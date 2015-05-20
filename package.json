@@ -1,0 +1,26 @@
+{
+  "name": "data-table",
+  "version": "0.0.1",
+  "devDependencies": {
+    "browser-sync": "^2.7.2",
+    "gulp": "^3.8.11",
+    "gulp-babel": "^5.1.0",
+    "gulp-changed": "^1.2.1",
+    "gulp-less": "^3.0.3",
+    "gulp-plumber": "^1.0.1",
+    "run-sequence": "^1.1.0"
+  },
+  "dependencies": {},
+  "jspm": {
+    "directories": {},
+    "dependencies": {
+      "angular/bower-angular": "github:angular/bower-angular@^1.4.0-build.4006+sha.718ff84",
+      "systemjs/plugin-css": "github:systemjs/plugin-css@^0.1.10"
+    },
+    "devDependencies": {
+      "babel": "npm:babel-core@^5.0.12",
+      "babel-runtime": "npm:babel-runtime@^5.0.12",
+      "core-js": "npm:core-js@^0.8.1"
+    }
+  }
+}

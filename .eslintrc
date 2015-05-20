@@ -1,0 +1,17 @@
+{
+  "parser": "babel-eslint",
+  "env": {
+    "browser": true
+  },
+  "rules": {
+    "strict": 0,
+    "no-multi-spaces": false,
+    "quotes": "single",
+    "no-shadow": false,
+    "no-empty": false,
+    "no-cond-assign": false,
+    "no-loop-func": false,
+    "no-underscore-dangle": false,
+    "no-use-before-define": false
+  }
+}
