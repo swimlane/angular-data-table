@@ -32,12 +32,32 @@
 
       .dt{
         width:75%;
-        margin:50px;
+        margin:50px 50px 50px 50px;
+      }
+
+      .toolbar{
+        background:#2962FF;
+        width:75%;
+        margin:20px 50px 15px 50px;
+        padding:5px 10px;
+      }
+
+      .toolbar a {
+        color:#FFF;
+        text-decoration: none;
       }
     </style>
     <link href="dist/themes/material.css" media="all" rel="stylesheet" />
+    <link href="https://fontastic.s3.amazonaws.com/Jnf54BZCm7mSjGCxNRbfp3/icons.css" rel="stylesheet">
   </head>
   <body ng-app="app" ng-controller="HomeController">
+
+    <!--
+    <div class="toolbar">
+      <a href="#" class="icon-add"></a>
+      <a href="#" class="icon-filter"></a>
+    </div>
+    -->
 
     <dt options="options" values="data"></dt>
 
@@ -53,7 +73,7 @@
           $scope.options = {
             rowHeight: 50,
             columns: [
-              { name: "Name", prop: "name" },
+              { name: "Name", prop: "name", width: 300 },
               { name: "Gender", prop: "gender" },
               { name: "Company", prop: "company" }
             ]

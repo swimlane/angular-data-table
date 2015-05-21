@@ -10,9 +10,13 @@
   .dt-header-cell{
     display: inline-block;
     vertical-align: top;
-    white-space: nowrap;
     overflow: hidden;
-    text-overflow: ellipsis;
+
+    white-space: normal;
+    line-height: 1.625;
+
+    //white-space: nowrap;
+    //text-overflow: ellipsis;
   }
 
 	.dt-header{
@@ -29,9 +33,14 @@
 	}
 
 	.dt-body{
+    //position:absolute;
+
     .dt-row{
+      backface-visibility: hidden;
+      //position: absolute;
+      //top: 0;
+
       .dt-cell{
-        backface-visibility: hidden;
       }
     }
 	}

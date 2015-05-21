@@ -6,7 +6,7 @@ export var HeaderController = function($scope){
   $scope.columnsByPin = ColumnsByPin($scope.columns);
 
   $scope.styles = {
-    width: ColumnTotalWidth($scope.columns) + 'px'
+    width: $scope._innerWidth //ColumnTotalWidth($scope.columns) + 'px'
   }
 };
 

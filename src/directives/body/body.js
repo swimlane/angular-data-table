@@ -6,15 +6,44 @@ import { ColumnTotalWidth } from 'utils/math';
 
 export class BodyController{
   constructor($scope){
+
+    console.log($scope.selectez)
+
     angular.extend(this, {
-      limit: 50,
+      data: $scope.values,
       options: $scope.options,
       selected: $scope.selected
     });
 
     $scope.styles = {
-      width: ColumnTotalWidth($scope.options.columns) + 'px'
+      //ColumnTotalWidth($scope.options.columns) + 'px'
+      width: $scope._innerWidth 
     };
+  }
+
+  limit(){
+    if(!this.options.scrollbarV){
+      return this.data.length;
+    } else {
+      // todo
+      return 100;
+    }
+  }
+
+  isSelected(row){
+    var selected = false;
+
+    if(this.options.selectable){
+      if(this.options.multiSelect){
+        selected = this.selected.indexOf(row) > -1;
+      } else {
+        selected = this.selected === row;
+      }
+    }
+
+    return {
+      'selected': selected
+    }
   }
 
   rowClicked(row){
@@ -34,21 +63,22 @@ export class BodyController{
 }
 
 export var BodyDirective = function(){
-
   return {
     restrict: 'E',
     controller: 'BodyController',
     controllerAs: 'body',
     scope: {
       values: '=',
-      options: '='
+      options: '=',
+      selected: '='
     },
     template: `
       <div class="dt-body">
-        <dt-row ng-repeat="r in values track by $index | limitTo: body.limit" 
+        <dt-row ng-repeat="r in values track by $index | limitTo: body.limit()" 
                 value="r"
                 ng-click="body.rowClicked(r)"
                 columns="options.columns"
+                ng-class="body.isSelected(r)"
                 ng-style="styles">
         </dt-row>
       </div>`,

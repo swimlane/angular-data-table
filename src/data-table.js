@@ -15,7 +15,8 @@ import './data-table.css!'
 class DataTable {
 	constructor($scope){
 
-    $scope.options = angular.extend(angular.copy(TableDefaults), $scope.options);
+    $scope.options = angular.extend(angular.
+      copy(TableDefaults), $scope.options);
 
     $scope.options.columns.forEach((c, i) => {
       c = angular.extend(angular.copy(ColumnDefaults), c);
@@ -35,6 +36,7 @@ class DataTable {
 function Directive(){
   return {
     restrict: 'E',
+    replace: true,
     controller: 'DataTable',
     scope: {
       options: '=',
@@ -52,10 +54,8 @@ function Directive(){
          </dt-body>
         <dt-footer></dt-footer>
       </div>`,
-    compile: function (tElem, tAttrs) {
-      return function link($scope, $elm, $attrs){
-        //console.log($scope.options)
-      }
+    link: function($scope, $elm, $attrs){
+      $scope._innerWidth = $elm[0].offsetWidth;
     }
   };
 };

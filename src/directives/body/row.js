@@ -11,7 +11,6 @@ export var RowController = function($scope){
 
   $scope.styles = {
     //width: 
-    //'selected': 
   };
 };
 
