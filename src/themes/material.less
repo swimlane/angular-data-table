@@ -14,6 +14,10 @@
       font-weight: 400;
       color: #757575;
       vertical-align: bottom;
+
+      &.highlight{
+        background-color:#eee;
+      }
     }
   }
 
@@ -28,6 +32,10 @@
         -webkit-transition: all 0.3s ease;
         -o-transition: all 0.3s ease;
         transition: all 0.3s ease;
+
+        &.highlight{
+          background-color:#eee;
+        }
       }
 
       &:hover{
@@ -38,6 +46,10 @@
       &.selected:hover{
         color:#FFF;
         background-color:#304FFE;
+
+        .dt-cell.highlight{
+          background-color:#304FFE;
+        }
       }
     }
   }

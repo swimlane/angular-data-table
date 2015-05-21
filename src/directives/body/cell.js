@@ -1,16 +1,21 @@
 import angular from 'angular';
 
-export var CellController = function($scope){
-  var col = $scope.column;
+export class CellController {
 
-  $scope.styles = {
-    width: col.width  + 'px',
-    height: col.height  + 'px'
-  };
+  constructor($scope){
+    this.col = $scope.column;
 
-  $scope.classes = {
-    'highlight': col.selected
-  };
+    $scope.styles = {
+      width: this.col.width  + 'px',
+      height: this.col.height  + 'px'
+    };
+  }
+  
+  isSelected(){
+    return {
+      'highlight': this.col.selected
+    };
+  }
 
 };
 
@@ -18,13 +23,14 @@ export var CellDirective = function(){
   return {
     restrict: 'E',
     controller: 'CellController',
+    controllerAs: 'cell',
     scope: {
       value: '=',
       column: '='
     },
     template: 
       `<div class="dt-cell" 
-            ng-class="classes"
+            ng-class="cell.isSelected()"
             data-title="{{::column.name}}" 
             ng-style="styles">
         {{::value[column.prop]}}
