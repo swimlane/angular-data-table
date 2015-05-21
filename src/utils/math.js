@@ -1,6 +1,7 @@
+/* 
 export var ForceFill = function(){
 
-  /* var totalWidth = tableOptions.view.width,
+  var totalWidth = tableOptions.view.width,
     fixedColumnsWidth = 0,
     tableColumns = tableOptions.columns || [],
     availableContentWidth = totalWidth - fixedColumnsWidth,
@@ -30,6 +31,21 @@ export var ForceFill = function(){
 
     column.columnWidth = oldLargerThanNew ? 
         column.oldColumnWidth : newSize;
-  }); */
+  }); 
+
+  
+  // greed formula
+  // SpaceLeft := LineWidth - (Width(Word) + SpaceWidth)
 
 };
+*/
+
+export var ColumnTotalWidth = function(columns) {
+  var totalWidth = 0;
+
+  columns.forEach((c, i) => {
+    totalWidth += columns[i].width;
+  });
+
+  return totalWidth;
+}

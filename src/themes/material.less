@@ -1,27 +1,40 @@
-// http://codepen.io/zavoloklom/pen/IGkDz
-
 .dt.material{
   background:#FFF;
   -webkit-box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.12), 0 1px 2px 0 rgba(0, 0, 0, 0.24);
   -moz-box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.12), 0 1px 2px 0 rgba(0, 0, 0, 0.24);
   box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.12), 0 1px 2px 0 rgba(0, 0, 0, 0.24);
 
-  .dt-column{
-    text-align: left;
-    padding: 1.6rem;
-    vertical-align: top;
-    border-top: 0;
-    -webkit-transition: all 0.3s ease;
-    -o-transition: all 0.3s ease;
-    transition: all 0.3s ease;
-  }
-
   .dt-header{
-    .dt-column{
+    width:100%;
+
+    .dt-header-cell{
+      text-align: left;
+      padding: 1.6rem;
       font-weight: 400;
       color: #757575;
       vertical-align: bottom;
       border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+    }
+  }
+
+  .dt-body{
+    .dt-row{
+      .dt-cell{
+        text-align: left;
+        padding: 1.6rem;
+        vertical-align: top;
+        border-top: 0;
+
+        -webkit-transition: all 0.3s ease;
+        -o-transition: all 0.3s ease;
+        transition: all 0.3s ease;
+      }
+
+      &:hover{
+        .dt-cell{
+          background-color: #b3e5fc;
+        }
+      }
     }
   }
 }

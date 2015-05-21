@@ -1,6 +1,8 @@
 # data-table
 
-A data-table for AngularJS that doesn't suck.  Its ES6, fast, and awesome.  Only supports evergreen browsers.
+A data-table for AngularJS that doesn't suck.  Its ES6, fast, and awesome.  
+
+Only supports evergreen browsers and 1.4.x Angular.
 
 ## Features
 

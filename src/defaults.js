@@ -73,6 +73,9 @@ export var TableDefaults = Object.freeze({
 
 export var ColumnDefaults = Object.freeze({
 
+  // column is highlighted
+  selected: false,
+
   // column will highlight when double clicked
   selectable: false,
 

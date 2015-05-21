@@ -1,10 +1,6 @@
-export var Repeater = function() {
+import angular from 'angular';
 
-  return {
-    transclude: 'element',
-    priority: 1000,
-    compile: compileFun
-  };
+export var Repeater = function() {
 
   function compileFun(element, attrs, linker) {
     var expression = attrs.repeater.split(' in ');
@@ -13,16 +9,11 @@ export var Repeater = function() {
       property: expression[1]
     };
 
-    return {
-      post: repeat
-    };
-
     function repeat(scope, iele, iattrs) {
       var template = element[0].outerHTML;
       var data = scope.$eval(expression.property);
+      console.log('repeat', data)
       addElements(data, scope, iele);
-
-      return;
 
       function makeNewScope(index, expression, value, scope, collection) {
         var childScope = scope.$new();
@@ -59,6 +50,16 @@ export var Repeater = function() {
         return newElements;
       }
     }
+
+    return {
+      post: repeat
+    };
   }
 
-});
+  return {
+    transclude: 'element',
+    priority: 1000,
+    compile: compileFun
+  };
+
+};
