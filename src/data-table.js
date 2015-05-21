@@ -15,13 +15,19 @@ import './data-table.css!'
 class DataTable {
 	constructor($scope){
 
-    $scope.columns = $scope.options.columns.map((c) => {
-      var extended = angular.extend(angular.copy(ColumnDefaults), c);
-      if(extended.height){
-        extended.height = TableDefaults.headerHeight;
+    $scope.options = angular.extend(angular.copy(TableDefaults), $scope.options);
+
+    $scope.options.columns.forEach((c, i) => {
+      c = angular.extend(angular.copy(ColumnDefaults), c);
+      if(c.height){
+        c.height = TableDefaults.headerHeight;
       }
-      return extended;
+      $scope.options.columns[i] = c;
     });
+
+    if($scope.options.selectable && $scope.options.multiSelect){
+      $scope.selected = $scope.selected || [];
+    }
 
 	}
 }
@@ -33,17 +39,23 @@ function Directive(){
     scope: {
       options: '=',
       values: '=',
-      onSelect: '&'
+      onSelect: '&',
+      selected: '='
     },
     controllerAs: 'dt',
     template: 
       `<div class="dt material">
-        <dt-header columns="columns"></dt-header>
-        <dt-body values="values" columns="columns"></dt-body>
+        <dt-header columns="options.columns"></dt-header>
+        <dt-body values="values" 
+                 selected="selected"
+                 options="options">
+         </dt-body>
         <dt-footer></dt-footer>
       </div>`,
-    link: function($scope, $elm, $attrs){
-      //console.log($scope.options)
+    compile: function (tElem, tAttrs) {
+      return function link($scope, $elm, $attrs){
+        //console.log($scope.options)
+      }
     }
   };
 };

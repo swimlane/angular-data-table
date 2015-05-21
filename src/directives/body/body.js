@@ -4,56 +4,54 @@ import { ColumnTotalWidth } from 'utils/math';
 // Notes:
 // http://stackoverflow.com/questions/14615534/custom-directive-like-ng-repeat
 
-export var BodyController = function($scope){
-
-  $scope.limit = 50;
-
-  $scope.styles = {
-    width: ColumnTotalWidth($scope.columns)
-  }
-};
-
-export var BodyDirective = function(){
-
-  var createFrags = function(cols, data){
-    var frag = document.createDocumentFragment();
-
-    data.forEach((d) => {
-      cols.forEach((c) => {
-        var div = document.createElement("div");
-        div.textContent = d[c];
-        frag.appendChild(div);
-      });
+export class BodyController{
+  constructor($scope){
+    angular.extend(this, {
+      limit: 50,
+      options: $scope.options,
+      selected: $scope.selected
     });
 
-    return frag;
-  };
+    $scope.styles = {
+      width: ColumnTotalWidth($scope.options.columns) + 'px'
+    };
+  }
+
+  rowClicked(row){
+    if(this.options.selectable){
+      if(this.options.multiSelect){
+        var idx = this.selected.indexOf(row);
+        if(idx > -1){
+          this.selected.splice(idx, 1);
+        } else {
+          this.selected.push(row);
+        }
+      } else {
+        this.selected = row;
+      }
+    }
+  }
+}
+
+export var BodyDirective = function(){
 
   return {
     restrict: 'E',
     controller: 'BodyController',
+    controllerAs: 'body',
     scope: {
       values: '=',
-      columns: '='
+      options: '='
     },
     template: `
       <div class="dt-body">
-        <dt-row ng-repeat="r in values track by $index | limitTo: limit" 
-                value="r" 
-                columns="columns"
+        <dt-row ng-repeat="r in values track by $index | limitTo: body.limit" 
+                value="r"
+                ng-click="body.rowClicked(r)"
+                columns="options.columns"
                 ng-style="styles">
         </dt-row>
       </div>`,
-    replace:true,
-    compile : function(tElement, tAttrs, transclude) {
-      return {
-        post: function($scope, elm, attrs, controller) {
-
-          $scope.$watchCollection('values', (newVal, oldVal) => {
-            console.log('collection updated');
-          });
-        }
-      }
-    }
+    replace:true
   };
 };

@@ -4,8 +4,8 @@ export var CellController = function($scope){
   var col = $scope.column;
 
   $scope.styles = {
-    width: col.width,
-    height: col.height
+    width: col.width  + 'px',
+    height: col.height  + 'px'
   };
 
   $scope.classes = {
@@ -30,7 +30,7 @@ export var CellDirective = function(){
         {{::value[column.prop]}}
       </div>`,
     link: function($scope, $elm, $attrs){
-      console.log('cell')
+      //
     }
   };
 };

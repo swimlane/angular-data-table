@@ -8,6 +8,11 @@ import { ColumnsByPin } from 'utils/utils';
 
 export var RowController = function($scope){
   $scope.columnsByPin = ColumnsByPin($scope.columns);
+
+  $scope.styles = {
+    //width: 
+    //'selected': 
+  };
 };
 
 export var RowDirective = function(){
@@ -21,7 +26,7 @@ export var RowDirective = function(){
       index: '='
     },
     template: `
-      <div class="dt-row" tabindex="-1">
+      <div class="dt-row" tabindex="-1" ng-style="styles">
         <div class="dt-row-left">
           <dt-cell ng-repeat="column in columnsByPin.left track by $index"
                    column="column" 

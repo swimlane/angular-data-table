@@ -1,8 +1,13 @@
 import angular from 'angular';
 import { ColumnsByPin } from 'utils/utils';
+import { ColumnTotalWidth } from 'utils/math';
 
 export var HeaderController = function($scope){
   $scope.columnsByPin = ColumnsByPin($scope.columns);
+
+  $scope.styles = {
+    width: ColumnTotalWidth($scope.columns) + 'px'
+  }
 };
 
 export var HeaderDirective = function(){
@@ -14,7 +19,7 @@ export var HeaderDirective = function(){
       columns: '='
     },
     template: `
-      <div class="dt-header">
+      <div class="dt-header" ng-style="styles">
         <div class="dt-row-left">
           <dt-header-cell ng-repeat="column in columnsByPin.left track by $index" 
                           column="column"></dt-header-cell>

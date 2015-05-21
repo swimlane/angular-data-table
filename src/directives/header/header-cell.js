@@ -4,10 +4,10 @@ export var HeaderCellController = function($scope){
   var col = $scope.column;
 
   $scope.styles = {
-    width: col.width,
-    minWidth: col.minWidth,
-    maxWidth: col.maxWidth,
-    height: col.height
+    width: col.width  + 'px',
+    minWidth: col.minWidth  + 'px',
+    maxWidth: col.maxWidth  + 'px',
+    height: col.height  + 'px'
   };
 }
 
@@ -26,6 +26,16 @@ export var HeaderCellDirective = function(){
 
       $elm.on('dblclick', () => {
         $scope.column.selected = true;
+      });
+
+      $elm.on('click', () => {
+        if($scope.column.sortable){
+
+        }
+      });
+
+      $scope.$on('$destroy', () => {
+        $elm.off('dblclick click');
       });
 
     }

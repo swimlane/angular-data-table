@@ -43,3 +43,8 @@ Only supports evergreen browsers and 1.4.x Angular.
 
 - https://github.com/angular-ui/ng-grid/blob/master/misc/site/data/100.json
 - http://jsfiddle.net/api/post/library/pure/
+
+## Interesting Reads
+
+- https://github.com/bahmutov/web-worker-digest-demo
+- http://bahmutov.calepin.co/improving-angular-web-app-performance-example.html
