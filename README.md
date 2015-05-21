@@ -48,3 +48,6 @@ Only supports evergreen browsers and 1.4.x Angular.
 
 - https://github.com/bahmutov/web-worker-digest-demo
 - http://bahmutov.calepin.co/improving-angular-web-app-performance-example.html
+- http://glebbahmutov.com/blog/angular-plus-react-equals-speed-revisited/
+- https://github.com/kamilkp/angular-vs-repeat
+- https://github.com/teropa/angular-virtual-dom

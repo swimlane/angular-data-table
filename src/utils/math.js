@@ -1,3 +1,6 @@
+// https://github.com/facebook/fixed-data-table/blob/master/src/FixedDataTableScrollHelper.js
+// https://github.com/facebook/fixed-data-table/blob/master/src/FixedDataTableWidthHelper.js
+
 export var ColumnTotalWidth = function(columns) {
   var totalWidth = 0;
 
@@ -8,7 +11,7 @@ export var ColumnTotalWidth = function(columns) {
   return totalWidth;
 };
 
-function getTotalFlexGrow(columns){
+export var getTotalFlexGrow = function(columns){
   var totalFlexGrow = 0;
 
   columns.forEach((c) => {
