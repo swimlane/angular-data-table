@@ -42,11 +42,44 @@ export var TableDefaults = Object.freeze({
 
     // Page you are on, just for counter reflections
     page: 1
+  },
+
+  // if users can select itmes
+  selectable: true,
+
+  // if users can select mutliple items
+  multiSelect: true,
+
+  // if all columns are sortable
+  sortable: true,
+
+  positions: {
+
+    // Value of vertical scroll.
+    scrollTop: 0,
+
+    // Index of row to scroll to.
+    scrollToRow: undefined,
+
+    // Index of column to scroll to.
+    scrollToColumn: 0,
+
+    // Value of horizontal scroll.
+    scrollLeft: undefined
+
   }
 
 });
 
 export var ColumnDefaults = Object.freeze({
+
+  className: '',
+
+  // The grow factor relative to other columns. Same as the flex-grow 
+  // API from http://www.w3.org/TR/css3-flexbox/. Basically, 
+  // take any available extra width and distribute it proportionally 
+  // according to all columns' flexGrow values.
+  flexGrow: 0,
 
   // Minimum width of the column.
   minWidth: undefined,
@@ -69,4 +102,5 @@ export var ColumnDefaults = Object.freeze({
   // If yes then column will automatically resized to be 
   // larger when there is additional space for the table.
   canAutoResize: true
+
 });
