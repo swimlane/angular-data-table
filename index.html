@@ -34,27 +34,31 @@
   </head>
   <body ng-app="app" ng-controller="HomeController">
 
-    <dt options="options"></dt>
+    <dt options="options" values="data"></dt>
 
     <script src="jspm_packages/system.js"></script>
     <script src="config.js"></script>
 
     <script>
+
       System.import('data-table').then(function(dt){
         var module = angular.module('app', [ dt.default.name ]);
 
-        module.controller('HomeController', function($scope){
+        module.controller('HomeController', function($scope, $http){
           $scope.options = {
-            rowHeight: 50
+            rowHeight: 50,
+            columns: [
+              { name: "Name", prop: "name" },
+              { name: "Gender", prop: "gender" },
+              { name: "Company", prop: "company" }
+            ]
           }
 
-          $scope.data = [{
-            "moo": true
-          }]
+          $http.get('/data/100.json').success(function(data) {
+            $scope.data = data;
+          });
 
-          console.log('loaded')
-        })
-
+        });
       });
     </script>
 

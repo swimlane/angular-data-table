@@ -9,11 +9,44 @@ export var RowController = function($scope){
 };
 
 export var RowDirective = function(){
+
+  var createFrags = function(cols, data){
+    var frag = document.createDocumentFragment();
+
+    cols.forEach((c) => {
+      var div = document.createElement("div");
+      div.textContent = data[c.prop];
+      frag.appendChild(div);
+    });
+
+    return frag;
+  };
+
+  var getCols = function(cols){
+    var ret = {
+      left: [],
+      center: [],
+      right: []
+    }
+
+    cols.forEach((c) => {
+      if(c.frozenLeft){
+        ret.left.push(c)
+      } else if(c.frozenRight){
+        ret.right.push(c);
+      } else {
+        ret.center.push(c);
+      }
+    });
+
+    return ret;
+  };
+
   return {
     restrict: 'E',
     controller: 'RowController',
     scope: {
-      data: '=',
+      value: '=',
       columns: '=',
       index: '='
     },
@@ -26,19 +59,17 @@ export var RowDirective = function(){
     replace:true,
     compile : function(tElement, tAttrs, transclude) {
       return {
-        post: function (scope, elm, attrs, controller) {
-          var template = elm[0].outerHTML;
+        post: function($scope, elm, attrs, controller) {
+          var elms = elm[0].querySelectorAll(':scope > *'),
+              cols = getCols($scope.columns);
 
-          scope.$watch('data', function(newVal, oldVal) {
-
-            var frag = document.createDocumentFragment();
-
-            var div = document.createElement("div");
-            div.textContent = 'panda';
-            frag.appendChild(div);
-
-            elm[0].appendChild(frag);
-
+          $scope.$watchCollection('value', (newVal, oldVal) => {
+            if(newVal){
+              var idx = 0;
+              angular.forEach(cols, (c) => {
+                elms[idx++].appendChild(createFrags(c, newVal));
+              });
+            }
           });
         }
       }

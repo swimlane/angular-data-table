@@ -1,7 +1,10 @@
 import angular from 'angular';
 import { TableDefaults, ColumnDefaults } from './defaults';
-import { CellController, CellDirective } from './directives/cell';
+
+import { BodyController, BodyDirective } from './directives/body';
 import { RowController, RowDirective } from './directives/row';
+import { CellController, CellDirective } from './directives/cell';
+
 import './data-table.css!'
 
 class DataTable {
@@ -18,20 +21,14 @@ function Directive(){
     controller: 'DataTable',
     scope: {
       options: '=',
-      model: '=',
+      values: '=',
       onSelect: '&'
     },
     controllerAs: 'dt',
     template: 
       `<div class="dt material">
-        <dt-header></dt-th>
-        <div class="dt-body">
-          <div class="dt-scroller">
-            <div class="dt-row">
-              foo
-            </div>
-          </div>
-        </div>
+        <dt-header></dt-header>
+        <dt-body values="values" columns="options.columns"></dt-body>
         <dt-footer></dt-footer>
       </div>`,
     link: function($scope, $elm, $attrs){
@@ -45,6 +42,9 @@ export default angular
 
   .controller('DataTable', DataTable)
   .directive('dt', Directive)
+
+  .controller('BodyController', BodyController)
+  .directive('dtBody', BodyDirective)
 
   .controller('RowController', RowController)
   .directive('dtRow', RowDirective)

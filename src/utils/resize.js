@@ -1,3 +1,5 @@
+// http://stackoverflow.com/questions/18368485/angular-js-resizable-div-directive
+
 export var Resize = function($document) {
   return function($scope, $element, $attrs) {
 

@@ -73,6 +73,16 @@ export var TableDefaults = Object.freeze({
 
 export var ColumnDefaults = Object.freeze({
 
+  // column will highlight when double clicked
+  selectable: false,
+
+  // pinned to the left
+  frozenLeft: false,
+  
+  // pinned to the right
+  frozenRight: false,
+
+  // css class name
   className: '',
 
   // The grow factor relative to other columns. Same as the flex-grow 
