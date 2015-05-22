@@ -1,23 +1,19 @@
 import angular from 'angular';
-import { ColumnTotalWidth } from 'utils/math';
-
-// Notes:
-// http://stackoverflow.com/questions/14615534/custom-directive-like-ng-repeat
 
 export class BodyController{
   constructor($scope){
-
-    console.log($scope.selectez)
 
     angular.extend(this, {
       data: $scope.values,
       options: $scope.options,
       selected: $scope.selected
     });
+  }
 
-    $scope.styles = {
-      //ColumnTotalWidth($scope.options.columns) + 'px'
-      width: $scope._innerWidth 
+  styles(){
+    return {
+      width: this.options.cache.innerWidth + 'px',
+      height: this.options.cache.bodyHeight + 'px'
     };
   }
 
@@ -73,13 +69,12 @@ export var BodyDirective = function(){
       selected: '='
     },
     template: `
-      <div class="dt-body">
+      <div class="dt-body" ng-style="body.styles()">
         <dt-row ng-repeat="r in values track by $index | limitTo: body.limit()" 
                 value="r"
                 ng-click="body.rowClicked(r)"
-                columns="options.columns"
-                ng-class="body.isSelected(r)"
-                ng-style="styles">
+                options="options"
+                ng-class="body.isSelected(r)">
         </dt-row>
       </div>`,
     replace:true

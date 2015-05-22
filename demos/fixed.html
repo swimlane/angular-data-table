@@ -32,33 +32,43 @@
 
       .dt{
         width:75%;
-        margin:50px 50px 50px 50px;
+        margin:50px auto;
+        height:400px;
       }
 
-      .toolbar{
-        background:#2962FF;
-        width:75%;
-        margin:20px 50px 15px 50px;
-        padding:5px 10px;
-      }
-
-      .toolbar a {
-        color:#FFF;
-        text-decoration: none;
-      }
     </style>
-    <link href="dist/themes/material.css" media="all" rel="stylesheet" />
+    <link href="../dist/themes/material.css" media="all" rel="stylesheet" />
     <link href="https://fontastic.s3.amazonaws.com/Jnf54BZCm7mSjGCxNRbfp3/icons.css" rel="stylesheet">
   </head>
   <body ng-app="app" ng-controller="HomeController">
 
-<h1>Table Demos</h1>
+    <dt options="options" values="data"></dt>
 
-  <ul>
-  <li><a href="demos/basic.html">Basic</a></li>
-  <li><a href="demos/fixed.html">Fixed</a></li>
-  </ul>
+    <script src="../jspm_packages/system.js"></script>
+    <script src="../config.js"></script>
 
+    <script>
+
+      System.import('data-table').then(function(dt){
+        var module = angular.module('app', [ dt.default.name ]);
+
+        module.controller('HomeController', function($scope, $http){
+          $scope.options = {
+            rowHeight: 50,
+            columns: [
+              { name: "Name", prop: "name", width: 300 },
+              { name: "Gender", prop: "gender" },
+              { name: "Company", prop: "company" }
+            ]
+          };
+
+          $http.get('/demos/data/100.json').success(function(data) {
+            $scope.data = data;
+          });
+
+        });
+      });
+    </script>
 
   </body>
 </html>

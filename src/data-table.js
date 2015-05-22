@@ -1,7 +1,6 @@
 import angular from 'angular';
 
 import { TableDefaults, ColumnDefaults } from './defaults';
-//import { Repeater } from './utils/repeat';
 
 import { HeaderController, HeaderDirective } from './directives/header/header';
 import { HeaderCellDirective, HeaderCellController } from './directives/header/header-cell';
@@ -30,6 +29,8 @@ class DataTable {
       $scope.selected = $scope.selected || [];
     }
 
+    $scope.options.cache = {};
+
 	}
 }
 
@@ -47,7 +48,7 @@ function Directive(){
     controllerAs: 'dt',
     template: 
       `<div class="dt material">
-        <dt-header columns="options.columns"></dt-header>
+        <dt-header options="options"></dt-header>
         <dt-body values="values" 
                  selected="selected"
                  options="options">
@@ -55,15 +56,21 @@ function Directive(){
         <dt-footer></dt-footer>
       </div>`,
     link: function($scope, $elm, $attrs){
-      $scope._innerWidth = $elm[0].offsetWidth;
+      $scope.options.cache.innerWidth = $elm[0].offsetWidth;
+
+      if($scope.options.scrollbarV){
+        $scope.options.cache.bodyHeight = $elm[0].offsetHeight - $scope.options.headerHeight;
+
+        if($scope.options.hasFooter){
+          $scope.options.cache.bodyHeight = $scope.options.cache.bodyHeight - $scope.options.footerHeight;
+        }
+      }
     }
   };
 };
 
 export default angular
   .module('data-table', [])
-
-  //.directive('repeater', Repeater)
 
   .controller('DataTable', DataTable)
   .directive('dt', Directive)

@@ -1,7 +1,9 @@
 export var TableDefaults = Object.freeze({
 
+  // Enable vertical scrollbars
   scrollbarV: true,
 
+  // Enable horz scrollbars
   scrollbarH: true,
 
   // The row height, which is necessary 
@@ -12,7 +14,7 @@ export var TableDefaults = Object.freeze({
   forceFillColumns: true,
 
   // The minimum header height in pixels.
-  headerHeight: 30,
+  headerHeight: 50,
 
   // The minimum footer height in pixels.
   footerHeight: 30,

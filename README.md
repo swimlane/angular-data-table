@@ -51,3 +51,4 @@ Only supports evergreen browsers and 1.4.x Angular.
 - http://glebbahmutov.com/blog/angular-plus-react-equals-speed-revisited/
 - https://github.com/kamilkp/angular-vs-repeat
 - https://github.com/teropa/angular-virtual-dom
+- simple virtual repeat - http://codepen.io/2fdevs/pen/pvvXoO

@@ -66,7 +66,7 @@ gulp.task('serve', ['compile'], function (done) {
 
 
 gulp.task('watch', ['serve'], function() {
-  var watcher = gulp.watch([path.source, path.less, 'index.html'], ['compile']);
+  var watcher = gulp.watch([path.source, path.less, '*.html'], ['compile']);
   watcher.on('change', function(event) {
     console.log('File ' + event.path + ' was ' + event.type + ', running tasks...');
   });
