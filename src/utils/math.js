@@ -11,7 +11,7 @@ export var ColumnTotalWidth = function(columns) {
   return totalWidth;
 };
 
-export var getTotalFlexGrow = function(columns){
+export var GetTotalFlexGrow = function(columns){
   var totalFlexGrow = 0;
 
   columns.forEach((c) => {
@@ -19,4 +19,4 @@ export var getTotalFlexGrow = function(columns){
   });
 
   return totalFlexGrow;
-}
+};

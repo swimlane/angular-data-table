@@ -1,13 +1,19 @@
 import angular from 'angular';
+import { requestAnimFrame } from 'utils/utils';
 
 export class BodyController{
   constructor($scope){
 
     angular.extend(this, {
-      data: $scope.values,
       options: $scope.options,
       selected: $scope.selected
     });
+
+    // !this.options.scrollbarV
+
+    $scope.$watchCollection('values', (n) => {
+      if(n) $scope.rows = $scope.values.slice(0, this.rowsForHeight() * 2)
+    })
   }
 
   styles(){
@@ -17,13 +23,18 @@ export class BodyController{
     };
   }
 
-  limit(){
-    if(!this.options.scrollbarV){
-      return this.data.length;
-    } else {
-      // todo
-      return 100;
-    }
+  scrollStyles(scope){
+    if(!scope.values) return;
+
+    return {
+      height: this.totalRowHeight(scope.values) + 'px'
+    };
+  }
+
+  innerStyles(scope){
+    return {
+      transform: `translate3d(0px, ${scope.offset}px, 0px)`
+    };
   }
 
   isSelected(row){
@@ -39,7 +50,7 @@ export class BodyController{
 
     return {
       'selected': selected
-    }
+    };
   }
 
   rowClicked(row){
@@ -56,9 +67,17 @@ export class BodyController{
       }
     }
   }
+
+  totalRowHeight(data){
+    return data.length * this.options.rowHeight;
+  }
+
+  rowsForHeight(){
+    return this.options.cache.bodyHeight / this.options.rowHeight;
+  }
 }
 
-export var BodyDirective = function(){
+export var BodyDirective = function($timeout){
   return {
     restrict: 'E',
     controller: 'BodyController',
@@ -70,13 +89,43 @@ export var BodyDirective = function(){
     },
     template: `
       <div class="dt-body" ng-style="body.styles()">
-        <dt-row ng-repeat="r in values track by $index | limitTo: body.limit()" 
-                value="r"
-                ng-click="body.rowClicked(r)"
-                options="options"
-                ng-class="body.isSelected(r)">
-        </dt-row>
+        <div class="dt-body-scroller" ng-style="body.scrollStyles(this)">
+          <div class="dt-body-inner" ng-style="body.innerStyles(this)">
+            <dt-row ng-repeat="r in rows track by $index" 
+                    value="r"
+                    ng-click="body.rowClicked(r)"
+                    options="options"
+                    ng-class="body.isSelected(r)">
+            </dt-row>
+          </div>
+        </div>
       </div>`,
-    replace:true
+    replace:true,
+    link: function($scope, $elm, $attrs){
+
+      var ticking = false;
+      var lastScrollY = 0;
+
+      function update(){
+        $timeout(() => {
+          $scope.offset = lastScrollY;
+        })
+        ticking = false;
+      };
+
+      function requestTick() {
+        if(!ticking) {
+          requestAnimFrame(update);
+          ticking = true;
+        }
+      };
+
+      function onScroll(ev){
+        lastScrollY = this.scrollTop;
+        requestTick();
+      };
+
+      $elm[0].addEventListener('scroll', onScroll, false);
+    }
   };
 };

@@ -30,10 +30,10 @@ export var RowDirective = function(){
     restrict: 'E',
     controller: 'RowController',
     controllerAs: 'row',
+    replace: true,
     scope: {
       options: '=',
-      value: '=',
-      index: '='
+      value: '='
     },
     template: `
       <div class="dt-row" tabindex="-1" ng-style="row.styles(this)">
