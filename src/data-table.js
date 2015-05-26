@@ -1,6 +1,7 @@
 import angular from 'angular';
-import throttle from './utils/throttle';
 import sorty from 'sorty';
+import { Resizable } from 'utils/resizable';
+import throttle from './utils/throttle';
 
 import { TableDefaults, ColumnDefaults } from './defaults';
 
@@ -122,6 +123,7 @@ export default angular
 
   .controller('DataTable', DataTable)
   .directive('dt', Directive)
+  .directive('resizable', Resizable)
 
   .controller('HeaderController', HeaderController)
   .directive('dtHeader', HeaderDirective)

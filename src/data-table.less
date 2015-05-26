@@ -18,7 +18,10 @@
 
 	.dt-header{
 
+
+
     .dt-header-cell{
+      position:relative;
       white-space: nowrap;
       //text-overflow: ellipsis;
 
@@ -29,7 +32,15 @@
       -o-user-select: none;
       user-select: none;
 
-      cursor: pointer;
+      &.dt-dragover{
+        background:#EEE;
+      }
+
+      &.sortable{
+        .dt-header-cell-label{
+          cursor: pointer;
+        }
+      }
 
       .sort-btn{
         visibility: hidden;
@@ -39,6 +50,23 @@
         &.sort-asc{
           visibility: visible;
         }
+      }
+
+      .dt-resize-handle{
+        display: inline-block;
+        position: absolute;
+        right:0;
+        top:0;
+        bottom: 0;
+        width:5px;
+        padding:0 5px;
+        border-right:solid 1px #eee;
+        visibility: hidden;
+        cursor: e-resize;
+      }
+
+      &.resizable:hover .dt-resize-handle{
+        visibility: visible;
       }
     }
 	}

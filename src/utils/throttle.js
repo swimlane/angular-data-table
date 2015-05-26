@@ -1,7 +1,5 @@
 import angular from 'angular';
 
-// Copied from Angular Strap, wanted to migrate internally too
-// for consistency in our modules and not couple our app to as
 function debounce(func, wait, immediate) {
   var timeout, args, context, timestamp, result;
   return function() {

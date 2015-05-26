@@ -1,51 +1,50 @@
 import angular from 'angular';
  
 export class HeaderCellController{
-  constructor($scope){
-    this.col = $scope.column;
-  }
 
-  styles(){
+  styles(scope){
     return {
-      width: this.col.width  + 'px',
-      minWidth: this.col.minWidth  + 'px',
-      maxWidth: this.col.maxWidth  + 'px',
-      height: this.col.height  + 'px'
+      width: scope.column.width  + 'px',
+      minWidth: scope.column.minWidth  + 'px',
+      maxWidth: scope.column.maxWidth  + 'px',
+      height: scope.column.height  + 'px'
     };
   }
 
-  cellClass(){
+  cellClass(scope){
     var cls = {
-      'sortable': this.col.sortable,
-      'dt-header-cell': true
+      'sortable': scope.column.sortable,
+      'dt-header-cell': true,
+      'resizable': scope.column.resizable
     };
 
-    if(this.col.cssClass){
-      cls[this.col.cssClass] = true;
+    if(scope.column.cssClass){
+      cls[scope.column.cssClass] = true;
     }
 
     return cls;
   }
 
-  sort(){
-    if(this.col.sortable){
-      if(!this.col.sort){
-        this.col.sort = 'asc';
-      } else if(this.col.sort === 'asc'){
-        this.col.sort = 'desc';
-      } else if(this.col.sort === 'desc'){
-        this.col.sort = undefined;
+  sort(scope){
+    if(scope.column.sortable){
+      if(!scope.column.sort){
+        scope.column.sort = 'asc';
+      } else if(scope.column.sort === 'asc'){
+        scope.column.sort = 'desc';
+      } else if(scope.column.sort === 'desc'){
+        scope.column.sort = undefined;
       }
     }
   }
 
-  sortClass(){
+  sortClass(scope){
     return {
       'sort-btn': true,
-      'sort-asc icon-down': this.col.sort === 'asc',
-      'sort-desc icon-up': this.col.sort === 'desc'
+      'sort-asc icon-down': scope.column.sort === 'asc',
+      'sort-desc icon-up': scope.column.sort === 'desc'
     };
   }
+
 }
 
 export function HeaderCellDirective($timeout){
@@ -58,13 +57,14 @@ export function HeaderCellDirective($timeout){
     },
     replace: true,
     template: 
-      `<div ng-class="hcell.cellClass()"
-            ng-click="hcell.sort()"
-            ng-style="hcell.styles()">
-        <span class="dt-header-cell-label">
+      `<div ng-class="hcell.cellClass(this)"
+            ng-style="hcell.styles(this)"
+            resizable>
+        <span class="dt-header-cell-label" 
+            ng-click="hcell.sort(this)">
           {{::column.name}}
         </span>
-        <span ng-class="hcell.sortClass()"></span>
+        <span ng-class="hcell.sortClass(this)"></span>
       </div>`
   };
 };

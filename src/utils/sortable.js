@@ -12,6 +12,7 @@ export function Sortable(rootEl, onUpdate) {
     var target = evt.target;
 
     if (target && target !== dragEl && target.classList.contains('sortable')) {
+      //target.classList.add('dt-dragover');
       rootEl.insertBefore(dragEl, rootEl.children[0] !== target && target.nextSibling || target);
     }
   }
@@ -33,6 +34,7 @@ export function Sortable(rootEl, onUpdate) {
     nextEl = dragEl.nextSibling;
 
     evt.dataTransfer.effectAllowed = 'move';
+    //evt.dataTransfer.effectAllowed = 'copyMove';
     evt.dataTransfer.setData('Text', dragEl.textContent);
 
     rootEl.addEventListener('dragover', _onDragOver, false);
