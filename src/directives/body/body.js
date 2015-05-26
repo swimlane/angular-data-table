@@ -115,7 +115,7 @@ export class BodyController{
   }
 }
 
-export var BodyDirective = function($timeout){
+export function BodyDirective($timeout){
   return {
     restrict: 'E',
     controller: 'BodyController',

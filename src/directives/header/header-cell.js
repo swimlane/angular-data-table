@@ -48,7 +48,7 @@ export class HeaderCellController{
   }
 }
 
-export var HeaderCellDirective = function($timeout){
+export function HeaderCellDirective($timeout){
   return {
     restrict: 'E',
     controller: 'HeaderCellController',
@@ -56,6 +56,7 @@ export var HeaderCellDirective = function($timeout){
     scope: {
       column: '='
     },
+    replace: true,
     template: 
       `<div ng-class="hcell.cellClass()"
             ng-click="hcell.sort()"

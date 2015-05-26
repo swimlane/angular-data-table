@@ -1,11 +1,7 @@
 import angular from 'angular';
-import { ColumnsByPin } from 'utils/utils';
 import { ColumnTotalWidth } from 'utils/math';
 
 export class RowController {
-  constructor($scope){
-    this.columnsByPin = ColumnsByPin($scope.options.columns);
-  }
 
   styles(scope){
     return {
@@ -13,9 +9,19 @@ export class RowController {
     };
   }
 
-  stylesByGroup(group){
+  stylesByGroup(scope, group){
+   var cols = scope.options.columns.filter((c) => {
+      if(group === 'left' && c.frozenLeft){
+        return c;
+      } else if(group === 'right' && c.frozenRight){
+        return c;
+      } else {
+        return c;
+      }
+   });
+   
    return {
-      width: ColumnTotalWidth(group) + 'px'
+      width: ColumnTotalWidth(cols) + 'px'
     };
   }
 
@@ -24,7 +30,7 @@ export class RowController {
   }
 };
 
-export var RowDirective = function(){
+export function RowDirective(){
 
   return {
     restrict: 'E',
@@ -37,18 +43,18 @@ export var RowDirective = function(){
     },
     template: `
       <div class="dt-row" tabindex="-1" ng-style="row.styles(this)">
-        <div class="dt-row-left" ng-style="row.stylesByGroup(row.columnsByPin.left)">
-          <dt-cell ng-repeat="column in row.columnsByPin.left track by $index"
+        <div class="dt-row-left" ng-style="row.stylesByGroup(this, 'left')">
+          <dt-cell ng-repeat="column in options.columns | filter: { frozenLeft: true } track by $index"
                    column="column" 
                    value="row.getValue(this, column)"></dt-header-cell>
         </div>
-        <div class="dt-row-center" ng-style="row.stylesByGroup(row.columnsByPin.center)">
-          <dt-cell ng-repeat="column in row.columnsByPin.center track by $index"
+        <div class="dt-row-center" ng-style="row.stylesByGroup(this, 'center')">
+          <dt-cell ng-repeat="column in options.columns | filter: { frozenLeft: false, frozenRight: false } track by $index"
                    column="column" 
                    value="row.getValue(this, column)"></dt-header-cell>
         </div>
-        <div class="dt-row-right" ng-style="row.stylesByGroup(row.columnsByPin.right)">
-          <dt-cell ng-repeat="column in row.columnsByPin.right track by $index" 
+        <div class="dt-row-right" ng-style="row.stylesByGroup(this, 'right')">
+          <dt-cell ng-repeat="column in options.columns | filter: { frozenRight: true } track by $index" 
                    column="column" 
                    value="row.getValue(this, column)"></dt-cell>
         </div>

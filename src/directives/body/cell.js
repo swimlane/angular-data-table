@@ -2,18 +2,16 @@ import angular from 'angular';
 
 export class CellController {
 
-  constructor($scope){
-    this.col = $scope.column;
-
-    $scope.styles = {
-      width: this.col.width  + 'px',
-      height: this.col.height  + 'px'
+  styles(col){
+    return {
+      width: col.width  + 'px',
+      height: col.height  + 'px'
     };
   }
 
 };
 
-export var CellDirective = function(){
+export function CellDirective(){
   return {
     restrict: 'E',
     controller: 'CellController',
@@ -25,7 +23,7 @@ export var CellDirective = function(){
     template: 
       `<div class="dt-cell" 
             data-title="{{::column.name}}" 
-            ng-style="styles">
+            ng-style="cell.styles(column)">
         {{value}}
       </div>`
   };
