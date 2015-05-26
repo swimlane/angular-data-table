@@ -7,7 +7,7 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black" />
     <meta name="viewport" content="width = device-width, minimal-ui, initial-scale = 1, user-scalable = no" />
     <meta name="apple-mobile-web-app-title" content="Datagrid">
-    <title>Datagrid</title>
+    <title>Datagrid - Fixed Virtual</title>
     <base href="/">
     <style>
       *, *:after, *:before {
@@ -62,7 +62,7 @@
             ]
           };
 
-          $http.get('/demos/data/100.json').success(function(data) {
+          $http.get('/demos/data/complex-100000.json').success(function(data) {
             $scope.data = data;
           });
 
