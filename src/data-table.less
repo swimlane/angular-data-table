@@ -10,13 +10,14 @@
 
     white-space: normal;
     line-height: 1.625;
-
-    //white-space: nowrap;
-    //text-overflow: ellipsis;
   }
 
 	.dt-header{
+
     .dt-header-cell{
+      white-space: nowrap;
+      //text-overflow: ellipsis;
+
       touch-callout: none;
       -webkit-user-select: none;
       -moz-user-select: none;
@@ -25,6 +26,16 @@
       user-select: none;
 
       cursor: pointer;
+
+      .sort-btn{
+        visibility: hidden;
+        display: inline-block;
+
+        &.sort-desc,
+        &.sort-asc{
+          visibility: visible;
+        }
+      }
     }
 	}
 

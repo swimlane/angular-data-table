@@ -2,15 +2,13 @@ import angular from 'angular';
 import { requestAnimFrame } from 'utils/utils';
 
 export class BodyController{
+  
   constructor($scope, $timeout, throttle){
-
     angular.extend(this, {
       $scope: $scope,
       options: $scope.options,
       selected: $scope.selected
     });
-
-    // !this.options.scrollbarV
 
     this.rows = [];
     this._maxVisibleRowCount = Math.ceil(this.options.cache.bodyHeight / this.options.rowHeight) + 1;
@@ -29,11 +27,11 @@ export class BodyController{
       }
     })
 
-    $scope.$watch('offset', throttle(() => {
-      if(this.options.scrollbarV){
+    if(this.options.scrollbarV){
+      $scope.$watch('offset', throttle(() => {
         this.getRows();
-      }
-    }, 10));
+      }, 10));
+    }
   }
 
   getRows(){
@@ -112,10 +110,6 @@ export class BodyController{
     return data.length * this.options.rowHeight;
   }
 
-  rowsForHeight(){
-    return this.options.cache.bodyHeight / this.options.rowHeight;
-  }
-
   getValue(idx){
     return this.rows[idx];
   }
@@ -153,7 +147,7 @@ export var BodyDirective = function($timeout){
       function update(){
         $timeout(() => {
           $scope.offset = lastScrollY;
-        })
+        });
         ticking = false;
       };
 

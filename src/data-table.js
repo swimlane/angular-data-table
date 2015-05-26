@@ -13,16 +13,19 @@ import { CellController, CellDirective } from './directives/body/cell';
 import './data-table.css!'
 
 class DataTable {
-	constructor($scope){
 
+	constructor($scope){
     $scope.options = angular.extend(angular.
       copy(TableDefaults), $scope.options);
 
     $scope.options.columns.forEach((c, i) => {
       c = angular.extend(angular.copy(ColumnDefaults), c);
-      if(c.height){
-        c.height = TableDefaults.headerHeight;
-      }
+
+      // TODO
+      //if(c.height){
+      //  c.height = TableDefaults.headerHeight;
+      //}
+
       $scope.options.columns[i] = c;
     });
 
@@ -31,8 +34,8 @@ class DataTable {
     }
 
     $scope.options.cache = {};
-
 	}
+
 }
 
 function Directive(){
