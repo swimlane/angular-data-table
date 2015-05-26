@@ -61,10 +61,16 @@ class DataTable {
 
       var clientSorts = sorts.filter((c) => {
         return c.comparator !== false;
+      }).map((c) => {
+        return {
+          name: c.prop,
+          dir: c.sort,
+          fn: c.comparator
+        }
       });
 
       if(clientSorts.length){
-        sorty(sorts, rows);
+        sorty(clientSorts, rows);
       }
     }
   }
