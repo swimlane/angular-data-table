@@ -33,7 +33,7 @@ export var CellDirective = function(){
             ng-class="cell.isSelected()"
             data-title="{{::column.name}}" 
             ng-style="styles">
-        {{::value[column.prop]}}
+        {{value}}
       </div>`,
     link: function($scope, $elm, $attrs){
       //

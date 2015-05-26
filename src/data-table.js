@@ -1,4 +1,5 @@
 import angular from 'angular';
+import throttle from './utils/throttle';
 
 import { TableDefaults, ColumnDefaults } from './defaults';
 
@@ -55,14 +56,18 @@ function Directive(){
          </dt-body>
         <dt-footer></dt-footer>
       </div>`,
-    link: function($scope, $elm, $attrs){
-      $scope.options.cache.innerWidth = $elm[0].offsetWidth;
+    compile: function(tElem, tAttrs){
+      return {
+        pre: function($scope, $elm, $attrs){
+          $scope.options.cache.innerWidth = $elm[0].offsetWidth;
 
-      if($scope.options.scrollbarV){
-        $scope.options.cache.bodyHeight = $elm[0].offsetHeight - $scope.options.headerHeight;
+          if($scope.options.scrollbarV){
+            $scope.options.cache.bodyHeight = $elm[0].offsetHeight - $scope.options.headerHeight;
 
-        if($scope.options.hasFooter){
-          $scope.options.cache.bodyHeight = $scope.options.cache.bodyHeight - $scope.options.footerHeight;
+            if($scope.options.hasFooter){
+              $scope.options.cache.bodyHeight = $scope.options.cache.bodyHeight - $scope.options.footerHeight;
+            }
+          }
         }
       }
     }
@@ -70,7 +75,7 @@ function Directive(){
 };
 
 export default angular
-  .module('data-table', [])
+  .module('data-table', [ throttle.name ])
 
   .controller('DataTable', DataTable)
   .directive('dt', Directive)

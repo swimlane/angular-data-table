@@ -2,39 +2,79 @@ import angular from 'angular';
 import { requestAnimFrame } from 'utils/utils';
 
 export class BodyController{
-  constructor($scope){
+  constructor($scope, $timeout, throttle){
 
     angular.extend(this, {
+      $scope: $scope,
       options: $scope.options,
       selected: $scope.selected
     });
 
     // !this.options.scrollbarV
 
-    $scope.$watchCollection('values', (n) => {
-      if(n) $scope.rows = $scope.values.slice(0, this.rowsForHeight() * 2)
+    this.rows = [];
+    this._maxVisibleRowCount = Math.ceil(this.options.cache.bodyHeight / this.options.rowHeight) + 1;
+
+    this._viewportRowsStart = 0;
+    this._viewportRowsEnd = 0;
+
+    $scope.$watchCollection('values', (newVal, oldVal) => {
+      if(newVal) {
+        this._rowsCount = $scope.values.length;
+        if(this.options.scrollbarV){
+          this.getRows();
+        } else {
+          this.rows.push(...$scope.values);
+        }
+      }
     })
+
+    $scope.$watch('offset', throttle(() => {
+      if(this.options.scrollbarV){
+        this.getRows();
+      }
+    }, 10));
+  }
+
+  getRows(){
+    var firstRowIndex = Math.max(Math.floor((this.$scope.offset || 0) / this.options.rowHeight, 0), 0),
+        endIndex = Math.min(firstRowIndex + this._maxVisibleRowCount, this._rowsCount),
+        rowIndex = firstRowIndex,
+        idx = 0;
+
+    while (rowIndex < endIndex || (this.options.cache.bodyHeight < this._viewportHeight && rowIndex < this._rowsCount)) {
+      this.rows[idx++] = this.$scope.values[rowIndex];
+      this._viewportRowsEnd = rowIndex++;
+    }
   }
 
   styles(){
-    return {
+    var styles = {
       width: this.options.cache.innerWidth + 'px',
       height: this.options.cache.bodyHeight + 'px'
     };
+
+    if(!this.options.scrollbarV){
+      styles['overflow'] = 'hidden';
+    }
+
+    return styles;
   }
 
   scrollStyles(scope){
-    if(!scope.values) return;
-
-    return {
-      height: this.totalRowHeight(scope.values) + 'px'
-    };
+    if(scope.values){
+      return {
+        height: this.totalRowHeight(scope.values) + 'px'
+      };
+    }
   }
 
   innerStyles(scope){
-    return {
-      transform: `translate3d(0px, ${scope.offset}px, 0px)`
-    };
+    if(this.options.scrollbarV){
+      return {
+        transform: `translate3d(0px, ${scope.offset}px, 0px)`
+      };
+    }
   }
 
   isSelected(row){
@@ -75,6 +115,10 @@ export class BodyController{
   rowsForHeight(){
     return this.options.cache.bodyHeight / this.options.rowHeight;
   }
+
+  getValue(idx){
+    return this.rows[idx];
+  }
 }
 
 export var BodyDirective = function($timeout){
@@ -91,8 +135,8 @@ export var BodyDirective = function($timeout){
       <div class="dt-body" ng-style="body.styles()">
         <div class="dt-body-scroller" ng-style="body.scrollStyles(this)">
           <div class="dt-body-inner" ng-style="body.innerStyles(this)">
-            <dt-row ng-repeat="r in rows track by $index" 
-                    value="r"
+            <dt-row ng-repeat="r in body.rows track by $index" 
+                    value="body.getValue($index)"
                     ng-click="body.rowClicked(r)"
                     options="options"
                     ng-class="body.isSelected(r)">
