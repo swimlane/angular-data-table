@@ -4,7 +4,7 @@ export var TableDefaults = Object.freeze({
   scrollbarV: true,
 
   // Enable horz scrollbars
-  scrollbarH: true,
+  // scrollbarH: true,
 
   // The row height, which is necessary 
   // to calculate the height for the lazy rendering.
@@ -14,27 +14,19 @@ export var TableDefaults = Object.freeze({
   forceFillColumns: true,
 
   // The minimum header height in pixels.
+  // pass falsey for no header
   headerHeight: 50,
 
   // The minimum footer height in pixels.
+  // pass falsey for no footer
   footerHeight: 30,
-
-  // Shows the header block.
-  hasHeader: true,
-
-  // Shows a the footer block.
-  hasFooter: true,
 
   paging: {
     // Determine if you should reset page size based on height of grid
     autoPageSize: true,
 
     // Pages based on scrolling
-    virtualScrolling: true,
-
-    // Page you've paged to, this is the next
-    // server range to get
-    offset: 0,
+    virtualPaging: true,
 
     // Page size
     pageSize: undefined,
@@ -55,7 +47,7 @@ export var TableDefaults = Object.freeze({
   // if all columns are sortable
   sortable: true,
 
-  positions: {
+  /* positions: {
 
     // Value of vertical scroll.
     scrollTop: 0,
@@ -69,7 +61,10 @@ export var TableDefaults = Object.freeze({
     // Value of horizontal scroll.
     scrollLeft: undefined
 
-  }
+  }, */
+
+  // internal
+  cache: {}
 
 });
 
@@ -78,9 +73,6 @@ export var ColumnDefaults = Object.freeze({
   // column is highlighted
   selected: false,
 
-  // column will highlight when double clicked
-  selectable: false,
-
   // pinned to the left
   frozenLeft: false,
   
@@ -88,7 +80,7 @@ export var ColumnDefaults = Object.freeze({
   frozenRight: false,
 
   // css class name
-  className: '',
+  className: undefined,
 
   // The grow factor relative to other columns. Same as the flex-grow 
   // API from http://www.w3.org/TR/css3-flexbox/. Basically, 
@@ -107,6 +99,10 @@ export var ColumnDefaults = Object.freeze({
 
   // If yes then the column can be resized, otherwise it cannot.
   resizable: true,
+
+  // Custom sort comparator
+  // pass false if you want to server sort?
+  comparator: undefined, 
 
   // If yes then the column can be sorted.
   sortable: true,

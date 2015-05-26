@@ -15,11 +15,12 @@ System.config({
 
 System.config({
   "map": {
-    "css": "github:systemjs/plugin-css@0.1.10",
     "angular": "github:angular/bower-angular@1.4.0-rc.2",
     "babel": "npm:babel-core@5.4.4",
     "babel-runtime": "npm:babel-runtime@5.4.4",
     "core-js": "npm:core-js@0.8.4",
+    "css": "github:systemjs/plugin-css@0.1.10",
+    "sorty": "npm:sorty@1.2.0",
     "systemjs/plugin-css": "github:systemjs/plugin-css@0.1.10",
     "github:jspm/nodelibs-assert@0.1.0": {
       "assert": "npm:assert@1.3.0"

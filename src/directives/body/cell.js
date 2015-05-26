@@ -10,12 +10,6 @@ export class CellController {
       height: this.col.height  + 'px'
     };
   }
-  
-  isSelected(){
-    return {
-      'highlight': this.col.selected
-    };
-  }
 
 };
 
@@ -30,13 +24,9 @@ export var CellDirective = function(){
     },
     template: 
       `<div class="dt-cell" 
-            ng-class="cell.isSelected()"
             data-title="{{::column.name}}" 
             ng-style="styles">
         {{value}}
-      </div>`,
-    link: function($scope, $elm, $attrs){
-      //
-    }
+      </div>`
   };
 };

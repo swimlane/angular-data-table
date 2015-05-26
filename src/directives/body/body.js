@@ -2,7 +2,7 @@ import angular from 'angular';
 import { requestAnimFrame } from 'utils/utils';
 
 export class BodyController{
-  
+
   constructor($scope, $timeout, throttle){
     angular.extend(this, {
       $scope: $scope,
@@ -11,7 +11,8 @@ export class BodyController{
     });
 
     this.rows = [];
-    this._maxVisibleRowCount = Math.ceil(this.options.cache.bodyHeight / this.options.rowHeight) + 1;
+    this._maxVisibleRowCount = Math.ceil(
+      this.options.cache.bodyHeight / this.options.rowHeight) + 1;
 
     this._viewportRowsStart = 0;
     this._viewportRowsEnd = 0;
@@ -22,15 +23,14 @@ export class BodyController{
         if(this.options.scrollbarV){
           this.getRows();
         } else {
+          this.rows.splice(0, this.rows.length);
           this.rows.push(...$scope.values);
         }
       }
-    })
+    });
 
     if(this.options.scrollbarV){
-      $scope.$watch('offset', throttle(() => {
-        this.getRows();
-      }, 10));
+      $scope.$watch('offset', throttle(this.getRows.bind(this), 10));
     }
   }
 

@@ -1,5 +1,6 @@
 import angular from 'angular';
 import throttle from './utils/throttle';
+import sorty from 'sorty';
 
 import { TableDefaults, ColumnDefaults } from './defaults';
 
@@ -15,16 +16,17 @@ import './data-table.css!'
 class DataTable {
 
 	constructor($scope){
+    this.$scope = $scope;
+
     $scope.options = angular.extend(angular.
       copy(TableDefaults), $scope.options);
 
     $scope.options.columns.forEach((c, i) => {
       c = angular.extend(angular.copy(ColumnDefaults), c);
 
-      // TODO
-      //if(c.height){
-      //  c.height = TableDefaults.headerHeight;
-      //}
+      if(!c.height){
+        c.height = TableDefaults.headerHeight;
+      }
 
       $scope.options.columns[i] = c;
     });
@@ -33,8 +35,38 @@ class DataTable {
       $scope.selected = $scope.selected || [];
     }
 
-    $scope.options.cache = {};
+    // this is not idea ... todo better
+    $scope.$watch('options.columns', (newVal, oldVal) => {
+      var sorted = false;
+
+      newVal.forEach((c, i) => {
+        var old = oldVal[i];
+        if(c.prop === old.prop && c.sort !== oldVal[i].sort){
+          sorted = true;
+        }
+      });
+
+      this.sort(newVal, $scope.values);
+    }, true);
 	}
+
+  sort(cols, rows){
+    var sorts = cols.filter((c) => {
+      return c.sort;
+    });
+
+    if(sorts.length){
+      this.$scope.onSort({ sorts: sorts });
+
+      var clientSorts = sorts.filter((c) => {
+        return c.comparator !== false;
+      });
+
+      if(clientSorts.length){
+        sorty(sorts, rows);
+      }
+    }
+  }
 
 }
 
@@ -47,17 +79,19 @@ function Directive(){
       options: '=',
       values: '=',
       onSelect: '&',
+      onSort: '&',
       selected: '='
     },
     controllerAs: 'dt',
     template: 
       `<div class="dt material">
-        <dt-header options="options"></dt-header>
+        <dt-header options="options" 
+                   ng-if="options.headerHeight"></dt-header>
         <dt-body values="values" 
                  selected="selected"
                  options="options">
          </dt-body>
-        <dt-footer></dt-footer>
+        <dt-footer ng-if="options.footerHeight"></dt-footer>
       </div>`,
     compile: function(tElem, tAttrs){
       return {
@@ -65,11 +99,17 @@ function Directive(){
           $scope.options.cache.innerWidth = $elm[0].offsetWidth;
 
           if($scope.options.scrollbarV){
-            $scope.options.cache.bodyHeight = $elm[0].offsetHeight - $scope.options.headerHeight;
+            var height = $elm[0].offsetHeight;
 
-            if($scope.options.hasFooter){
-              $scope.options.cache.bodyHeight = $scope.options.cache.bodyHeight - $scope.options.footerHeight;
+            if($scope.options.headerHeight){
+              height = height - $scope.options.headerHeight;
             }
+
+            if($scope.options.footerHeight){
+              height = height - $scope.options.footerHeight;
+            }
+
+            $scope.options.cache.bodyHeight = height;
           }
         }
       }

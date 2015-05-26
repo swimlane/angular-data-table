@@ -16,8 +16,6 @@ export class HeaderCellController{
 
   cellClass(){
     var cls = {
-      'selectable': this.col.selectable,
-      'highlight': this.col.selected,
       'sortable': this.col.sortable,
       'dt-header-cell': true
     };
@@ -41,10 +39,6 @@ export class HeaderCellController{
     }
   }
 
-  selectCol(){
-    this.col.selected = !this.col.selected;
-  }
-
   sortClass(){
     return {
       'sort-btn': true,
@@ -65,7 +59,6 @@ export var HeaderCellDirective = function($timeout){
     template: 
       `<div ng-class="hcell.cellClass()"
             ng-click="hcell.sort()"
-            ng-dblclick="hcell.selectCol()"
             ng-style="hcell.styles()">
         <span class="dt-header-cell-label">
           {{::column.name}}
