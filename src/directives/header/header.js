@@ -11,6 +11,13 @@ export class HeaderController {
     }
   }
 
+  innerStyles(scope){
+    return {
+      width: ColumnTotalWidth(scope.options.columns) + 'px',
+      transform: `translate3d(-${scope.options.cache.offsetX}px, 0, 0)`
+    };
+  }
+
 };
 
 export function HeaderDirective($timeout){
@@ -24,23 +31,25 @@ export function HeaderDirective($timeout){
     },
     template: `
       <div class="dt-header" ng-style="header.styles(this)">
-        <div class="dt-row-left" 
-             sortable="options.reorderable"
-             on-sort="sorted(event, childScope)">
-          <dt-header-cell ng-repeat="column in options.columns | filter: { frozenLeft: true }" 
-            column="column"></dt-header-cell>
-        </div>
-        <div class="dt-row-center" 
-             sortable="options.reorderable"
-             on-sort="sorted(event, childScope)">
-          <dt-header-cell ng-repeat="column in options.columns | filter: { frozenLeft: false, frozenRight: false }" 
-            column="column"></dt-header-cell>
-        </div>
-        <div class="dt-row-right"
-             sortable="options.reorderable"
-             on-sort="sorted(event, childScope)">
-          <dt-header-cell ng-repeat="column in options.columns | filter: { frozenRight: true }" 
-            column="column"></dt-header-cell>
+        <div class="dt-header-inner" ng-style="header.innerStyles(this)">
+          <div class="dt-row-left" 
+               sortable="options.reorderable"
+               on-sort="sorted(event, childScope)">
+            <dt-header-cell ng-repeat="column in options.columns | filter: { frozenLeft: true }" 
+              column="column"></dt-header-cell>
+          </div>
+          <div class="dt-row-center" 
+               sortable="options.reorderable"
+               on-sort="sorted(event, childScope)">
+            <dt-header-cell ng-repeat="column in options.columns | filter: { frozenLeft: false, frozenRight: false }" 
+              column="column"></dt-header-cell>
+          </div>
+          <div class="dt-row-right"
+               sortable="options.reorderable"
+               on-sort="sorted(event, childScope)">
+            <dt-header-cell ng-repeat="column in options.columns | filter: { frozenRight: true }" 
+              column="column"></dt-header-cell>
+          </div>
         </div>
       </div>`,
     replace:true,

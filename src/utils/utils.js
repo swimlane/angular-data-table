@@ -1,6 +1,6 @@
 // shim layer with setTimeout fallback
 // http://www.html5rocks.com/en/tutorials/speed/animations/
-export function requestAnimFrame(){
+export var requestAnimFrame = (function(){
   return  window.requestAnimationFrame       ||
           window.webkitRequestAnimationFrame ||
           window.mozRequestAnimationFrame    ||
@@ -9,7 +9,7 @@ export function requestAnimFrame(){
           function( callback ){
             window.setTimeout(callback, 1000 / 60);
           };
-};
+})();
 
 export var KeyCodes = {
   LEFTARROW: 37,

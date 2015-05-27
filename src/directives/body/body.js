@@ -30,12 +30,12 @@ export class BodyController{
     });
 
     if(this.options.scrollbarV){
-      $scope.$watch('offset', throttle(this.getRows.bind(this), 10));
+      $scope.$watch('options.cache.offsetY', throttle(this.getRows.bind(this), 10));
     }
   }
 
   getRows(){
-    var firstRowIndex = Math.max(Math.floor((this.$scope.offset || 0) / this.options.rowHeight, 0), 0),
+    var firstRowIndex = Math.max(Math.floor((this.$scope.options.cache.offsetY || 0) / this.options.rowHeight, 0), 0),
         endIndex = Math.min(firstRowIndex + this._maxVisibleRowCount, this._rowsCount),
         rowIndex = firstRowIndex,
         idx = 0;
@@ -70,7 +70,7 @@ export class BodyController{
   innerStyles(scope){
     if(this.options.scrollbarV){
       return {
-        transform: `translate3d(0px, ${scope.offset}px, 0px)`
+        transform: `translate3d(0, ${scope.options.cache.offsetY}px, 0)`
       };
     }
   }
@@ -189,12 +189,14 @@ export function BodyDirective($timeout){
     replace:true,
     link: function($scope, $elm, $attrs){
 
-      var ticking = false;
-      var lastScrollY = 0;
+      var ticking = false,
+          lastScrollY = 0,
+          lastScrollX = 0;
 
       function update(){
         $timeout(() => {
-          $scope.offset = lastScrollY;
+          $scope.options.cache.offsetY = lastScrollY;
+          $scope.options.cache.offsetX = lastScrollX;
         });
         ticking = false;
       };
@@ -206,12 +208,11 @@ export function BodyDirective($timeout){
         }
       };
 
-      function onScroll(ev){
+      $elm.on('scroll', function(ev) {
         lastScrollY = this.scrollTop;
+        lastScrollX = this.scrollLeft;
         requestTick();
-      };
-
-      $elm[0].addEventListener('scroll', onScroll, false);
+      });
     }
   };
 };

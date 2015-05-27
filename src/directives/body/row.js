@@ -15,11 +15,11 @@ export class RowController {
         return c;
       } else if(group === 'right' && c.frozenRight){
         return c;
-      } else {
+      } else if(group === 'center') {
         return c;
       }
    });
-   
+
    return {
       width: ColumnTotalWidth(cols) + 'px'
     };
