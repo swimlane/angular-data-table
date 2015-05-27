@@ -10,3 +10,11 @@ export var requestAnimFrame = (function(){
             window.setTimeout(callback, 1000 / 60);
           };
 })();
+
+export var KeyCodes = {
+  LEFTARROW: 37,
+  UPARROW: 38,
+  RIGHTARROW: 39,
+  DOWNARROW: 40,
+  ENTER: 13
+};

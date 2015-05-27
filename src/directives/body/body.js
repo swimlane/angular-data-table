@@ -1,5 +1,5 @@
 import angular from 'angular';
-import { requestAnimFrame } from 'utils/utils';
+import { requestAnimFrame, KeyCodes } from 'utils/utils';
 
 export class BodyController{
 
@@ -91,19 +91,61 @@ export class BodyController{
     };
   }
 
-  rowClicked(row){
+  keyDown(ev, index, row){
+    ev.preventDefault();
+
+    if (ev.keyCode === KeyCodes.DOWNARROW) {
+      var next = ev.target.nextElementSibling;
+      if(next){
+        next.focus();
+      }
+    } else if (ev.keyCode === KeyCodes.UPARROW) {
+      var prev = ev.target.previousElementSibling;
+      if(prev){
+        prev.focus();
+      }
+    } else if(ev.keyCode === KeyCodes.ENTER){
+      this.selectRow(index, row);
+    }
+  }
+
+  rowClicked(event, index, row){
+    event.preventDefault();
+    this.selectRow(index, row);
+  }
+
+  selectRow(index, row){
     if(this.options.selectable){
       if(this.options.multiSelect){
-        var idx = this.selected.indexOf(row);
-        if(idx > -1){
-          this.selected.splice(idx, 1);
+        var isCtrlKeyDown = event.ctrlKey || event.metaKey,
+            isShiftKeyDown = event.shiftKey;
+
+        if(isShiftKeyDown){
+          this.selectRowsBetween(index, row);
         } else {
-          this.selected.push(row);
+          var idx = this.selected.indexOf(row);
+          if(idx > -1){
+            this.selected.splice(idx, 1);
+          } else {
+            this.selected.push(row);
+          }
         }
+        this.prevIndex = index;
       } else {
         this.selected = row;
       }
     }
+  }
+
+  selectRowsBetween(index){
+    this.rows.forEach((row, i) => {
+      if(i >= this.prevIndex && i <= index){
+        var idx = this.selected.indexOf(row);
+        if(idx === -1){
+          this.selected.push(row);
+        }
+      }
+    });
   }
 
   totalRowHeight(data){
@@ -131,7 +173,9 @@ export function BodyDirective($timeout){
           <div class="dt-body-inner" ng-style="body.innerStyles(this)">
             <dt-row ng-repeat="r in body.rows track by $index" 
                     value="body.getValue($index)"
-                    ng-click="body.rowClicked(r)"
+                    tabindex="{{$index}}"
+                    ng-keydown="body.keyDown($event, $index, r)"
+                    ng-click="body.rowClicked($event, $index, r)"
                     options="options"
                     ng-class="body.isSelected(r)">
             </dt-row>

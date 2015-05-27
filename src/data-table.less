@@ -17,6 +17,13 @@
 
     white-space: normal;
     line-height: 1.625;
+
+    touch-callout: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    -o-user-select: none;
+    user-select: none;
   }
 
 	.dt-header{
@@ -24,14 +31,6 @@
     .dt-header-cell{
       position:relative;
       white-space: nowrap;
-      //text-overflow: ellipsis;
-
-      touch-callout: none;
-      -webkit-user-select: none;
-      -moz-user-select: none;
-      -ms-user-select: none;
-      -o-user-select: none;
-      user-select: none;
 
       &.dt-drag-over{
         background:#EEE;
@@ -77,6 +76,11 @@
 
     .dt-row{
       backface-visibility: hidden;
+      outline:none;
+
+      &:focus{
+        background-color:#EEE;
+      }
 
       .dt-cell{
       }
