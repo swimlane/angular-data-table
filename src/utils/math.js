@@ -1,7 +1,7 @@
-// https://github.com/facebook/fixed-data-table/blob/master/src/FixedDataTableScrollHelper.js
-// https://github.com/facebook/fixed-data-table/blob/master/src/FixedDataTableWidthHelper.js
+import angular from 'angular';
+import { ColumnsByPin } from 'utils/utils';
 
-export var ColumnTotalWidth = function(columns) {
+export function ColumnTotalWidth(columns) {
   var totalWidth = 0;
 
   columns.forEach((c) => {
@@ -9,9 +9,9 @@ export var ColumnTotalWidth = function(columns) {
   });
 
   return totalWidth;
-};
+}
 
-export var GetTotalFlexGrow = function(columns){
+export function GetTotalFlexGrow(columns){
   var totalFlexGrow = 0;
 
   columns.forEach((c) => {
@@ -19,4 +19,55 @@ export var GetTotalFlexGrow = function(columns){
   });
 
   return totalFlexGrow;
-};
+}
+
+export function DistributeFlexWidth(columns, flexWidth) {
+  if (flexWidth <= 0) {
+    return {
+      columns: columns,
+      width: ColumnTotalWidth(columns),
+    };
+  }
+
+  var remainingFlexGrow = GetTotalFlexGrow(columns),
+      remainingFlexWidth = flexWidth,
+      totalWidth = 0;
+
+  columns.forEach((column) => {
+    if (!column.flexGrow) {
+      totalWidth += column.width;
+      return;
+    }
+
+    var columnFlexWidth = Math.floor(column.flexGrow / remainingFlexGrow * remainingFlexWidth),
+        newColumnWidth = Math.floor(column.width + columnFlexWidth);
+
+    totalWidth += newColumnWidth;
+    remainingFlexGrow -= column.flexGrow;
+    remainingFlexWidth -= columnFlexWidth;
+
+    column.width = newColumnWidth;
+  });
+
+  return {
+    width: totalWidth
+  };
+}
+
+// Inspired by:
+// https://github.com/facebook/fixed-data-table/blob/master/src/FixedDataTableWidthHelper.js
+export function AdjustColumnWidths(allColumns, expectedWidth){
+  var columnsWidth = ColumnTotalWidth(allColumns),
+      remainingFlexGrow = GetTotalFlexGrow(allColumns),
+      remainingFlexWidth = Math.max(expectedWidth - columnsWidth, 0),
+      colsByGroup = ColumnsByPin(allColumns);
+
+  angular.forEach(colsByGroup, (cols) => {
+    var columnGroupFlexGrow = GetTotalFlexGrow(cols),
+        columnGroupFlexWidth = Math.floor(columnGroupFlexGrow / remainingFlexGrow * remainingFlexWidth),
+        newColumnSettings = DistributeFlexWidth(cols, columnGroupFlexWidth);
+
+    remainingFlexGrow -= columnGroupFlexGrow;
+    remainingFlexWidth -= columnGroupFlexWidth;
+  });
+}

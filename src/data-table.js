@@ -2,6 +2,7 @@ import angular from 'angular';
 import sorty from 'sorty';
 import { Resizable } from 'utils/resizable';
 import { Sortable } from 'utils/sortable';
+import { AdjustColumnWidths } from 'utils/math';
 import throttle from './utils/throttle';
 
 import { TableDefaults, ColumnDefaults } from './defaults';
@@ -54,6 +55,11 @@ class DataTable {
     if($scope.options.selectable && $scope.options.multiSelect){
       $scope.selected = $scope.selected || [];
     }
+  }
+
+  adjustColumns(columns, width){
+    AdjustColumnWidths(this.$scope.options.columns, 
+      this.$scope.options.cache.innerWidth);
   }
 
   sort(cols, rows){
@@ -128,6 +134,8 @@ function Directive($window, $timeout, throttle){
 
               $scope.options.cache.bodyHeight = height;
             }
+
+            ctrl.adjustColumns();
           }
 
           resize();

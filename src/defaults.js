@@ -108,10 +108,6 @@ export var ColumnDefaults = Object.freeze({
   sortable: true,
 
   // Default sort asecending/descending for the column
-  sort: undefined,
-
-  // If yes then column will automatically resized to be 
-  // larger when there is additional space for the table.
-  canAutoResize: true
+  sort: undefined
 
 });
