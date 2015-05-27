@@ -2,8 +2,11 @@
   justify-content: center;
   position: relative;
 
-  .ghost {
+  .dt-clone{
     opacity: .4;
+    .dt-resize-handle{
+      visibility: hidden;
+    }
   }
 
   .dt-cell,
@@ -30,7 +33,7 @@
       -o-user-select: none;
       user-select: none;
 
-      &.dt-dragover{
+      &.dt-drag-over{
         background:#EEE;
       }
 

@@ -44,8 +44,8 @@ export var TableDefaults = Object.freeze({
   // if users can select mutliple items
   multiSelect: true,
 
-  // if all columns are sortable
-  sortable: true,
+  // if you can reorder columns
+  reorderable: true,
 
   /* positions: {
 

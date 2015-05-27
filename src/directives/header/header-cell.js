@@ -1,4 +1,5 @@
 import angular from 'angular';
+import { Resizable } from 'utils/resizable';
  
 export class HeaderCellController{
 
@@ -45,6 +46,10 @@ export class HeaderCellController{
     };
   }
 
+  resized(width, column){
+    column.width = width;
+  }
+
 }
 
 export function HeaderCellDirective($timeout){
@@ -58,13 +63,15 @@ export function HeaderCellDirective($timeout){
     replace: true,
     template: 
       `<div ng-class="hcell.cellClass(this)"
-            ng-style="hcell.styles(this)"
-            resizable>
-        <span class="dt-header-cell-label" 
-            ng-click="hcell.sort(this)">
-          {{::column.name}}
-        </span>
-        <span ng-class="hcell.sortClass(this)"></span>
+            ng-style="hcell.styles(this)">
+        <div resizable="column.resizable" 
+             on-resize="hcell.resized(width, column)">
+          <span class="dt-header-cell-label" 
+              ng-click="hcell.sort(this)">
+            {{::column.name}}
+          </span>
+          <span ng-class="hcell.sortClass(this)"></span>
+        </div>
       </div>`
   };
 };

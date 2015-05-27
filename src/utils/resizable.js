@@ -3,8 +3,17 @@
 export function Resizable($document, debounce, $timeout){
   return {
     restrict: 'AEC',
+    scope:{
+      isResizable: '=resizable',
+      onResize: '&'
+    },
     link: function($scope, $element, $attrs){
-      var handle = angular.element(`<span class="dt-resize-handle"></span>`);
+      if($scope.isResizable){
+        $element.addClass('resizable');
+      }
+
+      var handle = angular.element(`<span class="dt-resize-handle"></span>`),
+          parent = $element.parent();
 
       handle.on('mousedown', function(event) {
         if(!$element[0].classList.contains('resizable')) {
@@ -19,16 +28,18 @@ export function Resizable($document, debounce, $timeout){
       });
 
       function mousemove(event) {
-        var width = $element[0].scrollWidth;
-        $element.css({
+        var width = parent[0].scrollWidth;
+        parent.css({
           width: (width + event.movementX) + 'px'
         });
       }
 
       function mouseup() {
-        $timeout(() => {
-          $scope.column.width = $element[0].scrollWidth;
-        });
+        if($scope.onResize){
+          $timeout(() => {
+            $scope.onResize({ width: parent[0].scrollWidth });
+          });
+        }
 
         $document.unbind('mousemove', mousemove);
         $document.unbind('mouseup', mouseup);
