@@ -65,8 +65,16 @@
         cursor: ew-resize;
       }
 
-      &.resizable:hover .dt-resize-handle{
-        visibility: visible;
+      &.resizable:hover {
+        .dt-resize-handle{
+          visibility: visible;
+        }
+      }
+
+      &:last-child {
+        .dt-resize-handle{
+          visibility: hidden !important;
+        }
       }
     }
 	}

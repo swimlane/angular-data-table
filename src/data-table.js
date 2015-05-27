@@ -58,15 +58,18 @@ class DataTable {
     });
 
     if(sorts.length){
-      this.$scope.onSort({ sorts: sorts });
+      if(this.$scope.onSort){
+        this.$scope.onSort({ sorts: sorts });
+      }
 
-      var clientSorts = sorts.filter((c) => {
-        return c.comparator !== false;
-      }).map((c) => {
-        return {
-          name: c.prop,
-          dir: c.sort,
-          fn: c.comparator
+      var clientSorts = [];
+      sorts.forEach((c) => {
+        if(c.comparator !== false){
+          clientSorts.push({
+            name: c.prop,
+            dir: c.sort,
+            fn: c.comparator
+          });
         }
       });
 

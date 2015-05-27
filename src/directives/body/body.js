@@ -112,6 +112,10 @@ export class BodyController{
   rowClicked(event, index, row){
     event.preventDefault();
     this.selectRow(index, row);
+    
+    if(this.$scope.onSelect){
+      this.$scope.onSelect({ row: row });
+    }
   }
 
   selectRow(index, row){
