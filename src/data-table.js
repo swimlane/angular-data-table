@@ -18,8 +18,26 @@ import './data-table.css!'
 class DataTable {
 
 	constructor($scope){
-    this.$scope = $scope;
+    this.defaults($scope);
 
+    // this is not idea ... todo better
+    $scope.$watch('options.columns', (newVal, oldVal) => {
+      var sorted = false;
+
+      newVal.forEach((c, i) => {
+        var old = oldVal[i];
+        if(c.prop === old.prop && c.sort !== oldVal[i].sort){
+          sorted = true;
+        }
+      });
+
+      this.sort(newVal, $scope.values);
+    }, true);
+	}
+
+  defaults($scope){
+    this.$scope = $scope;
+    
     $scope.options = angular.extend(angular.
       copy(TableDefaults), $scope.options);
 
@@ -36,21 +54,7 @@ class DataTable {
     if($scope.options.selectable && $scope.options.multiSelect){
       $scope.selected = $scope.selected || [];
     }
-
-    // this is not idea ... todo better
-    $scope.$watch('options.columns', (newVal, oldVal) => {
-      var sorted = false;
-
-      newVal.forEach((c, i) => {
-        var old = oldVal[i];
-        if(c.prop === old.prop && c.sort !== oldVal[i].sort){
-          sorted = true;
-        }
-      });
-
-      this.sort(newVal, $scope.values);
-    }, true);
-	}
+  }
 
   sort(cols, rows){
     var sorts = cols.filter((c) => {
@@ -81,7 +85,7 @@ class DataTable {
 
 }
 
-function Directive(){
+function Directive($window, $timeout, throttle){
   return {
     restrict: 'E',
     replace: true,
@@ -106,22 +110,30 @@ function Directive(){
       </div>`,
     compile: function(tElem, tAttrs){
       return {
-        pre: function($scope, $elm, $attrs){
-          $scope.options.cache.innerWidth = $elm[0].offsetWidth;
+        pre: function($scope, $elm, $attrs, ctrl){
 
-          if($scope.options.scrollbarV){
-            var height = $elm[0].offsetHeight;
+          function resize(){
+            $scope.options.cache.innerWidth = $elm[0].offsetWidth;
 
-            if($scope.options.headerHeight){
-              height = height - $scope.options.headerHeight;
+            if($scope.options.scrollbarV){
+              var height = $elm[0].offsetHeight;
+
+              if($scope.options.headerHeight){
+                height = height - $scope.options.headerHeight;
+              }
+
+              if($scope.options.footerHeight){
+                height = height - $scope.options.footerHeight;
+              }
+
+              $scope.options.cache.bodyHeight = height;
             }
-
-            if($scope.options.footerHeight){
-              height = height - $scope.options.footerHeight;
-            }
-
-            $scope.options.cache.bodyHeight = height;
           }
+
+          resize();
+          angular.element($window).bind('resize', throttle(() => {
+            $timeout(resize);
+          }));
         }
       }
     }
