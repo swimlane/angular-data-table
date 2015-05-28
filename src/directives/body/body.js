@@ -1,5 +1,6 @@
 import angular from 'angular';
-import { requestAnimFrame, KeyCodes } from 'utils/utils';
+import { requestAnimFrame, KeyCodes, ColumnsByPin } from 'utils/utils';
+import { ColumnTotalWidth } from 'utils/math';
 
 export class BodyController{
 
@@ -11,11 +12,9 @@ export class BodyController{
     });
 
     this.rows = [];
-    this._maxVisibleRowCount = Math.ceil(
-      this.options.cache.bodyHeight / this.options.rowHeight) + 1;
-
     this._viewportRowsStart = 0;
     this._viewportRowsEnd = 0;
+    this._maxVisibleRowCount = Math.ceil(this.options.cache.bodyHeight / this.options.rowHeight) + 1;
 
     $scope.$watchCollection('values', (newVal, oldVal) => {
       if(newVal) {
@@ -32,6 +31,12 @@ export class BodyController{
     if(this.options.scrollbarV){
       $scope.$watch('options.cache.offsetY', throttle(this.getRows.bind(this), 10));
     }
+
+    this.columnsByPin = ColumnsByPin($scope.options.columns);
+
+    $scope.$watch('options.columns', (newVal) => {
+      this.columnsByPin = ColumnsByPin(newVal);
+    }, true);
   }
 
   getRows(){
@@ -48,23 +53,16 @@ export class BodyController{
 
   styles(){
     var styles = {
-      width: this.options.cache.innerWidth + 'px',
-      height: this.options.cache.bodyHeight + 'px'
+      width: this.options.cache.innerWidth + 'px'
     };
 
     if(!this.options.scrollbarV){
-      styles['overflow'] = 'hidden';
+      styles.overflow = 'hidden';
+    } else {
+      styles.height = this.options.cache.bodyHeight + 'px';
     }
 
     return styles;
-  }
-
-  scrollStyles(scope){
-    if(scope.values){
-      return {
-        height: this.totalRowHeight(scope.values) + 'px'
-      };
-    }
   }
 
   rowStyles(scope, row){
@@ -74,6 +72,13 @@ export class BodyController{
         transform: `translate3d(0, ${idx * scope.options.rowHeight}px, 0)`
       }
     }
+  }
+
+  rowClasses(row){
+    return {
+      'hover': !this.scrolling && this.hover === row,
+      'selected': this.isSelected(row)
+    };
   }
 
   isSelected(row){
@@ -87,9 +92,7 @@ export class BodyController{
       }
     }
 
-    return {
-      'selected': selected
-    };
+    return selected;
   }
 
   keyDown(ev, index, row){
@@ -160,6 +163,34 @@ export class BodyController{
   getValue(idx){
     return this.rows[idx];
   }
+
+  stylesByGroup(scope, group){
+    var styles = {
+      width: ColumnTotalWidth(this.columnsByPin[group]) + 'px'
+    };
+
+    if(scope.values){
+      styles.height = this.totalRowHeight(scope.values) + 'px';
+    }
+
+    return styles;
+  }
+
+  centerStyle(scope){
+    return { 
+      width: scope.options.cache.innerWidth - ColumnTotalWidth(this.columnsByPin.left) + 'px'
+    };
+  }
+
+  rowMouseEnter(row){
+    if(!this.scrolling){
+      this.hover = row;
+    }
+  }
+
+  rowMouseLeave(row){
+    this.hover = false;
+  }
 }
 
 export function BodyDirective($timeout){
@@ -174,30 +205,76 @@ export function BodyDirective($timeout){
     },
     template: `
       <div class="dt-body" ng-style="body.styles()">
-        <div class="dt-body-scroller" ng-style="body.scrollStyles(this)">
-          <dt-row ng-repeat="r in body.rows track by $index" 
-                  value="body.getValue($index)"
-                  tabindex="{{$index}}"
-                  ng-keydown="body.keyDown($event, $index, r)"
-                  ng-click="body.rowClicked($event, $index, r)"
-                  options="options"
-                  ng-style="body.rowStyles(this, r)"
-                  ng-class="body.isSelected(r)">
-          </dt-row>
+        <div class="dt-body-scroller">
+
+          <div class="dt-row-left" 
+               ng-if="body.columnsByPin.left.length"
+               ng-style="body.stylesByGroup(this, 'left')">
+            <dt-row ng-repeat="r in body.rows track by $index" 
+                    value="body.getValue($index)"
+                    tabindex="{{$index}}"
+                    ng-keydown="body.keyDown($event, $index, r)"
+                    ng-click="body.rowClicked($event, $index, r)"
+                    columns="body.columnsByPin.left"
+                    ng-class="body.rowClasses(r)"
+                    ng-mouseenter="body.rowMouseEnter(r)"
+                    ng-mouseleave="body.rowMouseLeave(r)"
+                    ng-style="body.rowStyles(this, r)">
+            </dt-row>
+          </div>
+
+          <div class="dt-row-center" ng-style="body.centerStyle(this)">
+            <div ng-style="body.stylesByGroup(this, 'center')">
+              <dt-row ng-repeat="r in body.rows track by $index" 
+                      value="body.getValue($index)"
+                      tabindex="{{$index}}"
+                      ng-keydown="body.keyDown($event, $index, r)"
+                      ng-click="body.rowClicked($event, $index, r)"
+                      ng-mouseenter="body.rowMouseEnter(r)"
+                      ng-mouseleave="body.rowMouseLeave(r)"
+                      ng-class="body.rowClasses(r)"
+                      columns="body.columnsByPin.center"
+                      ng-style="body.rowStyles(this, r)">
+              </dt-row>
+            </div>
+          </div>
+
+          <div class="dt-row-right" 
+               ng-if="body.columnsByPin.right.length"
+               ng-style="body.stylesByGroup(this, 'center')">
+            <dt-row ng-repeat="r in body.rows track by $index" 
+                    value="body.getValue($index)"
+                    tabindex="{{$index}}"
+                    ng-keydown="body.keyDown($event, $index, r)"
+                    ng-click="body.rowClicked($event, $index, r)"
+                    ng-mouseenter="body.rowMouseEnter(r)"
+                    ng-class="body.rowClasses(r)"
+                    ng-mouseleave="body.rowMouseLeave(r)"
+                    columns="body.columnsByPin.right"
+                    ng-style="body.rowStyles(this, r)">
+            </dt-row>
+          </div>
+
         </div>
       </div>`,
     replace:true,
-    link: function($scope, $elm, $attrs){
-
+    link: function($scope, $elm, $attrs, ctrl){
       var ticking = false,
           lastScrollY = 0,
-          lastScrollX = 0;
+          lastScrollX = 0,
+          timer;
 
       function update(){
         $timeout(() => {
           $scope.options.cache.offsetY = lastScrollY;
           $scope.options.cache.offsetX = lastScrollX;
         });
+
+        $timeout.cancel(timer)
+        timer = $timeout(() => {
+          ctrl.scrolling = false;
+        }, 10);
+
         ticking = false;
       };
 
@@ -209,10 +286,16 @@ export function BodyDirective($timeout){
       };
 
       $elm.on('scroll', function(ev) {
+        ctrl.scrolling = true;
         lastScrollY = this.scrollTop;
-        lastScrollX = this.scrollLeft;
         requestTick();
       });
+
+      angular.element($elm[0].querySelector('.dt-row-center'))
+        .on('scroll', function() {
+          lastScrollX = this.scrollLeft;
+          requestTick();
+        });
     }
   };
 };

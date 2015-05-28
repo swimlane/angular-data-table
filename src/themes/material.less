@@ -17,36 +17,42 @@
     }
   }
 
+  .dt-header,
+  .dt-body{
+    .dt-row-left{
+      background:#eee;
+      
+      .dt-header-cell{
+        background:#eee;
+      }
+    }
+  }
+
   .dt-body{
     .dt-row{
       .dt-cell{
-        background:#FFF;
         text-align: left;
         padding: .5rem 1.2rem;
         vertical-align: top;
         border-top: 0;
 
-        -webkit-transition: all 0.3s ease;
-        -o-transition: all 0.3s ease;
-        transition: all 0.3s ease;
+        -webkit-transition: width 0.3s ease;
+        -o-transition: width 0.3s ease;
+        transition: width 0.3s ease;
 
         &.highlight{
           background-color:#eee;
         }
       }
 
-      &:hover{
-        .dt-cell{
-          background-color: #b3e5fc;
-        }
+      &.hover{
+        background-color: #b3e5fc;
       }
 
       &.selected,
-      &.selected:hover{
-        .dt-cell{
-          color:#FFF;
-          background-color:#304FFE;
-        }
+      &.selected.hover{
+        background-color:#304FFE;
+        color:#FFF;
       }
     }
   }

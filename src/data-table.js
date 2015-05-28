@@ -57,6 +57,12 @@ class DataTable {
     }
   }
 
+  tableCss(scope){
+    return {
+      'fixed': scope.options.scrollbarV
+    }
+  }
+
   adjustColumns(columns, width){
     AdjustColumnWidths(this.$scope.options.columns, 
       this.$scope.options.cache.innerWidth);
@@ -105,7 +111,7 @@ function Directive($window, $timeout, throttle){
     },
     controllerAs: 'dt',
     template: 
-      `<div class="dt material">
+      `<div class="dt material" ng-class="dt.tableCss(this)">
         <dt-header options="options" 
                    ng-if="options.headerHeight"></dt-header>
         <dt-body values="values" 

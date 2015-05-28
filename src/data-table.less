@@ -31,7 +31,12 @@
     z-index: 9;
   }
 
-
+  .dt-row-left,
+  .dt-row-center,
+  .dt-row-right{
+    display:inline-block;
+    position:relative;
+  }
 
 
 	.dt-header{
@@ -95,24 +100,23 @@
     }
 	}
 
- 
-
 	.dt-body{
-    overflow:auto;
+    overflow-y:auto;
+    overflow-x:hidden;
     position:relative;
 
-    .dt-row-left{
-      position: fixed;
-      left:0;
+    .dt-row-center{
+      overflow-x:auto;
+    }
+
+    .dt-body-scroller{
+      white-space: nowrap;
     }
 
     .dt-row{
       backface-visibility: hidden;
       outline:none;
       white-space: nowrap;
-
-      position: absolute;
-      top:0;
 
       > div{
         display:inline-block;
@@ -121,14 +125,18 @@
       &:focus{
         background-color:#EEE;
       }
-
-      .dt-cell{
-      }
     }
 	}
 
 	.dt-footer{
 
 	}
+
+  &.fixed {
+    .dt-body .dt-row{
+      position: absolute;
+      top:0;
+    }
+  }
 
 }
