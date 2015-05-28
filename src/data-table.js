@@ -18,23 +18,24 @@ import './data-table.css!'
 
 class DataTable {
 
-	constructor($scope){
+	constructor($scope, $timeout){
     this.defaults($scope);
-
-    // this is not idea ... todo better
-    $scope.$watch('options.columns', (newVal, oldVal) => {
-      var sorted = false;
-
-      newVal.forEach((c, i) => {
-        var old = oldVal[i];
-        if(c.prop === old.prop && c.sort !== oldVal[i].sort){
-          sorted = true;
-        }
-      });
-
-      this.sort(newVal, $scope.values);
-    }, true);
+    $scope.$watch('options.columns', this.columnsChanged.bind(this), true);
 	}
+
+  columnsChanged(newVal, oldVal){
+    // this is not idea ... todo better
+    var sorted = false;
+
+    newVal.forEach((c, i) => {
+      var old = oldVal[i];
+      if(c.prop === old.prop && c.sort !== oldVal[i].sort){
+        sorted = true;
+      }
+    });
+
+    this.sort(newVal, this.$scope.values);
+  }
 
   defaults($scope){
     this.$scope = $scope;
@@ -55,6 +56,14 @@ class DataTable {
     if($scope.options.selectable && $scope.options.multiSelect){
       $scope.selected = $scope.selected || [];
     }
+
+    // default sort
+    var watch = $scope.$watch('values', (newVal) => {
+      if(newVal){
+        watch();
+        this.sort($scope.options.columns, newVal);
+      }
+    });
   }
 
   tableCss(scope){
@@ -69,6 +78,8 @@ class DataTable {
   }
 
   sort(cols, rows){
+    if(!rows) return;
+
     var sorts = cols.filter((c) => {
       return c.sort;
     });
