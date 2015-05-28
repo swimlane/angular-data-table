@@ -7,7 +7,7 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black" />
     <meta name="viewport" content="width = device-width, minimal-ui, initial-scale = 1, user-scalable = no" />
     <meta name="apple-mobile-web-app-title" content="Datagrid">
-    <title>Datagrid</title>
+    <title>Datagrid - Column Pinning</title>
     <base href="/">
     <style>
       *, *:after, *:before {
@@ -32,36 +32,48 @@
 
       .dt{
         width:75%;
-        margin:50px 50px 50px 50px;
+        margin:50px auto;
+        height: 350px;
       }
 
-      .toolbar{
-        background:#2962FF;
-        width:75%;
-        margin:20px 50px 15px 50px;
-        padding:5px 10px;
-      }
-
-      .toolbar a {
-        color:#FFF;
-        text-decoration: none;
-      }
     </style>
-    <link href="dist/themes/material.css" media="all" rel="stylesheet" />
+    <link href="../dist/themes/material.css" media="all" rel="stylesheet" />
     <link href="https://fontastic.s3.amazonaws.com/Jnf54BZCm7mSjGCxNRbfp3/icons.css" rel="stylesheet">
   </head>
   <body ng-app="app" ng-controller="HomeController">
 
-<h1>Table Demos</h1>
+    <dt options="options" values="data"></dt>
 
-  <ul>
-  <li><a href="demos/basic.html">Basic</a></li>
-  <li><a href="demos/basic.html">Horz / Vert Scrolling</a></li>
-  <li><a href="demos/pins.html">Column Pinning</a></li>
-  <li><a href="demos/greed.html">Greedy Column Widths</a></li>
-  <li><a href="demos/virtual.html">100k Rows</a></li>
-  </ul>
+    <script src="../jspm_packages/system.js"></script>
+    <script src="../config.js"></script>
 
+    <script>
+
+      System.import('data-table').then(function(dt){
+        var module = angular.module('app', [ dt.default.name ]);
+
+        module.controller('HomeController', function($scope, $http){
+          $scope.options = {
+            rowHeight: 50,
+            footerHeight: false,
+            columns: [
+              { name: "Name", prop: "name", width: 200 },
+              { name: "Gender", prop: "gender", width: 200, frozenLeft: true },
+              { name: "Company", prop: "company", width: 200, frozenLeft: true },
+              { name: "Department", prop: "dept", width: 200 },
+              { name: "Age", prop: "age", width: 200 },
+              { name: "Clearance", prop: "clearance", width: 200 },
+              { name: "Date of Birth", prop: "dob", width: 200 }
+            ]
+          };
+
+          $http.get('/demos/data/columns.json').success(function(data) {
+            $scope.data = data.splice(0, 10);
+          });
+
+        });
+      });
+    </script>
 
   </body>
 </html>

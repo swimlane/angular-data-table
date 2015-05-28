@@ -3,12 +3,6 @@ import { ColumnTotalWidth } from 'utils/math';
 
 export class RowController {
 
-  styles(scope){
-    return {
-      height: scope.options.height + 'px'
-    };
-  }
-
   stylesByGroup(scope, group){
    var cols = scope.options.columns.filter((c) => {
       if(group === 'left' && c.frozenLeft){
@@ -20,9 +14,15 @@ export class RowController {
       }
    });
 
-   return {
+   var styles = {
       width: ColumnTotalWidth(cols) + 'px'
     };
+
+    if(group === 'center'){
+      //styles['transform'] = `translate3d(${-scope.options.cache.offsetX}px, 0, 0)`
+    }
+
+    return styles;
   }
 
   getValue(scope, col){
@@ -42,7 +42,7 @@ export function RowDirective(){
       value: '='
     },
     template: `
-      <div class="dt-row" tabindex="-1" ng-style="row.styles(this)">
+      <div class="dt-row">
         <div class="dt-row-left" ng-style="row.stylesByGroup(this, 'left')">
           <dt-cell ng-repeat="column in options.columns | filter: { frozenLeft: true } track by $index"
                    column="column" 

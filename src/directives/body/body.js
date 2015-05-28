@@ -67,11 +67,12 @@ export class BodyController{
     }
   }
 
-  innerStyles(scope){
+  rowStyles(scope, row){
     if(this.options.scrollbarV){
+      var idx = scope.values.indexOf(row);
       return {
-        transform: `translate3d(0, ${scope.options.cache.offsetY}px, 0)`
-      };
+        transform: `translate3d(0, ${idx * scope.options.rowHeight}px, 0)`
+      }
     }
   }
 
@@ -174,16 +175,15 @@ export function BodyDirective($timeout){
     template: `
       <div class="dt-body" ng-style="body.styles()">
         <div class="dt-body-scroller" ng-style="body.scrollStyles(this)">
-          <div class="dt-body-inner" ng-style="body.innerStyles(this)">
-            <dt-row ng-repeat="r in body.rows track by $index" 
-                    value="body.getValue($index)"
-                    tabindex="{{$index}}"
-                    ng-keydown="body.keyDown($event, $index, r)"
-                    ng-click="body.rowClicked($event, $index, r)"
-                    options="options"
-                    ng-class="body.isSelected(r)">
-            </dt-row>
-          </div>
+          <dt-row ng-repeat="r in body.rows track by $index" 
+                  value="body.getValue($index)"
+                  tabindex="{{$index}}"
+                  ng-keydown="body.keyDown($event, $index, r)"
+                  ng-click="body.rowClicked($event, $index, r)"
+                  options="options"
+                  ng-style="body.rowStyles(this, r)"
+                  ng-class="body.isSelected(r)">
+          </dt-row>
         </div>
       </div>`,
     replace:true,

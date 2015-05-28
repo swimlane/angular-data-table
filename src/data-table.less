@@ -26,8 +26,23 @@
     user-select: none;
   }
 
+  .dt-row-left > *,
+  .dt-row-right > *{
+    z-index: 9;
+  }
+
+
+
+
 	.dt-header{
     overflow:hidden;
+
+    .dt-header-inner{
+      white-space: nowrap;
+      > div{
+        display:inline-block;
+      }
+    }
 
     .dt-header-cell{
       position:relative;
@@ -80,12 +95,28 @@
     }
 	}
 
+ 
+
 	.dt-body{
     overflow:auto;
+    position:relative;
+
+    .dt-row-left{
+      position: fixed;
+      left:0;
+    }
 
     .dt-row{
       backface-visibility: hidden;
       outline:none;
+      white-space: nowrap;
+
+      position: absolute;
+      top:0;
+
+      > div{
+        display:inline-block;
+      }
 
       &:focus{
         background-color:#EEE;
