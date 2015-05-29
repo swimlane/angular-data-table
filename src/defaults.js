@@ -113,6 +113,16 @@ export var ColumnDefaults = Object.freeze({
   sortable: true,
 
   // Default sort asecending/descending for the column
-  sort: undefined
+  sort: undefined,
+
+  // The cell renderer that returns content for table column header
+  headerRenderer: undefined,
+
+  // The cell renderer function(scope, elm) that returns React-renderable content for table cell.
+  cellRenderer: undefined,
+
+  // The getter function(value) that returns the cell data for the cellRenderer. 
+  // If not provided, the cell data will be collected from row data instead. 
+  cellDataGetter: undefined
 
 });
