@@ -75,6 +75,9 @@
               { 
                 name: "Gender", 
                 prop: "gender" ,
+                headerRenderer: function(scope, elm){
+                  return '<strong>moo</strong>';
+                },
                 cellRenderer: function(scope, elm){
                   displayGraphExample(elm[0], 300, 30, "basis", true, 1000, 1000);
                 }

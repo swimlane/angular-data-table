@@ -52,7 +52,7 @@ export class HeaderCellController{
 
 }
 
-export function HeaderCellDirective($timeout){
+export function HeaderCellDirective($compile){
   return {
     restrict: 'E',
     controller: 'HeaderCellController',
@@ -68,10 +68,23 @@ export function HeaderCellDirective($timeout){
              on-resize="hcell.resized(width, column)">
           <span class="dt-header-cell-label" 
               ng-click="hcell.sort(this)">
-            {{::column.name}}
           </span>
           <span ng-class="hcell.sortClass(this)"></span>
         </div>
-      </div>`
+      </div>`,
+    compile: function() {
+      return {
+        pre: function($scope, $elm, $attrs, ctrl) {
+          var label = $elm[0].querySelector('.dt-header-cell-label');
+
+          if($scope.column.headerRenderer){
+            var elm = angular.element($scope.column.headerRenderer($scope, $elm));
+            label.appendChild($compile(elm)($scope)[0]);
+          } else {
+            label.innerText =$scope.column.name;
+          }
+        }
+      }
+    }
   };
 };
