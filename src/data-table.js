@@ -106,6 +106,14 @@ class DataTable {
     }
   }
 
+  onTreeToggle(scope, row, cell){
+    scope.onTreeToggle && 
+      scope.onTreeToggle({ 
+        row: row, 
+        cell: cell 
+      });
+  }
+
 }
 
 function Directive($window, $timeout, throttle){
@@ -118,6 +126,7 @@ function Directive($window, $timeout, throttle){
       values: '=',
       onSelect: '&',
       onSort: '&',
+      onTreeToggle: '&',
       selected: '='
     },
     controllerAs: 'dt',
@@ -127,6 +136,7 @@ function Directive($window, $timeout, throttle){
                    ng-if="options.headerHeight"></dt-header>
         <dt-body values="values" 
                  selected="selected"
+                 on-tree-toggle="dt.onTreeToggle(this, row, cell)"
                  options="options">
          </dt-body>
         <dt-footer ng-if="options.footerHeight"></dt-footer>

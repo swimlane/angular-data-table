@@ -123,6 +123,9 @@ export var ColumnDefaults = Object.freeze({
 
   // The getter function(value) that returns the cell data for the cellRenderer. 
   // If not provided, the cell data will be collected from row data instead. 
-  cellDataGetter: undefined
+  cellDataGetter: undefined,
+
+  // Adds +/- button and makes a secondary call to load nested data
+  isTreeColumn: false
 
 });

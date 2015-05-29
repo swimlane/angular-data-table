@@ -1,5 +1,7 @@
-// shim layer with setTimeout fallback
-// http://www.html5rocks.com/en/tutorials/speed/animations/
+/**
+ * Shim layer with setTimeout fallback
+ * http://www.html5rocks.com/en/tutorials/speed/animations/
+ */
 export var requestAnimFrame = (function(){
   return  window.requestAnimationFrame       ||
           window.webkitRequestAnimationFrame ||
@@ -11,6 +13,9 @@ export var requestAnimFrame = (function(){
           };
 })();
 
+/**
+ * Key code shortcuts.
+ */
 export var KeyCodes = {
   LEFTARROW: 37,
   UPARROW: 38,
@@ -19,6 +24,9 @@ export var KeyCodes = {
   ENTER: 13
 };
 
+/**
+ * Returns the columns by pin.
+ */
 export function ColumnsByPin(cols){
   var ret = {
     left: [],
@@ -37,4 +45,22 @@ export function ColumnsByPin(cols){
   });
 
   return ret;
+};
+
+/**
+ * Returns a deep object given a string. zoo['animal.type']
+ */
+export function DeepValueGetter(obj, path) {
+  if(!obj) return obj;
+
+  var current = obj,
+      split = path.split('.');
+
+  if(split.length){
+    split.forEach((p) => { 
+      current = current[p]; 
+    }); 
+  }
+  
+  return current;
 };

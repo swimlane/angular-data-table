@@ -191,6 +191,13 @@ export class BodyController{
   rowMouseLeave(row){
     this.hover = false;
   }
+
+  onTreeToggle(scope, row, cell){
+    scope.onTreeToggle({ 
+      row: row, 
+      cell: cell 
+    });
+  }
 }
 
 export function BodyDirective($timeout){
@@ -201,7 +208,8 @@ export function BodyDirective($timeout){
     scope: {
       values: '=',
       options: '=',
-      selected: '='
+      selected: '=',
+      onTreeToggle: '&'
     },
     template: `
       <div class="dt-body" ng-style="body.styles()">
@@ -217,6 +225,7 @@ export function BodyDirective($timeout){
                     ng-click="body.rowClicked($event, $index, r)"
                     columns="body.columnsByPin.left"
                     ng-class="body.rowClasses(r)"
+                    on-tree-toggle="body.onTreeToggle(this, row, cell)"
                     ng-mouseenter="body.rowMouseEnter(r)"
                     ng-mouseleave="body.rowMouseLeave(r)"
                     ng-style="body.rowStyles(this, r)">
@@ -231,6 +240,7 @@ export function BodyDirective($timeout){
                       ng-keydown="body.keyDown($event, $index, r)"
                       ng-click="body.rowClicked($event, $index, r)"
                       ng-mouseenter="body.rowMouseEnter(r)"
+                      on-tree-toggle="body.onTreeToggle(this, row, cell)"
                       ng-mouseleave="body.rowMouseLeave(r)"
                       ng-class="body.rowClasses(r)"
                       columns="body.columnsByPin.center"
@@ -248,6 +258,7 @@ export function BodyDirective($timeout){
                     ng-keydown="body.keyDown($event, $index, r)"
                     ng-click="body.rowClicked($event, $index, r)"
                     ng-mouseenter="body.rowMouseEnter(r)"
+                    on-tree-toggle="body.onTreeToggle(this, cell)"
                     ng-class="body.rowClasses(r)"
                     ng-mouseleave="body.rowMouseLeave(r)"
                     columns="body.columnsByPin.right"

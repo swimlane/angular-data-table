@@ -79,9 +79,11 @@ export function HeaderCellDirective($compile){
 
           if($scope.column.headerRenderer){
             var elm = angular.element($scope.column.headerRenderer($scope, $elm));
-            label.appendChild($compile(elm)($scope)[0]);
+            angular.element(label).append($compile(elm)($scope)[0]);
           } else {
-            label.innerText = $scope.column.name;
+            var val = $scope.column.name;
+            if(val === undefined || val === null) val = '';
+            label.innerHTML = val;
           }
         }
       }

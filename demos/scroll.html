@@ -68,7 +68,7 @@
           };
 
           $http.get('/demos/data/columns.json').success(function(data) {
-            $scope.data = data.splice(0, 10);
+            $scope.data = data;
           });
 
         });
