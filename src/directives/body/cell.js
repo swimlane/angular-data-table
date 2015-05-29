@@ -29,21 +29,25 @@ export function CellDirective($rootScope, $compile, $log){
     compile: function() {
       return {
         pre: function($scope, $elm, $attrs, ctrl) {
-          if($scope.column.cellRenderer){
-            var elm = angular.element($scope.column.cellRenderer($scope, $elm));
-            $elm.append($compile(elm)($scope));
-          } else if($scope.column.cellDataGetter) {
-            var val = $scope.column.cellDataGetter($scope.value);
+          $scope.$watch('value', () => {
+            $elm.empty();
+            
+            if($scope.column.cellRenderer){
+              var elm = angular.element($scope.column.cellRenderer($scope, $elm));
+              $elm.append($compile(elm)($scope));
+            } else if($scope.column.cellDataGetter) {
+              var val = $scope.column.cellDataGetter($scope.value);
 
-            if(!angular.isString(val)) {
-              $log.error('Column values must be of type string');
-              return;
+              if(!angular.isString(val)) {
+                $log.error('Column values must be of type string');
+                return;
+              }
+
+              $elm.append(val);
+            } else {
+              $elm.append($scope.value);
             }
-
-            $elm.append(val);
-          } else {
-            $elm.append($scope.value);
-          }
+          });
         }
       }
     }

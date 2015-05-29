@@ -81,7 +81,7 @@ export function HeaderCellDirective($compile){
             var elm = angular.element($scope.column.headerRenderer($scope, $elm));
             label.appendChild($compile(elm)($scope)[0]);
           } else {
-            label.innerText =$scope.column.name;
+            label.innerText = $scope.column.name;
           }
         }
       }
