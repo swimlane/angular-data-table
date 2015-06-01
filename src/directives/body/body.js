@@ -4,7 +4,7 @@ import { ColumnTotalWidth } from 'utils/math';
 
 export class BodyController{
 
-  constructor($scope, $timeout, throttle){
+  constructor($scope, $timeout, $log, throttle){
     angular.extend(this, {
       $scope: $scope,
       options: $scope.options,
@@ -16,7 +16,22 @@ export class BodyController{
     this._viewportRowsEnd = 0;
     this._maxVisibleRowCount = Math.ceil(this.options.cache.bodyHeight / this.options.rowHeight) + 1;
 
-    $scope.$watchCollection('values', (newVal, oldVal) => {
+    if(this.options.scrollbarV){
+      $scope.$watch('options.cache.offsetY', throttle(this.getRows.bind(this), 10));
+    }
+
+    this.columnsByPin = ColumnsByPin($scope.options.columns);
+    this.groupColumn = this.getGroupColumn();
+    if(this.groupColumn){
+      this.rowsByGroup = this.getRowsByGroup();
+      this.depthByRow = this.getDepthByRow();
+    }
+
+    $scope.$watch('options.columns', (newVal) => {
+      this.columnsByPin = ColumnsByPin(newVal);
+    }, true);
+
+    $scope.$watchCollection('values', (newVal, oldVal) => { 
       if(newVal) {
         this._rowsCount = $scope.values.length;
         if(this.options.scrollbarV){
@@ -27,26 +42,127 @@ export class BodyController{
         }
       }
     });
+  }
 
-    if(this.options.scrollbarV){
-      $scope.$watch('options.cache.offsetY', throttle(this.getRows.bind(this), 10));
-    }
+  getGroupColumn(){
+    var obj;
+    this.$scope.options.columns.forEach((c) => {
+      if(c.isTreeColumn){
+        obj = c;
+        return false;
+      }
+    });
+    return obj;
+  }
 
-    this.columnsByPin = ColumnsByPin($scope.options.columns);
+  getDepthByRow(){
+    var obj = {};
 
-    $scope.$watch('options.columns', (newVal) => {
-      this.columnsByPin = ColumnsByPin(newVal);
-    }, true);
+    // todo
+    // rowsByGroup = {  
+    //    "Apple" : [ 
+    //      { name: "Apple IBS", parent: "Apple" } 
+    //    ],
+    //    "Apple IBS": [
+    //      { name: "Apple IBS South", parent: "Apple IBS" } 
+    //    ]
+    //  }
+
+    /* angular.forEach(this.rowsByGroup, (rows, key) => {
+      if(rows.length){
+        //var children = rows[0][this.groupColumn.relationProp];
+      }
+
+    }); */
+
+    return obj;
+  }
+
+  getFirstLastIndexes(rowCount){
+    var firstRowIndex = Math.max(Math.floor((this.$scope.options.cache.offsetY || 0) / this.options.rowHeight, 0), 0),
+        endIndex = Math.min(firstRowIndex + this._maxVisibleRowCount, rowCount);
+
+    return {
+      first: firstRowIndex,
+      last: endIndex
+    };
+  }
+
+  getRowsByGroup(){
+    var obj = {};
+
+    // {  
+    //    "Acme" : [ 
+    //      { name: "Acme Holdings", parent: "Acme" } 
+    //    ],
+    //    "Acme Holdings": [
+    //      { name: "Acme Ltd", parent: "Acme Holdings" } 
+    //    ]
+    //  }
+    this.$scope.values.forEach((val) => {
+      var relVal = val[this.groupColumn.relationProp];
+      if(relVal){
+        if(obj[relVal]){
+          obj[relVal].push(val);
+        } else {
+          obj[relVal] = [ val ];
+        }
+      }
+    });
+
+    return obj;
   }
 
   getRows(){
-    var firstRowIndex = Math.max(Math.floor((this.$scope.options.cache.offsetY || 0) / this.options.rowHeight, 0), 0),
-        endIndex = Math.min(firstRowIndex + this._maxVisibleRowCount, this._rowsCount),
-        rowIndex = firstRowIndex,
+    var indexes = this.getFirstLastIndexes(this._rowsCount),
+        temp = this.$scope.values;
+
+    if(this.groupColumn){
+      var idx = 0,
+          rowIndex = indexes.first,
+          last = indexes.last
+      temp = [];
+
+      while(rowIndex < last && last <= this._rowsCount){
+        var row = this.$scope.values[rowIndex],
+            relVal = row[this.groupColumn.relationProp],
+            keyVal = row[this.groupColumn.prop],
+            rows = this.rowsByGroup[keyVal],
+            expanded = this.$scope.expanded[keyVal];
+
+        if(!relVal){
+          temp[idx++] = row;
+        }
+
+        if(rows && rows.length){
+          if(expanded){
+            rows.forEach((r) => {
+              temp[idx++] = r;
+            });
+          } else {
+            last = last + 1 >= this._rowsCount ? last : last + 1;
+          }
+        }
+
+        rowIndex++;
+      }
+
+      // Have to splice out the list to force
+      // the list to update if we collapse
+      // and have less rows than expanded
+      this.rows.splice(0, this.rows.length);
+    }
+
+    var rowIndex = indexes.first,
         idx = 0;
 
-    while (rowIndex < endIndex || (this.options.cache.bodyHeight < this._viewportHeight && rowIndex < this._rowsCount)) {
-      this.rows[idx++] = this.$scope.values[rowIndex];
+    while (rowIndex < indexes.last || (this.options.cache.bodyHeight < this._viewportHeight && rowIndex < this._rowsCount)) {
+      var row = temp[rowIndex];
+      if(row){
+        row.$$index = rowIndex;
+        this.rows[idx] = row;
+      }
+      idx++;
       this._viewportRowsEnd = rowIndex++;
     }
   }
@@ -67,18 +183,24 @@ export class BodyController{
 
   rowStyles(scope, row){
     if(this.options.scrollbarV){
-      var idx = scope.values.indexOf(row);
       return {
-        transform: `translate3d(0, ${idx * scope.options.rowHeight}px, 0)`
+        transform: `translate3d(0, ${row.$$index * scope.options.rowHeight}px, 0)`
       }
     }
   }
 
-  rowClasses(row){
-    return {
+  rowClasses(scope, row){
+    var styles = {
       'hover': !this.scrolling && this.hover === row,
       'selected': this.isSelected(row)
     };
+
+    if(this.groupColumn){
+      styles['dt-leaf'] = this.rowsByGroup[row[this.groupColumn.relationProp]];
+      styles['dt-has-leafs'] = this.rowsByGroup[row[this.groupColumn.prop]];
+    }
+
+    return styles;
   }
 
   isSelected(row){
@@ -192,7 +314,22 @@ export class BodyController{
     this.hover = false;
   }
 
+  getRowExpanded(scope, row){
+    if(!this.groupColumn) return;
+    return scope.expanded[row[this.groupColumn.prop]];
+  }
+
+  getRowHasChildren(row){
+    if(!this.groupColumn) return;
+    var children = this.rowsByGroup[row[this.groupColumn.prop]];
+    return children !== undefined || (children && !children.length);
+  }
+
   onTreeToggle(scope, row, cell){
+    var val  = row[this.groupColumn.prop];
+    scope.expanded[val] = !scope.expanded[val];
+    this.getRows();
+
     scope.onTreeToggle({ 
       row: row, 
       cell: cell 
@@ -209,6 +346,7 @@ export function BodyDirective($timeout){
       values: '=',
       options: '=',
       selected: '=',
+      expanded: '=',
       onTreeToggle: '&'
     },
     template: `
@@ -223,12 +361,14 @@ export function BodyDirective($timeout){
                     tabindex="{{$index}}"
                     ng-keydown="body.keyDown($event, $index, r)"
                     ng-click="body.rowClicked($event, $index, r)"
-                    columns="body.columnsByPin.left"
-                    ng-class="body.rowClasses(r)"
-                    on-tree-toggle="body.onTreeToggle(this, row, cell)"
+                    ng-class="body.rowClasses(this, r)"
                     ng-mouseenter="body.rowMouseEnter(r)"
                     ng-mouseleave="body.rowMouseLeave(r)"
-                    ng-style="body.rowStyles(this, r)">
+                    ng-style="body.rowStyles(this, r)"
+                    columns="body.columnsByPin.left"
+                    has-children="body.getRowHasChildren(r)"
+                    expanded="body.getRowExpanded(this, r)"
+                    on-tree-toggle="body.onTreeToggle(this, row, cell)">
             </dt-row>
           </div>
 
@@ -242,8 +382,10 @@ export function BodyDirective($timeout){
                       ng-mouseenter="body.rowMouseEnter(r)"
                       on-tree-toggle="body.onTreeToggle(this, row, cell)"
                       ng-mouseleave="body.rowMouseLeave(r)"
-                      ng-class="body.rowClasses(r)"
+                      ng-class="body.rowClasses(this, r)"
                       columns="body.columnsByPin.center"
+                      has-children="body.getRowHasChildren(r)"
+                      expanded="body.getRowExpanded(this, r)"
                       ng-style="body.rowStyles(this, r)">
               </dt-row>
             </div>
@@ -259,9 +401,11 @@ export function BodyDirective($timeout){
                     ng-click="body.rowClicked($event, $index, r)"
                     ng-mouseenter="body.rowMouseEnter(r)"
                     on-tree-toggle="body.onTreeToggle(this, cell)"
-                    ng-class="body.rowClasses(r)"
+                    ng-class="body.rowClasses(this, r)"
                     ng-mouseleave="body.rowMouseLeave(r)"
                     columns="body.columnsByPin.right"
+                    children="body.getRowHasChildren(r)"
+                    expanded="body.getRowExpanded(this, r)"
                     ng-style="body.rowStyles(this, r)">
             </dt-row>
           </div>

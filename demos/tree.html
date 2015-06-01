@@ -33,7 +33,25 @@
       .dt{
         width:75%;
         margin:50px auto;
+        height:400px;
       }
+
+      .dt-cell{
+        font-weight:500;
+      }
+
+      .dt-leaf .dt-cell{
+        font-weight:100;
+      }
+
+      .dt-leaf .dt-cell:first-child{
+        text-indent:60px;
+      }
+
+      .dt-row:not(.dt-has-leafs):not(.dt-leaf) .dt-cell:first-child{
+        text-indent: 25px;
+      }
+
 
     </style>
     <link href="../dist/themes/material.css" media="all" rel="stylesheet" />
@@ -42,7 +60,10 @@
   <body ng-app="app" ng-controller="HomeController">
 
 
-    <dt options="options" values="data" on-tree-toggle="treeToggled(cell)"></dt>
+    <dt options="options" 
+        values="data" 
+        expanded="expanded"
+        on-tree-toggle="treeToggled(cell)"></dt>
 
     <script src="../jspm_packages/system.js"></script>
     <script src="../config.js"></script>
@@ -56,26 +77,30 @@
           $scope.options = {
             rowHeight: 50,
             footerHeight: false,
-            scrollbarV: false,
+            scrollbarV: true,
             columns: [
               { 
                 name: "Company", 
                 prop: "company", 
-                width: 400,//'40%', 
+                flexGrow: 2,
                 isTreeColumn: true,
-                relationProp: '$parent'
+                relationProp: 'parent'
               },
               { 
                 name: "Revenue", 
-                prop: "revenue" ,
-                width: 200,//'30%'
+                flexGrow: 1,
+                prop: "revenue" 
               },
               { 
                 name: "Sales", 
-                prop: "sales",
-                width: 200,//'30%'
+                flexGrow: 1,
+                prop: "sales"
               }
             ]
+          };
+
+          $scope.expanded = {
+            'Acme': true
           };
 
           $scope.treeToggled = function(row, cell){
@@ -84,10 +109,12 @@
 
           $scope.data = [
             { 'company': 'Acme', 'revenue': '$3,452,342', 'sales': '$3,452,342,353' },
-            { 'company': 'Acme Holdings', 'revenue': '$345,342', 'sales': '$4,452,222,353', $parent: 'Acme' },
-            { 'company': 'Acme Limited', 'revenue': '$344,442', 'sales': '$10,452,444,353', $parent: 'Acme' },
+            { 'company': 'Acme Holdings', 'revenue': '$345,342', 'sales': '$4,452,222,353', parent: 'Acme' },
+            { 'company': 'Acme Limited', 'revenue': '$344,442', 'sales': '$10,452,444,353', parent: 'Acme' },
             { 'company': 'Sterling', 'revenue': '$40,443,111', 'sales': '$50,433,777,564' },
-            { 'company': 'Apple', 'revenue': '$1,440,443,111', 'sales': '$999,509,433,777,564' }
+            { 'company': 'Apple', 'revenue': '$1,440,443,111', 'sales': '$999,509,433,777,564' },
+            { 'company': 'Apple IBS', 'revenue': '$1,440,443,111', 'sales': '$999,509,433,777,564', parent: 'Apple' },
+            { 'company': 'Apple IBS South', 'revenue': '$1,440,443,111', 'sales': '$999,509,433,777,564', parent: 'Apple IBS' }
           ];
 
         });

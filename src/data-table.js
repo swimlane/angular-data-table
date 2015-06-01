@@ -39,6 +39,7 @@ class DataTable {
 
   defaults($scope){
     this.$scope = $scope;
+    $scope.expanded = $scope.expanded || {};
     
     $scope.options = angular.extend(angular.
       copy(TableDefaults), $scope.options);
@@ -124,10 +125,11 @@ function Directive($window, $timeout, throttle){
     scope: {
       options: '=',
       values: '=',
+      selected: '=',
+      expanded: '=',
       onSelect: '&',
       onSort: '&',
-      onTreeToggle: '&',
-      selected: '='
+      onTreeToggle: '&'
     },
     controllerAs: 'dt',
     template: 
@@ -136,6 +138,7 @@ function Directive($window, $timeout, throttle){
                    ng-if="options.headerHeight"></dt-header>
         <dt-body values="values" 
                  selected="selected"
+                 expanded="expanded"
                  on-tree-toggle="dt.onTreeToggle(this, row, cell)"
                  options="options">
          </dt-body>

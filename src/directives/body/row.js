@@ -25,6 +25,8 @@ export function RowDirective(){
     scope: {
       columns: '=',
       value: '=',
+      expanded: '=',
+      hasChildren: '=',
       onTreeToggle: '&'
     },
     template: `
@@ -32,6 +34,8 @@ export function RowDirective(){
           <dt-cell ng-repeat="column in columns track by $index"
                    on-tree-toggle="row.onTreeToggle(this, cell)"
                    column="column" 
+                   has-children="hasChildren"
+                   expanded="expanded"
                    value="row.getValue(this, column)">
           </dt-header-cell>
       </div>`,

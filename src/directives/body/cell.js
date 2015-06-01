@@ -9,22 +9,22 @@ export class CellController {
     };
   }
 
-  treeClass(){
+  treeClass(scope){
     return {
       'dt-tree-toggle': true,
-      'icon-down': !this.expanded,
-      'icon-up': this.expanded
+      'icon-right': !scope.expanded,
+      'icon-down': scope.expanded
     }
   }
 
   onTreeToggle(evt, scope){
     evt.stopPropagation();
-    this.expanded = !this.expanded;
+    scope.expanded = !scope.expanded;
     scope.onTreeToggle({ 
       cell: {
         value: scope.value,
         column: scope.column,
-        expanded: this.expanded
+        expanded: scope.expanded
       }
     });
   }
@@ -39,14 +39,16 @@ export function CellDirective($rootScope, $compile, $log){
     scope: {
       value: '=',
       column: '=',
+      expanded: '=',
+      hasChildren: '=',
       onTreeToggle: '&'
     },
     template: 
       `<div class="dt-cell" 
             data-title="{{::column.name}}" 
             ng-style="cell.styles(column)">
-        <span ng-if="column.isTreeColumn"
-              ng-class="cell.treeClass()"
+        <span ng-if="column.isTreeColumn && hasChildren"
+              ng-class="cell.treeClass(this)"
               ng-click="cell.onTreeToggle($event, this)"></span>
         <span class="dt-cell-content"></span>
       </div>`,
@@ -60,7 +62,7 @@ export function CellDirective($rootScope, $compile, $log){
             content.empty();
             
             if($scope.column.cellRenderer){
-              var elm = angular.element($scope.column.cellRenderer($scope));
+              var elm = angular.element($scope.column.cellRenderer($scope, content));
               content.append($compile(elm)($scope));
             } else {
               var val = $scope.column.cellDataGetter ? 
