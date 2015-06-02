@@ -23,10 +23,10 @@ export var TableDefaults = Object.freeze({
 
   paging: {
     // Determine if you should reset page size based on height of grid
-    autoPageSize: true,
+    //autoPageSize: true,
 
     // Pages based on scrolling
-    virtualPaging: true,
+    //virtualPaging: true,
 
     // Page size
     pageSize: undefined,
@@ -35,7 +35,7 @@ export var TableDefaults = Object.freeze({
     count: 0,
 
     // Page you are on, just for counter reflections
-    page: 1
+    offset: 1
   },
 
   // if users can select itmes

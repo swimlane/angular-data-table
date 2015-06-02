@@ -56,4 +56,38 @@
       }
     }
   }
+
+  .dt-footer{
+    border-top: 1px solid rgba(0, 0, 0, 0.12);
+
+    .page-count{
+      line-height: 50px;
+      height:50px;
+      padding: 0 1.2rem;
+    }
+
+    .pagination{
+      a{
+        height:50px;
+        color:#2196F3;
+        padding: .5rem .5rem;
+        text-decoration: none;
+
+        &:hover{
+          color:#999;
+        }
+      }
+
+      .disabled a{
+        cursor: not-allowed;
+        color:rgba(0, 0, 0, 0.26) !important;
+      }
+
+      .active a{
+        font-weight: bold;
+        //color: #FFFFFF;
+        //background-color: #2196F3;
+      }
+    }
+  }
 }

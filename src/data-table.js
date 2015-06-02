@@ -1,9 +1,10 @@
 import angular from 'angular';
 import sorty from 'sorty';
-import { Resizable } from 'utils/resizable';
-import { Sortable } from 'utils/sortable';
-import { AdjustColumnWidths } from 'utils/math';
-import throttle from './utils/throttle';
+import Throttle from './utils/throttle';
+import Pager from './directives/footer/pager';
+import { Resizable } from './utils/resizable';
+import { Sortable } from './utils/sortable';
+import { AdjustColumnWidths } from './utils/math';
 
 import { TableDefaults, ColumnDefaults } from './defaults';
 
@@ -13,6 +14,8 @@ import { HeaderCellDirective, HeaderCellController } from './directives/header/h
 import { BodyController, BodyDirective } from './directives/body/body';
 import { RowController, RowDirective } from './directives/body/row';
 import { CellController, CellDirective } from './directives/body/cell';
+
+import { FooterController, FooterDirective } from './directives/footer/footer';
 
 import './data-table.css!'
 
@@ -73,9 +76,13 @@ class DataTable {
     }
   }
 
-  adjustColumns(columns, width){
-    AdjustColumnWidths(this.$scope.options.columns, 
-      this.$scope.options.cache.innerWidth);
+  adjustColumns(){
+    AdjustColumnWidths(this.$scope.options.columns, this.$scope.options.cache.innerWidth);
+  }
+
+  calculatePageSize(){
+    this.$scope.options.paging.pageSize = Math.ceil(
+      this.$scope.options.cache.bodyHeight / this.$scope.options.rowHeight) + 1;
   }
 
   sort(cols, rows){
@@ -135,14 +142,18 @@ function Directive($window, $timeout, throttle){
     template: 
       `<div class="dt material" ng-class="dt.tableCss(this)">
         <dt-header options="options" 
-                   ng-if="options.headerHeight"></dt-header>
+                   ng-if="options.headerHeight">
+        </dt-header>
         <dt-body values="values" 
                  selected="selected"
                  expanded="expanded"
                  on-tree-toggle="dt.onTreeToggle(this, row, cell)"
                  options="options">
          </dt-body>
-        <dt-footer ng-if="options.footerHeight"></dt-footer>
+        <dt-footer ng-if="options.footerHeight"
+                   ng-style="{ height: options.footerHeight + 'px' }"
+                   paging="options.paging">
+         </dt-footer>
       </div>`,
     compile: function(tElem, tAttrs){
       return {
@@ -166,6 +177,7 @@ function Directive($window, $timeout, throttle){
             }
 
             ctrl.adjustColumns();
+            ctrl.calculatePageSize();
           }
 
           resize();
@@ -179,7 +191,10 @@ function Directive($window, $timeout, throttle){
 };
 
 export default angular
-  .module('data-table', [ throttle.name ])
+  .module('data-table', [ 
+    Throttle.name,
+    Pager.name
+  ])
 
   .controller('DataTable', DataTable)
   .directive('dt', Directive)
@@ -201,4 +216,7 @@ export default angular
 
   .controller('CellController', CellController)
   .directive('dtCell', CellDirective)
+
+  .controller('FooterController', FooterController)
+  .directive('dtFooter', FooterDirective)
 

@@ -14,7 +14,6 @@ export class BodyController{
     this.rows = [];
     this._viewportRowsStart = 0;
     this._viewportRowsEnd = 0;
-    this._maxVisibleRowCount = Math.ceil(this.options.cache.bodyHeight / this.options.rowHeight) + 1;
 
     if(this.options.scrollbarV){
       $scope.$watch('options.cache.offsetY', throttle(this.getRows.bind(this), 10));
@@ -24,7 +23,6 @@ export class BodyController{
     this.groupColumn = this.getGroupColumn();
     if(this.groupColumn){
       this.rowsByGroup = this.getRowsByGroup();
-      this.depthByRow = this.getDepthByRow();
     }
 
     $scope.$watch('options.columns', (newVal) => {
@@ -33,7 +31,8 @@ export class BodyController{
 
     $scope.$watchCollection('values', (newVal, oldVal) => { 
       if(newVal) {
-        this._rowsCount = $scope.values.length;
+        $scope.options.paging.count = $scope.values.length;
+        //this._rowsCount = $scope.values.length;
         if(this.options.scrollbarV){
           this.getRows();
         } else {
@@ -55,32 +54,10 @@ export class BodyController{
     return obj;
   }
 
-  getDepthByRow(){
-    var obj = {};
-
-    // todo
-    // rowsByGroup = {  
-    //    "Apple" : [ 
-    //      { name: "Apple IBS", parent: "Apple" } 
-    //    ],
-    //    "Apple IBS": [
-    //      { name: "Apple IBS South", parent: "Apple IBS" } 
-    //    ]
-    //  }
-
-    /* angular.forEach(this.rowsByGroup, (rows, key) => {
-      if(rows.length){
-        //var children = rows[0][this.groupColumn.relationProp];
-      }
-
-    }); */
-
-    return obj;
-  }
-
-  getFirstLastIndexes(rowCount){
-    var firstRowIndex = Math.max(Math.floor((this.$scope.options.cache.offsetY || 0) / this.options.rowHeight, 0), 0),
-        endIndex = Math.min(firstRowIndex + this._maxVisibleRowCount, rowCount);
+  getFirstLastIndexes(){
+    var firstRowIndex = Math.max(Math.floor((
+          this.$scope.options.cache.offsetY || 0) / this.options.rowHeight, 0), 0),
+        endIndex = Math.min(firstRowIndex + this.options.paging.pageSize, this.options.paging.count);
 
     return {
       first: firstRowIndex,
@@ -114,16 +91,17 @@ export class BodyController{
   }
 
   getRows(){
-    var indexes = this.getFirstLastIndexes(this._rowsCount),
+    var indexes = this.getFirstLastIndexes(),
         temp = this.$scope.values;
 
+    // determine the child rows to show if grouping
     if(this.groupColumn){
       var idx = 0,
           rowIndex = indexes.first,
           last = indexes.last
       temp = [];
 
-      while(rowIndex < last && last <= this._rowsCount){
+      while(rowIndex < last && last <= this.options.paging.count){
         var row = this.$scope.values[rowIndex],
             relVal = row[this.groupColumn.relationProp],
             keyVal = row[this.groupColumn.prop],
@@ -140,7 +118,7 @@ export class BodyController{
               temp[idx++] = r;
             });
           } else {
-            last = last + 1 >= this._rowsCount ? last : last + 1;
+            last = last + 1 >= this.options.paging.count ? last : last + 1;
           }
         }
 
@@ -156,7 +134,8 @@ export class BodyController{
     var rowIndex = indexes.first,
         idx = 0;
 
-    while (rowIndex < indexes.last || (this.options.cache.bodyHeight < this._viewportHeight && rowIndex < this._rowsCount)) {
+    while (rowIndex < indexes.last || (this.options.cache.bodyHeight < 
+        this._viewportHeight && rowIndex < this.options.paging.count)) {
       var row = temp[rowIndex];
       if(row){
         row.$$index = rowIndex;
@@ -196,7 +175,9 @@ export class BodyController{
     };
 
     if(this.groupColumn){
+      // if i am a child
       styles['dt-leaf'] = this.rowsByGroup[row[this.groupColumn.relationProp]];
+      // if i have children
       styles['dt-has-leafs'] = this.rowsByGroup[row[this.groupColumn.prop]];
     }
 
