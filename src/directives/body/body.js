@@ -103,17 +103,24 @@ export class BodyController{
     }
   }
 
+  /**
+   * Matches groups to their respective parents by index.
+   * 
+   * Example:
+   * 
+   *  {
+   *    "Acme" : [
+   *      { name: "Acme Holdings", parent: "Acme" }
+   *    ],
+   *    "Acme Holdings": [
+   *      { name: "Acme Ltd", parent: "Acme Holdings" }
+   *    ]
+   *  }
+   * 
+   */
   getRowsByGroup(){
     var obj = {};
 
-    // {
-    //    "Acme" : [
-    //      { name: "Acme Holdings", parent: "Acme" }
-    //    ],
-    //    "Acme Holdings": [
-    //      { name: "Acme Ltd", parent: "Acme Holdings" }
-    //    ]
-    //  }
     this.$scope.values.forEach((val) => {
       var relVal = val[this.groupColumn.relationProp];
       if(relVal){
@@ -131,6 +138,9 @@ export class BodyController{
   /**
    * Creates an index on the treeColumn if there is one
    * and assigns depths to all rows.
+   * 
+   * TODO: move to `getRowsByGroup` so we can minimize 
+   *       itterations over total collection
    */
   buildIndexes(){
     var prop = this.groupColumn.prop, 
@@ -154,6 +164,9 @@ export class BodyController{
     })
   }
 
+  /**
+   * Creates the intermediate collection that is shown in the view.
+   */
   getRows(){
     var indexes = this.getFirstLastIndexes(),
         temp = this.$scope.values || [];
@@ -210,6 +223,10 @@ export class BodyController{
     }
   }
 
+  /**
+   * Returns the styles for the table body directive.
+   * @return {[object]}
+   */
   styles(){
     var styles = {
       width: this.options.cache.innerWidth + 'px'
@@ -224,6 +241,12 @@ export class BodyController{
     return styles;
   }
 
+  /**
+   * Returns the styles for the row diretive.
+   * @param  {scope}
+   * @param  {row}
+   * @return {styles object}
+   */
   rowStyles(scope, row){
     if(this.options.scrollbarV){
       return {
@@ -232,6 +255,12 @@ export class BodyController{
     }
   }
 
+  /**
+   * Returns the css classes for the row directive.
+   * @param  {scope}
+   * @param  {row}
+   * @return {css class object}
+   */
   rowClasses(scope, row){
     var styles = {
       'hover': !this.scrolling && this.hover === row,
@@ -250,6 +279,11 @@ export class BodyController{
     return styles;
   }
 
+  /**
+   * Returns if the row is selected
+   * @param  {row}
+   * @return {Boolean}
+   */
   isSelected(row){
     var selected = false;
 
@@ -264,6 +298,12 @@ export class BodyController{
     return selected;
   }
 
+  /**
+   * Handler for the keydown on a row
+   * @param  {event}
+   * @param  {index}
+   * @param  {row}
+   */
   keyDown(ev, index, row){
     ev.preventDefault();
 
@@ -282,6 +322,12 @@ export class BodyController{
     }
   }
 
+  /**
+   * Handler for the row click event
+   * @param  {event}
+   * @param  {index}
+   * @param  {row}
+   */
   rowClicked(event, index, row){
     event.preventDefault();
     this.selectRow(index, row);
@@ -291,6 +337,11 @@ export class BodyController{
     }
   }
 
+  /**
+   * Selects a row and places in the selection collection
+   * @param  {index}
+   * @param  {row}
+   */
   selectRow(index, row){
     if(this.options.selectable){
       if(this.options.multiSelect){
@@ -314,6 +365,10 @@ export class BodyController{
     }
   }
 
+  /**
+   * Selectes the rows between a index.  Used for shift click selection.
+   * @param  {index}
+   */
   selectRowsBetween(index){
     this.rows.forEach((row, i) => {
       if(i >= this.prevIndex && i <= index){
@@ -325,14 +380,29 @@ export class BodyController{
     });
   }
 
+  /**
+   * Returns the virtual row height.
+   * @return {[type]}
+   */
   totalRowsHeight(){
     return this.options.paging.count * this.options.rowHeight;
   }
 
+  /**
+   * Returns the row model for the index in the view.
+   * @param  {index}
+   * @return {row model}
+   */
   getRowValue(idx){
     return this.rows[idx];
   }
 
+  /**
+   * Calculates the styles for a pin group
+   * @param  {scope}
+   * @param  {group}
+   * @return {styles object}
+   */
   stylesByGroup(scope, group){
     return {
       width: ColumnTotalWidth(this.columnsByPin[group]) + 'px',
@@ -340,33 +410,63 @@ export class BodyController{
     };
   }
 
+  /**
+   * Calculates the styles for the center group
+   * @param  {scope}
+   * @return {styles object}
+   */
   centerStyle(scope){
     return {
       width: scope.options.cache.innerWidth - ColumnTotalWidth(this.columnsByPin.left) + 'px'
     };
   }
 
+  /**
+   * Mouse enter handler on a row.
+   * @param  {row}
+   */
   rowMouseEnter(row){
     if(!this.scrolling){
       this.hover = row;
     }
   }
 
+  /**
+   * Mouse leave handler on a row
+   * @param  {row}
+   */
   rowMouseLeave(row){
     this.hover = false;
   }
 
+  /**
+   * Calculates if a row is expanded or collasped for tree grids.
+   * @param  {scope}
+   * @param  {row}
+   * @return {boolean}
+   */
   getRowExpanded(scope, row){
     if(!this.groupColumn) return;
     return scope.expanded[row[this.groupColumn.prop]];
   }
 
+  /**
+   * Calculates if the row has children
+   * @param  {row}
+   * @return {boolean}
+   */
   getRowHasChildren(row){
     if(!this.groupColumn) return;
     var children = this.rowsByGroup[row[this.groupColumn.prop]];
     return children !== undefined || (children && !children.length);
   }
 
+  /**
+   * Tree toggle event from a cell
+   * @param  {scope}
+   * @param  {row model}
+   * @param  {cell model}
+   */
   onTreeToggle(scope, row, cell){
     var val  = row[this.groupColumn.prop];
     scope.expanded[val] = !scope.expanded[val];
