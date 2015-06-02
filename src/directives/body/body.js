@@ -31,8 +31,9 @@ export class BodyController{
       this.columnsByPin = ColumnsByPin(newVal);
     }, true);
 
-    $scope.$watchCollection('values', (newVal, oldVal) => { 
+    $scope.$watchCollection('values', (newVal, oldVal) => {
       if(newVal) {
+        this.index();
         this._rowsCount = $scope.values.length;
         if(this.options.scrollbarV){
           this.getRows();
@@ -59,12 +60,12 @@ export class BodyController{
     var obj = {};
 
     // todo
-    // rowsByGroup = {  
-    //    "Apple" : [ 
-    //      { name: "Apple IBS", parent: "Apple" } 
+    // rowsByGroup = {
+    //    "Apple" : [
+    //      { name: "Apple IBS", parent: "Apple" }
     //    ],
     //    "Apple IBS": [
-    //      { name: "Apple IBS South", parent: "Apple IBS" } 
+    //      { name: "Apple IBS South", parent: "Apple IBS" }
     //    ]
     //  }
 
@@ -91,12 +92,12 @@ export class BodyController{
   getRowsByGroup(){
     var obj = {};
 
-    // {  
-    //    "Acme" : [ 
-    //      { name: "Acme Holdings", parent: "Acme" } 
+    // {
+    //    "Acme" : [
+    //      { name: "Acme Holdings", parent: "Acme" }
     //    ],
     //    "Acme Holdings": [
-    //      { name: "Acme Ltd", parent: "Acme Holdings" } 
+    //      { name: "Acme Ltd", parent: "Acme Holdings" }
     //    ]
     //  }
     this.$scope.values.forEach((val) => {
@@ -111,6 +112,36 @@ export class BodyController{
     });
 
     return obj;
+  }
+
+  /**
+   * Creates an index on the treeColumn if there is one
+   * and assigns depths to all rows
+   */
+  index(){
+    var treeColumn = this.getGroupColumn();
+    if (!treeColumn){
+      return;
+    } else {
+      treeColumn = treeColumn.prop;
+    }
+    var parent;
+    this.$scope.index = {};
+
+    this.$scope.values.forEach((obj) => {
+      this.$scope.index[obj[treeColumn]] = obj;
+      if (obj.parent === undefined){
+        obj._depth = 0;
+      } else {
+        parent = this.$scope.index[obj.parent];
+        obj._depth = parent._depth + 1;
+        if (parent._children){
+          parent._children.push(obj[treeColumn]);
+        } else {
+          parent._children = [obj[treeColumn]];
+        }
+      }
+    })
   }
 
   getRows(){
@@ -198,6 +229,7 @@ export class BodyController{
     if(this.groupColumn){
       styles['dt-leaf'] = this.rowsByGroup[row[this.groupColumn.relationProp]];
       styles['dt-has-leafs'] = this.rowsByGroup[row[this.groupColumn.prop]];
+      styles['dt-tree-depth-' + row._depth] = true;
     }
 
     return styles;
@@ -238,7 +270,7 @@ export class BodyController{
   rowClicked(event, index, row){
     event.preventDefault();
     this.selectRow(index, row);
-    
+
     if(this.$scope.onSelect){
       this.$scope.onSelect({ row: row });
     }
@@ -299,7 +331,7 @@ export class BodyController{
   }
 
   centerStyle(scope){
-    return { 
+    return {
       width: scope.options.cache.innerWidth - ColumnTotalWidth(this.columnsByPin.left) + 'px'
     };
   }
@@ -330,9 +362,9 @@ export class BodyController{
     scope.expanded[val] = !scope.expanded[val];
     this.getRows();
 
-    scope.onTreeToggle({ 
-      row: row, 
-      cell: cell 
+    scope.onTreeToggle({
+      row: row,
+      cell: cell
     });
   }
 }
@@ -353,10 +385,10 @@ export function BodyDirective($timeout){
       <div class="dt-body" ng-style="body.styles()">
         <div class="dt-body-scroller">
 
-          <div class="dt-row-left" 
+          <div class="dt-row-left"
                ng-if="body.columnsByPin.left.length"
                ng-style="body.stylesByGroup(this, 'left')">
-            <dt-row ng-repeat="r in body.rows track by $index" 
+            <dt-row ng-repeat="r in body.rows track by $index"
                     value="body.getValue($index)"
                     tabindex="{{$index}}"
                     ng-keydown="body.keyDown($event, $index, r)"
@@ -374,7 +406,7 @@ export function BodyDirective($timeout){
 
           <div class="dt-row-center" ng-style="body.centerStyle(this)">
             <div ng-style="body.stylesByGroup(this, 'center')">
-              <dt-row ng-repeat="r in body.rows track by $index" 
+              <dt-row ng-repeat="r in body.rows track by $index"
                       value="body.getValue($index)"
                       tabindex="{{$index}}"
                       ng-keydown="body.keyDown($event, $index, r)"
@@ -391,10 +423,10 @@ export function BodyDirective($timeout){
             </div>
           </div>
 
-          <div class="dt-row-right" 
+          <div class="dt-row-right"
                ng-if="body.columnsByPin.right.length"
                ng-style="body.stylesByGroup(this, 'center')">
-            <dt-row ng-repeat="r in body.rows track by $index" 
+            <dt-row ng-repeat="r in body.rows track by $index"
                     value="body.getValue($index)"
                     tabindex="{{$index}}"
                     ng-keydown="body.keyDown($event, $index, r)"
