@@ -22,11 +22,23 @@ import './data-table.css!'
 
 class DataTable {
 
+  /**
+   * Creates an instance of the DataTable Controller
+   * @param  {scope}
+   * @param  {timeout}
+   * @return {object}
+   */
 	constructor($scope, $timeout){
     this.defaults($scope);
     $scope.$watch('options.columns', this.columnsChanged.bind(this), true);
 	}
 
+  /**
+   * Invoked when a column attribute is changed to detect
+   * if sort was trigger to resort the columns.
+   * @param  {new column}
+   * @param  {old column}
+   */
   columnsChanged(newVal, oldVal){
     // this is not idea ... todo better
     var sorted = false;
@@ -41,6 +53,10 @@ class DataTable {
     this.sort(newVal, this.$scope.values);
   }
 
+  /**
+   * Creates and extends default options for the grid control
+   * @param  {scope}
+   */
   defaults($scope){
     this.$scope = $scope;
 
@@ -77,21 +93,39 @@ class DataTable {
     });
   }
 
+  /**
+   * Returns the css classes for the data table.
+   * @param  {scope}
+   * @return {style object}
+   */
   tableCss(scope){
     return {
       'fixed': scope.options.scrollbarV
-    }
+    };
   }
 
+  /**
+   * Adjusts the column widths to handle greed/etc.
+   * @return {[type]}
+   */
   adjustColumns(){
     AdjustColumnWidths(this.$scope.options.columns, this.$scope.options.cache.innerWidth);
   }
 
+  /**
+   * Calculates the page size given the height * row height.
+   * @return {[type]}
+   */
   calculatePageSize(){
     this.$scope.options.paging.size = Math.ceil(
       this.$scope.options.cache.bodyHeight / this.$scope.options.rowHeight) + 1;
   }
 
+  /**
+   * Sorts the values of the grid for client side sorting.
+   * @param  {columns}
+   * @param  {rows}
+   */
   sort(cols, rows){
     if(!rows) return;
 
@@ -121,29 +155,52 @@ class DataTable {
     }
   }
 
+  /**
+   * Invoked when a tree is collasped/expanded
+   * @param  {scope}
+   * @param  {row model}
+   * @param  {cell model}
+   */
   onTreeToggle(scope, row, cell){
-    scope.onTreeToggle && 
+    if(scope.onTreeToggle){
       scope.onTreeToggle({ 
         row: row, 
         cell: cell 
       });
+    }
   }
 
+  /**
+   * Invoked when the body triggers a page change.
+   * @param  {scope}
+   * @param  {offset}
+   * @param  {size}
+   */
   onBodyPage(scope, offset, size){
-    scope.onPage({
-      offset: offset,
-      size: size
-    });
+    if(scope.onPage){
+      scope.onPage({
+        offset: offset,
+        size: size
+      });
+    }
   }
 
+  /**
+   * Invoked when the footer triggers a page change.
+   * @param  {scope}
+   * @param  {offset}
+   * @param  {size}
+   */
   onFooterPage(scope, offset, size){
     var pageBlockSize = scope.options.rowHeight * size;
     scope.options.paging.offsetY = pageBlockSize * offset;
     
-    scope.onPage({
-      offset: offset,
-      size: size
-    });
+    if(scope.onPage){
+      scope.onPage({
+        offset: offset,
+        size: size
+      });
+    }
   }
 
 }

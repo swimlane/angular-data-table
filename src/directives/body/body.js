@@ -62,7 +62,7 @@ export class BodyController{
       });
 
       $scope.$watch('options.paging.offset', (newVal) => {
-        //console.log(newVal)
+        //console.log('offset from body', newVal)
         $scope.onPage({
           offset: newVal,
           size: this.options.paging.size
@@ -91,7 +91,9 @@ export class BodyController{
    * @param  {paging object}
    */
   updatePage(paging){
-    var prevVis = (paging.offset - 1) * paging.size,
+    //console.log('pre updating paging in body', paging.offset)
+
+    var prevVis = (paging.offset + 1) * paging.size,
         prevVisHeight = prevVis * this.options.rowHeight,
         nextable = paging.offset <= (paging.count / paging.size),
         offsetY = this.options.cache.offsetY;
@@ -101,6 +103,8 @@ export class BodyController{
     } else if((offsetY > prevVisHeight) && nextable){
       paging.offset++;
     }
+
+    //console.log('post updating paging in body', paging.offset)
   }
 
   /**
@@ -144,7 +148,7 @@ export class BodyController{
    */
   buildIndexes(){
     var prop = this.groupColumn.prop, 
-        parentProp = this.groupColumn.relationProp,
+        parentProp = this.groupColumn.relationProp;
 
     this.index = {};
 

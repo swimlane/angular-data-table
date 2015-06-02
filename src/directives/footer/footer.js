@@ -1,6 +1,12 @@
 import angular from 'angular';
 
 export class FooterController {
+
+  /**
+   * Creates an instance of the Footer Controller
+   * @param  {scope}
+   * @return {[type]}
+   */
   constructor($scope){
     this.page = $scope.paging.offset + 1;
 
@@ -11,10 +17,12 @@ export class FooterController {
     });
 
     $scope.$watch('paging.offset', (newVal) => {
+      //console.log('offset from footer', newVal)
+
       this.page = newVal + 1;
-      console.log(this.page)
     });
   }
+
 };
 
 export function FooterDirective(){
