@@ -1,4 +1,5 @@
 import angular from 'angular';
+import './utils/polyfill';
 import sorty from 'sorty';
 import Throttle from './utils/throttle';
 import Pager from './directives/footer/pager';
@@ -44,18 +45,23 @@ class DataTable {
     this.$scope = $scope;
     $scope.expanded = $scope.expanded || {};
     
-    $scope.options = angular.extend(angular.
+    var options = angular.extend(angular.
       copy(TableDefaults), $scope.options);
 
-    $scope.options.columns.forEach((c, i) => {
+    options.paging = angular.extend(angular.copy(TableDefaults.paging), 
+      $scope.options.paging);
+
+    options.columns.forEach((c, i) => {
       c = angular.extend(angular.copy(ColumnDefaults), c);
 
       if(!c.height){
         c.height = TableDefaults.headerHeight;
       }
 
-      $scope.options.columns[i] = c;
+      options.columns[i] = c;
     });
+
+    $scope.options = options;
 
     if($scope.options.selectable && $scope.options.multiSelect){
       $scope.selected = $scope.selected || [];
@@ -81,7 +87,7 @@ class DataTable {
   }
 
   calculatePageSize(){
-    this.$scope.options.paging.pageSize = Math.ceil(
+    this.$scope.options.paging.size = Math.ceil(
       this.$scope.options.cache.bodyHeight / this.$scope.options.rowHeight) + 1;
   }
 
@@ -122,6 +128,13 @@ class DataTable {
       });
   }
 
+  onPage(scope, offset, size){
+    scope.onPage({
+      offset: offset,
+      size: size
+    });
+  }
+
 }
 
 function Directive($window, $timeout, throttle){
@@ -136,7 +149,8 @@ function Directive($window, $timeout, throttle){
       expanded: '=',
       onSelect: '&',
       onSort: '&',
-      onTreeToggle: '&'
+      onTreeToggle: '&',
+      onPage: '&'
     },
     controllerAs: 'dt',
     template: 
@@ -147,11 +161,13 @@ function Directive($window, $timeout, throttle){
         <dt-body values="values" 
                  selected="selected"
                  expanded="expanded"
-                 on-tree-toggle="dt.onTreeToggle(this, row, cell)"
-                 options="options">
+                 options="options"
+                 on-page="dt.onPage(this, offset, size)"
+                 on-tree-toggle="dt.onTreeToggle(this, row, cell)">
          </dt-body>
         <dt-footer ng-if="options.footerHeight"
                    ng-style="{ height: options.footerHeight + 'px' }"
+                   on-page="dt.onPage(this, offset, size)"
                    paging="options.paging">
          </dt-footer>
       </div>`,

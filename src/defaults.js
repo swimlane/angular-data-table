@@ -19,7 +19,7 @@ export var TableDefaults = Object.freeze({
 
   // The minimum footer height in pixels.
   // pass falsey for no footer
-  footerHeight: 30,
+  footerHeight: 0,
 
   paging: {
     // Determine if you should reset page size based on height of grid
@@ -28,14 +28,16 @@ export var TableDefaults = Object.freeze({
     // Pages based on scrolling
     //virtualPaging: true,
 
+    externalPaging: false, 
+
     // Page size
-    pageSize: undefined,
+    size: undefined,
 
     // Total count
     count: 0,
 
-    // Page you are on, just for counter reflections
-    offset: 1
+    // Page offset
+    offset: 0
   },
 
   // if users can select itmes
