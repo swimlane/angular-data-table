@@ -43,7 +43,7 @@ export class BodyController{
         }
 
         if(this.groupColumn){
-		  this.index();
+		      this.buildIndexes();
           this.rowsByGroup = this.getRowsByGroup();
         }
 
@@ -56,18 +56,17 @@ export class BodyController{
       }
     });
 
-    $scope.$watch('options.cache.offsetY', (newVal) => {
-      this.updatePage(this.options.paging);
-    });
+    if(this.options.scrollbarV){
+      $scope.$watch('options.cache.offsetY', (newVal) => {
+        this.updatePage(this.options.paging);
+      });
 
-    $scope.$watch('options.paging.offset', (newVal) => {
-      console.log(newVal)
-    });
-
-    if(this.options.paging.externalPaging){
-      $scope.onPage({
-        offset: this.options.paging.offset,
-        size: this.options.paging.size
+      $scope.$watch('options.paging.offset', (newVal) => {
+        //console.log(newVal)
+        $scope.onPage({
+          offset: newVal,
+          size: this.options.paging.size
+        });
       });
     }
   }
@@ -131,29 +130,25 @@ export class BodyController{
 
   /**
    * Creates an index on the treeColumn if there is one
-   * and assigns depths to all rows
+   * and assigns depths to all rows.
    */
-  index(){
-    var treeColumn = this.groupColumn;
-    if (!treeColumn){
-      return;
-    } else {
-      treeColumn = treeColumn.prop;
-    }
-    var parent;
-    this.$scope.index = {};
+  buildIndexes(){
+    var prop = this.groupColumn.prop, 
+        parentProp = this.groupColumn.relationProp,
+
+    this.index = {};
 
     this.$scope.values.forEach((obj) => {
-      this.$scope.index[obj[treeColumn]] = obj;
-      if (obj.parent === undefined){
-        obj._depth = 0;
+      this.index[obj[prop]] = obj;
+      if (obj[parentProp] === undefined){
+        obj.$$depth = 0;
       } else {
-        parent = this.$scope.index[obj.parent];
-        obj._depth = parent._depth + 1;
-        if (parent._children){
-          parent._children.push(obj[treeColumn]);
+        var parent = this.index[obj[parentProp]];
+        obj.$$depth = parent.$$depth + 1;
+        if (parent.$$children){
+          parent.$$children.push(obj[prop]);
         } else {
-          parent._children = [obj[treeColumn]];
+          parent.$$children = [obj[prop]];
         }
       }
     })
@@ -249,7 +244,7 @@ export class BodyController{
       // if i have children
       styles['dt-has-leafs'] = this.rowsByGroup[row[this.groupColumn.prop]];
       // the depth
-      styles['dt-depth-' + row._depth] = true;
+      styles['dt-depth-' + row.$$depth] = true;
     }
 
     return styles;

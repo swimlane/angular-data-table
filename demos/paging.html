@@ -7,7 +7,7 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black" />
     <meta name="viewport" content="width = device-width, minimal-ui, initial-scale = 1, user-scalable = no" />
     <meta name="apple-mobile-web-app-title" content="Datagrid">
-    <title>Datagrid - Basic</title>
+    <title>Datagrid - Paging</title>
     <base href="/">
     <style>
       *, *:after, *:before {
@@ -77,9 +77,13 @@
               if(!$scope.data){
                 $scope.data = set;
               } else {
-                $scope.data.push(set);
+                // only insert items i don't already have
+                set.forEach(function(r, i){
+                  if(!$scope.data[i + offset]){
+                    $scope.data.push(r);
+                  }
+                });
               }
-
             });
           };
         });

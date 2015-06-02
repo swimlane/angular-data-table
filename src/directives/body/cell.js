@@ -9,6 +9,12 @@ export class CellController {
     };
   }
 
+  cellClass(col){
+    return {
+      'dt-tree-col': col.isTreeColumn
+    };
+  }
+
   treeClass(scope){
     return {
       'dt-tree-toggle': true,
@@ -46,7 +52,8 @@ export function CellDirective($rootScope, $compile, $log){
     template: 
       `<div class="dt-cell" 
             data-title="{{::column.name}}" 
-            ng-style="cell.styles(column)">
+            ng-style="cell.styles(column)"
+            ng-class="cell.cellClass(column)">
         <span ng-if="column.isTreeColumn && hasChildren"
               ng-class="cell.treeClass(this)"
               ng-click="cell.onTreeToggle($event, this)"></span>

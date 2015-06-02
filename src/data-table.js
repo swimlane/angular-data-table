@@ -43,6 +43,7 @@ class DataTable {
 
   defaults($scope){
     this.$scope = $scope;
+
     $scope.expanded = $scope.expanded || {};
     
     var options = angular.extend(angular.
@@ -128,7 +129,17 @@ class DataTable {
       });
   }
 
-  onPage(scope, offset, size){
+  onBodyPage(scope, offset, size){
+    scope.onPage({
+      offset: offset,
+      size: size
+    });
+  }
+
+  onFooterPage(scope, offset, size){
+    var pageBlockSize = scope.options.rowHeight * size;
+    scope.options.paging.offsetY = pageBlockSize * offset;
+    
     scope.onPage({
       offset: offset,
       size: size
@@ -162,12 +173,12 @@ function Directive($window, $timeout, throttle){
                  selected="selected"
                  expanded="expanded"
                  options="options"
-                 on-page="dt.onPage(this, offset, size)"
+                 on-page="dt.onBodyPage(this, offset, size)"
                  on-tree-toggle="dt.onTreeToggle(this, row, cell)">
          </dt-body>
         <dt-footer ng-if="options.footerHeight"
                    ng-style="{ height: options.footerHeight + 'px' }"
-                   on-page="dt.onPage(this, offset, size)"
+                   on-page="dt.onFooterPage(this, offset, size)"
                    paging="options.paging">
          </dt-footer>
       </div>`,

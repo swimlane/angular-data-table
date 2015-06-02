@@ -36,22 +36,27 @@
         height:400px;
       }
 
-      .dt-cell{
+      .dt-depth-0 > .dt-cell{
         font-weight:500;
       }
 
-      .dt-leaf .dt-cell{
-        font-weight:100;
-      }
-
-      .dt-leaf .dt-cell:first-child{
-        text-indent:60px;
-      }
-
-      .dt-row:not(.dt-has-leafs):not(.dt-leaf) .dt-cell:first-child{
+      .dt-depth-1 > .dt-tree-col{
         text-indent: 25px;
       }
 
+      .dt-depth-2 > .dt-tree-col{
+        text-indent: 35px;
+      }
+
+      .dt-tree-col {
+        padding-left:35px !important;
+      }
+
+      .dt-tree-toggle{
+        position:absolute;
+        left:5px;
+        line-height: 40px;
+      }
 
     </style>
     <link href="../dist/themes/material.css" media="all" rel="stylesheet" />

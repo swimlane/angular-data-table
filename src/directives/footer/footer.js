@@ -9,6 +9,11 @@ export class FooterController {
         $scope.paging.offset = newVal - 1;
       }
     });
+
+    $scope.$watch('paging.offset', (newVal) => {
+      this.page = newVal + 1;
+      console.log(this.page)
+    });
   }
 };
 
