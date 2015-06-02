@@ -14,27 +14,32 @@ export class BodyController{
     this.rows = [];
     this._viewportRowsStart = 0;
     this._viewportRowsEnd = 0;
-    this._maxVisibleRowCount = Math.ceil(this.options.cache.bodyHeight / this.options.rowHeight) + 1;
 
     if(this.options.scrollbarV){
       $scope.$watch('options.cache.offsetY', throttle(this.getRows.bind(this), 10));
     }
 
     this.columnsByPin = ColumnsByPin($scope.options.columns);
-    this.groupColumn = this.getGroupColumn();
-    if(this.groupColumn){
-      this.rowsByGroup = this.getRowsByGroup();
-      this.depthByRow = this.getDepthByRow();
-    }
 
     $scope.$watch('options.columns', (newVal) => {
+      this.groupColumn = newVal.find((c) => {
+        return c.isTreeColumn;
+      });
+
       this.columnsByPin = ColumnsByPin(newVal);
     }, true);
 
     $scope.$watchCollection('values', (newVal, oldVal) => {
       if(newVal) {
-        this.index();
-        this._rowsCount = $scope.values.length;
+        if(!this.options.paging.externalPaging){
+          this.options.paging.count = newVal.length;
+        }
+
+        if(this.groupColumn){
+		  this.index();
+          this.rowsByGroup = this.getRowsByGroup();
+        }
+
         if(this.options.scrollbarV){
           this.getRows();
         } else {
@@ -43,45 +48,19 @@ export class BodyController{
         }
       }
     });
+
+    if(this.options.paging.externalPaging){
+      $scope.onPage({
+        offset: this.options.paging.offset,
+        size: this.options.paging.size
+      });
+    }
   }
 
-  getGroupColumn(){
-    var obj;
-    this.$scope.options.columns.forEach((c) => {
-      if(c.isTreeColumn){
-        obj = c;
-        return false;
-      }
-    });
-    return obj;
-  }
-
-  getDepthByRow(){
-    var obj = {};
-
-    // todo
-    // rowsByGroup = {
-    //    "Apple" : [
-    //      { name: "Apple IBS", parent: "Apple" }
-    //    ],
-    //    "Apple IBS": [
-    //      { name: "Apple IBS South", parent: "Apple IBS" }
-    //    ]
-    //  }
-
-    /* angular.forEach(this.rowsByGroup, (rows, key) => {
-      if(rows.length){
-        //var children = rows[0][this.groupColumn.relationProp];
-      }
-
-    }); */
-
-    return obj;
-  }
-
-  getFirstLastIndexes(rowCount){
-    var firstRowIndex = Math.max(Math.floor((this.$scope.options.cache.offsetY || 0) / this.options.rowHeight, 0), 0),
-        endIndex = Math.min(firstRowIndex + this._maxVisibleRowCount, rowCount);
+  getFirstLastIndexes(){
+    var firstRowIndex = Math.max(Math.floor((
+          this.$scope.options.cache.offsetY || 0) / this.options.rowHeight, 0), 0),
+        endIndex = Math.min(firstRowIndex + this.options.paging.size, this.options.paging.count);
 
     return {
       first: firstRowIndex,
@@ -119,7 +98,7 @@ export class BodyController{
    * and assigns depths to all rows
    */
   index(){
-    var treeColumn = this.getGroupColumn();
+    var treeColumn = this.groupColumn;
     if (!treeColumn){
       return;
     } else {
@@ -145,16 +124,17 @@ export class BodyController{
   }
 
   getRows(){
-    var indexes = this.getFirstLastIndexes(this._rowsCount),
-        temp = this.$scope.values;
+    var indexes = this.getFirstLastIndexes(),
+        temp = this.$scope.values || [];
 
+    // determine the child rows to show if grouping
     if(this.groupColumn){
       var idx = 0,
           rowIndex = indexes.first,
-          last = indexes.last
+          last = indexes.last;
       temp = [];
 
-      while(rowIndex < last && last <= this._rowsCount){
+      while(rowIndex < last && last <= this.options.paging.count){
         var row = this.$scope.values[rowIndex],
             relVal = row[this.groupColumn.relationProp],
             keyVal = row[this.groupColumn.prop],
@@ -171,7 +151,7 @@ export class BodyController{
               temp[idx++] = r;
             });
           } else {
-            last = last + 1 >= this._rowsCount ? last : last + 1;
+            last = last + 1 >= this.options.paging.count ? last : last + 1;
           }
         }
 
@@ -187,7 +167,8 @@ export class BodyController{
     var rowIndex = indexes.first,
         idx = 0;
 
-    while (rowIndex < indexes.last || (this.options.cache.bodyHeight < this._viewportHeight && rowIndex < this._rowsCount)) {
+    while (rowIndex < indexes.last || (this.options.cache.bodyHeight <
+        this._viewportHeight && rowIndex < this.options.paging.count)) {
       var row = temp[rowIndex];
       if(row){
         row.$$index = rowIndex;
@@ -227,9 +208,12 @@ export class BodyController{
     };
 
     if(this.groupColumn){
+      // if i am a child
       styles['dt-leaf'] = this.rowsByGroup[row[this.groupColumn.relationProp]];
+      // if i have children
       styles['dt-has-leafs'] = this.rowsByGroup[row[this.groupColumn.prop]];
-      styles['dt-tree-depth-' + row._depth] = true;
+      // the depth
+      styles['dt-depth-' + row._depth] = true;
     }
 
     return styles;
@@ -314,7 +298,7 @@ export class BodyController{
     return data.length * this.options.rowHeight;
   }
 
-  getValue(idx){
+  getRowValue(idx){
     return this.rows[idx];
   }
 
@@ -379,6 +363,7 @@ export function BodyDirective($timeout){
       options: '=',
       selected: '=',
       expanded: '=',
+      onPage: '&',
       onTreeToggle: '&'
     },
     template: `
@@ -389,7 +374,7 @@ export function BodyDirective($timeout){
                ng-if="body.columnsByPin.left.length"
                ng-style="body.stylesByGroup(this, 'left')">
             <dt-row ng-repeat="r in body.rows track by $index"
-                    value="body.getValue($index)"
+                    value="body.getRowValue($index)"
                     tabindex="{{$index}}"
                     ng-keydown="body.keyDown($event, $index, r)"
                     ng-click="body.rowClicked($event, $index, r)"
@@ -407,7 +392,7 @@ export function BodyDirective($timeout){
           <div class="dt-row-center" ng-style="body.centerStyle(this)">
             <div ng-style="body.stylesByGroup(this, 'center')">
               <dt-row ng-repeat="r in body.rows track by $index"
-                      value="body.getValue($index)"
+                      value="body.getRowValue($index)"
                       tabindex="{{$index}}"
                       ng-keydown="body.keyDown($event, $index, r)"
                       ng-click="body.rowClicked($event, $index, r)"
@@ -427,7 +412,7 @@ export function BodyDirective($timeout){
                ng-if="body.columnsByPin.right.length"
                ng-style="body.stylesByGroup(this, 'center')">
             <dt-row ng-repeat="r in body.rows track by $index"
-                    value="body.getValue($index)"
+                    value="body.getRowValue($index)"
                     tabindex="{{$index}}"
                     ng-keydown="body.keyDown($event, $index, r)"
                     ng-click="body.rowClicked($event, $index, r)"

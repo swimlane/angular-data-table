@@ -1,9 +1,11 @@
 import angular from 'angular';
+import './utils/polyfill';
 import sorty from 'sorty';
-import { Resizable } from 'utils/resizable';
-import { Sortable } from 'utils/sortable';
-import { AdjustColumnWidths } from 'utils/math';
-import throttle from './utils/throttle';
+import Throttle from './utils/throttle';
+import Pager from './directives/footer/pager';
+import { Resizable } from './utils/resizable';
+import { Sortable } from './utils/sortable';
+import { AdjustColumnWidths } from './utils/math';
 
 import { TableDefaults, ColumnDefaults } from './defaults';
 
@@ -13,6 +15,8 @@ import { HeaderCellDirective, HeaderCellController } from './directives/header/h
 import { BodyController, BodyDirective } from './directives/body/body';
 import { RowController, RowDirective } from './directives/body/row';
 import { CellController, CellDirective } from './directives/body/cell';
+
+import { FooterController, FooterDirective } from './directives/footer/footer';
 
 import './data-table.css!'
 
@@ -41,18 +45,23 @@ class DataTable {
     this.$scope = $scope;
     $scope.expanded = $scope.expanded || {};
     
-    $scope.options = angular.extend(angular.
+    var options = angular.extend(angular.
       copy(TableDefaults), $scope.options);
 
-    $scope.options.columns.forEach((c, i) => {
+    options.paging = angular.extend(angular.copy(TableDefaults.paging), 
+      $scope.options.paging);
+
+    options.columns.forEach((c, i) => {
       c = angular.extend(angular.copy(ColumnDefaults), c);
 
       if(!c.height){
         c.height = TableDefaults.headerHeight;
       }
 
-      $scope.options.columns[i] = c;
+      options.columns[i] = c;
     });
+
+    $scope.options = options;
 
     if($scope.options.selectable && $scope.options.multiSelect){
       $scope.selected = $scope.selected || [];
@@ -73,9 +82,13 @@ class DataTable {
     }
   }
 
-  adjustColumns(columns, width){
-    AdjustColumnWidths(this.$scope.options.columns, 
-      this.$scope.options.cache.innerWidth);
+  adjustColumns(){
+    AdjustColumnWidths(this.$scope.options.columns, this.$scope.options.cache.innerWidth);
+  }
+
+  calculatePageSize(){
+    this.$scope.options.paging.size = Math.ceil(
+      this.$scope.options.cache.bodyHeight / this.$scope.options.rowHeight) + 1;
   }
 
   sort(cols, rows){
@@ -115,6 +128,13 @@ class DataTable {
       });
   }
 
+  onPage(scope, offset, size){
+    scope.onPage({
+      offset: offset,
+      size: size
+    });
+  }
+
 }
 
 function Directive($window, $timeout, throttle){
@@ -129,20 +149,27 @@ function Directive($window, $timeout, throttle){
       expanded: '=',
       onSelect: '&',
       onSort: '&',
-      onTreeToggle: '&'
+      onTreeToggle: '&',
+      onPage: '&'
     },
     controllerAs: 'dt',
     template: 
       `<div class="dt material" ng-class="dt.tableCss(this)">
         <dt-header options="options" 
-                   ng-if="options.headerHeight"></dt-header>
+                   ng-if="options.headerHeight">
+        </dt-header>
         <dt-body values="values" 
                  selected="selected"
                  expanded="expanded"
-                 on-tree-toggle="dt.onTreeToggle(this, row, cell)"
-                 options="options">
+                 options="options"
+                 on-page="dt.onPage(this, offset, size)"
+                 on-tree-toggle="dt.onTreeToggle(this, row, cell)">
          </dt-body>
-        <dt-footer ng-if="options.footerHeight"></dt-footer>
+        <dt-footer ng-if="options.footerHeight"
+                   ng-style="{ height: options.footerHeight + 'px' }"
+                   on-page="dt.onPage(this, offset, size)"
+                   paging="options.paging">
+         </dt-footer>
       </div>`,
     compile: function(tElem, tAttrs){
       return {
@@ -166,6 +193,7 @@ function Directive($window, $timeout, throttle){
             }
 
             ctrl.adjustColumns();
+            ctrl.calculatePageSize();
           }
 
           resize();
@@ -179,7 +207,10 @@ function Directive($window, $timeout, throttle){
 };
 
 export default angular
-  .module('data-table', [ throttle.name ])
+  .module('data-table', [ 
+    Throttle.name,
+    Pager.name
+  ])
 
   .controller('DataTable', DataTable)
   .directive('dt', Directive)
@@ -201,4 +232,7 @@ export default angular
 
   .controller('CellController', CellController)
   .directive('dtCell', CellDirective)
+
+  .controller('FooterController', FooterController)
+  .directive('dtFooter', FooterDirective)
 
