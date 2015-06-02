@@ -4,7 +4,14 @@ import { ColumnTotalWidth } from 'utils/math';
 
 export class BodyController{
 
-  constructor($scope, $timeout, $log, throttle){
+  /**
+   * A tale body controller
+   * @param  {$scope}
+   * @param  {$timeout}
+   * @param  {throttle}
+   * @return {BodyController}
+   */
+  constructor($scope, $timeout, throttle){
     angular.extend(this, {
       $scope: $scope,
       options: $scope.options,
@@ -48,6 +55,14 @@ export class BodyController{
       }
     });
 
+    $scope.$watch('options.cache.offsetY', (newVal) => {
+      this.updatePage(this.options.paging);
+    });
+
+    $scope.$watch('options.paging.offset', (newVal) => {
+      console.log(newVal)
+    });
+
     if(this.options.paging.externalPaging){
       $scope.onPage({
         offset: this.options.paging.offset,
@@ -56,6 +71,10 @@ export class BodyController{
     }
   }
 
+  /**
+   * Gets the first and last indexes based on the offset, row height, page size, and overall count.
+   * @return {object}
+   */
   getFirstLastIndexes(){
     var firstRowIndex = Math.max(Math.floor((
           this.$scope.options.cache.offsetY || 0) / this.options.rowHeight, 0), 0),
@@ -65,6 +84,23 @@ export class BodyController{
       first: firstRowIndex,
       last: endIndex
     };
+  }
+
+  /**
+   * Updates the page's offset given the scroll position.
+   * @param  {paging object}
+   */
+  updatePage(paging){
+    var prevVis = (paging.offset - 1) * paging.size,
+        prevVisHeight = prevVis * this.options.rowHeight,
+        nextable = paging.offset <= (paging.count / paging.size),
+        offsetY = this.options.cache.offsetY;
+
+    if((offsetY < prevVisHeight) && (paging.offset > 1)){
+      paging.offset--;
+    } else if((offsetY > prevVisHeight) && nextable){
+      paging.offset++;
+    }
   }
 
   getRowsByGroup(){
@@ -261,8 +297,8 @@ export class BodyController{
     });
   }
 
-  totalRowHeight(data){
-    return data.length * this.options.rowHeight;
+  totalRowsHeight(){
+    return this.options.paging.count * this.options.rowHeight;
   }
 
   getRowValue(idx){
@@ -270,15 +306,10 @@ export class BodyController{
   }
 
   stylesByGroup(scope, group){
-    var styles = {
-      width: ColumnTotalWidth(this.columnsByPin[group]) + 'px'
+    return {
+      width: ColumnTotalWidth(this.columnsByPin[group]) + 'px',
+      height: this.totalRowsHeight() + 'px'
     };
-
-    if(scope.values){
-      styles.height = this.totalRowHeight(scope.values) + 'px';
-    }
-
-    return styles;
   }
 
   centerStyle(scope){
@@ -407,6 +438,7 @@ export function BodyDirective($timeout){
         $timeout(() => {
           $scope.options.cache.offsetY = lastScrollY;
           $scope.options.cache.offsetX = lastScrollX;
+          ctrl.updatePage($scope.options.paging);
         });
 
         $timeout.cancel(timer)
