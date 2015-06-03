@@ -14,17 +14,6 @@ export var requestAnimFrame = (function(){
 })();
 
 /**
- * Key code shortcuts.
- */
-export var KeyCodes = {
-  LEFTARROW: 37,
-  UPARROW: 38,
-  RIGHTARROW: 39,
-  DOWNARROW: 40,
-  ENTER: 13
-};
-
-/**
  * Returns the columns by pin.
  */
 export function ColumnsByPin(cols){

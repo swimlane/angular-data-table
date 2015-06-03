@@ -1,8 +1,10 @@
 import angular from 'angular';
+
 import './utils/polyfill';
 import sorty from 'sorty';
 import Throttle from './utils/throttle';
 import Pager from './directives/footer/pager';
+
 import { Resizable } from './utils/resizable';
 import { Sortable } from './utils/sortable';
 import { AdjustColumnWidths } from './utils/math';

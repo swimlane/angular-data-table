@@ -26,8 +26,8 @@
     user-select: none;
   }
 
-  .dt-row-left > *,
-  .dt-row-right > *{
+  .dt-row-left,
+  .dt-row-right{
     z-index: 9;
   }
 
@@ -37,7 +37,6 @@
     display:inline-block;
     position:relative;
   }
-
 
 	.dt-header{
     overflow:hidden;
@@ -101,13 +100,9 @@
 	}
 
 	.dt-body{
-    overflow-y:auto;
-    overflow-x:hidden;
+    overflow:auto;
     position:relative;
-
-    .dt-row-center{
-      overflow-x:auto;
-    }
+    z-index:10;
 
     .dt-body-scroller{
       white-space: nowrap;
@@ -120,10 +115,6 @@
 
       > div{
         display:inline-block;
-      }
-
-      &:focus{
-        background-color:#EEE;
       }
     }
 	}

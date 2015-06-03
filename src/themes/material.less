@@ -8,7 +8,6 @@
     border-bottom: 1px solid rgba(0, 0, 0, 0.12);
 
     .dt-header-cell{
-      background:#FFF;
       text-align: left;
       padding: .5rem 1.2rem;
       font-weight: 400;
@@ -20,11 +19,10 @@
   .dt-header,
   .dt-body{
     .dt-row-left{
-      background:#eee;
-      
-      .dt-header-cell{
-        background:#eee;
-      }
+      background-color:#FFF;
+      background-position: 100% 0;
+      background-repeat: repeat-y;
+      background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAABCAYAAAD5PA/NAAAAFklEQVQIHWPSkNeSBmJhTQVtbiDNCgASagIIuJX8OgAAAABJRU5ErkJggg==);
     }
   }
 
@@ -39,18 +37,23 @@
         -webkit-transition: width 0.3s ease;
         -o-transition: width 0.3s ease;
         transition: width 0.3s ease;
-
-        &.highlight{
-          background-color:#eee;
-        }
       }
 
-      &.hover{
+      &:hover,
+      &:hover .dt-row-block{
         background-color: #b3e5fc;
       }
 
+      &:focus,
+      &:focus .dt-row-block{
+        background-color:#EEE;
+      }
+
       &.selected,
-      &.selected.hover{
+      &.selected:hover,
+      &.selected:focus,
+      &.selected .dt-row-block,
+      &.selected:hover .dt-row-block{
         background-color:#304FFE;
         color:#FFF;
       }
@@ -85,8 +88,6 @@
 
       .active a{
         font-weight: bold;
-        //color: #FFFFFF;
-        //background-color: #2196F3;
       }
     }
   }

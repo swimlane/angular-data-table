@@ -1,6 +1,6 @@
 import angular from 'angular';
-import { requestAnimFrame, KeyCodes, ColumnsByPin } from 'utils/utils';
-import { ColumnTotalWidth } from 'utils/math';
+import { requestAnimFrame, ColumnsByPin } from 'utils/utils';
+import { KEYS } from 'utils/keys';
 
 export class BodyController{
 
@@ -21,7 +21,6 @@ export class BodyController{
     this.rows = [];
     this._viewportRowsStart = 0;
     this._viewportRowsEnd = 0;
-    this.columnsByPin = ColumnsByPin($scope.options.columns);
 
     if(this.options.scrollbarV){
       $scope.$watch('options.internal.offsetY', throttle(this.getRows.bind(this), 10));
@@ -255,7 +254,6 @@ export class BodyController{
    */
   rowClasses(scope, row){
     var styles = {
-      'hover': !this.scrolling && this.hover === row,
       'selected': this.isSelected(row)
     };
 
@@ -299,17 +297,17 @@ export class BodyController{
   keyDown(ev, index, row){
     ev.preventDefault();
 
-    if (ev.keyCode === KeyCodes.DOWNARROW) {
+    if (ev.keyCode === KEYS.DOWN) {
       var next = ev.target.nextElementSibling;
       if(next){
         next.focus();
       }
-    } else if (ev.keyCode === KeyCodes.UPARROW) {
+    } else if (ev.keyCode === KEYS.UP) {
       var prev = ev.target.previousElementSibling;
       if(prev){
         prev.focus();
       }
-    } else if(ev.keyCode === KeyCodes.ENTER){
+    } else if(ev.keyCode === KEYS.RETURN){
       this.selectRow(index, row);
     }
   }
@@ -374,10 +372,12 @@ export class BodyController{
 
   /**
    * Returns the virtual row height.
-   * @return {[type]}
+   * @return {[height]}
    */
-  totalRowsHeight(){
-    return this.options.paging.count * this.options.rowHeight;
+  scrollerStyles(){
+    return {
+      height: this.options.paging.count * this.options.rowHeight + 'px'
+    }
   }
 
   /**
@@ -387,48 +387,6 @@ export class BodyController{
    */
   getRowValue(idx){
     return this.rows[idx];
-  }
-
-  /**
-   * Calculates the styles for a pin group
-   * @param  {scope}
-   * @param  {group}
-   * @return {styles object}
-   */
-  stylesByGroup(scope, group){
-    return {
-      width: ColumnTotalWidth(this.columnsByPin[group]) + 'px',
-      height: this.totalRowsHeight() + 'px'
-    };
-  }
-
-  /**
-   * Calculates the styles for the center group
-   * @param  {scope}
-   * @return {styles object}
-   */
-  centerStyle(scope){
-    return {
-      width: scope.options.internal.innerWidth - ColumnTotalWidth(this.columnsByPin.left) + 'px'
-    };
-  }
-
-  /**
-   * Mouse enter handler on a row.
-   * @param  {row}
-   */
-  rowMouseEnter(row){
-    if(!this.scrolling){
-      this.hover = row;
-    }
-  }
-
-  /**
-   * Mouse leave handler on a row
-   * @param  {row}
-   */
-  rowMouseLeave(row){
-    this.hover = false;
   }
 
   /**
@@ -498,65 +456,20 @@ export function BodyDirective($timeout){
     },
     template: `
       <div class="dt-body" ng-style="body.styles()">
-        <div class="dt-body-scroller">
-
-          <div class="dt-row-left"
-               ng-if="body.columnsByPin.left.length"
-               ng-style="body.stylesByGroup(this, 'left')">
-            <dt-row ng-repeat="r in body.rows track by $index"
-                    value="body.getRowValue($index)"
-                    tabindex="{{$index}}"
-                    ng-keydown="body.keyDown($event, $index, r)"
-                    ng-click="body.rowClicked($event, $index, r)"
-                    ng-class="body.rowClasses(this, r)"
-                    ng-mouseenter="body.rowMouseEnter(r)"
-                    ng-mouseleave="body.rowMouseLeave(r)"
-                    ng-style="body.rowStyles(this, r)"
-                    columns="body.columnsByPin.left"
-                    has-children="body.getRowHasChildren(r)"
-                    expanded="body.getRowExpanded(this, r)"
-                    on-tree-toggle="body.onTreeToggle(this, row, cell)">
-            </dt-row>
-          </div>
-
-          <div class="dt-row-center" ng-style="body.centerStyle(this)">
-            <div ng-style="body.stylesByGroup(this, 'center')">
-              <dt-row ng-repeat="r in body.rows track by $index"
-                      value="body.getRowValue($index)"
-                      tabindex="{{$index}}"
-                      ng-keydown="body.keyDown($event, $index, r)"
-                      ng-click="body.rowClicked($event, $index, r)"
-                      ng-mouseenter="body.rowMouseEnter(r)"
-                      on-tree-toggle="body.onTreeToggle(this, row, cell)"
-                      ng-mouseleave="body.rowMouseLeave(r)"
-                      ng-class="body.rowClasses(this, r)"
-                      columns="body.columnsByPin.center"
-                      has-children="body.getRowHasChildren(r)"
-                      expanded="body.getRowExpanded(this, r)"
-                      ng-style="body.rowStyles(this, r)">
-              </dt-row>
-            </div>
-          </div>
-
-          <div class="dt-row-right"
-               ng-if="body.columnsByPin.right.length"
-               ng-style="body.stylesByGroup(this, 'center')">
-            <dt-row ng-repeat="r in body.rows track by $index"
-                    value="body.getRowValue($index)"
-                    tabindex="{{$index}}"
-                    ng-keydown="body.keyDown($event, $index, r)"
-                    ng-click="body.rowClicked($event, $index, r)"
-                    ng-mouseenter="body.rowMouseEnter(r)"
-                    on-tree-toggle="body.onTreeToggle(this, cell)"
-                    ng-class="body.rowClasses(this, r)"
-                    ng-mouseleave="body.rowMouseLeave(r)"
-                    columns="body.columnsByPin.right"
-                    children="body.getRowHasChildren(r)"
-                    expanded="body.getRowExpanded(this, r)"
-                    ng-style="body.rowStyles(this, r)">
-            </dt-row>
-          </div>
-
+        <div class="dt-body-scroller" ng-style="body.scrollerStyles()">
+          <dt-row ng-repeat="r in body.rows track by $index"
+                  value="body.getRowValue($index)"
+                  tabindex="{{$index}}"
+                  ng-keydown="body.keyDown($event, $index, r)"
+                  ng-click="body.rowClicked($event, $index, r)"
+                  on-tree-toggle="body.onTreeToggle(this, row, cell)"
+                  ng-class="body.rowClasses(this, r)"
+                  options="options"
+                  columns="body.columnsByPin"
+                  has-children="body.getRowHasChildren(r)"
+                  expanded="body.getRowExpanded(this, r)"
+                  ng-style="body.rowStyles(this, r)">
+          </dt-row>
         </div>
       </div>`,
     replace:true,
@@ -564,8 +477,7 @@ export function BodyDirective($timeout){
       var ticking = false,
           lastScrollY = 0,
           lastScrollX = 0,
-          helper = BodyHelper.create($elm),
-          timer;
+          helper = BodyHelper.create($elm);
 
       function update(){
         $timeout(() => {
@@ -573,11 +485,6 @@ export function BodyDirective($timeout){
           $scope.options.internal.offsetX = lastScrollX;
           ctrl.updatePage();
         });
-
-        $timeout.cancel(timer)
-        timer = $timeout(() => {
-          ctrl.scrolling = false;
-        }, 10);
 
         ticking = false;
       };
@@ -590,16 +497,10 @@ export function BodyDirective($timeout){
       };
 
       $elm.on('scroll', function(ev) {
-        ctrl.scrolling = true;
         lastScrollY = this.scrollTop;
+        lastScrollX = this.scrollLeft;
         requestTick();
       });
-
-      angular.element($elm[0].querySelector('.dt-row-center'))
-        .on('scroll', function() {
-          lastScrollX = this.scrollLeft;
-          requestTick();
-        });
     }
   };
 };
