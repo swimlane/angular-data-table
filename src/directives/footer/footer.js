@@ -13,10 +13,18 @@ export class FooterController {
     $scope.$watch('paging.offset', this.offsetChanged.bind(this));
   }
 
+  /**
+   * The offset ( page ) changed externally, update the page
+   * @param  {new offset}
+   */
   offsetChanged(newVal){
     this.$scope.page = newVal + 1;
   }
 
+  /**
+   * The pager was invoked
+   * @param  {scope}
+   */
   pageChanged(scope){
     scope.paging.offset = scope.page - 1;
     scope.onPage({

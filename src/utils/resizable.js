@@ -1,5 +1,10 @@
-// http://stackoverflow.com/questions/18368485/angular-js-resizable-div-directive
-
+/**
+ * Resizable directive
+ * http://stackoverflow.com/questions/18368485/angular-js-resizable-div-directive
+ * @param {document}
+ * @param {debounce}
+ * @param {timeout}
+ */
 export function Resizable($document, debounce, $timeout){
   return {
     restrict: 'AEC',

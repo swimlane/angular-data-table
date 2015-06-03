@@ -4,6 +4,26 @@
   -moz-box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.12), 0 1px 2px 0 rgba(0, 0, 0, 0.24);
   box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.12), 0 1px 2px 0 rgba(0, 0, 0, 0.24);
 
+  &.selectable{
+    .dt-body{
+      .dt-row{
+        &:focus,
+        &:focus .dt-row-block{
+          background-color:#EEE;
+        }
+
+        &.selected,
+        &.selected:hover,
+        &.selected:focus,
+        &.selected .dt-row-block,
+        &.selected:hover .dt-row-block{
+          background-color:#304FFE;
+          color:#FFF;
+        }
+      }
+    }
+  }
+
   .dt-header{
     border-bottom: 1px solid rgba(0, 0, 0, 0.12);
 
@@ -42,20 +62,6 @@
       &:hover,
       &:hover .dt-row-block{
         background-color: #b3e5fc;
-      }
-
-      &:focus,
-      &:focus .dt-row-block{
-        background-color:#EEE;
-      }
-
-      &.selected,
-      &.selected:hover,
-      &.selected:focus,
-      &.selected .dt-row-block,
-      &.selected:hover .dt-row-block{
-        background-color:#304FFE;
-        color:#FFF;
       }
     }
   }

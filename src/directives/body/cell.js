@@ -2,6 +2,11 @@ import angular from 'angular';
 
 export class CellController {
 
+  /**
+   * Calculates the styles for the Cell Directive
+   * @param  {column}
+   * @return {styles object}
+   */
   styles(col){
     return {
       width: col.width  + 'px',
@@ -9,12 +14,22 @@ export class CellController {
     };
   }
 
+  /**
+   * Calculates the css classes for the cell directive
+   * @param  {column}
+   * @return {class object}
+   */
   cellClass(col){
     return {
       'dt-tree-col': col.isTreeColumn
     };
   }
 
+  /**
+   * Calculates the tree class styles.
+   * @param  {scope}
+   * @return {css classes object}
+   */
   treeClass(scope){
     return {
       'dt-tree-toggle': true,
@@ -23,6 +38,11 @@ export class CellController {
     }
   }
 
+  /**
+   * Invoked when the tree toggle button was clicked.
+   * @param  {event}
+   * @param  {scope}
+   */
   onTreeToggle(evt, scope){
     evt.stopPropagation();
     scope.expanded = !scope.expanded;

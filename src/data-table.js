@@ -81,7 +81,8 @@ class DataTable {
    */
   tableCss(scope){
     return {
-      'fixed': scope.options.scrollbarV
+      'fixed': scope.options.scrollbarV,
+      'selectable': scope.options.selectable
     };
   }
 

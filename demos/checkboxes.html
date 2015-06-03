@@ -7,7 +7,7 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black" />
     <meta name="viewport" content="width = device-width, minimal-ui, initial-scale = 1, user-scalable = no" />
     <meta name="apple-mobile-web-app-title" content="Datagrid">
-    <title>Datagrid - Basic</title>
+    <title>Datagrid - Checkboxes</title>
     <base href="/">
     <style>
       *, *:after, *:before {
@@ -57,7 +57,7 @@
             rowHeight: 50,
             footerHeight: false,
             scrollbarV: false,
-            selectable: false,
+            checkboxSelection: true,
             columns: [
               { name: "Name", prop: "name", width: 300 },
               { name: "Gender", prop: "gender" },
@@ -66,7 +66,7 @@
           };
 
           $http.get('/demos/data/100.json').success(function(data) {
-            $scope.data = data;
+            $scope.data = data.splice(0, 10);
           });
 
         });

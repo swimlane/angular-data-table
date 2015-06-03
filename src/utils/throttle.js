@@ -1,5 +1,11 @@
 import angular from 'angular';
 
+/**
+ * Debounce helper
+ * @param  {function}
+ * @param  {int}
+ * @param  {boolean}
+ */
 function debounce(func, wait, immediate) {
   var timeout, args, context, timestamp, result;
   return function() {
@@ -26,6 +32,12 @@ function debounce(func, wait, immediate) {
   };
 };
 
+/**
+ * Throttle helper
+ * @param  {function}
+ * @param  {boolean}
+ * @param  {object}
+ */
 function throttle(func, wait, options) {
   var context, args, result;
   var timeout = null;

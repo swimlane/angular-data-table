@@ -22,12 +22,7 @@ export var TableDefaults = Object.freeze({
   footerHeight: 0,
 
   paging: {
-    // Determine if you should reset page size based on height of grid
-    //autoPageSize: true,
-
-    // Pages based on scrolling
-    //virtualPaging: true,
-
+    // if external paging is turned on
     externalPaging: false, 
 
     // Page size
@@ -46,24 +41,11 @@ export var TableDefaults = Object.freeze({
   // if users can select mutliple items
   multiSelect: true,
 
+  // checkbox selection vs row click
+  checkboxSelection: false,
+
   // if you can reorder columns
   reorderable: true,
-
-  /* positions: {
-
-    // Value of vertical scroll.
-    scrollTop: 0,
-
-    // Index of row to scroll to.
-    scrollToRow: undefined,
-
-    // Index of column to scroll to.
-    scrollToColumn: 0,
-
-    // Value of horizontal scroll.
-    scrollLeft: undefined
-
-  }, */
 
   internal: {
     offsetX: 0,

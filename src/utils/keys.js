@@ -1,3 +1,7 @@
+/**
+ * Shortcut for key handlers
+ * @type {Object}
+ */
 export var KEYS = {
   BACKSPACE:  8,
   TAB:        9,

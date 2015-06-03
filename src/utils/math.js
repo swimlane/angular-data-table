@@ -1,6 +1,10 @@
 import angular from 'angular';
 import { ColumnsByPin } from 'utils/utils';
 
+/**
+ * Calculates the total width of all columns and their groups
+ * @param {int}
+ */
 export function ColumnTotalWidth(columns) {
   var totalWidth = 0;
 
@@ -11,6 +15,10 @@ export function ColumnTotalWidth(columns) {
   return totalWidth;
 }
 
+/**
+ * Calculates the Total Flex Grow width.
+ * @param {[type]}
+ */
 export function GetTotalFlexGrow(columns){
   var totalFlexGrow = 0;
 
@@ -21,6 +29,11 @@ export function GetTotalFlexGrow(columns){
   return totalFlexGrow;
 }
 
+/**
+ * Distributes the flex widths to the columns
+ * @param {columns}
+ * @param {flex width}
+ */
 export function DistributeFlexWidth(columns, flexWidth) {
   if (flexWidth <= 0) {
     return {
@@ -54,8 +67,12 @@ export function DistributeFlexWidth(columns, flexWidth) {
   };
 }
 
-// Inspired by:
-// https://github.com/facebook/fixed-data-table/blob/master/src/FixedDataTableWidthHelper.js
+/**
+ * Adjusts the column widths.
+ * Inspired by: https://github.com/facebook/fixed-data-table/blob/master/src/FixedDataTableWidthHelper.js
+ * @param {all columns}
+ * @param {width}
+ */
 export function AdjustColumnWidths(allColumns, expectedWidth){
   var columnsWidth = ColumnTotalWidth(allColumns),
       remainingFlexGrow = GetTotalFlexGrow(allColumns),

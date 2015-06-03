@@ -3,6 +3,11 @@ import { Resizable } from 'utils/resizable';
  
 export class HeaderCellController{
 
+  /**
+   * Calculates the styles for the header cell directive
+   * @param  {scope}
+   * @return {styles}
+   */
   styles(scope){
     return {
       width: scope.column.width  + 'px',
@@ -12,6 +17,10 @@ export class HeaderCellController{
     };
   }
 
+  /**
+   * Calculates the css classes for the header cell directive
+   * @param  {scope}
+   */
   cellClass(scope){
     var cls = {
       'sortable': scope.column.sortable,
@@ -26,6 +35,10 @@ export class HeaderCellController{
     return cls;
   }
 
+  /**
+   * Toggles the sorting on the column
+   * @param  {scope}
+   */
   sort(scope){
     if(scope.column.sortable){
       if(!scope.column.sort){
@@ -38,6 +51,10 @@ export class HeaderCellController{
     }
   }
 
+  /**
+   * Toggles the css class for the sort button
+   * @param  {scope}
+   */
   sortClass(scope){
     return {
       'sort-btn': true,
@@ -46,6 +63,11 @@ export class HeaderCellController{
     };
   }
 
+  /**
+   * Updates the column width on resize
+   * @param  {width}
+   * @param  {column}
+   */
   resized(width, column){
     column.width = width;
   }

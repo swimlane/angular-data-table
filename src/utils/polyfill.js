@@ -1,5 +1,7 @@
-// Array.prototype.find()
-// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/find
+/**
+ * Array.prototype.find()
+ * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/find
+ */
 (function() {
   function polyfill(fnName) {
     if (!Array.prototype[fnName]) {

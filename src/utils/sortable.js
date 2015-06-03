@@ -1,6 +1,10 @@
 import angular from 'angular';
 
-// http://jsfiddle.net/RubaXa/zLq5J/3/
+/**
+ * Sortable Directive
+ * http://jsfiddle.net/RubaXa/zLq5J/3/
+ * @param {timeout}
+ */
 export function Sortable($timeout) {
   return {
     restrict: 'AC',
