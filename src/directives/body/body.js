@@ -319,11 +319,14 @@ export class BodyController{
    * @param  {row}
    */
   rowClicked(event, index, row){
-    event.preventDefault();
-    this.selectRow(index, row);
+    if(!this.options.checkboxSelection){
+      event.preventDefault();
+      
+      this.selectRow(index, row);
 
-    if(this.$scope.onSelect){
-      this.$scope.onSelect({ row: row });
+      if(this.$scope.onSelect){
+        this.$scope.onSelect({ row: row });
+      }
     }
   }
 
@@ -427,8 +430,21 @@ export class BodyController{
       cell: cell
     });
   }
+
+  /**
+   * Invoked when a row directive's checkbox was changed.
+   * @param  {index}
+   * @param  {row}
+   */
+  onCheckboxChange(index, row){
+    this.selectRow(index, row);
+  }
 }
 
+/**
+ * A helper for scrolling the body to a specific scroll position
+ * when the footer pager is invoked.
+ */
 export var BodyHelper = function(){
   var _elm;
   return {
@@ -465,6 +481,8 @@ export function BodyDirective($timeout){
                   on-tree-toggle="body.onTreeToggle(this, row, cell)"
                   ng-class="body.rowClasses(this, r)"
                   options="options"
+                  selected="body.isSelected(r)"
+                  on-checkbox-change="body.onCheckboxChange($index, row)"
                   columns="body.columnsByPin"
                   has-children="body.getRowHasChildren(r)"
                   expanded="body.getRowExpanded(this, r)"

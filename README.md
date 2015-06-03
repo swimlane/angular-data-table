@@ -19,10 +19,16 @@ Only supports evergreen browsers and 1.4.x Angular.
 - No external deps
 - Light codebase
 - Server pagination
-- Rich column templates ( charts ? )
+- Rich column templates
 - Fixed AND Fluid heigh
 - Fixed header / footer
 - Server and Client Sorting
+
+## Run it
+
+- `npm install`
+- `gulp watch serve`
+- Open your browser to `http://localhost:9000`
 
 ## Alternatives
 

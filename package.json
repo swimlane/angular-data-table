@@ -23,5 +23,8 @@
       "babel-runtime": "npm:babel-runtime@^5.0.12",
       "core-js": "npm:core-js@^0.8.1"
     }
+  },
+  "scripts": {
+    "postinstall": "jspm install"
   }
 }

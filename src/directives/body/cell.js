@@ -20,9 +20,15 @@ export class CellController {
    * @return {class object}
    */
   cellClass(col){
-    return {
+    var style = {
       'dt-tree-col': col.isTreeColumn
     };
+
+    if(col.className){
+      style[col.className] = true;
+    }
+
+    return style;
   }
 
   /**
@@ -55,6 +61,10 @@ export class CellController {
     });
   }
 
+  onCheckboxChange(scope){
+    scope.onCheckboxChange();
+  }
+
 };
 
 export function CellDirective($rootScope, $compile, $log){
@@ -64,16 +74,23 @@ export function CellDirective($rootScope, $compile, $log){
     controllerAs: 'cell',
     scope: {
       value: '=',
+      selected: '=',
       column: '=',
       expanded: '=',
       hasChildren: '=',
-      onTreeToggle: '&'
+      onTreeToggle: '&',
+      onCheckboxChange: '&'
     },
     template: 
       `<div class="dt-cell" 
             data-title="{{::column.name}}" 
             ng-style="cell.styles(column)"
             ng-class="cell.cellClass(column)">
+        <label ng-if="column.isCheckboxColumn" class="dt-checkbox">
+          <input type="checkbox" 
+                 ng-model="selected"
+                 ng-change="cell.onCheckboxChange(this)" />
+        </label>
         <span ng-if="column.isTreeColumn && hasChildren"
               ng-class="cell.treeClass(this)"
               ng-click="cell.onTreeToggle($event, this)"></span>

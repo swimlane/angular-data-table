@@ -58,17 +58,17 @@ export var TableDefaults = Object.freeze({
 
 export var ColumnDefaults = Object.freeze({
 
-  // column is highlighted
-  selected: false,
-
   // pinned to the left
   frozenLeft: false,
   
   // pinned to the right
   frozenRight: false,
 
-  // css class name
+  // body cell css class name
   className: undefined,
+
+  // header cell css class name
+  heaerClassName: undefined,
 
   // The grow factor relative to other columns. Same as the flex-grow 
   // API from http://www.w3.org/TR/css3-flexbox/. Basically, 
@@ -109,6 +109,9 @@ export var ColumnDefaults = Object.freeze({
   cellDataGetter: undefined,
 
   // Adds +/- button and makes a secondary call to load nested data
-  isTreeColumn: false
+  isTreeColumn: false,
+
+  // Adds the checkbox selection to the column
+  isCheckboxColumn: false
 
 });

@@ -22,7 +22,7 @@ import { FooterController, FooterDirective } from './directives/footer/footer';
 
 import './data-table.css!'
 
-class DataTable {
+class DataTableController {
 
   /**
    * Creates an instance of the DataTable Controller
@@ -82,7 +82,8 @@ class DataTable {
   tableCss(scope){
     return {
       'fixed': scope.options.scrollbarV,
-      'selectable': scope.options.selectable
+      'selectable': scope.options.selectable,
+      'checkboxable': scope.options.checkboxSelection
     };
   }
 
@@ -187,9 +188,29 @@ class DataTable {
     }
   }
 
+  /**
+   * Invoked when the header checkbox directive has changed.
+   * @param  {scope}
+   */
+  onHeaderCheckboxChange(scope){
+    if(scope.values){
+      var matches = scope.selected.length === scope.values.length;
+      //scope.selected.splice(0, scope.selected.length);
+
+      if(matches){
+        //scope.selected.push(...scope.values);
+      }
+    }
+  }
+
+  isAllRowsSelected(scope){
+    if(!scope.values) return false;
+    return scope.selected.length === scope.values.length;
+  }
+
 }
 
-function Directive($window, $timeout, throttle){
+function DataTableDirective($window, $timeout, throttle){
   return {
     restrict: 'E',
     replace: true,
@@ -208,7 +229,9 @@ function Directive($window, $timeout, throttle){
     template: 
       `<div class="dt material" ng-class="dt.tableCss(this)">
         <dt-header options="options" 
+                   on-checkbox-change="dt.onHeaderCheckboxChange(this)"
                    ng-if="options.headerHeight"
+                   selected="dt.isAllRowsSelected(this)"
                    on-sort="dt.onSort(columns)">
         </dt-header>
         <dt-body values="values" 
@@ -265,8 +288,8 @@ export default angular
     Pager.name
   ])
 
-  .controller('DataTable', DataTable)
-  .directive('dt', Directive)
+  .controller('DataTable', DataTableController)
+  .directive('dt', DataTableDirective)
   
   .directive('resizable', Resizable)
   .directive('sortable', Sortable)

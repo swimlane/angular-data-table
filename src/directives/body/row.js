@@ -46,6 +46,16 @@ export class RowController {
     return styles;
   }
 
+  /**
+   * Invoked when the cell directive's checkbox changed state
+   * @param  {scope}
+   */
+  onCheckboxChange(scope){
+    scope.onCheckboxChange({
+      row: scope.value
+    });
+  }
+
 }
 
 export function RowDirective(){
@@ -58,8 +68,10 @@ export function RowDirective(){
       columns: '=',
       value: '=',
       expanded: '=',
+      selected: '=',
       hasChildren: '=',
       options: '=',
+      onCheckboxChange: '&',
       onTreeToggle: '&'
     },
     template: `
@@ -69,6 +81,8 @@ export function RowDirective(){
                    on-tree-toggle="row.onTreeToggle(this, cell)"
                    column="column" 
                    has-children="hasChildren"
+                   on-checkbox-change="row.onCheckboxChange(this)"
+                   selected="selected"
                    expanded="expanded"
                    value="row.getValue(this, column)">
           </dt-cell>
@@ -79,6 +93,8 @@ export function RowDirective(){
                    column="column" 
                    has-children="hasChildren"
                    expanded="expanded"
+                   selected="selected"
+                   on-checkbox-change="row.onCheckboxChange(this)"
                    value="row.getValue(this, column)">
           </dt-cell>
         </div>
@@ -87,6 +103,8 @@ export function RowDirective(){
                    on-tree-toggle="row.onTreeToggle(this, cell)"
                    column="column" 
                    has-children="hasChildren"
+                   selected="selected"
+                   on-checkbox-change="row.onCheckboxChange(this)"
                    expanded="expanded"
                    value="row.getValue(this, column)">
           </dt-cell>

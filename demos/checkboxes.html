@@ -30,9 +30,34 @@
         text-rendering: optimizeLegibility;
       }
 
-      .dt{
-        width:75%;
+      .wrapper{
+        width:80%;
         margin:50px auto;
+      }
+
+      .dt{
+        width:65%;
+        display:inline-block;
+      }
+
+      .selected-box{
+        background:#FFF;
+        display:inline-block;
+        padding:10px;
+        vertical-align: top;
+        width:30%;
+        -webkit-box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.12), 0 1px 2px 0 rgba(0, 0, 0, 0.24);
+        -moz-box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.12), 0 1px 2px 0 rgba(0, 0, 0, 0.24);
+        box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.12), 0 1px 2px 0 rgba(0, 0, 0, 0.24);
+      }
+
+      h5{
+        padding:0;
+        margin:0;
+      }
+
+      code{
+        font-size: 11px;
       }
 
     </style>
@@ -41,8 +66,15 @@
   </head>
   <body ng-app="app" ng-controller="HomeController">
 
+    <div class="wrapper">
+      <dt options="options" values="data" selected="selected"></dt>
 
-    <dt options="options" values="data"></dt>
+      <div class="selected-box">
+        <h5>Selected list</h5>
+        <code>{{selected}}</code>
+      </div>
+
+    </div>
 
     <script src="../jspm_packages/system.js"></script>
     <script src="../config.js"></script>
@@ -59,11 +91,13 @@
             scrollbarV: false,
             checkboxSelection: true,
             columns: [
-              { name: "Name", prop: "name", width: 300 },
+              { name: "Name", prop: "name", width: 300, isCheckboxColumn: true },
               { name: "Gender", prop: "gender" },
               { name: "Company", prop: "company" }
             ]
           };
+
+          $scope.selected = [];
 
           $http.get('/demos/data/100.json').success(function(data) {
             $scope.data = data.splice(0, 10);

@@ -89,6 +89,14 @@ export class HeaderController {
     return styles;
   }
 
+  /**
+   * Invoked when the header cell directive's checkbox has changed.
+   * @param  {scope}
+   */
+  onCheckboxChange(scope){
+    scope.onCheckboxChange();
+  }
+
 };
 
 export function HeaderDirective($timeout){
@@ -99,7 +107,8 @@ export function HeaderDirective($timeout){
     controllerAs: 'header',
     scope: {
       options: '=',
-      onSort: '&'
+      onSort: '&',
+      onCheckboxChange: '='
     },
     template: `
       <div class="dt-header" ng-style="header.styles(this)">
@@ -107,6 +116,8 @@ export function HeaderDirective($timeout){
           <div class="dt-row-left"
                ng-style="header.stylesByGroup(this, 'left')"
                sortable="options.reorderable"
+               on-checkbox-change="header.onCheckboxChange(this)"
+               selected="header.isSelected(this)"
                on-sort="sorted(event, childScope)">
             <dt-header-cell ng-repeat="column in options.columns | filter: { frozenLeft: true }" 
               column="column"></dt-header-cell>
@@ -114,6 +125,8 @@ export function HeaderDirective($timeout){
           <div class="dt-row-center" 
                sortable="options.reorderable"
                ng-style="header.stylesByGroup(this, 'center')"
+               on-checkbox-change="header.onCheckboxChange(this)"
+               selected="header.isSelected(this)"
                on-sort="sorted(event, childScope)">
             <dt-header-cell ng-repeat="column in options.columns | filter: { frozenLeft: false, frozenRight: false }" 
               column="column"></dt-header-cell>
@@ -121,6 +134,8 @@ export function HeaderDirective($timeout){
           <div class="dt-row-right"
                sortable="options.reorderable"
                ng-style="header.stylesByGroup(this, 'right')"
+               on-checkbox-change="header.onCheckboxChange(this)"
+               selected="header.isSelected(this)"
                on-sort="sorted(event, childScope)">
             <dt-header-cell ng-repeat="column in options.columns | filter: { frozenRight: true }" 
               column="column"></dt-header-cell>
