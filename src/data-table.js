@@ -108,7 +108,7 @@ class DataTable {
    * @param  {rows}
    */
   onSort(cols){
-    if(!this.$scope.rows) return;
+    if(!this.$scope.values) return;
 
     var sorts = cols.filter((c) => {
       return c.sort;
@@ -131,7 +131,7 @@ class DataTable {
       });
 
       if(clientSorts.length){
-        sorty(clientSorts, this.$scope.rows);
+        sorty(clientSorts, this.$scope.values);
       }
     }
   }
