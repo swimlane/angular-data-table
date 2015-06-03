@@ -4,13 +4,34 @@ import { Sortable } from 'utils/sortable';
 
 export class HeaderController {
 
+  /**
+   * Creates an instance of the HeaderController
+   * @param  {$scope}
+   * @return {HeaderController}
+   */
+  constructor($scope){
+    $scope.$watch('options.columns', (newVal, oldVal) => {
+      this.columnsChanged($scope, newVal, oldVal);
+    }, true);
+  }
+
+  /**
+   * Returns the styles for the header directive.
+   * @param  {scope}
+   * @return {styles object}
+   */
   styles(scope) {
     return {
-      width: scope.options.cache.innerWidth + 'px',
+      width: scope.options.internal.innerWidth + 'px',
       height: scope.options.headerHeight + 'px'
     }
   }
 
+  /**
+   * Returns the inner styles for the header directive
+   * @param  {scope}
+   * @return {styles object}
+   */
   innerStyles(scope){
     return {
       width: ColumnTotalWidth(scope.options.columns) + 'px'
@@ -18,6 +39,34 @@ export class HeaderController {
     };
   }
 
+  /**
+   * Invoked when a column attribute is changed to detect
+   * if sort was trigger to resort the columns.
+   * @param  {new column}
+   * @param  {old column}
+   */
+  columnsChanged(scope, newVal, oldVal){
+    // this is not idea ... todo better
+    var sorted = false;
+
+    newVal.forEach((c, i) => {
+      var old = oldVal[i];
+      if(c.prop === old.prop && c.sort !== oldVal[i].sort){
+        sorted = true;
+      }
+    });
+
+    scope.onSort({
+      columns: newVal
+    })
+  }
+
+  /**
+   * Returns the styles by group for the headers.
+   * @param  {scope}
+   * @param  {group}
+   * @return {styles object}
+   */
   stylesByGroup(scope, group){
     var cols = scope.options.columns.filter((c) => {
       if(group === 'left' && c.frozenLeft){
@@ -34,7 +83,7 @@ export class HeaderController {
     };
 
     if(group === 'center'){
-      styles['transform'] = `translate3d(-${scope.options.cache.offsetX}px, 0, 0)`
+      styles['transform'] = `translate3d(-${scope.options.internal.offsetX}px, 0, 0)`
     }
 
     return styles;
@@ -49,7 +98,8 @@ export function HeaderDirective($timeout){
     controller: 'HeaderController',
     controllerAs: 'header',
     scope: {
-      options: '='
+      options: '=',
+      onSort: '&'
     },
     template: `
       <div class="dt-header" ng-style="header.styles(this)">

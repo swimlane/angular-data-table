@@ -21,12 +21,11 @@ export class BodyController{
     this.rows = [];
     this._viewportRowsStart = 0;
     this._viewportRowsEnd = 0;
+    this.columnsByPin = ColumnsByPin($scope.options.columns);
 
     if(this.options.scrollbarV){
-      $scope.$watch('options.cache.offsetY', throttle(this.getRows.bind(this), 10));
+      $scope.$watch('options.internal.offsetY', throttle(this.getRows.bind(this), 10));
     }
-
-    this.columnsByPin = ColumnsByPin($scope.options.columns);
 
     $scope.$watch('options.columns', (newVal) => {
       this.groupColumn = newVal.find((c) => {
@@ -57,12 +56,11 @@ export class BodyController{
     });
 
     if(this.options.scrollbarV){
-      $scope.$watch('options.cache.offsetY', (newVal) => {
-        this.updatePage(this.options.paging);
+      $scope.$watch('options.internal.offsetY', (newVal) => {
+        this.updatePage();
       });
 
       $scope.$watch('options.paging.offset', (newVal) => {
-        //console.log('offset from body', newVal)
         $scope.onPage({
           offset: newVal,
           size: this.options.paging.size
@@ -77,7 +75,7 @@ export class BodyController{
    */
   getFirstLastIndexes(){
     var firstRowIndex = Math.max(Math.floor((
-          this.$scope.options.cache.offsetY || 0) / this.options.rowHeight, 0), 0),
+          this.$scope.options.internal.offsetY || 0) / this.options.rowHeight, 0), 0),
         endIndex = Math.min(firstRowIndex + this.options.paging.size, this.options.paging.count);
 
     return {
@@ -90,21 +88,11 @@ export class BodyController{
    * Updates the page's offset given the scroll position.
    * @param  {paging object}
    */
-  updatePage(paging){
-    //console.log('pre updating paging in body', paging.offset)
-
-    var prevVis = (paging.offset + 1) * paging.size,
-        prevVisHeight = prevVis * this.options.rowHeight,
-        nextable = paging.offset <= (paging.count / paging.size),
-        offsetY = this.options.cache.offsetY;
-
-    if((offsetY < prevVisHeight) && (paging.offset > 1)){
-      paging.offset--;
-    } else if((offsetY > prevVisHeight) && nextable){
-      paging.offset++;
-    }
-
-    //console.log('post updating paging in body', paging.offset)
+  updatePage(){
+    var idxs = this.getFirstLastIndexes(),
+        curPage = Math.ceil(idxs.first / this.options.paging.size);
+        //console.log(curPage)
+    this.options.paging.offset = curPage;
   }
 
   /**
@@ -215,7 +203,7 @@ export class BodyController{
     var rowIndex = indexes.first,
         idx = 0;
 
-    while (rowIndex < indexes.last || (this.options.cache.bodyHeight <
+    while (rowIndex < indexes.last || (this.options.internal.bodyHeight <
         this._viewportHeight && rowIndex < this.options.paging.count)) {
       var row = temp[rowIndex];
       if(row){
@@ -233,13 +221,13 @@ export class BodyController{
    */
   styles(){
     var styles = {
-      width: this.options.cache.innerWidth + 'px'
+      width: this.options.internal.innerWidth + 'px'
     };
 
     if(!this.options.scrollbarV){
       styles.overflow = 'hidden';
     } else {
-      styles.height = this.options.cache.bodyHeight + 'px';
+      styles.height = this.options.internal.bodyHeight + 'px';
     }
 
     return styles;
@@ -421,7 +409,7 @@ export class BodyController{
    */
   centerStyle(scope){
     return {
-      width: scope.options.cache.innerWidth - ColumnTotalWidth(this.columnsByPin.left) + 'px'
+      width: scope.options.internal.innerWidth - ColumnTotalWidth(this.columnsByPin.left) + 'px'
     };
   }
 
@@ -482,6 +470,18 @@ export class BodyController{
     });
   }
 }
+
+export var BodyHelper = function(){
+  var _elm;
+  return {
+    create: function(elm){
+      _elm = elm;
+    },
+    setYOffset: function(offsetY){
+      _elm[0].scrollTop = offsetY;
+    }
+  }
+}();
 
 export function BodyDirective($timeout){
   return {
@@ -564,13 +564,14 @@ export function BodyDirective($timeout){
       var ticking = false,
           lastScrollY = 0,
           lastScrollX = 0,
+          helper = BodyHelper.create($elm),
           timer;
 
       function update(){
         $timeout(() => {
-          $scope.options.cache.offsetY = lastScrollY;
-          $scope.options.cache.offsetX = lastScrollX;
-          ctrl.updatePage($scope.options.paging);
+          $scope.options.internal.offsetY = lastScrollY;
+          $scope.options.internal.offsetX = lastScrollX;
+          ctrl.updatePage();
         });
 
         $timeout.cancel(timer)

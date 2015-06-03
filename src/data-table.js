@@ -12,7 +12,7 @@ import { TableDefaults, ColumnDefaults } from './defaults';
 import { HeaderController, HeaderDirective } from './directives/header/header';
 import { HeaderCellDirective, HeaderCellController } from './directives/header/header-cell';
 
-import { BodyController, BodyDirective } from './directives/body/body';
+import { BodyController, BodyHelper, BodyDirective } from './directives/body/body';
 import { RowController, RowDirective } from './directives/body/row';
 import { CellController, CellDirective } from './directives/body/cell';
 
@@ -30,28 +30,7 @@ class DataTable {
    */
 	constructor($scope, $timeout){
     this.defaults($scope);
-    $scope.$watch('options.columns', this.columnsChanged.bind(this), true);
 	}
-
-  /**
-   * Invoked when a column attribute is changed to detect
-   * if sort was trigger to resort the columns.
-   * @param  {new column}
-   * @param  {old column}
-   */
-  columnsChanged(newVal, oldVal){
-    // this is not idea ... todo better
-    var sorted = false;
-
-    newVal.forEach((c, i) => {
-      var old = oldVal[i];
-      if(c.prop === old.prop && c.sort !== oldVal[i].sort){
-        sorted = true;
-      }
-    });
-
-    this.sort(newVal, this.$scope.values);
-  }
 
   /**
    * Creates and extends default options for the grid control
@@ -88,7 +67,7 @@ class DataTable {
     var watch = $scope.$watch('values', (newVal) => {
       if(newVal){
         watch();
-        this.sort($scope.options.columns, newVal);
+        this.onSort($scope.options.columns);
       }
     });
   }
@@ -109,7 +88,7 @@ class DataTable {
    * @return {[type]}
    */
   adjustColumns(){
-    AdjustColumnWidths(this.$scope.options.columns, this.$scope.options.cache.innerWidth);
+    AdjustColumnWidths(this.$scope.options.columns, this.$scope.options.internal.innerWidth);
   }
 
   /**
@@ -118,7 +97,7 @@ class DataTable {
    */
   calculatePageSize(){
     this.$scope.options.paging.size = Math.ceil(
-      this.$scope.options.cache.bodyHeight / this.$scope.options.rowHeight) + 1;
+      this.$scope.options.internal.bodyHeight / this.$scope.options.rowHeight) + 1;
   }
 
   /**
@@ -126,8 +105,8 @@ class DataTable {
    * @param  {columns}
    * @param  {rows}
    */
-  sort(cols, rows){
-    if(!rows) return;
+  onSort(cols){
+    if(!this.$scope.rows) return;
 
     var sorts = cols.filter((c) => {
       return c.sort;
@@ -150,7 +129,7 @@ class DataTable {
       });
 
       if(clientSorts.length){
-        sorty(clientSorts, rows);
+        sorty(clientSorts, this.$scope.rows);
       }
     }
   }
@@ -192,9 +171,11 @@ class DataTable {
    * @param  {size}
    */
   onFooterPage(scope, offset, size){
-    var pageBlockSize = scope.options.rowHeight * size;
-    scope.options.paging.offsetY = pageBlockSize * offset;
-    
+    var pageBlockSize = scope.options.rowHeight * size,
+        offsetY = pageBlockSize * offset;
+
+    BodyHelper.setYOffset(offsetY);
+
     if(scope.onPage){
       scope.onPage({
         offset: offset,
@@ -224,7 +205,8 @@ function Directive($window, $timeout, throttle){
     template: 
       `<div class="dt material" ng-class="dt.tableCss(this)">
         <dt-header options="options" 
-                   ng-if="options.headerHeight">
+                   ng-if="options.headerHeight"
+                   on-sort="dt.onSort(columns)">
         </dt-header>
         <dt-body values="values" 
                  selected="selected"
@@ -244,7 +226,7 @@ function Directive($window, $timeout, throttle){
         pre: function($scope, $elm, $attrs, ctrl){
 
           function resize(){
-            $scope.options.cache.innerWidth = $elm[0].offsetWidth;
+            $scope.options.internal.innerWidth = $elm[0].offsetWidth;
 
             if($scope.options.scrollbarV){
               var height = $elm[0].offsetHeight;
@@ -257,7 +239,7 @@ function Directive($window, $timeout, throttle){
                 height = height - $scope.options.footerHeight;
               }
 
-              $scope.options.cache.bodyHeight = height;
+              $scope.options.internal.bodyHeight = height;
             }
 
             ctrl.adjustColumns();

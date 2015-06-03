@@ -79,7 +79,7 @@
               } else {
                 // only insert items i don't already have
                 set.forEach(function(r, i){
-                  if(!$scope.data[i + offset]){
+                  if(!$scope.data[i + (offset * size)]){
                     $scope.data.push(r);
                   }
                 });

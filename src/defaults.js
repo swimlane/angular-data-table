@@ -65,8 +65,7 @@ export var TableDefaults = Object.freeze({
 
   }, */
 
-  // internal
-  cache: {
+  internal: {
     offsetX: 0,
     offsetY: 0,
     innerWidth: 0,

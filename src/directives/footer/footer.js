@@ -8,18 +8,20 @@ export class FooterController {
    * @return {[type]}
    */
   constructor($scope){
-    this.page = $scope.paging.offset + 1;
+    this.$scope = $scope;
+    $scope.page = $scope.paging.offset + 1;
+    $scope.$watch('paging.offset', this.offsetChanged.bind(this));
+  }
 
-    $scope.$watch('page', (newVal) => {
-      if(newVal){
-        $scope.paging.offset = newVal - 1;
-      }
-    });
+  offsetChanged(newVal){
+    this.$scope.page = newVal + 1;
+  }
 
-    $scope.$watch('paging.offset', (newVal) => {
-      //console.log('offset from footer', newVal)
-
-      this.page = newVal + 1;
+  pageChanged(scope){
+    scope.paging.offset = scope.page - 1;
+    scope.onPage({
+      offset: scope.paging.offset,
+      size: scope.paging.size
     });
   }
 
@@ -31,7 +33,8 @@ export function FooterDirective(){
     controller: 'FooterController',
     controllerAs: 'footer',
     scope: {
-      paging: '='
+      paging: '=',
+      onPage: '&'
     },
     template: 
       `<div class="dt-footer">
@@ -41,13 +44,14 @@ export function FooterDirective(){
                     items-per-page="paging.size"
                     total-items="paging.count"
                     ng-show="paging.count > 1"
+                    ng-change="footer.pageChanged(this)"
                     previous-text="&lsaquo;"
                     next-text="&rsaquo;"
                     first-text="&laquo;"
                     last-text="&raquo;"
                     rotate="false"
                     max-size="5"
-                    ng-model="footer.page">
+                    ng-model="page">
         </pagination>
       </div>`,
     replace: true
