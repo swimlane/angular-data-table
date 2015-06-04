@@ -48,6 +48,10 @@ export class HeaderCellController{
       } else if(scope.column.sort === 'desc'){
         scope.column.sort = undefined;
       }
+
+      scope.onSort({
+        column: scope.column
+      });
     }
   }
 
@@ -72,10 +76,12 @@ export class HeaderCellController{
     column.width = width;
   }
 
+  /**
+   * Invoked when the header cell directive checkbox was changed
+   * @param  {object} scope angularjs scope
+   */
   onCheckboxChange(scope){
-    scope.onCheckboxChange({
-      checked: scope.checked
-    });
+    scope.onCheckboxChange();
   }
 
 }
@@ -88,6 +94,7 @@ export function HeaderCellDirective($compile){
     scope: {
       column: '=',
       onCheckboxChange: '&',
+      onSort: '&',
       selected: '='
     },
     replace: true,
@@ -99,8 +106,8 @@ export function HeaderCellDirective($compile){
              on-resize="hcell.resized(width, column)">
           <label ng-if="column.isCheckboxColumn" class="dt-checkbox">
             <input type="checkbox" 
-                   ng-model="selected"
-                   ng-change="hcell.onCheckboxChange(this)" />
+                   ng-checked="selected"
+                   ng-click="hcell.onCheckboxChange(this)" />
           </label>
           <span class="dt-header-cell-label" 
               ng-click="hcell.sort(this)">

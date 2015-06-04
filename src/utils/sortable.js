@@ -10,7 +10,7 @@ export function Sortable($timeout) {
     restrict: 'AC',
     scope: {
       isSortable: '=sortable',
-      onSort: '&'
+      onSortableSort: '&'
     },
     link: function($scope, $element, $attrs){
       var rootEl = $element[0], dragEl, nextEl;
@@ -53,7 +53,7 @@ export function Sortable($timeout) {
         $element.off('dragend', onDragEnd);
 
         if (nextEl !== dragEl.nextSibling) {
-          $scope.onSort({ 
+          $scope.onSortableSort({ 
             event: evt, 
             childScope: angular.element(dragEl).scope() 
           });

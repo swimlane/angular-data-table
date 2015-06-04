@@ -69,7 +69,7 @@ class DataTableController {
     var watch = $scope.$watch('values', (newVal) => {
       if(newVal){
         watch();
-        this.onSort($scope.options.columns);
+        this.onSort($scope);
       }
     });
   }
@@ -106,13 +106,12 @@ class DataTableController {
 
   /**
    * Sorts the values of the grid for client side sorting.
-   * @param  {columns}
-   * @param  {rows}
+   * @param  {scope}
    */
-  onSort(cols){
-    if(!this.$scope.values) return;
+  onSort(scope){
+    if(!scope.values) return;
 
-    var sorts = cols.filter((c) => {
+    var sorts = scope.options.columns.filter((c) => {
       return c.sort;
     });
 
@@ -145,12 +144,10 @@ class DataTableController {
    * @param  {cell model}
    */
   onTreeToggle(scope, row, cell){
-    if(scope.onTreeToggle){
-      scope.onTreeToggle({ 
-        row: row, 
-        cell: cell 
-      });
-    }
+    scope.onTreeToggle({ 
+      row: row, 
+      cell: cell 
+    });
   }
 
   /**
@@ -160,12 +157,10 @@ class DataTableController {
    * @param  {size}
    */
   onBodyPage(scope, offset, size){
-    if(scope.onPage){
-      scope.onPage({
-        offset: offset,
-        size: size
-      });
-    }
+    scope.onPage({
+      offset: offset,
+      size: size
+    });
   }
 
   /**
@@ -180,12 +175,10 @@ class DataTableController {
 
     BodyHelper.setYOffset(offsetY);
 
-    if(scope.onPage){
-      scope.onPage({
-        offset: offset,
-        size: size
-      });
-    }
+    scope.onPage({
+      offset: offset,
+      size: size
+    });
   }
 
   /**
@@ -194,11 +187,13 @@ class DataTableController {
    */
   onHeaderCheckboxChange(scope){
     if(scope.values){
+      console.log('checkbox header', scope.selected.length, scope.values.length)
       var matches = scope.selected.length === scope.values.length;
-      //scope.selected.splice(0, scope.selected.length);
 
-      if(matches){
-        //scope.selected.push(...scope.values);
+      scope.selected.splice(0, scope.selected.length);
+
+      if(!matches){
+        scope.selected.push(...scope.values);
       }
     }
   }
@@ -232,7 +227,7 @@ function DataTableDirective($window, $timeout, throttle){
                    on-checkbox-change="dt.onHeaderCheckboxChange(this)"
                    ng-if="options.headerHeight"
                    selected="dt.isAllRowsSelected(this)"
-                   on-sort="dt.onSort(columns)">
+                   on-sort="dt.onSort(this)">
         </dt-header>
         <dt-body values="values" 
                  selected="selected"

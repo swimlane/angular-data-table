@@ -88,8 +88,8 @@ export function CellDirective($rootScope, $compile, $log){
             ng-class="cell.cellClass(column)">
         <label ng-if="column.isCheckboxColumn" class="dt-checkbox">
           <input type="checkbox" 
-                 ng-model="selected"
-                 ng-change="cell.onCheckboxChange(this)" />
+                 ng-checked="selected"
+                 ng-click="cell.onCheckboxChange(this)" />
         </label>
         <span ng-if="column.isTreeColumn && hasChildren"
               ng-class="cell.treeClass(this)"
