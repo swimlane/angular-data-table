@@ -21,18 +21,13 @@ export class BodyController{
     this.rows = [];
     this._viewportRowsStart = 0;
     this._viewportRowsEnd = 0;
+    this.groupColumn = $scope.options.columns.find((c) => {
+      return c.isTreeColumn;
+    });
 
     if(this.options.scrollbarV){
       $scope.$watch('options.internal.offsetY', throttle(this.getRows.bind(this), 10));
     }
-
-    $scope.$watch('options.columns', (newVal) => {
-      this.groupColumn = newVal.find((c) => {
-        return c.isTreeColumn;
-      });
-
-      this.columnsByPin = ColumnsByPin(newVal);
-    }, true);
 
     $scope.$watchCollection('values', (newVal, oldVal) => {
       if(newVal) {
@@ -55,10 +50,7 @@ export class BodyController{
     });
 
     if(this.options.scrollbarV){
-      $scope.$watch('options.internal.offsetY', (newVal) => {
-        this.updatePage();
-      });
-
+      $scope.$watch('options.internal.offsetY', this.updatePage.bind(this));
       $scope.$watch('options.paging.offset', (newVal) => {
         $scope.onPage({
           offset: newVal,
@@ -463,6 +455,8 @@ export function BodyDirective($timeout){
     controller: 'BodyController',
     controllerAs: 'body',
     scope: {
+      columns: '=',
+      columnWidths: '=',
       values: '=',
       options: '=',
       selected: '=',
@@ -476,6 +470,8 @@ export function BodyDirective($timeout){
           <dt-row ng-repeat="r in body.rows track by $index"
                   value="body.getRowValue($index)"
                   tabindex="{{$index}}"
+                  columns="columns"
+                  column-widths="columnWidths"
                   ng-keydown="body.keyDown($event, $index, r)"
                   ng-click="body.rowClicked($event, $index, r)"
                   on-tree-toggle="body.onTreeToggle(this, row, cell)"

@@ -1,22 +1,12 @@
 import angular from 'angular';
-import { ColumnTotalWidth } from 'utils/math';
 import { Sortable } from 'utils/sortable';
-import { ColumnsByPin } from 'utils/utils';
 
 export class HeaderController {
 
   /**
-   * Creates an instance of the HeaderController
-   * @param  {object} $scope angular js scope
-   */
-  constructor($scope){
-    this.columnsByPin = ColumnsByPin($scope.options.columns);
-  }
-
-  /**
    * Returns the styles for the header directive.
-   * @param  {scope}
-   * @return {styles object}
+   * @param  {object} scope
+   * @return {object} styles
    */
   styles(scope) {
     return {
@@ -27,25 +17,24 @@ export class HeaderController {
 
   /**
    * Returns the inner styles for the header directive
-   * @param  {scope}
-   * @return {styles object}
+   * @param  {object} scope
+   * @return {object} styles
    */
   innerStyles(scope){
     return {
-      width: ColumnTotalWidth(scope.options.columns) + 'px'
-      
+      width: scope.columnWidths.total + 'px'
     };
   }
 
   /**
    * Invoked when a column sort direction has changed
-   * @param  {scope}
-   * @param  {column}
+   * @param  {object} scope
+   * @param  {object} column
    */
   onSort(scope, column){
     scope.onSort({
       column: column
-    })
+    });
   }
 
   /**
@@ -55,18 +44,8 @@ export class HeaderController {
    * @return {styles object}
    */
   stylesByGroup(scope, group){
-    var cols = scope.options.columns.filter((c) => {
-      if(group === 'left' && c.frozenLeft){
-        return c;
-      } else if(group === 'right' && c.frozenRight){
-        return c;
-      } else if(group === 'center') {
-        return c;
-      }
-    });
-
     var styles = {
-      width: ColumnTotalWidth(cols) + 'px'
+      width: scope.columnWidths[group] + 'px'
     };
 
     if(group === 'center'){
@@ -94,6 +73,8 @@ export function HeaderDirective($timeout){
     controllerAs: 'header',
     scope: {
       options: '=',
+      columns: '=',
+      columnWidths: '=',
       onSort: '&',
       onCheckboxChange: '&'
     },
@@ -104,7 +85,7 @@ export function HeaderDirective($timeout){
                ng-style="header.stylesByGroup(this, 'left')"
                sortable="options.reorderable"
                on-sortable-sort="columnsResorted(event, childScope)">
-            <dt-header-cell ng-repeat="column in header.columnsByPin['left']" 
+            <dt-header-cell ng-repeat="column in columns['left'] track by column.name" 
                             on-checkbox-change="header.onCheckboxChange(this)"
                             on-sort="header.onSort(this, column)"
                             selected="header.isSelected(this)"
@@ -115,7 +96,7 @@ export function HeaderDirective($timeout){
                sortable="options.reorderable"
                ng-style="header.stylesByGroup(this, 'center')"
                on-sortable-sort="columnsResorted(event, childScope)">
-            <dt-header-cell ng-repeat="column in header.columnsByPin['center']" 
+            <dt-header-cell ng-repeat="column in columns['center'] track by column.name" 
                             on-checkbox-change="header.onCheckboxChange(this)"
                             on-sort="header.onSort(this, column)"
                             selected="header.isSelected(this)"
@@ -126,7 +107,7 @@ export function HeaderDirective($timeout){
                sortable="options.reorderable"
                ng-style="header.stylesByGroup(this, 'right')"
                on-sortable-sort="columnsResorted(event, childScope)">
-            <dt-header-cell ng-repeat="column in header.columnsByPin['right']" 
+            <dt-header-cell ng-repeat="column in columns['right'] track by column.name" 
                             on-checkbox-change="header.onCheckboxChange(this)"
                             on-sort="header.onSort(this, column)"
                             selected="header.isSelected(this)"
@@ -140,7 +121,6 @@ export function HeaderDirective($timeout){
 
       $scope.columnsResorted = function(event, childScope){
         var col = childScope.column,
-            idx = $scope.options.columns.indexOf(col),
             parent = angular.element(event.currentTarget),
             newIdx = -1;
 
@@ -151,13 +131,16 @@ export function HeaderDirective($timeout){
         });
 
         $timeout(() => {
-          $scope.options.columns.splice(idx, 1);
-          $scope.options.columns.splice(newIdx, 0, col);
+          angular.forEach($scope.columns, (group) => {
+            var idx = group.indexOf(col);
+            if(idx > -1){
+              group.splice(idx, 1);
+              group.splice(newIdx, 0, col);
+            }
+          });
+          
         });
-
-        ctrl.columnsByPin = ColumnsByPin($scope.options.columns);
       }
-
     }
   };
 };

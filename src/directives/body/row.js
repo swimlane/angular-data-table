@@ -1,17 +1,7 @@
 import angular from 'angular';
 import { DeepValueGetter } from 'utils/utils';
-import { ColumnTotalWidth } from 'utils/math';
 
 export class RowController {
-
-  constructor($scope){
-    this.widths = {
-      left: ColumnTotalWidth($scope.columns.left),
-      center: ColumnTotalWidth($scope.columns.center),
-      right: ColumnTotalWidth($scope.columns.right),
-      total: ColumnTotalWidth($scope.options.columns)
-    }
-  }
 
   /**
    * Returns the value for a given column
@@ -43,15 +33,14 @@ export class RowController {
    */
   stylesByGroup(scope, group){
     var styles = {
-      width: this.widths[group] + 'px'
+      width: scope.columnWidths[group] + 'px'
     };
 
     if(group === 'left'){
       styles.transform = `translate3d(${scope.options.internal.offsetX}px, 0, 0)`;
     } else if(group === 'right'){
-      var offset = (this.widths.total - scope.options.internal.innerWidth) - 
+      var offset = (scope.columnWidths.total - scope.options.internal.innerWidth) - 
         scope.options.internal.offsetX;
-
       styles.transform = `translate3d(-${offset}px, 0, 0)`;
     }
 
@@ -77,8 +66,9 @@ export function RowDirective(){
     controllerAs: 'row',
     replace: true,
     scope: {
-      columns: '=',
       value: '=',
+      columns: '=',
+      columnWidths: '=',
       expanded: '=',
       selected: '=',
       hasChildren: '=',

@@ -1,3 +1,5 @@
+import { ColumnTotalWidth } from 'utils/math';
+
 /**
  * Shim layer with setTimeout fallback
  * http://www.html5rocks.com/en/tutorials/speed/animations/
@@ -35,6 +37,20 @@ export function ColumnsByPin(cols){
 
   return ret;
 };
+
+/**
+ * Returns the widths of all group sets of a column
+ * @param {object} groups 
+ * @param {array} all 
+ */
+export function ColumnGroupWidths(groups, all){
+  return {
+    left: ColumnTotalWidth(groups.left),
+    center: ColumnTotalWidth(groups.center),
+    right: ColumnTotalWidth(groups.right),
+    total: ColumnTotalWidth(all)
+  };
+}
 
 /**
  * Returns a deep object given a string. zoo['animal.type']

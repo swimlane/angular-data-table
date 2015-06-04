@@ -7,6 +7,7 @@ import Pager from './directives/footer/pager';
 import { Resizable } from './utils/resizable';
 import { Sortable } from './utils/sortable';
 import { AdjustColumnWidths } from './utils/math';
+import { ColumnsByPin, ColumnGroupWidths } from 'utils/utils';
 
 import { TableDefaults, ColumnDefaults } from './defaults';
 
@@ -28,13 +29,15 @@ class DataTableController {
    * @param  {scope}
    * @param  {filter}
    */
-	constructor($scope, $filter){
+	constructor($scope, $filter, $log){
     angular.extend(this, {
       $scope: $scope,
-      $filter: $filter
+      $filter: $filter,
+      $log: $log
     });
 
     this.defaults($scope);
+    $scope.$watch('options.columns', this.calculateColumns.bind(this))
 	}
 
   /**
@@ -57,6 +60,11 @@ class DataTableController {
         c.height = TableDefaults.headerHeight;
       }
 
+      if(!c.name){
+        this.$log.warn(`'Name' property expected but not defined.`, c);
+        c.name = Math.random();
+      }
+
       options.columns[i] = c;
     });
 
@@ -73,6 +81,11 @@ class DataTableController {
         this.onSort($scope);
       }
     });
+  }
+
+  calculateColumns(columns){
+    this.columnsByPin = ColumnsByPin(columns);
+    this.columnWidths = ColumnGroupWidths(this.columnsByPin, columns);
   }
 
   /**
@@ -130,6 +143,8 @@ class DataTableController {
       });
 
       if(clientSorts.length){
+        // todo: more ideal to just resort vs splice and repush
+        // but wasn't responding to this change ...
         var sortedValues = this.$filter('orderBy')(scope.values, clientSorts);
         scope.values.splice(0, scope.values.length);
         scope.values.push(...sortedValues);
@@ -187,9 +202,7 @@ class DataTableController {
    */
   onHeaderCheckboxChange(scope){
     if(scope.values){
-      console.log('checkbox header', scope.selected.length, scope.values.length)
       var matches = scope.selected.length === scope.values.length;
-
       scope.selected.splice(0, scope.selected.length);
 
       if(!matches){
@@ -198,6 +211,11 @@ class DataTableController {
     }
   }
 
+  /**
+   * Returns if all the rows are selected
+   * @param  {scope}  scope 
+   * @return {Boolean} if all selected
+   */
   isAllRowsSelected(scope){
     if(!scope.values) return false;
     return scope.selected.length === scope.values.length;
@@ -225,6 +243,8 @@ function DataTableDirective($window, $timeout, throttle){
       `<div class="dt material" ng-class="dt.tableCss(this)">
         <dt-header options="options" 
                    on-checkbox-change="dt.onHeaderCheckboxChange(this)"
+                   columns="dt.columnsByPin"
+                   column-widths="dt.columnWidths"
                    ng-if="options.headerHeight"
                    selected="dt.isAllRowsSelected(this)"
                    on-sort="dt.onSort(this)">
@@ -232,6 +252,8 @@ function DataTableDirective($window, $timeout, throttle){
         <dt-body values="values" 
                  selected="selected"
                  expanded="expanded"
+                 columns="dt.columnsByPin"
+                 column-widths="dt.columnWidths"
                  options="options"
                  on-page="dt.onBodyPage(this, offset, size)"
                  on-tree-toggle="dt.onTreeToggle(this, row, cell)">
