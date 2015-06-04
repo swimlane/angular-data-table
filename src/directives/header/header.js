@@ -10,9 +10,7 @@ export class HeaderController {
    * @param  {object} $scope angular js scope
    */
   constructor($scope){
-    $scope.$watch('options.columns', (newVal) => {
-      this.columnsByPin = ColumnsByPin(newVal);
-    }, true);
+    this.columnsByPin = ColumnsByPin($scope.options.columns);
   }
 
   /**
@@ -138,7 +136,7 @@ export function HeaderDirective($timeout){
         </div>
       </div>`,
     replace:true,
-    link: function($scope, $elm, $attrs){
+    link: function($scope, $elm, $attrs, ctrl){
 
       $scope.columnsResorted = function(event, childScope){
         var col = childScope.column,
@@ -156,6 +154,8 @@ export function HeaderDirective($timeout){
           $scope.options.columns.splice(idx, 1);
           $scope.options.columns.splice(newIdx, 0, col);
         });
+
+        ctrl.columnsByPin = ColumnsByPin($scope.options.columns);
       }
 
     }
