@@ -1,7 +1,6 @@
 import angular from 'angular';
 
 import './utils/polyfill';
-import sorty from 'sorty';
 import Throttle from './utils/throttle';
 import Pager from './directives/footer/pager';
 
@@ -27,10 +26,14 @@ class DataTableController {
   /**
    * Creates an instance of the DataTable Controller
    * @param  {scope}
-   * @param  {timeout}
-   * @return {object}
+   * @param  {filter}
    */
-	constructor($scope, $timeout){
+	constructor($scope, $filter){
+    angular.extend(this, {
+      $scope: $scope,
+      $filter: $filter
+    });
+
     this.defaults($scope);
 	}
 
@@ -39,8 +42,6 @@ class DataTableController {
    * @param  {scope}
    */
   defaults($scope){
-    this.$scope = $scope;
-
     $scope.expanded = $scope.expanded || {};
     
     var options = angular.extend(angular.
@@ -123,16 +124,15 @@ class DataTableController {
       var clientSorts = [];
       sorts.forEach((c) => {
         if(c.comparator !== false){
-          clientSorts.push({
-            name: c.prop,
-            dir: c.sort,
-            fn: c.comparator
-          });
+          var dir = c.sort === 'asc' ? '' : '-';
+          clientSorts.push(dir + c.prop);
         }
       });
 
       if(clientSorts.length){
-        sorty(clientSorts, this.$scope.values);
+        var sortedValues = this.$filter('orderBy')(scope.values, clientSorts);
+        scope.values.splice(0, scope.values.length);
+        scope.values.push(...sortedValues);
       }
     }
   }

@@ -40,7 +40,7 @@ export function ColumnsByPin(cols){
  * Returns a deep object given a string. zoo['animal.type']
  */
 export function DeepValueGetter(obj, path) {
-  if(!obj) return obj;
+  if(!obj || !path) return obj;
 
   var current = obj,
       split = path.split('.');
