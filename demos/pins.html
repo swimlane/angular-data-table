@@ -57,13 +57,24 @@
             rowHeight: 50,
             footerHeight: false,
             columns: [
-              { name: "Name", prop: "name", width: 200 },
-              { name: "Gender", prop: "gender", width: 200, frozenLeft: true },
+              { name: "Name", prop: "name", width: 100 },
+              { name: "Gender", prop: "gender", width: 150, frozenLeft: true },
               { name: "Company", prop: "company", width: 200, frozenLeft: true },
               { name: "Department", prop: "dept", width: 200 },
               { name: "Age", prop: "age", width: 200 },
               { name: "Clearance", prop: "clearance", width: 200 },
-              { name: "Date of Birth", prop: "dob", width: 200 }
+              { name: "Date of Birth", prop: "dob", width: 200 },
+              { 
+                width: 100, 
+                frozenRight: true,
+                cellRenderer: function(scope, elm){
+                  return '<strong>panda</strong>';
+                  //displayGraphExample(elm[0], 300, 30, "basis", true, 1000, 1000);
+                },
+                headerRenderer: function(){
+                  return '<strong>$</strong>'
+                }
+              }
             ]
           };
 

@@ -4,6 +4,15 @@ import { ColumnTotalWidth } from 'utils/math';
 
 export class RowController {
 
+  constructor($scope){
+    this.widths = {
+      left: ColumnTotalWidth($scope.columns.left),
+      center: ColumnTotalWidth($scope.columns.center),
+      right: ColumnTotalWidth($scope.columns.right),
+      total: ColumnTotalWidth($scope.options.columns)
+    }
+  }
+
   /**
    * Returns the value for a given column
    * @param  {scope}
@@ -33,14 +42,17 @@ export class RowController {
    * @return {styles object}
    */
   stylesByGroup(scope, group){
-    var width = ColumnTotalWidth(scope.columns[group]);
     var styles = {
-      width: width + 'px'
-      //height: this.totalRowsHeight() + 'px'
+      width: this.widths[group] + 'px'
     };
 
     if(group === 'left'){
-      styles.transform = `translate3d(0${scope.options.internal.offsetX}px, 0, 0)`
+      styles.transform = `translate3d(${scope.options.internal.offsetX}px, 0, 0)`;
+    } else if(group === 'right'){
+      var offset = (this.widths.total - scope.options.internal.innerWidth) - 
+        scope.options.internal.offsetX;
+
+      styles.transform = `translate3d(-${offset}px, 0, 0)`;
     }
 
     return styles;
