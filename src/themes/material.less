@@ -109,79 +109,120 @@
       }
     }
   }
+}
 
-  // props to http://codepen.io/Sambego/pen/zDLxe
-  .dt-checkbox {
-    position: relative;
-    margin: .5rem;
-    font-family: Arial, sans-serif;
-    line-height: 135%;
+.dt-menu{
+  position:relative;
+  display:inline-block;
+  font-size:14px;
+
+  .dropdown-toggle{
+    text-decoration: none;
+    color:rgba(0, 0, 0, 0.26);
+    z-index: 2;
+    display: inline-block;
+    vertical-align: top;
+    margin: 0;
+    padding: 0;
+    border: none;
+    border-radius: 2px;
+    background-color: transparent;
+    font-weight: 400;
+    text-align: center;
+    text-transform: uppercase;
     cursor: pointer;
+  }
 
-    input[type='checkbox'] {
-      position: relative;
-      top: -0.375rem;
-      margin: 0 1rem 0 0;
-      cursor: pointer;
+  .dropdown-menu{
+    position:absolute;
+    right:0;
+    background:#FFF;
+    z-index: 99;
+    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.16), 0 2px 8px 0 rgba(0, 0, 0, 0.12);
+
+    input[type='text']{
+      padding:10px 15px;
+      display:block;
+      width:100%;
+      font-size:16px;
       outline:none;
-
-      &:before {
-        -webkit-transition: all 0.3s ease-in-out;
-        -moz-transition: all 0.3s ease-in-out;
-        transition: all 0.3s ease-in-out;
-        content: "";
-        position: absolute;
-        left: 0;
-        z-index: 1;
-        width: 1rem;
-        height: 1rem;
-        border: 2px solid #f2f2f2;
-      }
-
-      &:checked:before {
-        -webkit-transform: rotate(-45deg);
-        -moz-transform: rotate(-45deg);
-        -ms-transform: rotate(-45deg);
-        -o-transform: rotate(-45deg);
-        transform: rotate(-45deg);
-        height: .5rem;
-        border-color: #009688;
-        border-top-style: none;
-        border-right-style: none;
-      }
-
-      &:after {
-        content: "";
-        position: absolute;
-        top: -0.125rem;
-        left: 0;
-        width: 1.1rem;
-        height: 1.1rem;
-        background: #fff;
-        cursor: pointer;
-      }
+      border:none;
+      border-bottom:1px solid #eee;
     }
   }
+}
 
-  @-webkit-keyframes slideUp {
-    0% {
-      -webkit-transform: translateY(6.25rem);
-      transform: translateY(6.25rem);
+// props to http://codepen.io/Sambego/pen/zDLxe
+.dt-checkbox {
+  position: relative;
+  margin: .5rem;
+  font-family: Arial, sans-serif;
+  line-height: 135%;
+  cursor: pointer;
+
+  input[type='checkbox'] {
+    position: relative;
+    top: -0.375rem;
+    margin: 0 1rem 0 0;
+    cursor: pointer;
+    outline:none;
+
+    &:before {
+      -webkit-transition: all 0.3s ease-in-out;
+      -moz-transition: all 0.3s ease-in-out;
+      transition: all 0.3s ease-in-out;
+      content: "";
+      position: absolute;
+      left: 0;
+      z-index: 1;
+      width: 1rem;
+      height: 1rem;
+      border: 2px solid #f2f2f2;
     }
-    100% {
-      -webkit-transform: translateY(0);
-      transform: translateY(0);
+
+    &:checked:before {
+      -webkit-transform: rotate(-45deg);
+      -moz-transform: rotate(-45deg);
+      -ms-transform: rotate(-45deg);
+      -o-transform: rotate(-45deg);
+      transform: rotate(-45deg);
+      height: .5rem;
+      border-color: #009688;
+      border-top-style: none;
+      border-right-style: none;
+    }
+
+    &:after {
+      content: "";
+      position: absolute;
+      top: -0.125rem;
+      left: 0;
+      width: 1.1rem;
+      height: 1.1rem;
+      background: #fff;
+      cursor: pointer;
     }
   }
-  @keyframes slideUp {
-    0% {
-      -webkit-transform: translateY(6.25rem);
-      transform: translateY(6.25rem);
-    }
-    100% {
-      -webkit-transform: translateY(0);
-      transform: translateY(0);
-    }
-  }
+}
 
+@-webkit-keyframes slideUp {
+  0% {
+    -webkit-transform: translateY(6.25rem);
+    transform: translateY(6.25rem);
+  }
+  100% {
+    -webkit-transform: translateY(0);
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideUp {
+  0% {
+    -webkit-transform: translateY(6.25rem);
+    transform: translateY(6.25rem);
+  }
+  100% {
+    -webkit-transform: translateY(0);
+    transform: translateY(0);
+  }
 }

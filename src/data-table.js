@@ -3,6 +3,7 @@ import angular from 'angular';
 import './utils/polyfill';
 import Throttle from './utils/throttle';
 import Pager from './directives/footer/pager';
+import ColumnMenu from './directives/menu/menu';
 
 import { Resizable } from './utils/resizable';
 import { Sortable } from './utils/sortable';
@@ -317,7 +318,8 @@ function DataTableDirective($window, $timeout, throttle){
 export default angular
   .module('data-table', [ 
     Throttle.name,
-    Pager.name
+    Pager.name,
+    ColumnMenu.name
   ])
 
   .controller('DataTable', DataTableController)
