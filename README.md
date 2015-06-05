@@ -1,28 +1,27 @@
 # data-table
 
-A data-table for AngularJS that doesn't suck.  Its ES6, fast, and awesome.  
+A data-table for AngularJS that doesn't suck.  Its ES6, fast, light and awesome!
 
-Only supports evergreen browsers and 1.4.x Angular.
+Only supports [Evergreen Browsers](http://eisenbergeffect.bluespire.com/evergreen-browsers/) and 1.4.x Angular.
 
 ## Features
 
-- Column Pinning
+- Handle large data sets ( Virtual DOM )
+- Left and Right Column Pinning
 - Column Reordering
-- Column resizing
-- Column Auto fill width
+- Column Resizing
+- Column Width Flex-grow 
 - Column Add/Removing
-- Horz Scrolling
-- Pager and Infinite scroll
-- Nested / Tree Grids
+- Horizontal/Vertical Scrolling
+- Virtual scroll paging with traditional pager for relativity
+- Tree Grids
 - Row Selection ( multi / single / keyboard / touch )
-- Handle large data sets ( virtual dom )
-- No external deps
-- Light codebase
-- Server pagination
-- Rich column templates
-- Fixed AND Fluid heigh
-- Fixed header / footer
-- Server and Client Sorting
+- Light codebase / No external deps
+- Server Pagination / Sorting
+- Client-side Sorting
+- Rich header / column templates
+- Fixed AND Fluid height
+- Decoupled themeing with included Google Material theme
 
 ## Run it
 
@@ -57,4 +56,4 @@ Only supports evergreen browsers and 1.4.x Angular.
 - http://glebbahmutov.com/blog/angular-plus-react-equals-speed-revisited/
 - https://github.com/kamilkp/angular-vs-repeat
 - https://github.com/teropa/angular-virtual-dom
-- simple virtual repeat - http://codepen.io/2fdevs/pen/pvvXoO
+- [Simple virtual repeat](http://codepen.io/2fdevs/pen/pvvXoO)

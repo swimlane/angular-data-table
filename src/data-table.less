@@ -1,9 +1,17 @@
 .dt{
+
+  *, *:before, *:after {
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+  }
+
   justify-content: center;
   position: relative;
 
   .dt-clone{
     opacity: .4;
+
     .dt-resize-handle{
       visibility: hidden;
     }
@@ -11,7 +19,6 @@
 
   .dt-cell,
   .dt-header-cell{
-    display: inline-block;
     vertical-align: top;
     overflow: hidden;
 
@@ -26,6 +33,23 @@
     user-select: none;
   }
 
+  .dt-row,
+  .dt-header-inner{
+    display: -webkit-box;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: -webkit-flex;
+    display: flex;
+
+    flex-direction: row;
+    -webkit-flex-flow: row;
+    -moz-flex-flow: row;
+    -ms-flex-flow: row;
+    -o-flex-flow: row;
+    flex-flow: row;
+    flex-flow: row;
+  }
+
   .dt-row-left,
   .dt-row-right{
     z-index: 9;
@@ -34,7 +58,6 @@
   .dt-row-left,
   .dt-row-center,
   .dt-row-right{
-    display:inline-block;
     position:relative;
   }
 
@@ -43,14 +66,14 @@
 
     .dt-header-inner{
       white-space: nowrap;
-      > div{
-        display:inline-block;
-      }
+      align-items: stretch;
+      -webkit-align-items: stretch;
     }
 
     .dt-header-cell{
       position:relative;
       white-space: nowrap;
+      display:inline-block;
 
       &.dt-drag-over{
         background:#EEE;
@@ -113,8 +136,12 @@
       outline:none;
       white-space: nowrap;
 
-      > div{
-        display:inline-block;
+      > div {
+        display: -webkit-box;
+        display: -moz-box;
+        display: -ms-flexbox;
+        display: -webkit-flex;
+        display: flex;
       }
 
       .dt-tree-toggle{

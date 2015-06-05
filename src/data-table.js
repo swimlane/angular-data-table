@@ -221,6 +221,20 @@ class DataTableController {
     return scope.selected.length === scope.values.length;
   }
 
+  /**
+   * Occurs when a header directive triggered a resize event
+   * @param  {object} scope  
+   * @param  {object} column 
+   * @param  {int} width  
+   */
+  onResize(scope, column, width){
+    var idx = scope.options.columns.indexOf(column);
+    if(idx > -1){
+      scope.options.columns[idx].width = width;
+      this.calculateColumns(scope.options.columns);
+    }
+  }
+
 }
 
 function DataTableDirective($window, $timeout, throttle){
@@ -246,6 +260,7 @@ function DataTableDirective($window, $timeout, throttle){
                    columns="dt.columnsByPin"
                    column-widths="dt.columnWidths"
                    ng-if="options.headerHeight"
+                   on-resize="dt.onResize(this, column, width)"
                    selected="dt.isAllRowsSelected(this)"
                    on-sort="dt.onSort(this)">
         </dt-header>

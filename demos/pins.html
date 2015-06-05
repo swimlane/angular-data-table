@@ -36,13 +36,19 @@
         height: 350px;
       }
 
+      .util-col{
+        text-align:center;
+        display:inline-block;
+        width:100%;
+      }
+
     </style>
     <link href="../dist/themes/material.css" media="all" rel="stylesheet" />
     <link href="http://fontastic.s3.amazonaws.com/Jnf54BZCm7mSjGCxNRbfp3/icons.css" rel="stylesheet">
   </head>
   <body ng-app="app" ng-controller="HomeController">
 
-    <dt options="options" values="data"></dt>
+    <dt id="datatable" options="options" values="data"></dt>
 
     <script src="../jspm_packages/system.js"></script>
     <script src="../config.js"></script>
@@ -53,6 +59,19 @@
         var module = angular.module('app', [ dt.default.name ]);
 
         module.controller('HomeController', function($scope, $http){
+
+
+          document.getElementById("datatable").addEventListener("click", function(e) {
+            // e.target is the clicked element!
+            // If it was a list item
+            if(e.target && e.target.classList.contains('delete-btn')) {
+              e.preventDefault();
+              e.stopPropagation();
+              var elm = angular.element(e.target);
+              console.log(elm.scope())
+            }
+          });
+
           $scope.options = {
             rowHeight: 50,
             footerHeight: false,
@@ -65,14 +84,14 @@
               { name: "Clearance", prop: "clearance", width: 200 },
               { name: "Date of Birth", prop: "dob", width: 200 },
               { 
-                width: 100, 
+                width: 80, 
                 frozenRight: true,
+                sortable: false,
                 cellRenderer: function(scope, elm){
-                  return '<strong>panda</strong>';
-                  //displayGraphExample(elm[0], 300, 30, "basis", true, 1000, 1000);
+                  return '<a href="#" class="util-col delete-btn" style="font-size:10px;">Delete</a>';
                 },
                 headerRenderer: function(){
-                  return '<strong>$</strong>'
+                  return '<span class="icon-filter util-col" title="Utilities"></span>'
                 }
               }
             ]

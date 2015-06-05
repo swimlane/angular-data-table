@@ -61,6 +61,10 @@ export class CellController {
     });
   }
 
+  /**
+   * Invoked when the checkbox was changed
+   * @param  {object} scope 
+   */
   onCheckboxChange(scope){
     scope.onCheckboxChange();
   }

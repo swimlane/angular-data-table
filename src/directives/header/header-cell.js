@@ -72,8 +72,12 @@ export class HeaderCellController{
    * @param  {width}
    * @param  {column}
    */
-  resized(width, column){
-    column.width = width;
+  onResize(scope, width, column){
+    scope.onResize({
+      column: column,
+      width: width
+    });
+    //column.width = width;
   }
 
   /**
@@ -95,6 +99,7 @@ export function HeaderCellDirective($compile){
       column: '=',
       onCheckboxChange: '&',
       onSort: '&',
+      onResize: '&',
       selected: '='
     },
     replace: true,
@@ -103,7 +108,7 @@ export function HeaderCellDirective($compile){
             ng-style="hcell.styles(this)"
             title="{{::column.name}}">
         <div resizable="column.resizable" 
-             on-resize="hcell.resized(width, column)">
+             on-resize="hcell.onResize(this, width, column)">
           <label ng-if="column.isCheckboxColumn" class="dt-checkbox">
             <input type="checkbox" 
                    ng-checked="selected"

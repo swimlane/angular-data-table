@@ -50,6 +50,9 @@ export class HeaderController {
 
     if(group === 'center'){
       styles['transform'] = `translate3d(-${scope.options.internal.offsetX}px, 0, 0)`
+    } else if(group === 'right'){
+      var offset = (scope.columnWidths.total - scope.options.internal.innerWidth);
+      styles.transform = `translate3d(-${offset}px, 0, 0)`;
     }
 
     return styles;
@@ -61,6 +64,19 @@ export class HeaderController {
    */
   onCheckboxChange(scope){
     scope.onCheckboxChange();
+  }
+
+  /**
+   * Occurs when a header cell directive triggered a resize
+   * @param  {object} scope  
+   * @param  {object} column 
+   * @param  {int} width  
+   */
+  onResize(scope, column, width){
+    scope.onResize({
+      column: column,
+      width: width
+    });
   }
 
 };
@@ -76,6 +92,7 @@ export function HeaderDirective($timeout){
       columns: '=',
       columnWidths: '=',
       onSort: '&',
+      onResize: '&',
       onCheckboxChange: '&'
     },
     template: `
@@ -88,6 +105,7 @@ export function HeaderDirective($timeout){
             <dt-header-cell ng-repeat="column in columns['left'] track by column.name" 
                             on-checkbox-change="header.onCheckboxChange(this)"
                             on-sort="header.onSort(this, column)"
+                            on-resize="header.onResize(this, column, width)"
                             selected="header.isSelected(this)"
                             column="column">
             </dt-header-cell>
@@ -100,6 +118,7 @@ export function HeaderDirective($timeout){
                             on-checkbox-change="header.onCheckboxChange(this)"
                             on-sort="header.onSort(this, column)"
                             selected="header.isSelected(this)"
+                            on-resize="header.onResize(this, column, width)"
                             column="column">
             </dt-header-cell>
           </div>
@@ -111,6 +130,7 @@ export function HeaderDirective($timeout){
                             on-checkbox-change="header.onCheckboxChange(this)"
                             on-sort="header.onSort(this, column)"
                             selected="header.isSelected(this)"
+                            on-resize="header.onResize(this, column, width)"
                             column="column">
             </dt-header-cell>
           </div>
