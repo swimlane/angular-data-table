@@ -84,6 +84,10 @@
             columns: $scope.cur
           };
 
+          $scope.$watch('cur', function(n){
+            console.log('columns changed', n)
+          }, true)
+
           $http.get('/demos/data/columns.json').success(function(data) {
             $scope.data = data;
           });

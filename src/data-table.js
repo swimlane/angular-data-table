@@ -38,7 +38,7 @@ class DataTableController {
     });
 
     this.defaults($scope);
-    $scope.$watch('options.columns', this.calculateColumns.bind(this))
+    $scope.$watch('options.columns', this.calculateColumns.bind(this), true);
 	}
 
   /**

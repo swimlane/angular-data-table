@@ -2,7 +2,7 @@ import angular from 'angular';
 import Dropdown from 'utils/dropdown';
  
 class DataTableMenuController{
-  constructor($scope){
+  constructor($scope, $timeout){
     this.$scope = $scope;
   }
 
@@ -21,7 +21,7 @@ class DataTableMenuController{
     if(idx === -1){
       this.$scope.current.push(model);
     } else {
-      this.$scope.current.splice(1, idx);
+      this.$scope.current.splice(idx, 1);
     }
   }
 }
@@ -53,7 +53,7 @@ function DataTableMenuDirective(){
               <label class="dt-checkbox">
                 <input type="checkbox" 
                        ng-checked="dtm.isChecked(column)"
-                       ng-click="dt.onCheck(column)">
+                       ng-click="dtm.onCheck(column)">
                 {{column.name}}
               </label>
             </li>
