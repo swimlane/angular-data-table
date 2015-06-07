@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset=" utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <meta name="viewport" content="width = device-width, minimal-ui, initial-scale = 1, user-scalable = no" />
+    <meta name="apple-mobile-web-app-title" content="Datagrid">
+    <title>Datagrid - Fixed Virtual</title>
+    <base href="/">
+    <style>
+      *, *:after, *:before {
+        -webkit-box-sizing: border-box;
+        -moz-box-sizing: border-box;
+        box-sizing: border-box;
+      }
+
+      body{
+        font-family: 'RobotoDraft', 'Roboto', 'Helvetica Neue, Helvetica, Arial', sans-serif;
+        font-style: normal;
+        font-weight: 300;
+        font-size: 1.4rem;
+        line-height: 2rem;
+        letter-spacing: 0.01rem;
+        color: #212121;
+        background-color: #f5f5f5;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        text-rendering: optimizeLegibility;
+      }
+
+      .dt{
+        width:75%;
+        margin:50px auto;
+        height:400px;
+      }
+
+    </style>
+    <link href="../dist/themes/material.css" media="all" rel="stylesheet" />
+    <link href="http://fontastic.s3.amazonaws.com/Jnf54BZCm7mSjGCxNRbfp3/icons.css" rel="stylesheet">
+  </head>
+  <body ng-app="app" ng-controller="HomeController">
+
+    <dt options="options1" values="data"></dt>
+    <dt options="options2" values="data"></dt>
+    <dt options="options3" values="data"></dt>
+    <dt options="options4" values="data"></dt>
+    <dt options="options5" values="data"></dt>
+    <dt options="options6" values="data"></dt>
+    <dt options="options7" values="data"></dt>
+    <dt options="options8" values="data"></dt>
+    <dt options="options9" values="data"></dt>
+    <dt options="options10" values="data"></dt>
+
+    <script src="../jspm_packages/system.js"></script>
+    <script src="../config.js"></script>
+
+    <script>
+
+      System.import('data-table').then(function(dt){
+        var module = angular.module('app', [ dt.default.name ]);
+
+        module.controller('HomeController', function($scope, $http){
+          var options = {
+            rowHeight: 50,
+            columns: [
+              { name: "Name", prop: "name", width: 300 },
+              { name: "Gender", prop: "gender" },
+              { name: "Company", prop: "address.state" }
+            ]
+          };
+
+
+          $scope.options1 = angular.copy(options);
+          $scope.options2 = angular.copy(options);
+          $scope.options3 = angular.copy(options);
+          $scope.options4 = angular.copy(options);
+          $scope.options5 = angular.copy(options);
+          $scope.options6 = angular.copy(options);
+          $scope.options7 = angular.copy(options);
+          $scope.options8 = angular.copy(options);
+          $scope.options9 = angular.copy(options);
+          $scope.options10 = angular.copy(options);
+
+          $http.get('/demos/data/complex-100000.json').success(function(data) {
+            $scope.data = data;
+          });
+
+        });
+      });
+    </script>
+
+  </body>
+</html>
