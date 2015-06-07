@@ -38,7 +38,7 @@ export function Resizable($document, debounce, $timeout){
         var width = parent[0].scrollWidth,
             newWidth = width + event.movementX;
 
-        if(newWidth >= $scope.minWidth && newWidth <= $scope.maxWidth){
+        if((!$scope.minWidth || newWidth >= $scope.minWidth) && (!$scope.maxWidth || newWidth <= $scope.maxWidth)){
           parent.css({
             width: newWidth + 'px'
           });
