@@ -17,7 +17,7 @@ export function ColumnTotalWidth(columns) {
 
 /**
  * Calculates the Total Flex Grow width.
- * @param {[type]}
+ * @param {array}
  */
 export function GetTotalFlexGrow(columns){
   var totalFlexGrow = 0;
@@ -31,8 +31,8 @@ export function GetTotalFlexGrow(columns){
 
 /**
  * Distributes the flex widths to the columns
- * @param {columns}
- * @param {flex width}
+ * @param {array} columns
+ * @param {int} flex width
  */
 export function DistributeFlexWidth(columns, flexWidth) {
   if (flexWidth <= 0) {
@@ -55,6 +55,14 @@ export function DistributeFlexWidth(columns, flexWidth) {
     var columnFlexWidth = Math.floor(column.flexGrow / remainingFlexGrow * remainingFlexWidth),
         newColumnWidth = Math.floor(column.width + columnFlexWidth);
 
+    if(column.minWidth && newColumnWidth < column.minWidth){
+      newColumnWidth = column.minWidth;
+    }
+
+    if(column.maxWidth && newColumnWidth > column.maxWidth){
+      newColumnWidth = column.maxWidth;
+    }
+
     totalWidth += newColumnWidth;
     remainingFlexGrow -= column.flexGrow;
     remainingFlexWidth -= columnFlexWidth;
@@ -70,8 +78,8 @@ export function DistributeFlexWidth(columns, flexWidth) {
 /**
  * Adjusts the column widths.
  * Inspired by: https://github.com/facebook/fixed-data-table/blob/master/src/FixedDataTableWidthHelper.js
- * @param {all columns}
- * @param {width}
+ * @param {array} all columns
+ * @param {int} width
  */
 export function AdjustColumnWidths(allColumns, expectedWidth){
   var columnsWidth = ColumnTotalWidth(allColumns),
