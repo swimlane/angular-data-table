@@ -3,6 +3,7 @@ import angular from 'angular';
 /**
  * Sortable Directive
  * http://jsfiddle.net/RubaXa/zLq5J/3/
+ * https://jsfiddle.net/hrohxze0/6/
  * @param {timeout}
  */
 export function Sortable($timeout) {
@@ -13,7 +14,7 @@ export function Sortable($timeout) {
       onSortableSort: '&'
     },
     link: function($scope, $element, $attrs){
-      var rootEl = $element[0], dragEl, nextEl;
+      var rootEl = $element[0], dragEl, nextEl, dropEl;
 
       $timeout(() => {
         angular.forEach(rootEl.children, (el) => {
@@ -21,27 +22,23 @@ export function Sortable($timeout) {
         });
       });
 
-      function onDragOver(evt) {
-        evt.preventDefault();
-        evt.dataTransfer.dropEffect = 'move';
-        var target = evt.target;
-
-        if (target && target !== dragEl && target.hasAttribute('draggable')) {
-          rootEl.insertBefore(dragEl, rootEl.children[0] !== target && target.nextSibling || target);
+      function isbefore(a, b) {
+        if (a.parentNode == b.parentNode) {
+          for (var cur = a; cur; cur = cur.previousSibling) {
+            if (cur === b) { 
+              return true;
+            }
+          }
         }
+        return false;
       };
 
       function onDragEnter(e) {
         var target = e.target;
-        if(target.hasAttribute('draggable')){
-          target.classList.add('dt-drag-over');
-        }
-      };
-
-      function onDragLeave(e) {
-        var target = e.target;
-        if(target.hasAttribute('draggable')){
-          target.classList.remove('dt-drag-over');
+        if (isbefore(dragEl, target)) {
+          target.parentNode.insertBefore(dragEl, target);
+        } else if(target.nextSibling && target.hasAttribute('draggable')) {
+          target.parentNode.insertBefore(dragEl, target.nextSibling);
         }
       };
 
@@ -49,8 +46,9 @@ export function Sortable($timeout) {
         evt.preventDefault();
 
         dragEl.classList.remove('dt-clone');
-        $element.off('dragover', onDragOver);
+
         $element.off('dragend', onDragEnd);
+        $element.off('dragenter', onDragEnter);
 
         if (nextEl !== dragEl.nextSibling) {
           $scope.onSortableSort({ 
@@ -67,17 +65,18 @@ export function Sortable($timeout) {
         nextEl = dragEl.nextSibling;
         dragEl.classList.add('dt-clone');
 
-        //evt.dataTransfer.effectAllowed = 'move';
-        evt.dataTransfer.effectAllowed = 'copyMove';
+        evt.dataTransfer.effectAllowed = 'move';
         evt.dataTransfer.setData('Text', dragEl.textContent);
 
-        $element.on('dragover', onDragOver);
+        $element.on('dragenter', onDragEnter);
         $element.on('dragend', onDragEnd);
-        //$element.on('dragenter', onDragEnter);
-        //$element.on('dragleave', onDragLeave);
       };
 
       $element.on('dragstart', onDragStart);
+
+      $scope.$on('$destroy', () => {
+        $element.off('dragstart', onDragStart);
+      });
     }
   }
 }
