@@ -10,10 +10,45 @@ class DropdownController{
   }
 }
 
-function DropdownDirective($document){
+function DropdownDirective($document, $timeout){
   return {
     restrict: 'C',
-    controller: 'DropdownController'
+    controller: 'DropdownController',
+    link: function($scope, $elm, $attrs) {
+
+      function closeDropdown(ev){
+        if($elm[0].contains(ev.target) ) {
+          return;
+        }
+
+        $timeout(() => {
+          $scope.open = false;
+          off();
+        });
+      };
+
+      function keydown(ev){
+        if (ev.which === 27) {
+          $timeout(() => {
+            $scope.open = false;
+            off();
+          });
+        }
+      };
+
+      function off(){
+        $document.unbind('click', closeDropdown);
+        $document.unbind('keydown', keydown);
+      };
+
+      $scope.$watch('open', (newVal) => {
+        if(newVal){
+          $document.bind('click', closeDropdown);
+          $document.bind('keydown', keydown);
+        }
+      });
+      
+    }
   };
 };
 
@@ -38,11 +73,9 @@ function DropdownToggleDirective($timeout){
 
       function toggleClick(event) {
         event.preventDefault();
-        if (!$elm.hasClass('disabled') && !$attrs.disabled ) {
-          $timeout(() => {
-            ctrl.toggle($scope);
-          });
-        }
+        $timeout(() => {
+          ctrl.toggle($scope);
+        });
       };
 
       function toggleDestroy(){
