@@ -13,6 +13,8 @@ export var TableDefaults = Object.freeze({
   // Expands the columns to fill the given width.
   forceFillColumns: true,
 
+  loadingMessage: 'Loading...',
+
   // Message to show when array is presented
   // but contains no values
   emptyMessage: 'No data to display',

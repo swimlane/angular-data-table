@@ -489,9 +489,13 @@ export function BodyDirective($timeout){
                   ng-style="body.rowStyles(this, r)">
           </dt-row>
         </div>
-        <div ng-if="!values.length" 
+        <div ng-if="values && !values.length" 
              class="empty-row" 
              ng-bind="::options.emptyMessage">
+       </div>
+       <div ng-if="values === undefined" 
+             class="loading-row" 
+             ng-bind="::options.loadingMessage">
        </div>
       </div>`,
     replace:true,
