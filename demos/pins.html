@@ -42,6 +42,13 @@
         width:100%;
       }
 
+      .pinbox{
+        width:75%;
+        margin:10px auto;
+        background:#FFF;
+        padding:10px;
+      }
+
     </style>
     <link href="../dist/themes/material.css" media="all" rel="stylesheet" />
     <link href="http://fontastic.s3.amazonaws.com/Jnf54BZCm7mSjGCxNRbfp3/icons.css" rel="stylesheet">
@@ -49,6 +56,16 @@
   <body ng-app="app" ng-controller="HomeController">
 
     <dt id="datatable" options="options" values="data"></dt>
+
+    <div class="pinbox">
+      <p>Pinning Options</p>
+      <label class="dt-checkbox">
+      <input type="checkbox" 
+             ng-checked="isPinned()"
+             ng-click="togglePin(column)">
+         Pin 'Gender'
+    </label>
+    </div>
 
     <script src="../jspm_packages/system.js"></script>
     <script src="../config.js"></script>
@@ -58,8 +75,7 @@
       System.import('data-table').then(function(dt){
         var module = angular.module('app', [ dt.default.name ]);
 
-        module.controller('HomeController', function($scope, $http){
-
+        module.controller('HomeController', function($scope, $http, $timeout){
 
           document.getElementById("datatable").addEventListener("click", function(e) {
             // e.target is the clicked element!
@@ -95,6 +111,22 @@
                 }
               }
             ]
+          };
+
+          $scope.isPinned = function(){
+            var gcol = $scope.options.columns.find(function(c){
+              return c.prop === 'gender';
+            })
+            return gcol.frozenLeft;
+          };
+
+          $scope.togglePin = function(){
+            var gcol = $scope.options.columns.find(function(c){
+              return c.prop === 'gender';
+            })
+          
+            gcol.frozenLeft = !gcol.frozenLeft;
+            console.log('toggled pin', gcol)
           };
 
           $http.get('/demos/data/columns.json').success(function(data) {
