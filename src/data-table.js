@@ -38,7 +38,12 @@ class DataTableController {
     });
 
     this.defaults($scope);
-    $scope.$watch('options.columns', this.calculateColumns.bind(this), true);
+    $scope.$watch('options.columns', (newVal, oldVal) => {
+      if(newVal.length > oldVal.length){
+        this.transposeColumnDefaults(newVal);
+      }
+      this.calculateColumns(newVal);
+    }, true);
 	}
 
   /**
@@ -54,20 +59,7 @@ class DataTableController {
     options.paging = angular.extend(angular.copy(TableDefaults.paging), 
       $scope.options.paging);
 
-    options.columns.forEach((c, i) => {
-      c = angular.extend(angular.copy(ColumnDefaults), c);
-
-      if(!c.height){
-        c.height = TableDefaults.headerHeight;
-      }
-
-      if(!c.name){
-        this.$log.warn(`'Name' property expected but not defined.`, c);
-        c.name = Math.random();
-      }
-
-      options.columns[i] = c;
-    });
+    this.transposeColumnDefaults(options.columns);
 
     $scope.options = options;
 
@@ -84,6 +76,33 @@ class DataTableController {
     });
   }
 
+  /**
+   * On init or when a column is added, we need to
+   * make sure all the columns added have the correct
+   * defaults applied.
+   * @param  {Object} columns
+   */
+  transposeColumnDefaults(columns){
+    columns.forEach((c, i) => {
+      c = angular.extend(angular.copy(ColumnDefaults), c);
+
+      if(!c.height){
+        c.height = TableDefaults.headerHeight;
+      }
+
+      if(!c.name){
+        this.$log.warn(`'Name' property expected but not defined.`, c);
+        c.name = Math.random();
+      }
+
+      columns[i] = c;
+    });
+  }
+
+  /**
+   * Calculate column groups and widths
+   * @param  {object} columns 
+   */
   calculateColumns(columns){
     this.columnsByPin = ColumnsByPin(columns);
     this.columnWidths = ColumnGroupWidths(this.columnsByPin, columns);
