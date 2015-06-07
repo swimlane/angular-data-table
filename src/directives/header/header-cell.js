@@ -111,7 +111,7 @@ export function HeaderCellDirective($compile){
              on-resize="hcell.onResize(this, width, column)"
              min-width="column.minWidth"
              max-width="column.maxWidth">
-          <label ng-if="column.isCheckboxColumn" class="dt-checkbox">
+          <label ng-if="column.isCheckboxColumn && column.headerCheckbox" class="dt-checkbox">
             <input type="checkbox" 
                    ng-checked="selected"
                    ng-click="hcell.onCheckboxChange(this)" />

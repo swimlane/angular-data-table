@@ -118,6 +118,10 @@ export var ColumnDefaults = Object.freeze({
   isTreeColumn: false,
 
   // Adds the checkbox selection to the column
-  isCheckboxColumn: false
+  isCheckboxColumn: false,
+
+  // Toggles the checkbox column in the header
+  // for selecting all values given to the grid
+  headerCheckbox: false
 
 });
