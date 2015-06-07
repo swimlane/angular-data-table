@@ -108,14 +108,16 @@ export function HeaderCellDirective($compile){
             ng-style="hcell.styles(this)"
             title="{{::column.name}}">
         <div resizable="column.resizable" 
-             on-resize="hcell.onResize(this, width, column)">
+             on-resize="hcell.onResize(this, width, column)"
+             min-width="column.minWidth"
+             max-width="column.maxWidth">
           <label ng-if="column.isCheckboxColumn" class="dt-checkbox">
             <input type="checkbox" 
                    ng-checked="selected"
                    ng-click="hcell.onCheckboxChange(this)" />
           </label>
           <span class="dt-header-cell-label" 
-              ng-click="hcell.sort(this)">
+                ng-click="hcell.sort(this)">
           </span>
           <span ng-class="hcell.sortClass(this)"></span>
         </div>

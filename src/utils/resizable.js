@@ -10,6 +10,8 @@ export function Resizable($document, debounce, $timeout){
     restrict: 'AEC',
     scope:{
       isResizable: '=resizable',
+      minWidth: '=',
+      maxWidth: '=',
       onResize: '&'
     },
     link: function($scope, $element, $attrs){
@@ -17,7 +19,7 @@ export function Resizable($document, debounce, $timeout){
         $element.addClass('resizable');
       }
 
-      var handle = angular.element(`<span class="dt-resize-handle"></span>`),
+      var handle = angular.element(`<span class="dt-resize-handle" title="Resize"></span>`),
           parent = $element.parent();
 
       handle.on('mousedown', function(event) {
@@ -33,10 +35,14 @@ export function Resizable($document, debounce, $timeout){
       });
 
       function mousemove(event) {
-        var width = parent[0].scrollWidth;
-        parent.css({
-          width: (width + event.movementX) + 'px'
-        });
+        var width = parent[0].scrollWidth,
+            newWidth = width + event.movementX;
+
+        if(newWidth >= $scope.minWidth && newWidth <= $scope.maxWidth){
+          parent.css({
+            width: newWidth + 'px'
+          });
+        }
       }
 
       function mouseup() {
