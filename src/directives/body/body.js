@@ -216,8 +216,12 @@ export class BodyController{
     };
 
     if(!this.options.scrollbarV){
-      styles.overflow = 'hidden';
-    } else {
+      styles.overflowY = 'hidden';
+    } else if(this.options.scrollbarH === false){
+      styles.overflowX = 'hidden';
+    }
+
+    if(this.options.scrollbarV){
       styles.height = this.options.internal.bodyHeight + 'px';
     }
 
