@@ -489,6 +489,10 @@ export function BodyDirective($timeout){
                   ng-style="body.rowStyles(this, r)">
           </dt-row>
         </div>
+        <div ng-if="!values.length" 
+             class="empty-row" 
+             ng-bind="::options.emptyMessage">
+       </div>
       </div>`,
     replace:true,
     link: function($scope, $elm, $attrs, ctrl){
