@@ -36,8 +36,7 @@ export class BodyController{
         }
 
         if(this.groupColumn){
-		      this.buildIndexes();
-          this.rowsByGroup = this.getRowsByGroup();
+		      this.buildRowsByGroup();
         }
 
         if(this.options.scrollbarV){
@@ -101,50 +100,38 @@ export class BodyController{
    *  }
    * 
    */
-  getRowsByGroup(){
-    var obj = {};
-
-    this.$scope.values.forEach((val) => {
-      var relVal = val[this.groupColumn.relationProp];
-      if(relVal){
-        if(obj[relVal]){
-          obj[relVal].push(val);
-        } else {
-          obj[relVal] = [ val ];
-        }
-      }
-    });
-
-    return obj;
-  }
-
-  /**
-   * Creates an index on the treeColumn if there is one
-   * and assigns depths to all rows.
-   * 
-   * TODO: move to `getRowsByGroup` so we can minimize 
-   *       itterations over total collection
-   */
-  buildIndexes(){
+  buildRowsByGroup(){
     var prop = this.groupColumn.prop, 
         parentProp = this.groupColumn.relationProp;
 
     this.index = {};
+    this.rowsByGroup = {};
 
-    this.$scope.values.forEach((obj) => {
-      this.index[obj[prop]] = obj;
-      if (obj[parentProp] === undefined){
-        obj.$$depth = 0;
-      } else {
-        var parent = this.index[obj[parentProp]];
-        obj.$$depth = parent.$$depth + 1;
-        if (parent.$$children){
-          parent.$$children.push(obj[prop]);
+    this.$scope.values.forEach((row) => {
+      // build groups
+      var relVal = row[parentProp];
+      if(relVal){
+        if(this.rowsByGroup[relVal]){
+          this.rowsByGroup[relVal].push(row);
         } else {
-          parent.$$children = [obj[prop]];
+          this.rowsByGroup[relVal] = [ row ];
         }
       }
-    })
+
+      // build indexes
+      this.index[row[prop]] = row;
+      if (row[parentProp] === undefined){
+        row.$$depth = 0;
+      } else {
+        var parent = this.index[row[parentProp]];
+        row.$$depth = parent.$$depth + 1;
+        if (parent.$$children){
+          parent.$$children.push(row[prop]);
+        } else {
+          parent.$$children = [row[prop]];
+        }
+      }
+    });
   }
 
   /**
