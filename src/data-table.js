@@ -7,7 +7,7 @@ import ColumnMenu from './directives/menu/menu';
 
 import { Resizable } from './utils/resizable';
 import { Sortable } from './utils/sortable';
-import { AdjustColumnWidths } from './utils/math';
+import { AdjustColumnWidths, ForceFillColumnWidths } from './utils/math';
 import { ColumnsByPin, ColumnGroupWidths } from 'utils/utils';
 
 import { TableDefaults, ColumnDefaults } from './defaults';
@@ -126,7 +126,14 @@ class DataTableController {
    * @return {[type]}
    */
   adjustColumns(){
-    AdjustColumnWidths(this.$scope.options.columns, this.$scope.options.internal.innerWidth);
+    // todo: combine these
+    if(this.$scope.options.forceFillColumns){
+      ForceFillColumnWidths(this.$scope.options.columns, 
+        this.$scope.options.internal.innerWidth);
+    } else {
+      AdjustColumnWidths(this.$scope.options.columns, 
+        this.$scope.options.internal.innerWidth);
+    }
   }
 
   /**

@@ -11,8 +11,10 @@ export var TableDefaults = Object.freeze({
   rowHeight: 30,
 
   // Expands the columns to fill the given width.
-  forceFillColumns: true,
+  // Can NOT be used with flex grow attributes
+  forceFillColumns: false,
 
+  // Loading message presented when the array is undefined
   loadingMessage: 'Loading...',
 
   // Message to show when array is presented
@@ -95,7 +97,7 @@ export var ColumnDefaults = Object.freeze({
   resizable: true,
 
   // Custom sort comparator
-  // pass false if you want to server sort?
+  // pass false if you want to server sort
   comparator: undefined, 
 
   // If yes then the column can be sorted.

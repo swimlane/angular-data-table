@@ -1,5 +1,5 @@
 import angular from 'angular';
-import { ColumnsByPin } from 'utils/utils';
+import { ColumnsByPin, ColumnGroupWidths } from 'utils/utils';
 
 /**
  * Calculates the total width of all columns and their groups
@@ -94,5 +94,40 @@ export function AdjustColumnWidths(allColumns, expectedWidth){
 
     remainingFlexGrow -= columnGroupFlexGrow;
     remainingFlexWidth -= columnGroupFlexWidth;
+  });
+}
+
+/**
+ * Forces the width of the columns to 
+ * distribute equally but overflowing when nesc.
+ * @param {array} allColumns 
+ * @param {int} expectedWidth
+ */
+export function ForceFillColumnWidths(allColumns, expectedWidth){
+  var colsByGroup = ColumnsByPin(allColumns),
+      widthsByGroup = ColumnGroupWidths(colsByGroup, allColumns),
+      availableWidth = expectedWidth - (widthsByGroup.left + widthsByGroup.right);
+
+  colsByGroup.center.forEach(function(column) {
+    if(column.$$oldWidth){
+      column.width = column.$$oldWidth;
+    }
+  });
+
+  var contentWidth = ColumnTotalWidth(colsByGroup.center),
+      remainingWidth = availableWidth - contentWidth,
+      additionWidthPerColumn = Math.floor(remainingWidth / colsByGroup.center.length),
+      oldLargerThanNew = contentWidth > widthsByGroup.center;
+
+  allColumns.forEach(function(column) {
+    if(!column.frozenLeft && !column.frozenRight){
+      // cache first size
+      if(!column.$$oldWidth){
+        column.$$oldWidth = column.width;
+      }
+
+      var newSize = column.width + additionWidthPerColumn;
+      column.width = oldLargerThanNew ? column.$$oldWidth : newSize;
+    }
   });
 }
