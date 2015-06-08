@@ -21,7 +21,7 @@ import { CellController, CellDirective } from './directives/body/cell';
 
 import { FooterController, FooterDirective } from './directives/footer/footer';
 
-import './data-table.css!'
+import './data-table.css!';
 
 class DataTableController {
 
@@ -52,11 +52,11 @@ class DataTableController {
    */
   defaults($scope){
     $scope.expanded = $scope.expanded || {};
-    
+
     var options = angular.extend(angular.
       copy(TableDefaults), $scope.options);
 
-    options.paging = angular.extend(angular.copy(TableDefaults.paging), 
+    options.paging = angular.extend(angular.copy(TableDefaults.paging),
       $scope.options.paging);
 
     this.transposeColumnDefaults(options.columns);
@@ -101,7 +101,7 @@ class DataTableController {
 
   /**
    * Calculate column groups and widths
-   * @param  {object} columns 
+   * @param  {object} columns
    */
   calculateColumns(columns){
     this.columnsByPin = ColumnsByPin(columns);
@@ -179,9 +179,9 @@ class DataTableController {
    * @param  {cell model}
    */
   onTreeToggle(scope, row, cell){
-    scope.onTreeToggle({ 
-      row: row, 
-      cell: cell 
+    scope.onTreeToggle({
+      row: row,
+      cell: cell
     });
   }
 
@@ -233,7 +233,7 @@ class DataTableController {
 
   /**
    * Returns if all the rows are selected
-   * @param  {scope}  scope 
+   * @param  {scope}  scope
    * @return {Boolean} if all selected
    */
   isAllRowsSelected(scope){
@@ -243,9 +243,9 @@ class DataTableController {
 
   /**
    * Occurs when a header directive triggered a resize event
-   * @param  {object} scope  
-   * @param  {object} column 
-   * @param  {int} width  
+   * @param  {object} scope
+   * @param  {object} column
+   * @param  {int} width
    */
   onResize(scope, column, width){
     var idx = scope.options.columns.indexOf(column);
@@ -273,9 +273,9 @@ function DataTableDirective($window, $timeout, throttle){
       onPage: '&'
     },
     controllerAs: 'dt',
-    template: 
+    template:
       `<div class="dt material" ng-class="dt.tableCss(this)">
-        <dt-header options="options" 
+        <dt-header options="options"
                    on-checkbox-change="dt.onHeaderCheckboxChange(this)"
                    columns="dt.columnsByPin"
                    column-widths="dt.columnWidths"
@@ -284,7 +284,7 @@ function DataTableDirective($window, $timeout, throttle){
                    selected="dt.isAllRowsSelected(this)"
                    on-sort="dt.onSort(this)">
         </dt-header>
-        <dt-body values="values" 
+        <dt-body values="values"
                  selected="selected"
                  expanded="expanded"
                  columns="dt.columnsByPin"
@@ -335,7 +335,7 @@ function DataTableDirective($window, $timeout, throttle){
 };
 
 export default angular
-  .module('data-table', [ 
+  .module('data-table', [
     Throttle.name,
     Pager.name,
     ColumnMenu.name
@@ -343,7 +343,7 @@ export default angular
 
   .controller('DataTable', DataTableController)
   .directive('dt', DataTableDirective)
-  
+
   .directive('resizable', Resizable)
   .directive('sortable', Sortable)
 

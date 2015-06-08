@@ -13,14 +13,14 @@ var compilerOptions = {
   modules: 'system',
   moduleIds: false,
   comments: true,
-  compact: false,
-  stage: 0
+  compact: false
 };
 
 var path = {
   source:'src/**/*.js',
   less: 'src/**/*.less',
   output:'dist/',
+  release: 'release/',
   outputCss: 'dist/**/*.css'
 };
 
@@ -44,13 +44,14 @@ gulp.task('less', function () {
 });
 
 gulp.task('clean', function() {
-  return gulp.src([path.output])
+  return gulp.src([path.output, path.release])
     .pipe(vinylPaths(del));
 });
 
 gulp.task('compile', function (callback) {
   return runSequence(
-    ['clean', 'less', 'es6'],
+    'clean',
+    ['less', 'es6'],
     callback
   );
 });
@@ -66,8 +67,7 @@ gulp.task('release', function(callback) {
 gulp.task('release-compile', function () {
   var builder = new Builder();
   return builder.loadConfig('./config.js').then(function(){
-    //builder.loader.baseURL = path.resolve('./src');
-    return builder.build('data-table', './release/data-table.js', { 
+    return builder.build('data-table', './release/data-table.js', {
       runtime: false,
       mangle: false
     })
