@@ -15,7 +15,7 @@
     "gulp-less": "^3.0.3",
     "gulp-plumber": "^1.0.1",
     "run-sequence": "^1.1.0",
-    "systemjs-builder": "^0.11.3",
+    "systemjs-builder": "^0.10.4",
     "vinyl-paths": "^1.0.0"
   },
   "dependencies": {},
@@ -23,7 +23,7 @@
     "directories": {},
     "dependencies": {
       "angular/bower-angular": "github:angular/bower-angular@^1.4.0-build.4006+sha.718ff84",
-      "systemjs/plugin-css": "github:systemjs/plugin-css@^0.1.10"
+      "systemjs/plugin-css": "github:systemjs/plugin-css@0.1.10"
     },
     "devDependencies": {
       "babel": "npm:babel-core@^5.0.12",

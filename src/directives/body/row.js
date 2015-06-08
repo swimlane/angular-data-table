@@ -19,7 +19,7 @@ export class RowController {
    * @param  {cell}
    */
   onTreeToggle(scope, cell){
-    scope.onTreeToggle({ 
+    scope.onTreeToggle({
       cell: cell,
       row: scope.value
     });
@@ -39,7 +39,7 @@ export class RowController {
     if(group === 'left'){
       styles.transform = `translate3d(${scope.options.internal.offsetX}px, 0, 0)`;
     } else if(group === 'right'){
-      var offset = (scope.columnWidths.total - scope.options.internal.innerWidth) - 
+      var offset = (scope.columnWidths.total - scope.options.internal.innerWidth) -
         scope.options.internal.offsetX;
       styles.transform = `translate3d(-${offset}px, 0, 0)`;
     }
@@ -64,7 +64,6 @@ export function RowDirective(){
     restrict: 'E',
     controller: 'RowController',
     controllerAs: 'row',
-    replace: true,
     scope: {
       value: '=',
       columns: '=',
@@ -81,7 +80,7 @@ export function RowDirective(){
         <div class="dt-row-left dt-row-block" ng-style="row.stylesByGroup(this, 'left')">
           <dt-cell ng-repeat="column in columns['left'] track by $index"
                    on-tree-toggle="row.onTreeToggle(this, cell)"
-                   column="column" 
+                   column="column"
                    has-children="hasChildren"
                    on-checkbox-change="row.onCheckboxChange(this)"
                    selected="selected"
@@ -92,7 +91,7 @@ export function RowDirective(){
         <div class="dt-row-center dt-row-block" ng-style="row.stylesByGroup(this, 'center')">
           <dt-cell ng-repeat="column in columns['center'] track by $index"
                    on-tree-toggle="row.onTreeToggle(this, cell)"
-                   column="column" 
+                   column="column"
                    has-children="hasChildren"
                    expanded="expanded"
                    selected="selected"
@@ -103,7 +102,7 @@ export function RowDirective(){
         <div class="dt-row-right dt-row-block" ng-style="row.stylesByGroup(this, 'right')">
           <dt-cell ng-repeat="column in columns['right'] track by $index"
                    on-tree-toggle="row.onTreeToggle(this, cell)"
-                   column="column" 
+                   column="column"
                    has-children="hasChildren"
                    selected="selected"
                    on-checkbox-change="row.onCheckboxChange(this)"

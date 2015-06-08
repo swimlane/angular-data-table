@@ -1,5 +1,5 @@
 System.config({
-  "baseURL": "/",
+  "baseURL": "",
   "transpiler": "babel",
   "babelOptions": {
     "optional": [
@@ -10,30 +10,32 @@ System.config({
     "*": "dist/*.js",
     "github:*": "jspm_packages/github/*.js",
     "npm:*": "jspm_packages/npm/*.js"
-  }
+  },
+  "buildCSS": true,
+  "separateCSS": false
 });
 
 System.config({
   "map": {
-    "angular": "github:angular/bower-angular@1.4.0",
     "angular/bower-angular": "github:angular/bower-angular@1.4.0",
-    "babel": "npm:babel-core@5.4.4",
-    "babel-runtime": "npm:babel-runtime@5.4.4",
+    "angular": "github:angular/bower-angular@1.4.0",
+    "babel": "npm:babel-core@5.5.5",
+    "babel-runtime": "npm:babel-runtime@5.5.5",
     "core-js": "npm:core-js@0.8.4",
-    "css": "github:systemjs/plugin-css@0.1.10",
     "systemjs/plugin-css": "github:systemjs/plugin-css@0.1.10",
+    "css": "github:systemjs/plugin-css@0.1.10",
     "github:jspm/nodelibs-assert@0.1.0": {
       "assert": "npm:assert@1.3.0"
     },
     "github:jspm/nodelibs-buffer@0.1.0": {
       "buffer": "npm:buffer@3.2.2"
     },
-    "github:jspm/nodelibs-events@0.1.0": {
-      "events-browserify": "npm:events-browserify@0.0.1"
+    "github:jspm/nodelibs-events@0.1.1": {
+      "events": "npm:events@1.0.2"
     },
     "github:jspm/nodelibs-http@1.7.1": {
       "Base64": "npm:Base64@0.2.1",
-      "events": "github:jspm/nodelibs-events@0.1.0",
+      "events": "github:jspm/nodelibs-events@0.1.1",
       "inherits": "npm:inherits@2.0.1",
       "stream": "github:jspm/nodelibs-stream@0.1.0",
       "url": "github:jspm/nodelibs-url@0.1.0",
@@ -74,6 +76,9 @@ System.config({
     "npm:assert@1.3.0": {
       "util": "npm:util@0.10.3"
     },
+    "npm:babel-runtime@5.5.5": {
+      "process": "github:jspm/nodelibs-process@0.1.1"
+    },
     "npm:buffer@3.2.2": {
       "base64-js": "npm:base64-js@0.0.8",
       "ieee754": "npm:ieee754@1.1.5",
@@ -94,7 +99,7 @@ System.config({
     },
     "npm:commander@2.6.0": {
       "child_process": "github:jspm/nodelibs-child_process@0.1.0",
-      "events": "github:jspm/nodelibs-events@0.1.0",
+      "events": "github:jspm/nodelibs-events@0.1.1",
       "path": "github:jspm/nodelibs-path@0.1.0",
       "process": "github:jspm/nodelibs-process@0.1.1"
     },
@@ -103,9 +108,6 @@ System.config({
     },
     "npm:core-util-is@1.0.1": {
       "buffer": "github:jspm/nodelibs-buffer@0.1.0"
-    },
-    "npm:events-browserify@0.0.1": {
-      "process": "github:jspm/nodelibs-process@0.1.1"
     },
     "npm:https-browserify@0.0.0": {
       "http": "github:jspm/nodelibs-http@1.7.1"
@@ -125,7 +127,7 @@ System.config({
     "npm:readable-stream@1.1.13": {
       "buffer": "github:jspm/nodelibs-buffer@0.1.0",
       "core-util-is": "npm:core-util-is@1.0.1",
-      "events": "github:jspm/nodelibs-events@0.1.0",
+      "events": "github:jspm/nodelibs-events@0.1.1",
       "inherits": "npm:inherits@2.0.1",
       "isarray": "npm:isarray@0.0.1",
       "process": "github:jspm/nodelibs-process@0.1.1",
@@ -141,7 +143,7 @@ System.config({
       "process": "github:jspm/nodelibs-process@0.1.1"
     },
     "npm:stream-browserify@1.0.0": {
-      "events": "github:jspm/nodelibs-events@0.1.0",
+      "events": "github:jspm/nodelibs-events@0.1.1",
       "inherits": "npm:inherits@2.0.1",
       "readable-stream": "npm:readable-stream@1.1.13"
     },
