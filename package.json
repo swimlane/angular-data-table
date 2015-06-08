@@ -1,14 +1,22 @@
 {
   "name": "data-table",
   "version": "0.0.1",
+  "description": "AngularJS data table directive",
+  "repository": {
+    "type": "git",
+    "url": "http://github.com/Swimlane/data-table.git"
+  },
   "devDependencies": {
     "browser-sync": "^2.7.2",
+    "del": "^1.2.0",
     "gulp": "^3.8.11",
     "gulp-babel": "^5.1.0",
     "gulp-changed": "^1.2.1",
     "gulp-less": "^3.0.3",
     "gulp-plumber": "^1.0.1",
-    "run-sequence": "^1.1.0"
+    "run-sequence": "^1.1.0",
+    "systemjs-builder": "^0.11.3",
+    "vinyl-paths": "^1.0.0"
   },
   "dependencies": {},
   "jspm": {

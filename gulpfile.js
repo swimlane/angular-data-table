@@ -5,6 +5,9 @@ var browserSync = require('browser-sync');
 var runSequence = require('run-sequence');
 var less = require('gulp-less');
 var changed = require('gulp-changed');
+var Builder = require('systemjs-builder');
+var vinylPaths = require('vinyl-paths');
+var del = require('del');
 
 var compilerOptions = {
   modules: 'system',
@@ -20,7 +23,6 @@ var path = {
   output:'dist/',
   outputCss: 'dist/**/*.css'
 };
-
 
 gulp.task('es6', function () {
   return gulp.src(path.source)
@@ -41,14 +43,36 @@ gulp.task('less', function () {
     .pipe(browserSync.reload({ stream: true }));
 });
 
+gulp.task('clean', function() {
+  return gulp.src([path.output])
+    .pipe(vinylPaths(del));
+});
 
 gulp.task('compile', function (callback) {
   return runSequence(
-    ['less', 'es6'],
+    ['clean', 'less', 'es6'],
     callback
   );
 });
 
+gulp.task('release', function(callback) {
+  return runSequence(
+    'compile',
+    'release-compile',
+    callback
+  );
+});
+
+gulp.task('release-compile', function () {
+  var builder = new Builder();
+  return builder.loadConfig('./config.js').then(function(){
+    //builder.loader.baseURL = path.resolve('./src');
+    return builder.build('data-table', './release/data-table.js', { 
+      runtime: false,
+      mangle: false
+    })
+  });
+});
 
 gulp.task('serve', ['compile'], function (done) {
   browserSync({
@@ -63,7 +87,6 @@ gulp.task('serve', ['compile'], function (done) {
     }
   }, done);
 });
-
 
 gulp.task('watch', ['serve'], function() {
   var watcher = gulp.watch([path.source, path.less, '*.html'], ['compile']);
