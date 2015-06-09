@@ -1,5 +1,5 @@
 import angular from 'angular';
-import Dropdown from 'utils/dropdown';
+import Dropdown from './dropdown';
  
 class DataTableMenuController{
   constructor($scope, $timeout){

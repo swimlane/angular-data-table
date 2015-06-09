@@ -9,8 +9,7 @@ export class CellController {
    */
   styles(col){
     return {
-      width: col.width  + 'px',
-      height: col.height  + 'px'
+      width: col.width  + 'px'
     };
   }
 

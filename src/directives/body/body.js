@@ -21,8 +21,13 @@ export class BodyController{
     this.rows = [];
     this._viewportRowsStart = 0;
     this._viewportRowsEnd = 0;
-    this.groupColumn = $scope.options.columns.find((c) => {
+
+    this.treeColumn = $scope.options.columns.find((c) => {
       return c.isTreeColumn;
+    });
+
+    this.groupColumn = $scope.options.columns.find((c) => {
+      return c.group;
     });
 
     if(this.options.scrollbarV){
@@ -35,7 +40,7 @@ export class BodyController{
           this.options.paging.count = newVal.length;
         }
 
-        if(this.groupColumn){
+        if(this.treeColumn || this.groupColumn){
 		      this.buildRowsByGroup();
         }
 
@@ -101,13 +106,16 @@ export class BodyController{
    * 
    */
   buildRowsByGroup(){
-    var prop = this.groupColumn.prop, 
-        parentProp = this.groupColumn.relationProp;
 
     this.index = {};
     this.rowsByGroup = {};
 
+    var parentProp = this.treeColumn ? 
+      this.treeColumn.relationProp : 
+      this.groupColumn.prop;
+
     this.$scope.values.forEach((row) => {
+
       // build groups
       var relVal = row[parentProp];
       if(relVal){
@@ -119,16 +127,20 @@ export class BodyController{
       }
 
       // build indexes
-      this.index[row[prop]] = row;
-      if (row[parentProp] === undefined){
-        row.$$depth = 0;
-      } else {
-        var parent = this.index[row[parentProp]];
-        row.$$depth = parent.$$depth + 1;
-        if (parent.$$children){
-          parent.$$children.push(row[prop]);
+      if(this.treeColumn){
+        var prop = this.treeColumn.prop;
+        this.index[row[prop]] = row;
+
+        if (row[parentProp] === undefined){
+          row.$$depth = 0;
         } else {
-          parent.$$children = [row[prop]];
+          var parent = this.index[row[parentProp]];
+          row.$$depth = parent.$$depth + 1;
+          if (parent.$$children){
+            parent.$$children.push(row[prop]);
+          } else {
+            parent.$$children = [row[prop]];
+          }
         }
       }
     });
@@ -142,7 +154,7 @@ export class BodyController{
         temp = this.$scope.values || [];
 
     // determine the child rows to show if grouping
-    if(this.groupColumn){
+    if(this.treeColumn) {
       var idx = 0,
           rowIndex = indexes.first,
           last = indexes.last;
@@ -150,8 +162,8 @@ export class BodyController{
 
       while(rowIndex < last && last <= this.options.paging.count){
         var row = this.$scope.values[rowIndex],
-            relVal = row[this.groupColumn.relationProp],
-            keyVal = row[this.groupColumn.prop],
+            relVal = row[this.treeColumn.relationProp],
+            keyVal = row[this.treeColumn.prop],
             rows = this.rowsByGroup[keyVal],
             expanded = this.$scope.expanded[keyVal];
 
@@ -176,6 +188,21 @@ export class BodyController{
       // the list to update if we collapse
       // and have less rows than expanded
       this.rows.splice(0, this.rows.length);
+
+    } else if(this.groupColumn) {
+      temp = [];
+
+      angular.forEach(this.rowsByGroup, (v, k) => {
+        temp.push({
+          name: k,
+          group: true
+        });
+
+        if(this.$scope.expanded[k]){
+          temp.push(...v);
+        }
+      });
+
     }
 
     var rowIndex = indexes.first,
@@ -222,11 +249,21 @@ export class BodyController{
    * @return {styles object}
    */
   rowStyles(scope, row){
-    if(this.options.scrollbarV){
-      return {
-        transform: `translate3d(0, ${row.$$index * scope.options.rowHeight}px, 0)`
-      }
+    var styles = {
+      height: scope.options.rowHeight + 'px'
+    };
+
+    if(scope.options.scrollbarV){
+      styles.transform = `translate3d(0, ${row.$$index * scope.options.rowHeight}px, 0)`;
     }
+
+    return styles;
+  }
+
+  groupRowStyles(scope, row){
+    var styles = this.rowStyles(scope, row);
+    styles.width = scope.columnWidths.total + 'px';
+    return styles;
   }
 
   /**
@@ -240,11 +277,11 @@ export class BodyController{
       'selected': this.isSelected(row)
     };
 
-    if(this.groupColumn){
+    if(this.treeColumn){
       // if i am a child
-      styles['dt-leaf'] = this.rowsByGroup[row[this.groupColumn.relationProp]];
+      styles['dt-leaf'] = this.rowsByGroup[row[this.treeColumn.relationProp]];
       // if i have children
-      styles['dt-has-leafs'] = this.rowsByGroup[row[this.groupColumn.prop]];
+      styles['dt-has-leafs'] = this.rowsByGroup[row[this.treeColumn.prop]];
       // the depth
       styles['dt-depth-' + row.$$depth] = true;
     }
@@ -382,8 +419,11 @@ export class BodyController{
    * @return {boolean}
    */
   getRowExpanded(scope, row){
-    if(!this.groupColumn) return;
-    return scope.expanded[row[this.groupColumn.prop]];
+    if(this.treeColumn) {
+      return scope.expanded[row[this.treeColumn.prop]];
+    } else if(this.groupColumn){
+      return scope.expanded[row.name];
+    }
   }
 
   /**
@@ -392,8 +432,8 @@ export class BodyController{
    * @return {boolean}
    */
   getRowHasChildren(row){
-    if(!this.groupColumn) return;
-    var children = this.rowsByGroup[row[this.groupColumn.prop]];
+    if(!this.treeColumn) return;
+    var children = this.rowsByGroup[row[this.treeColumn.prop]];
     return children !== undefined || (children && !children.length);
   }
 
@@ -404,7 +444,7 @@ export class BodyController{
    * @param  {cell model}
    */
   onTreeToggle(scope, row, cell){
-    var val  = row[this.groupColumn.prop];
+    var val  = row[this.treeColumn.prop];
     scope.expanded[val] = !scope.expanded[val];
     this.getRows();
 
@@ -421,6 +461,11 @@ export class BodyController{
    */
   onCheckboxChange(index, row){
     this.selectRow(index, row);
+  }
+
+  onGroupToggle(scope, row){
+    scope.expanded[row.name] = !scope.expanded[row.name];
+    this.getRows();
   }
 }
 
@@ -458,30 +503,39 @@ export function BodyDirective($timeout){
     template: `
       <div class="dt-body" ng-style="body.styles()">
         <div class="dt-body-scroller" ng-style="body.scrollerStyles()">
-          <dt-row ng-repeat="r in body.rows track by $index"
-                  value="body.getRowValue($index)"
-                  tabindex="{{$index}}"
-                  columns="columns"
-                  column-widths="columnWidths"
-                  ng-keydown="body.keyDown($event, $index, r)"
-                  ng-click="body.rowClicked($event, $index, r)"
-                  on-tree-toggle="body.onTreeToggle(this, row, cell)"
-                  ng-class="body.rowClasses(this, r)"
-                  options="options"
-                  selected="body.isSelected(r)"
-                  on-checkbox-change="body.onCheckboxChange($index, row)"
-                  columns="body.columnsByPin"
-                  has-children="body.getRowHasChildren(r)"
-                  expanded="body.getRowExpanded(this, r)"
-                  ng-style="body.rowStyles(this, r)">
-          </dt-row>
+        <div ng-repeat="r in body.rows track by $index">
+            <dt-group-row ng-if="r.group"
+                          ng-style="body.groupRowStyles(this, r)" 
+                          on-group-toggle="body.onGroupToggle(this, group)"
+                          expanded="body.getRowExpanded(this, r)"
+                          tabindex="{{$index}}"
+                          value="r">
+            </dt-group-row>
+            <dt-row ng-if="!r.group"
+                    value="body.getRowValue($index)"
+                    tabindex="{{$index}}"
+                    columns="columns"
+                    column-widths="columnWidths"
+                    ng-keydown="body.keyDown($event, $index, r)"
+                    ng-click="body.rowClicked($event, $index, r)"
+                    on-tree-toggle="body.onTreeToggle(this, row, cell)"
+                    ng-class="body.rowClasses(this, r)"
+                    options="options"
+                    selected="body.isSelected(r)"
+                    on-checkbox-change="body.onCheckboxChange($index, row)"
+                    columns="body.columnsByPin"
+                    has-children="body.getRowHasChildren(r)"
+                    expanded="body.getRowExpanded(this, r)"
+                    ng-style="body.rowStyles(this, r)">
+            </dt-row>
+          </div>
         </div>
         <div ng-if="values && !values.length" 
              class="empty-row" 
              ng-bind="::options.emptyMessage">
        </div>
        <div ng-if="values === undefined" 
-             class="loading-row" 
+             class="loading-row"
              ng-bind="::options.loadingMessage">
        </div>
       </div>`,

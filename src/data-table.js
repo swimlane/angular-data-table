@@ -17,6 +17,7 @@ import { HeaderCellDirective, HeaderCellController } from './directives/header/h
 
 import { BodyController, BodyHelper, BodyDirective } from './directives/body/body';
 import { RowController, RowDirective } from './directives/body/row';
+import { GroupRowController, GroupRowDirective } from './directives/body/group-row';
 import { CellController, CellDirective } from './directives/body/cell';
 
 import { FooterController, FooterDirective } from './directives/footer/footer';
@@ -85,10 +86,6 @@ class DataTableController {
   transposeColumnDefaults(columns){
     columns.forEach((c, i) => {
       c = angular.extend(angular.copy(ColumnDefaults), c);
-
-      if(!c.height){
-        c.height = TableDefaults.headerHeight;
-      }
 
       if(!c.name){
         this.$log.warn(`'Name' property expected but not defined.`, c);
@@ -177,6 +174,8 @@ class DataTableController {
         scope.values.push(...sortedValues);
       }
     }
+
+    BodyHelper.setYOffset(0);
   }
 
   /**
@@ -365,6 +364,9 @@ export default angular
 
   .controller('RowController', RowController)
   .directive('dtRow', RowDirective)
+
+  .controller('GroupRowController', GroupRowController)
+  .directive('dtGroupRow', GroupRowDirective)
 
   .controller('CellController', CellController)
   .directive('dtCell', CellDirective)

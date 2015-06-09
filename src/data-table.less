@@ -24,6 +24,7 @@
 
     white-space: normal;
     line-height: 1.625;
+    text-overflow: ellipsis;
 
     touch-callout: none;
     -webkit-user-select: none;
@@ -131,6 +132,10 @@
       white-space: nowrap;
     }
 
+    .dt-group-row{
+      outline:none;
+    }
+
     .dt-row{
       backface-visibility: hidden;
       outline:none;
@@ -143,10 +148,10 @@
         display: -webkit-flex;
         display: flex;
       }
+    }
 
-      .dt-tree-toggle{
-        cursor:pointer;
-      }
+    .dt-tree-toggle{
+      cursor:pointer;
     }
 	}
 
@@ -175,7 +180,8 @@
 	}
 
   &.fixed {
-    .dt-body .dt-row{
+    .dt-body .dt-row,
+    .dt-body .dt-group-row{
       position: absolute;
       top:0;
     }
