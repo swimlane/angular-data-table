@@ -50,7 +50,7 @@ gulp.task('clean', function() {
 
 gulp.task('compile', function (callback) {
   return runSequence(
-    'clean',
+    //'clean',
     ['less', 'es6'],
     callback
   );
