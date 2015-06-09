@@ -89,7 +89,7 @@
                 prop: "company", 
                 flexGrow: 2,
                 isTreeColumn: true,
-                relationProp: 'parent'
+                relationProp: 'parentCompany'
               },
               { 
                 name: "Revenue", 
@@ -114,12 +114,12 @@
 
           $scope.data = [
             { 'company': 'Acme', 'revenue': '$3,452,342', 'sales': '$3,452,342,353' },
-            { 'company': 'Acme Holdings', 'revenue': '$345,342', 'sales': '$4,452,222,353', parent: 'Acme' },
-            { 'company': 'Acme Limited', 'revenue': '$344,442', 'sales': '$10,452,444,353', parent: 'Acme' },
+            { 'company': 'Acme Holdings', 'revenue': '$345,342', 'sales': '$4,452,222,353', parentCompany: 'Acme' },
+            { 'company': 'Acme Limited', 'revenue': '$344,442', 'sales': '$10,452,444,353', parentCompany: 'Acme' },
             { 'company': 'Sterling', 'revenue': '$40,443,111', 'sales': '$50,433,777,564' },
             { 'company': 'Apple', 'revenue': '$1,440,443,111', 'sales': '$999,509,433,777,564' },
-            { 'company': 'Apple IBS', 'revenue': '$1,440,443,111', 'sales': '$999,509,433,777,564', parent: 'Apple' },
-            { 'company': 'Apple IBS South', 'revenue': '$1,440,443,111', 'sales': '$999,509,433,777,564', parent: 'Apple IBS' }
+            { 'company': 'Apple IBS', 'revenue': '$1,440,443,111', 'sales': '$999,509,433,777,564', parentCompany: 'Apple' },
+            { 'company': 'Apple IBS South', 'revenue': '$1,440,443,111', 'sales': '$999,509,433,777,564', parentCompany: 'Apple IBS' }
           ];
 
         });
