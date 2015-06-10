@@ -50,8 +50,12 @@
 
     <script>
 
-      System.import('data-table').then(function(dt){
-        var module = angular.module('app', [ dt.default.name ]);
+      Promise.all([
+        System.import('data-table'),
+        System.import('directives/popover/popover')
+      ]).then(function(modules) {
+
+        var module = angular.module('app', [ 'data-table', 'popover' ]);
 
         module.controller('HomeController', function($scope, $http){
           $scope.options = {
@@ -76,7 +80,12 @@
               },{ 
                 name: "Comments", 
                 prop: "comments",
-                tooltips: true
+                tooltips: true,
+                cellRenderer: function(scope, elm){
+                  return "<span sw-popover sw-popover-placement='left' sw-popover-text='{{cell.getValue(this)}}'' sw-popover-group='main'>{{cell.getValue(this)}}</span>";
+                }
+
+
               }
             ]
           };

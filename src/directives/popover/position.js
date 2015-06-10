@@ -1,3 +1,6 @@
+/**
+ * Position helper for the popover directive.
+ */
 export function PositionHelper(){
   return {
 

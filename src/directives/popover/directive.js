@@ -59,7 +59,8 @@ export function PopoverDirective($q, $timeout, $templateCache, $compile, Popover
         placement: $attributes.swPopoverPlacement || 'right',
         alignment: $attributes.swPopoverAlignment  || 'center',
         group: $attributes.swPopoverGroup,
-        spacing: parseInt($attributes.swPopoverSpacing) || 0
+        spacing: parseInt($attributes.swPopoverSpacing) || 0,
+        showCaret: toBoolean($attributes.swPopoverPlain || false)
       };
 
       // attach exit and enter events to element
@@ -137,6 +138,7 @@ export function PopoverDirective($q, $timeout, $templateCache, $compile, Popover
         if ($scope.popover){
           $scope.popover.remove();
         }
+
         $scope.popover = undefined;
         PopoverRegistry.remove($scope.popoverId);
       };
@@ -179,7 +181,10 @@ export function PopoverDirective($q, $timeout, $templateCache, $compile, Popover
             left: left + 'px'
           });
 
-          addCaret($scope.popover, elDimensions, popoverDimensions);
+          if($scope.options.showCaret){
+            addCaret($scope.popover, elDimensions, popoverDimensions);
+          }
+
           $animate.addClass($scope.popover, 'sw-popover-animation');
         }, 50);
       };
@@ -191,7 +196,7 @@ export function PopoverDirective($q, $timeout, $templateCache, $compile, Popover
        * @param {object} popoverDimensions 
        */
       function addCaret(popoverEl, elDimensions, popoverDimensions){
-        var caret = angular.element('<span class="popover-caret caret-' + $scope.options.placement + '"></span>');
+        var caret = angular.element(`<span class="popover-caret caret-${$scope.options.placement}"></span>`);
         popoverEl.append(caret);
         var caretDimensions = caret[0].getBoundingClientRect();
 

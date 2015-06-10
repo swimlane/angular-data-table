@@ -6,7 +6,7 @@ import angular from 'angular';
  * @param  {int}
  * @param  {boolean}
  */
-function debounce(func, wait, immediate) {
+export function debounce(func, wait, immediate) {
   var timeout, args, context, timestamp, result;
   return function() {
     context = this;
@@ -38,7 +38,7 @@ function debounce(func, wait, immediate) {
  * @param  {boolean}
  * @param  {object}
  */
-function throttle(func, wait, options) {
+export function throttle(func, wait, options) {
   var context, args, result;
   var timeout = null;
   var previous = 0;
@@ -66,8 +66,3 @@ function throttle(func, wait, options) {
     return result;
   };
 };
-
-export default angular
-  .module('utils.throttle', [])
-  .constant('debounce', debounce)
-  .constant('throttle', throttle);

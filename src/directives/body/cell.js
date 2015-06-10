@@ -68,6 +68,20 @@ export class CellController {
     scope.onCheckboxChange();
   }
 
+  /**
+   * Returns the value in its fomatted form
+   * @param  {object} scope 
+   * @return {string} value
+   */
+  getValue(scope){
+    var val = scope.column.cellDataGetter ? 
+      scope.column.cellDataGetter(scope.value) : scope.value;
+
+    if(val === undefined || val === null) val = '';
+
+    return val;
+  }
+
 };
 
 export function CellDirective($rootScope, $compile, $log){
@@ -97,9 +111,7 @@ export function CellDirective($rootScope, $compile, $log){
         <span ng-if="column.isTreeColumn && hasChildren"
               ng-class="cell.treeClass(this)"
               ng-click="cell.onTreeToggle($event, this)"></span>
-        <span sw-popover
-              sw-popover-text="{{value}}"
-              sw-popover-group="main" class="dt-cell-content"></span>
+        <span class="dt-cell-content"></span>
       </div>`,
     replace: true,
     compile: function() {
@@ -114,12 +126,7 @@ export function CellDirective($rootScope, $compile, $log){
               var elm = angular.element($scope.column.cellRenderer($scope, content));
               content.append($compile(elm)($scope));
             } else {
-              var val = $scope.column.cellDataGetter ? 
-                $scope.column.cellDataGetter($scope.value) : $scope.value;
-
-              if(val === undefined || val === null) val = '';
-
-              content[0].innerHTML = val;
+              content[0].innerHTML = ctrl.getValue($scope);
             }
           });
         }

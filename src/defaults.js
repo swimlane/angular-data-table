@@ -124,8 +124,6 @@ export var ColumnDefaults = Object.freeze({
 
   // Toggles the checkbox column in the header
   // for selecting all values given to the grid
-  headerCheckbox: false,
-
-  tooltips: false
+  headerCheckbox: false
 
 });

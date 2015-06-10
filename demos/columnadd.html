@@ -56,8 +56,12 @@
 
     <script>
 
-      System.import('data-table').then(function(dt){
-        var module = angular.module('app', [ dt.default.name ]);
+      Promise.all([
+        System.import('data-table'),
+        System.import('directives/menu/menu')
+      ]).then(function(modules) {
+
+        var module = angular.module('app', [ 'data-table', 'dt.menu' ]);
 
         module.controller('HomeController', function($scope, $http){
           $scope.all = [ 

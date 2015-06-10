@@ -1,10 +1,8 @@
 import angular from 'angular';
 
 import './utils/polyfill';
-import Throttle from './utils/throttle';
+import { debounce, throttle } from './utils/throttle';
 import Pager from './directives/footer/pager';
-import ColumnMenu from './directives/menu/menu';
-import Popover from './directives/popover/popover';
 
 import { Resizable } from './utils/resizable';
 import { Sortable } from './utils/sortable';
@@ -343,18 +341,15 @@ function DataTableDirective($window, $timeout, throttle){
 };
 
 export default angular
-  .module('data-table', [
-    Throttle.name,
-    Pager.name,
-    ColumnMenu.name,
-    Popover.name
-  ])
+  .module('data-table', [ Pager.name ])
 
   .controller('DataTable', DataTableController)
   .directive('dt', DataTableDirective)
 
   .directive('resizable', Resizable)
   .directive('sortable', Sortable)
+  .constant('debounce', debounce)
+  .constant('throttle', throttle)
 
   .controller('HeaderController', HeaderController)
   .directive('dtHeader', HeaderDirective)
