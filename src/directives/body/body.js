@@ -566,32 +566,32 @@ export function BodyDirective($timeout){
     template: `
       <div class="dt-body" ng-style="body.styles()">
         <div class="dt-body-scroller" ng-style="body.scrollerStyles()">
-        <div ng-repeat="r in body.rows track by $index">
-            <dt-group-row ng-if="r.group"
-                          ng-style="body.groupRowStyles(this, r)" 
-                          on-group-toggle="body.onGroupToggle(this, group)"
-                          expanded="body.getRowExpanded(this, r)"
-                          tabindex="{{$index}}"
-                          value="r">
-            </dt-group-row>
-            <dt-row ng-if="!r.group"
-                    value="body.getRowValue($index)"
-                    tabindex="{{$index}}"
-                    columns="columns"
-                    column-widths="columnWidths"
-                    ng-keydown="body.keyDown($event, $index, r)"
-                    ng-click="body.rowClicked($event, $index, r)"
-                    on-tree-toggle="body.onTreeToggle(this, row, cell)"
-                    ng-class="body.rowClasses(this, r)"
-                    options="options"
-                    selected="body.isSelected(r)"
-                    on-checkbox-change="body.onCheckboxChange($index, row)"
-                    columns="body.columnsByPin"
-                    has-children="body.getRowHasChildren(r)"
-                    expanded="body.getRowExpanded(this, r)"
-                    ng-style="body.rowStyles(this, r)">
-            </dt-row>
-          </div>
+          <dt-group-row ng-repeat-start="r in body.rows track by $index"
+                        ng-if="r.group"
+                        ng-style="body.groupRowStyles(this, r)" 
+                        on-group-toggle="body.onGroupToggle(this, group)"
+                        expanded="body.getRowExpanded(this, r)"
+                        tabindex="{{$index}}"
+                        value="r">
+          </dt-group-row>
+          <dt-row ng-repeat-end
+                  ng-if="!r.group"
+                  value="body.getRowValue($index)"
+                  tabindex="{{$index}}"
+                  columns="columns"
+                  column-widths="columnWidths"
+                  ng-keydown="body.keyDown($event, $index, r)"
+                  ng-click="body.rowClicked($event, $index, r)"
+                  on-tree-toggle="body.onTreeToggle(this, row, cell)"
+                  ng-class="body.rowClasses(this, r)"
+                  options="options"
+                  selected="body.isSelected(r)"
+                  on-checkbox-change="body.onCheckboxChange($index, row)"
+                  columns="body.columnsByPin"
+                  has-children="body.getRowHasChildren(r)"
+                  expanded="body.getRowExpanded(this, r)"
+                  ng-style="body.rowStyles(this, r)">
+          </dt-row>
         </div>
         <div ng-if="values && !values.length" 
              class="empty-row" 
