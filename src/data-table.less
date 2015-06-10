@@ -22,7 +22,8 @@
     vertical-align: top;
     overflow: hidden;
 
-    white-space: normal;
+    //white-space: normal;
+    white-space: nowrap;
     line-height: 1.625;
     text-overflow: ellipsis;
 
@@ -188,27 +189,3 @@
   }
 }
 
-.dt-menu{
-  text-align:left;
-  
-  ul, li{
-    padding:0;
-    margin:0;
-    list-style:none;
-  }
-
-  .dropdown-menu{
-    width:200px;
-    display: none;
-
-    &.ddm-open{
-      display: inline-block;
-    }
-  }
-  
-  ul{
-    max-height: 300px;
-    overflow-y: auto;
-  }
-  
-}

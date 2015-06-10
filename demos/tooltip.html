@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset=" utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <meta name="viewport" content="width = device-width, minimal-ui, initial-scale = 1, user-scalable = no" />
+    <meta name="apple-mobile-web-app-title" content="Datagrid">
+    <title>Datagrid - Tooltips</title>
+    <base href="/">
+    <style>
+      *, *:after, *:before {
+        -webkit-box-sizing: border-box;
+        -moz-box-sizing: border-box;
+        box-sizing: border-box;
+      }
+
+      body{
+        font-family: 'RobotoDraft', 'Roboto', 'Helvetica Neue, Helvetica, Arial', sans-serif;
+        font-style: normal;
+        font-weight: 300;
+        font-size: 1.4rem;
+        line-height: 2rem;
+        letter-spacing: 0.01rem;
+        color: #212121;
+        background-color: #f5f5f5;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        text-rendering: optimizeLegibility;
+      }
+
+      .dt{
+        width:75%;
+        margin:50px auto;
+        height:400px;
+      }
+
+    </style>
+    <link href="../dist/themes/material.css" media="all" rel="stylesheet" />
+    <link href="http://fontastic.s3.amazonaws.com/Jnf54BZCm7mSjGCxNRbfp3/icons.css" rel="stylesheet">
+  </head>
+  <body ng-app="app" ng-controller="HomeController">
+
+    <dt options="options" 
+        values="data"></dt>
+
+    <script src="../jspm_packages/system.js"></script>
+    <script src="../config.js"></script>
+
+    <script>
+
+      System.import('data-table').then(function(dt){
+        var module = angular.module('app', [ dt.default.name ]);
+
+        module.controller('HomeController', function($scope, $http){
+          $scope.options = {
+            rowHeight: 50,
+            footerHeight: false,
+            scrollbarV: true,
+            columns: [
+              { 
+                name: "Company", 
+                prop: "company", 
+                flexGrow: 2
+              },
+              { 
+                name: "Revenue", 
+                flexGrow: 1,
+                prop: "revenue" 
+              },
+              { 
+                name: "Sales", 
+                flexGrow: 1,
+                prop: "sales"
+              },{ 
+                name: "Comments", 
+                prop: "comments",
+                tooltips: true
+              }
+            ]
+          };
+
+          $scope.data = [
+            { 'company': 'Acme', 'revenue': '$3,452,342', 'sales': '$3,452,342,353', comments: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut non orci libero. Suspendisse aliquam eu magna ac tristique. Suspendisse potenti. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Curabitur sem erat, suscipit nec faucibus sed, interdum quis enim. Cras id laoreet dolor. Quisque ex odio, consectetur et neque nec, sagittis tempus erat. Donec at maximus purus. Nulla molestie arcu eros, ac pulvinar ligula mattis in. Nulla ut dolor eu metus dignissim auctor. Phasellus auctor quam quis ullamcorper tincidunt.' },
+            { 'company': 'Acme Holdings', 'revenue': '$345,342', 'sales': '$4,452,222,353' },
+            { 'company': 'Acme Limited', 'revenue': '$344,442', 'sales': '$10,452,444,353' },
+            { 'company': 'Sterling', 'revenue': '$40,443,111', 'sales': '$50,433,777,564', comments: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut non orci libero. Suspendisse aliquam eu magna ac tristique. Suspendisse potenti. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Curabitur sem erat, suscipit nec faucibus sed, interdum quis enim. Cras id laoreet dolor. Quisque ex odio, consectetur et neque nec, sagittis tempus erat. Donec at maximus purus. Nulla molestie arcu eros, ac pulvinar ligula mattis in. Nulla ut dolor eu metus dignissim auctor. Phasellus auctor quam quis ullamcorper tincidunt.' },
+            { 'company': 'Apple', 'revenue': '$1,440,443,111', 'sales': '$999,509,433,777,564' },
+            { 'company': 'Apple IBS', 'revenue': '$1,440,443,111', 'sales': '$999,509,433,777,564', comments: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut non orci libero. Suspendisse aliquam eu magna ac tristique. Suspendisse potenti. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Curabitur sem erat, suscipit nec faucibus sed, interdum quis enim. Cras id laoreet dolor. Quisque ex odio, consectetur et neque nec, sagittis tempus erat. Donec at maximus purus. Nulla molestie arcu eros, ac pulvinar ligula mattis in. Nulla ut dolor eu metus dignissim auctor. Phasellus auctor quam quis ullamcorper tincidunt.' },
+            { 'company': 'Apple IBS South', 'revenue': '$1,440,443,111', 'sales': '$999,509,433,777,564' }
+          ];
+
+        });
+      });
+    </script>
+
+  </body>
+</html>

@@ -97,7 +97,9 @@ export function CellDirective($rootScope, $compile, $log){
         <span ng-if="column.isTreeColumn && hasChildren"
               ng-class="cell.treeClass(this)"
               ng-click="cell.onTreeToggle($event, this)"></span>
-        <span class="dt-cell-content"></span>
+        <span sw-popover
+              sw-popover-text="{{value}}"
+              sw-popover-group="main" class="dt-cell-content"></span>
       </div>`,
     replace: true,
     compile: function() {
