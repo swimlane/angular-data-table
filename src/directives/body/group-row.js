@@ -36,7 +36,7 @@ export function GroupRowDirective(){
               ng-click="group.onGroupToggle($event, this)">
         </span>
         <span class="dt-group-row-label">
-          {{::value.name}}
+          {{value.name}}
         </span>
       </div>`,
     replace:true

@@ -8,9 +8,9 @@ import { ColumnsByPin, ColumnGroupWidths } from 'utils/utils';
 export function ColumnTotalWidth(columns) {
   var totalWidth = 0;
 
-  columns.forEach((c) => {
+  for (let c of columns) {
     totalWidth += c.width;
-  });
+  }
 
   return totalWidth;
 }
@@ -22,9 +22,9 @@ export function ColumnTotalWidth(columns) {
 export function GetTotalFlexGrow(columns){
   var totalFlexGrow = 0;
 
-  columns.forEach((c) => {
+  for (let c of columns) {
     totalFlexGrow += c.flexGrow || 0;
-  });
+  }
 
   return totalFlexGrow;
 }
@@ -46,7 +46,9 @@ export function DistributeFlexWidth(columns, flexWidth) {
       remainingFlexWidth = flexWidth,
       totalWidth = 0;
 
-  columns.forEach((column) => {
+  for(var i=0, len=columns.length; i < len; i++) {
+    var column = columns[i];
+
     if (!column.flexGrow) {
       totalWidth += column.width;
       return;
@@ -68,7 +70,7 @@ export function DistributeFlexWidth(columns, flexWidth) {
     remainingFlexWidth -= columnFlexWidth;
 
     column.width = newColumnWidth;
-  });
+  }
 
   return {
     width: totalWidth
@@ -108,18 +110,19 @@ export function ForceFillColumnWidths(allColumns, expectedWidth){
       widthsByGroup = ColumnGroupWidths(colsByGroup, allColumns),
       availableWidth = expectedWidth - (widthsByGroup.left + widthsByGroup.right);
 
-  colsByGroup.center.forEach(function(column) {
+  for (let column of colsByGroup.center) {
     if(column.$$oldWidth){
       column.width = column.$$oldWidth;
     }
-  });
+  }
 
   var contentWidth = ColumnTotalWidth(colsByGroup.center),
       remainingWidth = availableWidth - contentWidth,
       additionWidthPerColumn = Math.floor(remainingWidth / colsByGroup.center.length),
       oldLargerThanNew = contentWidth > widthsByGroup.center;
 
-  allColumns.forEach(function(column) {
+  for(var i=0, len=allColumns.length; i < len; i++) {
+    var column = allColumns[i];
     if(!column.frozenLeft && !column.frozenRight){
       // cache first size
       if(!column.$$oldWidth){
@@ -129,5 +132,5 @@ export function ForceFillColumnWidths(allColumns, expectedWidth){
       var newSize = column.width + additionWidthPerColumn;
       column.width = oldLargerThanNew ? column.$$oldWidth : newSize;
     }
-  });
+  }
 }

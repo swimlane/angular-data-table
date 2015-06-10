@@ -25,7 +25,8 @@ export function ColumnsByPin(cols){
     right: []
   };
 
-  cols.forEach((c) => {
+  for(var i=0, len=cols.length; i < len; i++) {
+    var c = cols[i];
     if(c.frozenLeft){
       ret.left.push(c)
     } else if(c.frozenRight){
@@ -33,7 +34,7 @@ export function ColumnsByPin(cols){
     } else {
       ret.center.push(c);
     }
-  });
+  }
 
   return ret;
 };
@@ -62,9 +63,9 @@ export function DeepValueGetter(obj, path) {
       split = path.split('.');
 
   if(split.length){
-    split.forEach((p) => { 
-      current = current[p]; 
-    }); 
+    for(var i=0, len=split.length; i < len; i++) {
+      current = current[split[i]]; 
+    }
   }
   
   return current;

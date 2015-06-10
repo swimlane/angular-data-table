@@ -84,16 +84,16 @@ class DataTableController {
    * @param  {Object} columns
    */
   transposeColumnDefaults(columns){
-    columns.forEach((c, i) => {
-      c = angular.extend(angular.copy(ColumnDefaults), c);
+    for (let [index,element] of columns.entries()) {
+      element = angular.extend(angular.copy(ColumnDefaults), element);
 
-      if(!c.name){
-        this.$log.warn(`'Name' property expected but not defined.`, c);
-        c.name = Math.random();
+      if(!element.name){
+        this.$log.warn(`'Name' property expected but not defined.`, element);
+        element.name = Math.random();
       }
 
-      columns[i] = c;
-    });
+      columns[index] = element;
+    }
   }
 
   /**
@@ -159,12 +159,13 @@ class DataTableController {
       }
 
       var clientSorts = [];
-      sorts.forEach((c) => {
+      for(var i=0, len=sorts.length; i < len; i++) {
+        var c = sorts[i];
         if(c.comparator !== false){
           var dir = c.sort === 'asc' ? '' : '-';
           clientSorts.push(dir + c.prop);
         }
-      });
+      }
 
       if(clientSorts.length){
         // todo: more ideal to just resort vs splice and repush
