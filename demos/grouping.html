@@ -42,6 +42,8 @@
   </head>
   <body ng-app="app" ng-controller="HomeController">
 
+    <button type="button" ng-click="groupCountry()">Group on Country</button>
+    <button type="button" ng-click="groupYear()">Group on Year</button>
 
     <dt options="options" 
         values="data"></dt>
@@ -71,6 +73,22 @@
           $http.get('/demos/data/olympics.json').success(function(data) {
             $scope.data = data;
           });
+
+          $scope.groupCountry = function(){
+            var col = $scope.options.columns.find(function(c){
+              return c.prop === 'country';
+            });
+
+            col.group = !col.group;
+          };
+
+          $scope.groupYear = function(){
+            var col = $scope.options.columns.find(function(c){
+              return c.prop === 'year';
+            });
+
+            col.group = !col.group;
+          };
 
         });
       });
