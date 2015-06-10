@@ -77,6 +77,7 @@
 
         module.controller('HomeController', function($scope, $http, $timeout){
 
+          // demonstrates event delegation
           document.getElementById("datatable").addEventListener("click", function(e) {
             // e.target is the clicked element!
             // If it was a list item
@@ -84,9 +85,14 @@
               e.preventDefault();
               e.stopPropagation();
               var elm = angular.element(e.target);
-              console.log(elm.scope())
+              console.log('Event delegation:', elm.scope())
             }
           });
+
+          // demonstrates binding a scope of the controller
+          $scope.clicker = function(value){
+            console.log('Scope event:', value)
+          }
 
           $scope.options = {
             rowHeight: 50,
@@ -104,7 +110,8 @@
                 frozenRight: true,
                 sortable: false,
                 cellRenderer: function(scope, elm){
-                  return '<a href="#" class="util-col delete-btn" style="font-size:10px;">Delete</a>';
+                  scope.clicker = $scope.clicker;
+                  return '<a href="#" class="util-col delete-btn" ng-click="clicker(value)" style="font-size:10px;">Delete</a>';
                 },
                 headerRenderer: function(){
                   return '<span class="icon-filter util-col" title="Utilities"></span>'
