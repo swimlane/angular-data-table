@@ -1,11 +1,25 @@
 {
-  "name": "data-table",
+  "name": "angular-data-table",
+  "title": "AngularJS Data-Table",
+  "description": "AngularJS data table directive written in ES6.",
   "version": "0.0.1",
-  "description": "AngularJS data table directive",
   "repository": {
     "type": "git",
-    "url": "http://github.com/Swimlane/data-table.git"
+    "url": "git@github.com:Swimlane/data-table.git",
+    "github": "http://github.com/Swimlane/data-table.git"
   },
+  "homepage": "http://swimlane.com/",
+  "author": {
+    "name": "Swimlane",
+    "email": "austin@swimlane.com",
+    "web": "http://swimlane.com/"
+  },
+  "licenses": [
+    {
+      "type": "MIT",
+      "url": "http://opensource.org/licenses/mit-license.php"
+    }
+  ],
   "devDependencies": {
     "browser-sync": "^2.7.2",
     "del": "^1.2.0",
