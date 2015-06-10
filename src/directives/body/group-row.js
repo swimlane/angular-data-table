@@ -38,7 +38,6 @@ export function GroupRowDirective(){
         <span class="dt-group-row-label">
           {{value.name}}
         </span>
-      </div>`,
-    replace:true
+      </div>`
   };
 };
