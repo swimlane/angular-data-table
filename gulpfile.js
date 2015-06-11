@@ -24,6 +24,9 @@ var path = {
   outputCss: 'dist/**/*.css'
 };
 
+//
+// Compile Tasks
+// ------------------------------------------------------------
 gulp.task('es6', function () {
   return gulp.src(path.source)
     .pipe(plumber())
@@ -32,7 +35,6 @@ gulp.task('es6', function () {
     .pipe(gulp.dest(path.output))
     .pipe(browserSync.reload({ stream: true }));
 });
-
 
 gulp.task('less', function () {
   return gulp.src(path.less)
@@ -50,30 +52,14 @@ gulp.task('clean', function() {
 
 gulp.task('compile', function (callback) {
   return runSequence(
-    //'clean',
     ['less', 'es6'],
     callback
   );
 });
 
-gulp.task('release', function(callback) {
-  return runSequence(
-    'compile',
-    'release-compile',
-    callback
-  );
-});
-
-gulp.task('release-compile', function () {
-  var builder = new Builder();
-  return builder.loadConfig('./config.js').then(function(){
-    return builder.build('data-table', './release/data-table.js', {
-      runtime: false,
-      mangle: false
-    })
-  });
-});
-
+//
+// Dev Mode Tasks
+// ------------------------------------------------------------
 gulp.task('serve', ['compile'], function (done) {
   browserSync({
     open: false,
@@ -92,5 +78,99 @@ gulp.task('watch', ['serve'], function() {
   var watcher = gulp.watch([path.source, path.less, '*.html'], ['compile']);
   watcher.on('change', function(event) {
     console.log('File ' + event.path + ' was ' + event.type + ', running tasks...');
+  });
+});
+
+//
+// Release Tasks
+// ------------------------------------------------------------
+var excludes = {
+  buildCSS: false,
+  meta: {
+    'npm:process@0.10.1/browser': {
+      build: false
+    }
+  }
+};
+
+gulp.task('release', function(callback) {
+  return runSequence(
+    'clean',
+    'compile',
+    'release-less',
+    'release-sfx',
+    'release-sfx-min',
+    'release-sfx-runtime',
+    'release-sfx-runtime-min',
+    'release-system',
+    callback
+  );
+});
+
+gulp.task('release-less', function () {
+  return gulp.src(['src/themes/*.less', 'src/data-table.less'])
+    .pipe(less())
+    .pipe(gulp.dest(path.release));
+});
+
+gulp.task('release-system', function () {
+  var builder = new Builder();
+  return builder.loadConfig('./config.js').then(function(){
+    builder.config(excludes);
+
+    return builder.build('data-table', './release/data-table.system.js', {
+      runtime: false,
+      mangle: false
+    })
+  });
+});
+
+gulp.task('release-sfx', function () {
+  var builder = new Builder();
+  return builder.loadConfig('./config.js').then(function(){
+    builder.config(excludes);
+
+    return builder.buildSFX('data-table', './release/data-table.js', {
+      runtime: false,
+      mangle: false
+    })
+  });
+});
+
+gulp.task('release-sfx-min', function () {
+  var builder = new Builder();
+  return builder.loadConfig('./config.js').then(function(){
+    builder.config(excludes);
+
+    return builder.buildSFX('data-table', './release/data-table.min.js', {
+      runtime: false,
+      mangle: false,
+      minify: true
+    })
+  });
+});
+
+gulp.task('release-sfx-runtime', function () {
+  var builder = new Builder();
+  return builder.loadConfig('./config.js').then(function(){
+    builder.config(excludes);
+
+    return builder.buildSFX('data-table', './release/data-table.runtime.js', {
+      runtime: true,
+      mangle: false
+    })
+  });
+});
+
+gulp.task('release-sfx-runtime-min', function () {
+  var builder = new Builder();
+  return builder.loadConfig('./config.js').then(function(){
+    builder.config(excludes);
+
+    return builder.buildSFX('data-table', './release/data-table.runtime.min.js', {
+      runtime: true,
+      mangle: false,
+      minify: true
+    })
   });
 });

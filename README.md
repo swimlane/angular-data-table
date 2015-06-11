@@ -46,7 +46,26 @@ Build to ES5 via Babel ( excludes helpers ) and compile/concat run: `gulp releas
 
 #### Include
 
-Include `./release/data-table.js` file in your project and register `data-table` with your angular module.  You will need to include the [Babel Runtime](https://babeljs.io/docs/usage/runtime/) if you are not already using Babel.  Alternatively, you can reference the `./src/data-table.js` directly and use your own transpiler.
+You've got 5 different options to include this in your build depending on your setup.
+
+- `./release/data-table.js` - A standalone file that was compiled with Babel and EXCLUDES Babel runtime.
+- `./release/data-table.min.js` - A standalone minimized file that was compiled with Babel and EXCLUDES Babel runtime.
+- `./release/data-table.runtime.js` - A standalone file that was compiled with Babel and INCLUDES Babel runtime.
+- `./release/data-table.runtime.min.js` - A standalone minimized file that was compiled with Babel and INCLUDES Babel runtime.
+- `./release/data-table.system.js` - A SystemJS module compiled file that EXCLUDES Babel runtimes.
+
+There is also the CSS too:
+
+- `./release/data-table.css` - The base CSS, pretty much required
+- `./release/material.css` - Material theme
+
+If none of the above makes any sense just include `./release/data-table.runtime.min.js` and include the css files referenced above.
+
+Next include the module in your angular app module like:
+
+  var myApp = angular.module('myApp', [ 'data-table' ]);
+
+and your off to the races!
 
 ## Research
 
