@@ -30,7 +30,9 @@ Only supports [Evergreen Browsers](http://eisenbergeffect.bluespire.com/evergree
 #### Download
 
 - NPM `npm install angular-data-table`
-- JSPM `jspm install npm:angular-data-table`
+- JSPM `jspm install github:Swimlane/data-table`
+
+or Github download or clone of course!
 
 #### Run Demo
 
