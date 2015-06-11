@@ -58,7 +58,7 @@
 
       Promise.all([
         System.import('data-table'),
-        System.import('directives/menu/menu')
+        System.import('components/menu/menu')
       ]).then(function(modules) {
 
         var module = angular.module('app', [ 'data-table', 'dt.menu' ]);

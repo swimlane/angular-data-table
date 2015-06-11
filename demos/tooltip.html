@@ -52,7 +52,7 @@
 
       Promise.all([
         System.import('data-table'),
-        System.import('directives/popover/popover')
+        System.import('components/popover/popover')
       ]).then(function(modules) {
 
         var module = angular.module('app', [ 'data-table', 'popover' ]);
