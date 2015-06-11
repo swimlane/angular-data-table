@@ -13,8 +13,10 @@ Only supports [Evergreen Browsers](http://eisenbergeffect.bluespire.com/evergree
 - Column Width Flex-grow 
 - Column Add/Removing
 - Horizontal/Vertical Scrolling
-- Virtual scroll paging with traditional pager for relativity
+- Virtual Paging with linked traditional pager
 - Tree Grids
+- Cell tooltips for overflow
+- Row Grouping
 - Row Selection ( multi / single / keyboard / touch )
 - Light codebase / No external deps
 - Server Pagination / Sorting
@@ -22,7 +24,6 @@ Only supports [Evergreen Browsers](http://eisenbergeffect.bluespire.com/evergree
 - Rich header / column templates
 - Fixed AND Fluid height
 - Decoupled themeing with included Google Material theme
-
 
 ## Using It
 
@@ -47,31 +48,28 @@ Build to ES5 via Babel ( excludes helpers ) and compile/concat run: `gulp releas
 
 Include `./release/data-table.js` file in your project and register `data-table` with your angular module.  You will need to include the [Babel Runtime](https://babeljs.io/docs/usage/runtime/) if you are not already using Babel.  Alternatively, you can reference the `./src/data-table.js` directly and use your own transpiler.
 
-## Alternatives
+## Research
 
-- http://handsontable.github.io/ngHandsontable/
-- http://www.angulargrid.com/
-- https://facebook.github.io/fixed-data-table/
-- https://github.com/zippyui/react-datagrid
-- http://demos.telerik.com/kendo-ui/grid/index
-- http://ui-grid.info
-- http://demo.vaadin.com/sampler/#ui/grids-and-trees/grid
+#### Alternatives
 
-## Design Inspirations
+- [Handsome Table](http://handsontable.github.io/ngHandsontable/)
+- [Angular Grid](http://www.angulargrid.com/)
+- [React Fixed Data Table](https://facebook.github.io/fixed-data-table/)
+- [React Data Grid](https://github.com/zippyui/react-datagrid)
+- [Kendo UI Grid](http://demos.telerik.com/kendo-ui/grid/index)
+- [UI Grid](http://ui-grid.info)
+- [Vaadin](http://demo.vaadin.com/sampler/#ui/grids-and-trees/grid)
 
-- http://codepen.io/zavoloklom/pen/IGkDz
-- http://www.google.com/design/spec/components/data-tables.html#data-tables-tables-within-cards
+#### Design
 
-## Demo Data
+- [Material Table Codepen](http://codepen.io/zavoloklom/pen/IGkDz)
+- [Material Design Spec](http://www.google.com/design/spec/components/data-tables.html#data-tables-tables-within-cards)
 
-- https://github.com/angular-ui/ng-grid/blob/master/misc/site/data/100.json
-- http://jsfiddle.net/api/post/library/pure/
+#### Interesting Reads
 
-## Interesting Reads
-
-- https://github.com/bahmutov/web-worker-digest-demo
-- http://bahmutov.calepin.co/improving-angular-web-app-performance-example.html
-- http://glebbahmutov.com/blog/angular-plus-react-equals-speed-revisited/
-- https://github.com/kamilkp/angular-vs-repeat
-- https://github.com/teropa/angular-virtual-dom
+- [Angular Webworker digest](https://github.com/bahmutov/web-worker-digest-demo)
+- [Angular Performance](http://bahmutov.calepin.co/improving-angular-web-app-performance-example.html)
+- [Angular Plus React](http://glebbahmutov.com/blog/angular-plus-react-equals-speed-revisited/)
+- [angular-vs-repeat](https://github.com/kamilkp/angular-vs-repeat)
+- [angular-virtual-dom](https://github.com/teropa/angular-virtual-dom)
 - [Simple virtual repeat](http://codepen.io/2fdevs/pen/pvvXoO)

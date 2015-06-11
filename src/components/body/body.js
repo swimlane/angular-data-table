@@ -94,7 +94,6 @@ export class BodyController{
   updatePage(){
     var idxs = this.getFirstLastIndexes(),
         curPage = Math.ceil(idxs.first / this.options.paging.size);
-        //console.log(curPage)
     this.options.paging.offset = curPage;
   }
 
@@ -121,7 +120,8 @@ export class BodyController{
       this.treeColumn.relationProp : 
       this.groupColumn.prop;
 
-    for (let row of this.$scope.values) {
+    for(var i = 0, len = this.$scope.values.length; i < len; i++) {
+      var row = this.$scope.values[i];
       // build groups
       var relVal = row[parentProp];
       if(relVal){
