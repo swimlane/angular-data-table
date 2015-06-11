@@ -83,15 +83,16 @@ class DataTableController {
    * @param  {Object} columns
    */
   transposeColumnDefaults(columns){
-    for (let [index,element] of columns.entries()) {
-      element = angular.extend(angular.copy(ColumnDefaults), element);
+    for(var i=0, len=columns.length; i < len; i++) {
+      var column = columns[i];
+      column = angular.extend(angular.copy(ColumnDefaults), column);
 
-      if(!element.name){
+      if(!column.name){
         this.$log.warn(`'Name' property expected but not defined.`, element);
-        element.name = Math.random();
+        column.name = Math.random();
       }
 
-      columns[index] = element;
+      columns[i] = column;
     }
   }
 
