@@ -34,7 +34,7 @@ Only supports [Evergreen Browsers](http://eisenbergeffect.bluespire.com/evergree
 
 #### Run Demo
 
-Ensure you have the latest npm and jspm installed globally.
+Ensure you have the latest NPM and JSPM installed globally.
 
 - `npm install`
 - `gulp watch serve`
@@ -61,11 +61,27 @@ There is also the CSS too:
 
 If none of the above makes any sense just include `./release/data-table.runtime.min.js` and include the css files referenced above.
 
-Next include the module in your angular app module like:
+#### Usage
+
+Include the module in your angular app module like:
 
     var myApp = angular.module('myApp', [ 'data-table' ]);
 
-and your off to the races!
+    module.controller('HomeController', function($scope){
+      $scope.options = {
+        columns: [
+          { name: "Name", prop: "name" }
+        ]
+      };
+
+      $scope.data = [ { name: 'Austin' } ];
+    });
+
+then in your markup:
+
+    <dt options="options" values="data"></dt>
+
+and your off to the races!  For more information, reference the demo pages until docs are completed.  You can see them live by running the demo.
 
 ## Research
 
