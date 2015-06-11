@@ -63,7 +63,7 @@ If none of the above makes any sense just include `./release/data-table.runtime.
 
 Next include the module in your angular app module like:
 
-  var myApp = angular.module('myApp', [ 'data-table' ]);
+    var myApp = angular.module('myApp', [ 'data-table' ]);
 
 and your off to the races!
 
