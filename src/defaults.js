@@ -48,10 +48,10 @@ export var TableDefaults = Object.freeze({
   },
 
   // if users can select itmes
-  selectable: true,
+  selectable: false,
 
   // if users can select mutliple items
-  multiSelect: true,
+  multiSelect: false,
 
   // checkbox selection vs row click
   checkboxSelection: false,

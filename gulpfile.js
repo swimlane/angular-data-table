@@ -87,7 +87,19 @@ gulp.task('watch', ['serve'], function() {
 var excludes = {
   buildCSS: false,
   meta: {
+    'npm:angular@1.4.0': {
+      build: false
+    },
     'npm:process@0.10.1/browser': {
+      build: false
+    },
+    'github:jspm/nodelibs-process@0.1.1/index': {
+      build: false
+    },
+    'github:jspm/nodelibs-process@0.1.1': {
+      build: false
+    },
+    'github:systemjs/plugin-css@0.1.10': {
       build: false
     }
   }
