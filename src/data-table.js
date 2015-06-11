@@ -89,7 +89,7 @@ class DataTableController {
       column = angular.extend(angular.copy(ColumnDefaults), column);
 
       if(!column.name){
-        this.$log.warn(`'Name' property expected but not defined.`, element);
+        this.$log.warn(`'Name' property expected but not defined.`, column);
         column.name = Math.random();
       }
 
