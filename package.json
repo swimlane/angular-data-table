@@ -8,7 +8,7 @@
     "url": "git@github.com:Swimlane/angular-data-table.git",
     "github": "http://github.com/Swimlane/angular-data-table.git"
   },
-  "main": "./release/data-table.system.js",
+  "main": "./release/data-table.js",
   "homepage": "http://swimlane.com/",
   "author": {
     "name": "Swimlane",
