@@ -175,6 +175,7 @@ System.register("components/footer/pager", [], function(_export) {
       return $scope.page === $scope.totalPages;
     };
   }
+  PaginationController.$inject = ["$scope", "$attrs", "$parse"];
   function pagination($parse, paginationConfig) {
     return {
       restrict: 'EA',
@@ -257,6 +258,7 @@ System.register("components/footer/pager", [], function(_export) {
       }
     };
   }
+  pagination.$inject = ["$parse", "paginationConfig"];
   function pager(pagerConfig) {
     return {
       restrict: 'EA',
@@ -280,10 +282,12 @@ System.register("components/footer/pager", [], function(_export) {
       }
     };
   }
+  pager.$inject = ["pagerConfig"];
   function run($templateCache) {
     $templateCache.put('template/pagination/pager.html', '<ul class="pager">\n' + '  <li ng-class="{disabled: noPrevious(), previous: align}"><a href ng-click="selectPage(page - 1, $event)">{{getText(\'previous\')}}</a></li>\n' + '  <li ng-class="{disabled: noNext(), next: align}"><a href ng-click="selectPage(page + 1, $event)">{{getText(\'next\')}}</a></li>\n' + '</ul>');
     $templateCache.put('template/pagination/pagination.html', '<ul class="pagination">\n' + '  <li ng-if="boundaryLinks" ng-class="{disabled: noPrevious()}"><a href ng-click="selectPage(1, $event)">{{getText(\'first\')}}</a></li>\n' + '  <li ng-if="directionLinks" ng-class="{disabled: noPrevious()}"><a href ng-click="selectPage(page - 1, $event)">{{getText(\'previous\')}}</a></li>\n' + '  <li ng-repeat="page in pages track by $index" ng-class="{active: page.active}"><a href ng-click="selectPage(page.number, $event)">{{page.text}}</a></li>\n' + '  <li ng-if="directionLinks" ng-class="{disabled: noNext()}"><a href ng-click="selectPage(page + 1, $event)">{{getText(\'next\')}}</a></li>\n' + '  <li ng-if="boundaryLinks" ng-class="{disabled: noNext()}"><a href ng-click="selectPage(totalPages, $event)">{{getText(\'last\')}}</a></li>\n' + '</ul>');
   }
+  run.$inject = ["$templateCache"];
   return {
     setters: [],
     execute: function() {
@@ -1232,6 +1236,7 @@ System.register("components/footer/footer", ["npm:angular@1.4.0"], function(_exp
           $scope.page = $scope.paging.offset + 1;
           $scope.$watch('paging.offset', this.offsetChanged.bind(this));
         }
+        FooterController.$inject = ["$scope"];
         _createClass(FooterController, [{
           key: 'offsetChanged',
           value: function offsetChanged(newVal) {
@@ -1648,6 +1653,7 @@ System.register("components/body/body", ["npm:angular@1.4.0", "utils/utils", "ut
             });
           }
         }
+        BodyController.$inject = ["$scope", "$timeout", "throttle"];
         _createClass(BodyController, [{
           key: 'getFirstLastIndexes',
           value: function getFirstLastIndexes() {
@@ -1980,6 +1986,15 @@ System.register("components/body/body", ["npm:angular@1.4.0", "utils/utils", "ut
   };
 });
 
+System.register("github:systemjs/plugin-css@0.1.10", ["github:systemjs/plugin-css@0.1.10/css"], true, function(require, exports, module) {
+  var global = System.global,
+      __define = global.define;
+  global.define = undefined;
+  module.exports = require("github:systemjs/plugin-css@0.1.10/css");
+  global.define = __define;
+  return module.exports;
+});
+
 System.register("data-table", ["npm:angular@1.4.0", "utils/polyfill", "utils/throttle", "components/footer/pager", "utils/resizable", "utils/sortable", "utils/math", "utils/utils", "defaults", "components/header/header", "components/header/header-cell", "components/body/body", "components/body/row", "components/body/group-row", "components/body/cell", "components/footer/footer", "data-table.css!github:systemjs/plugin-css@0.1.10"], function(_export) {
   'use strict';
   var angular,
@@ -2086,6 +2101,7 @@ System.register("data-table", ["npm:angular@1.4.0", "utils/polyfill", "utils/thr
       }
     };
   }
+  DataTableDirective.$inject = ["$window", "$timeout", "throttle"];
   return {
     setters: [function(_angular) {
       angular = _angular['default'];
@@ -2148,6 +2164,7 @@ System.register("data-table", ["npm:angular@1.4.0", "utils/polyfill", "utils/thr
             _this.calculateColumns(newVal);
           }, true);
         }
+        DataTableController.$inject = ["$scope", "$filter", "$log"];
         _createClass(DataTableController, [{
           key: 'defaults',
           value: function defaults($scope) {

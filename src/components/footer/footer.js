@@ -7,6 +7,7 @@ export class FooterController {
    * @param  {scope}
    * @return {[type]}
    */
+  /*@ngInject*/
   constructor($scope){
     this.$scope = $scope;
     $scope.page = $scope.paging.offset + 1;

@@ -11,6 +11,7 @@ export class BodyController{
    * @param  {throttle}
    * @return {BodyController}
    */
+  /*@ngInject*/
   constructor($scope, $timeout, throttle){
     angular.extend(this, {
       $scope: $scope,

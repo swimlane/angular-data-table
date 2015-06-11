@@ -1,6 +1,7 @@
 import angular from 'angular';
 
 class DropdownController{
+  /*@ngInject*/
   constructor($scope){
     $scope.open = false;
   }

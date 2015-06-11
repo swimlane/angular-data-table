@@ -3,6 +3,7 @@ import Dropdown from './dropdown';
 import './menu.css!';
  
 class DataTableMenuController{
+  /*@ngInject*/
   constructor($scope, $timeout){
     this.$scope = $scope;
   }

@@ -30,6 +30,7 @@ class DataTableController {
    * @param  {scope}
    * @param  {filter}
    */
+  /*@ngInject*/
 	constructor($scope, $filter, $log){
     angular.extend(this, {
       $scope: $scope,

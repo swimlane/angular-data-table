@@ -8,6 +8,7 @@ var changed = require('gulp-changed');
 var Builder = require('systemjs-builder');
 var vinylPaths = require('vinyl-paths');
 var del = require('del');
+var ngAnnotate = require('gulp-ng-annotate');
 
 var compilerOptions = {
   modules: 'system',
@@ -32,6 +33,9 @@ gulp.task('es6', function () {
     .pipe(plumber())
     .pipe(changed(path.output, { extension: '.js' }))
     .pipe(babel(compilerOptions))
+    .pipe(ngAnnotate({
+      gulpWarnings: false
+    }))
     .pipe(gulp.dest(path.output))
     .pipe(browserSync.reload({ stream: true }));
 });
@@ -89,8 +93,8 @@ var excludes = {
   meta: {
     'npm:angular@1.4.0': {
       build: false
-    },
-    'npm:process@0.10.1/browser': {
+    }
+    /* 'npm:process@0.10.1/browser': {
       build: false
     },
     'github:jspm/nodelibs-process@0.1.1/index': {
@@ -101,7 +105,7 @@ var excludes = {
     },
     'github:systemjs/plugin-css@0.1.10': {
       build: false
-    }
+    } */
   }
 };
 
