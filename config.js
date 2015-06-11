@@ -17,13 +17,12 @@ System.config({
 
 System.config({
   "map": {
-    "angular/bower-angular": "github:angular/bower-angular@1.4.0",
-    "angular": "github:angular/bower-angular@1.4.0",
+    "angular": "npm:angular@1.4.0",
     "babel": "npm:babel-core@5.5.5",
     "babel-runtime": "npm:babel-runtime@5.5.5",
     "core-js": "npm:core-js@0.8.4",
-    "systemjs/plugin-css": "github:systemjs/plugin-css@0.1.10",
     "css": "github:systemjs/plugin-css@0.1.10",
+    "systemjs/plugin-css": "github:systemjs/plugin-css@0.1.10",
     "github:jspm/nodelibs-assert@0.1.0": {
       "assert": "npm:assert@1.3.0"
     },
@@ -71,6 +70,9 @@ System.config({
       "fs": "github:jspm/nodelibs-fs@0.1.2",
       "module": "github:jspm/nodelibs-module@0.1.0",
       "path": "github:jspm/nodelibs-path@0.1.0",
+      "process": "github:jspm/nodelibs-process@0.1.1"
+    },
+    "npm:angular@1.4.0": {
       "process": "github:jspm/nodelibs-process@0.1.1"
     },
     "npm:assert@1.3.0": {

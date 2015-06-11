@@ -17,6 +17,7 @@ export var requestAnimFrame = (function(){
 
 /**
  * Returns the columns by pin.
+ * @param {array} colsumns
  */
 export function ColumnsByPin(cols){
   var ret = {
@@ -55,6 +56,8 @@ export function ColumnGroupWidths(groups, all){
 
 /**
  * Returns a deep object given a string. zoo['animal.type']
+ * @param {object} obj  
+ * @param {string} path 
  */
 export function DeepValueGetter(obj, path) {
   if(!obj || !path) return obj;

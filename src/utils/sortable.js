@@ -4,7 +4,7 @@ import angular from 'angular';
  * Sortable Directive
  * http://jsfiddle.net/RubaXa/zLq5J/3/
  * https://jsfiddle.net/hrohxze0/6/
- * @param {timeout}
+ * @param {function}
  */
 export function Sortable($timeout) {
   return {

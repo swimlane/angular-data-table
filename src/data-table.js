@@ -2,7 +2,7 @@ import angular from 'angular';
 
 import './utils/polyfill';
 import { debounce, throttle } from './utils/throttle';
-import Pager from './directives/footer/pager';
+import Pager from './components/footer/pager';
 
 import { Resizable } from './utils/resizable';
 import { Sortable } from './utils/sortable';
@@ -11,15 +11,15 @@ import { ColumnsByPin, ColumnGroupWidths } from 'utils/utils';
 
 import { TableDefaults, ColumnDefaults } from './defaults';
 
-import { HeaderController, HeaderDirective } from './directives/header/header';
-import { HeaderCellDirective, HeaderCellController } from './directives/header/header-cell';
+import { HeaderController, HeaderDirective } from './components/header/header';
+import { HeaderCellDirective, HeaderCellController } from './components/header/header-cell';
 
-import { BodyController, BodyHelper, BodyDirective } from './directives/body/body';
-import { RowController, RowDirective } from './directives/body/row';
-import { GroupRowController, GroupRowDirective } from './directives/body/group-row';
-import { CellController, CellDirective } from './directives/body/cell';
+import { BodyController, BodyHelper, BodyDirective } from './components/body/body';
+import { RowController, RowDirective } from './components/body/row';
+import { GroupRowController, GroupRowDirective } from './components/body/group-row';
+import { CellController, CellDirective } from './components/body/cell';
 
-import { FooterController, FooterDirective } from './directives/footer/footer';
+import { FooterController, FooterDirective } from './components/footer/footer';
 
 import './data-table.css!';
 

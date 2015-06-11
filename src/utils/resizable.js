@@ -1,9 +1,9 @@
 /**
  * Resizable directive
  * http://stackoverflow.com/questions/18368485/angular-js-resizable-div-directive
- * @param {document}
- * @param {debounce}
- * @param {timeout}
+ * @param {object}
+ * @param {function}
+ * @param {function}
  */
 export function Resizable($document, debounce, $timeout){
   return {

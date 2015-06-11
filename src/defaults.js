@@ -1,3 +1,7 @@
+/**
+ * Default Table Options
+ * @type {object}
+ */
 export var TableDefaults = Object.freeze({
 
   // Enable vertical scrollbars
@@ -64,6 +68,10 @@ export var TableDefaults = Object.freeze({
 
 });
 
+/**
+ * Default Column Options
+ * @type {object}
+ */
 export var ColumnDefaults = Object.freeze({
 
   // pinned to the left

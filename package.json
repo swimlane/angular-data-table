@@ -36,7 +36,7 @@
   "jspm": {
     "directories": {},
     "dependencies": {
-      "angular/bower-angular": "github:angular/bower-angular@^1.4.0",
+      "angular": "npm:angular@^1.4.0",
       "systemjs/plugin-css": "github:systemjs/plugin-css@0.1.10"
     },
     "devDependencies": {

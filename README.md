@@ -23,20 +23,29 @@ Only supports [Evergreen Browsers](http://eisenbergeffect.bluespire.com/evergree
 - Fixed AND Fluid height
 - Decoupled themeing with included Google Material theme
 
-## Download it
+
+## Using It
+
+#### Download
 
 - NPM `npm install angular-data-table`
 - JSPM `jspm install npm:angular-data-table`
 
-## Run it
+#### Run Demo
+
+Ensure you have the latest npm and jspm installed globally.
 
 - `npm install`
 - `gulp watch serve`
 - Open your browser to `http://localhost:9000`
 
-## Build it
+#### Build
 
 Build to ES5 via Babel ( excludes helpers ) and compile/concat run: `gulp release`
+
+#### Include
+
+Include `./release/data-table.js` file in your project and register `data-table` with your angular module.  You will need to include the [Babel Runtime](https://babeljs.io/docs/usage/runtime/) if you are not already using Babel.  Alternatively, you can reference the `./src/data-table.js` directly and use your own transpiler.
 
 ## Alternatives
 
