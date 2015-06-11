@@ -54,7 +54,6 @@ You've got 5 different options to include this in your build depending on your s
 - `./release/data-table.min.js` - A standalone minimized file that was compiled with Babel and EXCLUDES Babel runtime.
 - `./release/data-table.runtime.js` - A standalone file that was compiled with Babel and INCLUDES Babel runtime.
 - `./release/data-table.runtime.min.js` - A standalone minimized file that was compiled with Babel and INCLUDES Babel runtime.
-- `./release/data-table.system.js` - A SystemJS module compiled file that EXCLUDES Babel runtimes.
 
 There is also the CSS too:
 

@@ -360,8 +360,6 @@
 
 (['data-table'], function(System) {
 
-System.register("data-table.css!github:systemjs/plugin-css@0.1.10", [], false, function() { console.log("SystemJS Builder - Plugin for data-table.css!github:systemjs/plugin-css@0.1.10 does not support sfx builds"); });
-
 System.register("utils/polyfill", [], function(_export) {
   "use strict";
   return {
@@ -1624,79 +1622,6 @@ System.register("components/footer/footer", ["npm:angular@1.4.0"], function(_exp
   };
 });
 
-System.register("github:systemjs/plugin-css@0.1.10/css", [], true, function(require, exports, module) {
-  var global = System.global,
-      __define = global.define;
-  global.define = undefined;
-  if (typeof window !== 'undefined') {
-    var waitSeconds = 100;
-    var head = document.getElementsByTagName('head')[0];
-    var links = document.getElementsByTagName('link');
-    var linkHrefs = [];
-    for (var i = 0; i < links.length; i++) {
-      linkHrefs.push(links[i].href);
-    }
-    var isWebkit = !!window.navigator.userAgent.match(/AppleWebKit\/([^ ;]*)/);
-    var webkitLoadCheck = function(link, callback) {
-      setTimeout(function() {
-        for (var i = 0; i < document.styleSheets.length; i++) {
-          var sheet = document.styleSheets[i];
-          if (sheet.href == link.href)
-            return callback();
-        }
-        webkitLoadCheck(link, callback);
-      }, 10);
-    };
-    var noop = function() {};
-    var loadCSS = function(url) {
-      return new Promise(function(resolve, reject) {
-        var timeout = setTimeout(function() {
-          reject('Unable to load CSS');
-        }, waitSeconds * 1000);
-        var _callback = function() {
-          clearTimeout(timeout);
-          link.onload = noop;
-          setTimeout(function() {
-            resolve('');
-          }, 7);
-        };
-        var link = document.createElement('link');
-        link.type = 'text/css';
-        link.rel = 'stylesheet';
-        link.href = url;
-        if (!isWebkit)
-          link.onload = _callback;
-        else
-          webkitLoadCheck(link, _callback);
-        head.appendChild(link);
-      });
-    };
-    exports.fetch = function(load) {
-      for (var i = 0; i < linkHrefs.length; i++)
-        if (load.address == linkHrefs[i])
-          return '';
-      return loadCSS(load.address);
-    };
-  } else {
-    exports.fetch = function(load) {
-      if (this.buildCSS === false)
-        load.metadata.build = false;
-      load.metadata.format = 'defined';
-      return '';
-    };
-    exports.bundle = function(loads, opts) {
-      var loader = this;
-      if (loader.buildCSS === false)
-        return '';
-      return loader.import('./css-builder', {name: module.id}).then(function(builder) {
-        return builder.call(loader, loads, opts);
-      });
-    };
-  }
-  global.define = __define;
-  return module.exports;
-});
-
 System.register("utils/math", ["npm:angular@1.4.0", "utils/utils"], function(_export) {
   'use strict';
   var angular,
@@ -2349,16 +2274,7 @@ System.register("components/body/body", ["npm:angular@1.4.0", "utils/utils", "ut
   };
 });
 
-System.register("github:systemjs/plugin-css@0.1.10", ["github:systemjs/plugin-css@0.1.10/css"], true, function(require, exports, module) {
-  var global = System.global,
-      __define = global.define;
-  global.define = undefined;
-  module.exports = require("github:systemjs/plugin-css@0.1.10/css");
-  global.define = __define;
-  return module.exports;
-});
-
-System.register("data-table", ["npm:angular@1.4.0", "utils/polyfill", "utils/throttle", "components/footer/pager", "utils/resizable", "utils/sortable", "utils/math", "utils/utils", "defaults", "components/header/header", "components/header/header-cell", "components/body/body", "components/body/row", "components/body/group-row", "components/body/cell", "components/footer/footer", "data-table.css!github:systemjs/plugin-css@0.1.10"], function(_export) {
+System.register("data-table", ["npm:angular@1.4.0", "utils/polyfill", "utils/throttle", "components/footer/pager", "utils/resizable", "utils/sortable", "utils/math", "utils/utils", "defaults", "components/header/header", "components/header/header-cell", "components/body/body", "components/body/row", "components/body/group-row", "components/body/cell", "components/footer/footer"], function(_export) {
   'use strict';
   var angular,
       debounce,
@@ -2508,7 +2424,7 @@ System.register("data-table", ["npm:angular@1.4.0", "utils/polyfill", "utils/thr
     }, function(_componentsFooterFooter) {
       FooterController = _componentsFooterFooter.FooterController;
       FooterDirective = _componentsFooterFooter.FooterDirective;
-    }, function(_dataTableCss) {}],
+    }],
     execute: function() {
       DataTableController = (function() {
         function DataTableController($scope, $filter, $log) {
@@ -2555,7 +2471,7 @@ System.register("data-table", ["npm:angular@1.4.0", "utils/polyfill", "utils/thr
               var column = columns[i];
               column = angular.extend(angular.copy(ColumnDefaults), column);
               if (!column.name) {
-                this.$log.warn('\'Name\' property expected but not defined.', element);
+                this.$log.warn('\'Name\' property expected but not defined.', column);
                 column.name = Math.random();
               }
               columns[i] = column;

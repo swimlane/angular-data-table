@@ -21,8 +21,6 @@ import { CellController, CellDirective } from './components/body/cell';
 
 import { FooterController, FooterDirective } from './components/footer/footer';
 
-import './data-table.css!';
-
 class DataTableController {
 
   /**

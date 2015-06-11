@@ -94,18 +94,6 @@ var excludes = {
     'npm:angular@1.4.0': {
       build: false
     }
-    /* 'npm:process@0.10.1/browser': {
-      build: false
-    },
-    'github:jspm/nodelibs-process@0.1.1/index': {
-      build: false
-    },
-    'github:jspm/nodelibs-process@0.1.1': {
-      build: false
-    },
-    'github:systemjs/plugin-css@0.1.10': {
-      build: false
-    } */
   }
 };
 
@@ -118,7 +106,6 @@ gulp.task('release', function(callback) {
     'release-sfx-min',
     'release-sfx-runtime',
     'release-sfx-runtime-min',
-    'release-system',
     callback
   );
 });
@@ -127,18 +114,6 @@ gulp.task('release-less', function () {
   return gulp.src(['src/themes/*.less', 'src/data-table.less'])
     .pipe(less())
     .pipe(gulp.dest(path.release));
-});
-
-gulp.task('release-system', function () {
-  var builder = new Builder();
-  return builder.loadConfig('./config.js').then(function(){
-    builder.config(excludes);
-
-    return builder.build('data-table', './release/data-table.system.js', {
-      runtime: false,
-      mangle: false
-    })
-  });
 });
 
 gulp.task('release-sfx', function () {

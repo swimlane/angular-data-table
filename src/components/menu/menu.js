@@ -1,7 +1,6 @@
 import angular from 'angular';
 import Dropdown from './dropdown';
-import './menu.css!';
- 
+
 class DataTableMenuController{
   /*@ngInject*/
   constructor($scope, $timeout){
