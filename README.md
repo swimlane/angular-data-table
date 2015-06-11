@@ -98,7 +98,9 @@ and your off to the races!  For more information, reference the demo pages until
 
 #### Design
 
-- [Material Table Codepen](http://codepen.io/zavoloklom/pen/IGkDz)
+- [Material Table](http://iamisti.github.io/md-data-table/)
+- [Material Table 2](http://danielnagy.me/md-data-table/)
+- [Material Table 3](http://codepen.io/zavoloklom/pen/IGkDz)
 - [Material Design Spec](http://www.google.com/design/spec/components/data-tables.html#data-tables-tables-within-cards)
 
 #### Interesting Reads
