@@ -32,7 +32,7 @@ gulp.task('es6', function () {
     .pipe(changed(path.output, { extension: '.js' }))
     .pipe(babel({
       modules: 'system',
-      moduleIds: false,
+      moduleIds: true,
       comments: true,
       compact: false
     }))

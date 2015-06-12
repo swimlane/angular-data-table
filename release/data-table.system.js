@@ -1,7 +1,7 @@
-System.register(['angular', './utils/polyfill', './utils/throttle', './utils/resizable', './utils/sortable', './utils/math', 'utils/utils', './defaults', './components/header/header', './components/header/header-cell', './components/body/body', './components/body/row', './components/body/group-row', './components/body/cell', './components/footer/footer', './components/footer/pager'], function (_export) {
+System.register('data-table', ['angular', './utils/polyfill', './utils/throttle', './utils/resizable', './utils/sortable', './utils/math', 'utils/utils', './defaults', './components/header/header', './components/header/header-cell', './components/body/body', './components/body/row', './components/body/group-row', './components/body/cell', './components/footer/footer', './components/footer/pager'], function (_export) {
   'use strict';
 
-  var angular, debounce, throttle, Resizable, Sortable, AdjustColumnWidths, ForceFillColumnWidths, ColumnsByPin, ColumnGroupWidths, TableDefaults, ColumnDefaults, HeaderController, HeaderDirective, HeaderCellDirective, HeaderCellController, BodyController, BodyHelper, BodyDirective, RowController, RowDirective, GroupRowController, GroupRowDirective, CellController, CellDirective, FooterController, FooterDirective, PagerController, PagerDirective, DataTableController;
+  var angular, debounce, throttle, Resizable, Sortable, AdjustColumnWidths, ForceFillColumnWidths, ColumnsByPin, ColumnGroupWidths, CamelCase, TableDefaults, ColumnDefaults, HeaderController, HeaderDirective, HeaderCellDirective, HeaderCellController, BodyController, BodyHelper, BodyDirective, RowController, RowDirective, GroupRowController, GroupRowDirective, CellController, CellDirective, FooterController, FooterDirective, PagerController, PagerDirective, DataTableController;
 
   var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
@@ -17,8 +17,8 @@ System.register(['angular', './utils/polyfill', './utils/throttle', './utils/res
       scope: {
         options: '=',
         values: '=',
-        selected: '=',
-        expanded: '=',
+        selected: '=?',
+        expanded: '=?',
         onSelect: '&',
         onSort: '&',
         onTreeToggle: '&',
@@ -76,6 +76,7 @@ System.register(['angular', './utils/polyfill', './utils/throttle', './utils/res
     }, function (_utilsUtils) {
       ColumnsByPin = _utilsUtils.ColumnsByPin;
       ColumnGroupWidths = _utilsUtils.ColumnGroupWidths;
+      CamelCase = _utilsUtils.CamelCase;
     }, function (_defaults) {
       TableDefaults = _defaults.TableDefaults;
       ColumnDefaults = _defaults.ColumnDefaults;
@@ -185,6 +186,10 @@ System.register(['angular', './utils/polyfill', './utils/throttle', './utils/res
               if (!column.name) {
                 this.$log.warn('\'Name\' property expected but not defined.', column);
                 column.name = Math.random();
+              }
+
+              if (column.name && !column.prop) {
+                column.prop = CamelCase(column.name);
               }
 
               columns[i] = column;
@@ -385,7 +390,7 @@ System.register(['angular', './utils/polyfill', './utils/throttle', './utils/res
     }
   };
 });
-System.register([], function (_export) {
+System.register('defaults', [], function (_export) {
   /**
    * Default Table Options
    * @type {object}
@@ -536,7 +541,7 @@ System.register([], function (_export) {
     }
   };
 });
-System.register([], function (_export) {
+System.register("utils/keys", [], function (_export) {
   /**
    * Shortcut for key handlers
    * @type {Object}
@@ -576,7 +581,7 @@ System.register([], function (_export) {
     }
   };
 });
-System.register(['angular', 'utils/utils'], function (_export) {
+System.register('utils/math', ['angular', 'utils/utils'], function (_export) {
   'use strict';
 
   var angular, ColumnsByPin, ColumnGroupWidths;
@@ -803,7 +808,7 @@ System.register(['angular', 'utils/utils'], function (_export) {
     execute: function () {}
   };
 });
-System.register([], function (_export) {
+System.register("utils/polyfill", [], function (_export) {
   /**
    * Array.prototype.find()
    * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/find
@@ -853,7 +858,7 @@ System.register([], function (_export) {
     }
   };
 });
-System.register([], function (_export) {
+System.register('utils/resizable', [], function (_export) {
   /**
    * Resizable directive
    * http://stackoverflow.com/questions/18368485/angular-js-resizable-div-directive
@@ -928,7 +933,7 @@ System.register([], function (_export) {
     }
   };
 });
-System.register(['angular'], function (_export) {
+System.register('utils/sortable', ['angular'], function (_export) {
   'use strict';
 
   var angular;
@@ -1027,7 +1032,7 @@ System.register(['angular'], function (_export) {
     execute: function () {}
   };
 });
-System.register(['angular'], function (_export) {
+System.register('utils/throttle', ['angular'], function (_export) {
   'use strict';
 
   var angular;
@@ -1111,10 +1116,10 @@ System.register(['angular'], function (_export) {
     }
   };
 });
-System.register(['utils/math'], function (_export) {
+System.register('utils/utils', ['utils/math'], function (_export) {
   'use strict';
 
-  var ColumnTotalWidth, requestAnimFrame;
+  var ColumnTotalWidth, requestAnimFrame, CamelCase;
 
   _export('ColumnsByPin', ColumnsByPin);
 
@@ -1204,264 +1209,33 @@ System.register(['utils/math'], function (_export) {
       _export('requestAnimFrame', requestAnimFrame);
 
       ;;
+
+      /**
+       * Converts strings from something to camel case
+       * http://stackoverflow.com/questions/10425287/convert-dash-separated-string-to-camelcase
+       * @param  {string} str 
+       * @return {string} camel case string
+       */
+
+      CamelCase = function CamelCase(str) {
+        // Replace special characters with a space
+        str = str.replace(/[^a-zA-Z0-9 ]/g, ' ');
+        // put a space before an uppercase letter
+        str = str.replace(/([a-z](?=[A-Z]))/g, '$1 ');
+        // Lower case first character and some other stuff
+        str = str.replace(/([^a-zA-Z0-9 ])|^[0-9]+/g, '').trim().toLowerCase();
+        // uppercase characters preceded by a space or number
+        str = str.replace(/([ 0-9]+)([a-zA-Z])/g, function (a, b, c) {
+          return b.trim() + c.toUpperCase();
+        });
+        return str;
+      };
+
+      _export('CamelCase', CamelCase);
     }
   };
 });
-System.register(['angular'], function (_export) {
-  'use strict';
-
-  var angular, FooterController;
-
-  var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
-
-  _export('FooterDirective', FooterDirective);
-
-  function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
-
-  function FooterDirective() {
-    return {
-      restrict: 'E',
-      controller: 'FooterController',
-      controllerAs: 'footer',
-      scope: {
-        paging: '=',
-        onPage: '&'
-      },
-      template: '<div class="dt-footer">\n        <div class="page-count">{{paging.count}} total</div>\n        <dt-pager page="page"\n               size="paging.size"\n               count="paging.count"\n               on-page="footer.onPage(this, page)"\n               ng-show="paging.count > 1">\n         </dt-pager>\n      </div>',
-      replace: true
-    };
-  }
-
-  return {
-    setters: [function (_angular) {
-      angular = _angular['default'];
-    }],
-    execute: function () {
-      FooterController = (function () {
-
-        /**
-         * Creates an instance of the Footer Controller
-         * @param  {scope}
-         * @return {[type]}
-         */
-        /*@ngInject*/
-
-        function FooterController($scope) {
-          var _this = this;
-
-          _classCallCheck(this, FooterController);
-
-          $scope.page = $scope.paging.offset + 1;
-          $scope.$watch('paging.offset', function (newVal) {
-            _this.offsetChanged($scope, newVal);
-          });
-        }
-        FooterController.$inject = ["$scope"];
-
-        _createClass(FooterController, [{
-          key: 'offsetChanged',
-
-          /**
-           * The offset ( page ) changed externally, update the page
-           * @param  {new offset}
-           */
-          value: function offsetChanged(scope, newVal) {
-            scope.page = newVal + 1;
-          }
-        }, {
-          key: 'onPage',
-
-          /**
-           * The pager was invoked
-           * @param  {scope}
-           */
-          value: function onPage(scope, page) {
-            scope.paging.offset = page - 1;
-            scope.onPage({
-              offset: scope.paging.offset,
-              size: scope.paging.size
-            });
-          }
-        }]);
-
-        return FooterController;
-      })();
-
-      _export('FooterController', FooterController);
-
-      ;
-
-      ;
-    }
-  };
-});
-System.register(['angular'], function (_export) {
-  'use strict';
-
-  var angular, PagerController;
-
-  var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
-
-  _export('PagerDirective', PagerDirective);
-
-  function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
-
-  function PagerDirective() {
-    return {
-      restrict: 'E',
-      controller: 'PagerController',
-      controllerAs: 'pager',
-      scope: {
-        page: '=',
-        size: '=',
-        count: '=',
-        onPage: '&'
-      },
-      template: '<div class="dt-pager">\n        <ul class="pager">\n          <li ng-class="{ disabled: !pager.canPrevious(this) }">\n            <a href ng-click="pager.selectPage(this, 1)" class="icon-left"></a>\n          </li>\n          <li ng-repeat="pg in pager.pages track by $index" ng-class="{ active: pg.active }">\n            <a href ng-click="pager.selectPage(this, pg.number)">{{pg.text}}</a>\n          </li>\n          <li ng-class="{ disabled: !pager.canNext(this) }">\n            <a href ng-click="pager.selectPage(this, pager.totalPages)" class="icon-right"></a>\n          </li>\n        </ul>\n      </div>',
-      replace: true
-    };
-  }
-
-  return {
-    setters: [function (_angular) {
-      angular = _angular['default'];
-    }],
-    execute: function () {
-      PagerController = (function () {
-
-        /**
-         * Creates an instance of the Pager Controller
-         * @param  {object} $scope   
-         */
-        /*@ngInject*/
-
-        function PagerController($scope) {
-          var _this = this;
-
-          _classCallCheck(this, PagerController);
-
-          angular.extend(this, {
-            size: $scope.size,
-            count: $scope.count
-          });
-
-          this.totalPages = this.calcTotalPages();
-          $scope.$watch('page', function (newVal) {
-            if (newVal !== 0 && newVal <= _this.totalPages) {
-              _this.getPages(newVal);
-            }
-          });
-        }
-        PagerController.$inject = ["$scope"];
-
-        _createClass(PagerController, [{
-          key: 'calcTotalPages',
-
-          /**
-           * Calculates the total number of pages given the count.
-           * @return {int} page count
-           */
-          value: function calcTotalPages() {
-            var count = this.size < 1 ? 1 : Math.ceil(this.count / this.size);
-            return Math.max(count || 0, 1);
-          }
-        }, {
-          key: 'selectPage',
-
-          /**
-           * Select a page
-           * @param  {object} scope 
-           * @param  {int} num   
-           */
-          value: function selectPage(scope, num) {
-            if (num > 0 && num <= this.totalPages) {
-              scope.page = num;
-              scope.onPage({
-                page: num
-              });
-            }
-          }
-        }, {
-          key: 'canPrevious',
-
-          /**
-           * Determines if the pager can go previous
-           * @param  {scope} scope 
-           * @return {boolean}
-           */
-          value: function canPrevious(scope) {
-            return scope.page !== 1;
-          }
-        }, {
-          key: 'canNext',
-
-          /**
-           * Determines if the pager can go forward
-           * @param  {object} scope 
-           * @return {boolean}       
-           */
-          value: function canNext(scope) {
-            return scope.page <= this.totalPages;
-          }
-        }, {
-          key: 'getPages',
-
-          /**
-           * Gets the page set given the current page
-           * @param  {int} page 
-           */
-          value: function getPages(page) {
-            var pages = [],
-                startPage = 1,
-                endPage = this.totalPages,
-                maxSize = 5,
-                isMaxSized = maxSize < this.totalPages;
-
-            if (isMaxSized) {
-              startPage = (Math.ceil(page / maxSize) - 1) * maxSize + 1;
-              endPage = Math.min(startPage + maxSize - 1, this.totalPages);
-            }
-
-            for (var number = startPage; number <= endPage; number++) {
-              pages.push({
-                number: number,
-                text: number,
-                active: number === page
-              });
-            }
-
-            if (isMaxSized) {
-              if (startPage > 1) {
-                pages.unshift({
-                  number: startPage - 1,
-                  text: '...'
-                });
-              }
-
-              if (endPage < this.totalPages) {
-                pages.push({
-                  number: endPage + 1,
-                  text: '...'
-                });
-              }
-            }
-
-            this.pages = pages;
-          }
-        }]);
-
-        return PagerController;
-      })();
-
-      _export('PagerController', PagerController);
-
-      ;
-
-      ;
-    }
-  };
-});
-System.register(['angular', 'utils/utils', 'utils/keys'], function (_export) {
+System.register('components/body/body', ['angular', 'utils/utils', 'utils/keys'], function (_export) {
   'use strict';
 
   var angular, requestAnimFrame, ColumnsByPin, KEYS, BodyController, BodyHelper;
@@ -1484,8 +1258,8 @@ System.register(['angular', 'utils/utils', 'utils/keys'], function (_export) {
         columnWidths: '=',
         values: '=',
         options: '=',
-        selected: '=',
-        expanded: '=',
+        selected: '=?',
+        expanded: '=?',
         onPage: '&',
         onTreeToggle: '&'
       },
@@ -2150,7 +1924,7 @@ System.register(['angular', 'utils/utils', 'utils/keys'], function (_export) {
     }
   };
 });
-System.register(['angular'], function (_export) {
+System.register('components/body/cell', ['angular'], function (_export) {
   'use strict';
 
   var angular, CellController;
@@ -2312,7 +2086,7 @@ System.register(['angular'], function (_export) {
     }
   };
 });
-System.register(['angular'], function (_export) {
+System.register('components/body/group-row', ['angular'], function (_export) {
   'use strict';
 
   var angular, GroupRowController;
@@ -2376,7 +2150,7 @@ System.register(['angular'], function (_export) {
     }
   };
 });
-System.register(['angular', 'utils/utils'], function (_export) {
+System.register('components/body/row', ['angular', 'utils/utils'], function (_export) {
   'use strict';
 
   var angular, DeepValueGetter, RowController;
@@ -2492,7 +2266,261 @@ System.register(['angular', 'utils/utils'], function (_export) {
     }
   };
 });
-System.register(['angular', 'utils/resizable'], function (_export) {
+System.register('components/footer/footer', ['angular'], function (_export) {
+  'use strict';
+
+  var angular, FooterController;
+
+  var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+  _export('FooterDirective', FooterDirective);
+
+  function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+  function FooterDirective() {
+    return {
+      restrict: 'E',
+      controller: 'FooterController',
+      controllerAs: 'footer',
+      scope: {
+        paging: '=',
+        onPage: '&'
+      },
+      template: '<div class="dt-footer">\n        <div class="page-count">{{paging.count}} total</div>\n        <dt-pager page="page"\n               size="paging.size"\n               count="paging.count"\n               on-page="footer.onPage(this, page)"\n               ng-show="paging.count > 1">\n         </dt-pager>\n      </div>',
+      replace: true
+    };
+  }
+
+  return {
+    setters: [function (_angular) {
+      angular = _angular['default'];
+    }],
+    execute: function () {
+      FooterController = (function () {
+
+        /**
+         * Creates an instance of the Footer Controller
+         * @param  {scope}
+         * @return {[type]}
+         */
+        /*@ngInject*/
+
+        function FooterController($scope) {
+          var _this = this;
+
+          _classCallCheck(this, FooterController);
+
+          $scope.page = $scope.paging.offset + 1;
+          $scope.$watch('paging.offset', function (newVal) {
+            _this.offsetChanged($scope, newVal);
+          });
+        }
+        FooterController.$inject = ["$scope"];
+
+        _createClass(FooterController, [{
+          key: 'offsetChanged',
+
+          /**
+           * The offset ( page ) changed externally, update the page
+           * @param  {new offset}
+           */
+          value: function offsetChanged(scope, newVal) {
+            scope.page = newVal + 1;
+          }
+        }, {
+          key: 'onPage',
+
+          /**
+           * The pager was invoked
+           * @param  {scope}
+           */
+          value: function onPage(scope, page) {
+            scope.paging.offset = page - 1;
+            scope.onPage({
+              offset: scope.paging.offset,
+              size: scope.paging.size
+            });
+          }
+        }]);
+
+        return FooterController;
+      })();
+
+      _export('FooterController', FooterController);
+
+      ;
+
+      ;
+    }
+  };
+});
+System.register('components/footer/pager', ['angular'], function (_export) {
+  'use strict';
+
+  var angular, PagerController;
+
+  var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+  _export('PagerDirective', PagerDirective);
+
+  function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+  function PagerDirective() {
+    return {
+      restrict: 'E',
+      controller: 'PagerController',
+      controllerAs: 'pager',
+      scope: {
+        page: '=',
+        size: '=',
+        count: '=',
+        onPage: '&'
+      },
+      template: '<div class="dt-pager">\n        <ul class="pager">\n          <li ng-class="{ disabled: !pager.canPrevious(this) }">\n            <a href ng-click="pager.selectPage(this, 1)" class="icon-left"></a>\n          </li>\n          <li ng-repeat="pg in pager.pages track by $index" ng-class="{ active: pg.active }">\n            <a href ng-click="pager.selectPage(this, pg.number)">{{pg.text}}</a>\n          </li>\n          <li ng-class="{ disabled: !pager.canNext(this) }">\n            <a href ng-click="pager.selectPage(this, pager.totalPages)" class="icon-right"></a>\n          </li>\n        </ul>\n      </div>',
+      replace: true
+    };
+  }
+
+  return {
+    setters: [function (_angular) {
+      angular = _angular['default'];
+    }],
+    execute: function () {
+      PagerController = (function () {
+
+        /**
+         * Creates an instance of the Pager Controller
+         * @param  {object} $scope   
+         */
+        /*@ngInject*/
+
+        function PagerController($scope) {
+          var _this = this;
+
+          _classCallCheck(this, PagerController);
+
+          angular.extend(this, {
+            size: $scope.size,
+            count: $scope.count
+          });
+
+          this.totalPages = this.calcTotalPages();
+          $scope.$watch('page', function (newVal) {
+            if (newVal !== 0 && newVal <= _this.totalPages) {
+              _this.getPages(newVal);
+            }
+          });
+        }
+        PagerController.$inject = ["$scope"];
+
+        _createClass(PagerController, [{
+          key: 'calcTotalPages',
+
+          /**
+           * Calculates the total number of pages given the count.
+           * @return {int} page count
+           */
+          value: function calcTotalPages() {
+            var count = this.size < 1 ? 1 : Math.ceil(this.count / this.size);
+            return Math.max(count || 0, 1);
+          }
+        }, {
+          key: 'selectPage',
+
+          /**
+           * Select a page
+           * @param  {object} scope 
+           * @param  {int} num   
+           */
+          value: function selectPage(scope, num) {
+            if (num > 0 && num <= this.totalPages) {
+              scope.page = num;
+              scope.onPage({
+                page: num
+              });
+            }
+          }
+        }, {
+          key: 'canPrevious',
+
+          /**
+           * Determines if the pager can go previous
+           * @param  {scope} scope 
+           * @return {boolean}
+           */
+          value: function canPrevious(scope) {
+            return scope.page !== 1;
+          }
+        }, {
+          key: 'canNext',
+
+          /**
+           * Determines if the pager can go forward
+           * @param  {object} scope 
+           * @return {boolean}       
+           */
+          value: function canNext(scope) {
+            return scope.page <= this.totalPages;
+          }
+        }, {
+          key: 'getPages',
+
+          /**
+           * Gets the page set given the current page
+           * @param  {int} page 
+           */
+          value: function getPages(page) {
+            var pages = [],
+                startPage = 1,
+                endPage = this.totalPages,
+                maxSize = 5,
+                isMaxSized = maxSize < this.totalPages;
+
+            if (isMaxSized) {
+              startPage = (Math.ceil(page / maxSize) - 1) * maxSize + 1;
+              endPage = Math.min(startPage + maxSize - 1, this.totalPages);
+            }
+
+            for (var number = startPage; number <= endPage; number++) {
+              pages.push({
+                number: number,
+                text: number,
+                active: number === page
+              });
+            }
+
+            if (isMaxSized) {
+              if (startPage > 1) {
+                pages.unshift({
+                  number: startPage - 1,
+                  text: '...'
+                });
+              }
+
+              if (endPage < this.totalPages) {
+                pages.push({
+                  number: endPage + 1,
+                  text: '...'
+                });
+              }
+            }
+
+            this.pages = pages;
+          }
+        }]);
+
+        return PagerController;
+      })();
+
+      _export('PagerController', PagerController);
+
+      ;
+
+      ;
+    }
+  };
+});
+System.register('components/header/header-cell', ['angular', 'utils/resizable'], function (_export) {
   'use strict';
 
   var angular, Resizable, HeaderCellController;
@@ -2656,7 +2684,7 @@ System.register(['angular', 'utils/resizable'], function (_export) {
     }
   };
 });
-System.register(['angular', 'utils/sortable'], function (_export) {
+System.register('components/header/header', ['angular', 'utils/sortable'], function (_export) {
   'use strict';
 
   var angular, Sortable, HeaderController;
@@ -2823,7 +2851,7 @@ System.register(['angular', 'utils/sortable'], function (_export) {
     }
   };
 });
-System.register(['angular', './dropdown'], function (_export) {
+System.register('components/menu/context', ['angular', './dropdown'], function (_export) {
   'use strict';
 
   var angular, Dropdown, ContextMenuController;
@@ -2853,7 +2881,7 @@ System.register(['angular', './dropdown'], function (_export) {
     }
   };
 });
-System.register(['angular'], function (_export) {
+System.register('components/menu/dropdown', ['angular'], function (_export) {
   'use strict';
 
   var angular, DropdownController;
@@ -2971,7 +2999,7 @@ System.register(['angular'], function (_export) {
     }
   };
 });
-System.register(['angular', './dropdown'], function (_export) {
+System.register('components/menu/menu', ['angular', './dropdown'], function (_export) {
   'use strict';
 
   var angular, Dropdown, DataTableMenuController;
@@ -3041,7 +3069,7 @@ System.register(['angular', './dropdown'], function (_export) {
     }
   };
 });
-System.register(['angular'], function (_export) {
+System.register('components/popover/directive', ['angular'], function (_export) {
   'use strict';
 
   var angular;
@@ -3280,7 +3308,7 @@ System.register(['angular'], function (_export) {
     }
   };
 });
-System.register(['angular', './directive', './registry', './position'], function (_export) {
+System.register('components/popover/popover', ['angular', './directive', './registry', './position'], function (_export) {
   'use strict';
 
   var angular, PopoverDirective, PopoverRegistry, PositionHelper;
@@ -3299,7 +3327,7 @@ System.register(['angular', './directive', './registry', './position'], function
     }
   };
 });
-System.register([], function (_export) {
+System.register('components/popover/position', [], function (_export) {
   /**
    * Position helper for the popover directive.
    */
@@ -3368,7 +3396,7 @@ System.register([], function (_export) {
     }
   };
 });
-System.register([], function (_export) {
+System.register('components/popover/registry', [], function (_export) {
   /**
    * Registering to deal with popovers
    * @param {function} $animate

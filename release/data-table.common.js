@@ -127,6 +127,10 @@ var DataTableController = (function () {
           column.name = Math.random();
         }
 
+        if (column.name && !column.prop) {
+          column.prop = (0, _utilsUtils.CamelCase)(column.name);
+        }
+
         columns[i] = column;
       }
     }
@@ -327,8 +331,8 @@ function DataTableDirective($window, $timeout, throttle) {
     scope: {
       options: '=',
       values: '=',
-      selected: '=',
-      expanded: '=',
+      selected: '=?',
+      expanded: '=?',
       onSelect: '&',
       onSort: '&',
       onTreeToggle: '&',
@@ -1152,6 +1156,27 @@ function DeepValueGetter(obj, path) {
 }
 
 ;
+
+/**
+ * Converts strings from something to camel case
+ * http://stackoverflow.com/questions/10425287/convert-dash-separated-string-to-camelcase
+ * @param  {string} str 
+ * @return {string} camel case string
+ */
+var CamelCase = function CamelCase(str) {
+  // Replace special characters with a space
+  str = str.replace(/[^a-zA-Z0-9 ]/g, ' ');
+  // put a space before an uppercase letter
+  str = str.replace(/([a-z](?=[A-Z]))/g, '$1 ');
+  // Lower case first character and some other stuff
+  str = str.replace(/([^a-zA-Z0-9 ])|^[0-9]+/g, '').trim().toLowerCase();
+  // uppercase characters preceded by a space or number
+  str = str.replace(/([ 0-9]+)([a-zA-Z])/g, function (a, b, c) {
+    return b.trim() + c.toUpperCase();
+  });
+  return str;
+};
+exports.CamelCase = CamelCase;
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -1798,8 +1823,8 @@ function BodyDirective($timeout) {
       columnWidths: '=',
       values: '=',
       options: '=',
-      selected: '=',
-      expanded: '=',
+      selected: '=?',
+      expanded: '=?',
       onPage: '&',
       onTreeToggle: '&'
     },

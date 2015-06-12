@@ -92,6 +92,10 @@ define('data-table', ['exports', 'module', 'angular', './utils/polyfill', './uti
             column.name = Math.random();
           }
 
+          if (column.name && !column.prop) {
+            column.prop = (0, _utilsUtils.CamelCase)(column.name);
+          }
+
           columns[i] = column;
         }
       }
@@ -292,8 +296,8 @@ define('data-table', ['exports', 'module', 'angular', './utils/polyfill', './uti
       scope: {
         options: '=',
         values: '=',
-        selected: '=',
-        expanded: '=',
+        selected: '=?',
+        expanded: '=?',
         onSelect: '&',
         onSort: '&',
         onTreeToggle: '&',
@@ -1122,6 +1126,27 @@ define('utils/utils', ['exports', 'utils/math'], function (exports, _utilsMath) 
   }
 
   ;
+
+  /**
+   * Converts strings from something to camel case
+   * http://stackoverflow.com/questions/10425287/convert-dash-separated-string-to-camelcase
+   * @param  {string} str 
+   * @return {string} camel case string
+   */
+  var CamelCase = function CamelCase(str) {
+    // Replace special characters with a space
+    str = str.replace(/[^a-zA-Z0-9 ]/g, ' ');
+    // put a space before an uppercase letter
+    str = str.replace(/([a-z](?=[A-Z]))/g, '$1 ');
+    // Lower case first character and some other stuff
+    str = str.replace(/([^a-zA-Z0-9 ])|^[0-9]+/g, '').trim().toLowerCase();
+    // uppercase characters preceded by a space or number
+    str = str.replace(/([ 0-9]+)([a-zA-Z])/g, function (a, b, c) {
+      return b.trim() + c.toUpperCase();
+    });
+    return str;
+  };
+  exports.CamelCase = CamelCase;
 });
 define('components/body/body', ['exports', 'angular', 'utils/utils', 'utils/keys'], function (exports, _angular, _utilsUtils, _utilsKeys) {
   'use strict';
@@ -1764,8 +1789,8 @@ define('components/body/body', ['exports', 'angular', 'utils/utils', 'utils/keys
         columnWidths: '=',
         values: '=',
         options: '=',
-        selected: '=',
-        expanded: '=',
+        selected: '=?',
+        expanded: '=?',
         onPage: '&',
         onTreeToggle: '&'
       },
@@ -2391,206 +2416,6 @@ define('components/footer/pager', ['exports', 'angular'], function (exports, _an
 
   ;
 });
-define('components/menu/context', ['exports', 'module', 'angular', './dropdown'], function (exports, module, _angular, _dropdown) {
-  'use strict';
-
-  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-
-  function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
-
-  var _angular2 = _interopRequireDefault(_angular);
-
-  var _Dropdown = _interopRequireDefault(_dropdown);
-
-  var ContextMenuController = function ContextMenuController() {
-    _classCallCheck(this, ContextMenuController);
-  };
-
-  function ContextMenuDirective() {
-    return {
-      restrict: 'C',
-      controller: 'ContextMenuController',
-      link: function link($scope, $elm, $attrs, ctrl) {}
-    };
-  }
-
-  module.exports = _angular2['default'].module('contextmenu', [_Dropdown['default'].name]).directive('contextMenu', ContextMenuDirective);
-});
-define('components/menu/dropdown', ['exports', 'module', 'angular'], function (exports, module, _angular) {
-  'use strict';
-
-  var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
-
-  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-
-  function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
-
-  var _angular2 = _interopRequireDefault(_angular);
-
-  var DropdownController = (function () {
-    /*@ngInject*/
-
-    function DropdownController($scope) {
-      _classCallCheck(this, DropdownController);
-
-      $scope.open = false;
-    }
-    DropdownController.$inject = ["$scope"];
-
-    _createClass(DropdownController, [{
-      key: 'toggle',
-      value: function toggle(scope) {
-        scope.open = !scope.open;
-      }
-    }]);
-
-    return DropdownController;
-  })();
-
-  function DropdownDirective($document, $timeout) {
-    return {
-      restrict: 'C',
-      controller: 'DropdownController',
-      link: function link($scope, $elm, $attrs) {
-
-        function closeDropdown(ev) {
-          if ($elm[0].contains(ev.target)) {
-            return;
-          }
-
-          $timeout(function () {
-            $scope.open = false;
-            off();
-          });
-        };
-
-        function keydown(ev) {
-          if (ev.which === 27) {
-            $timeout(function () {
-              $scope.open = false;
-              off();
-            });
-          }
-        };
-
-        function off() {
-          $document.unbind('click', closeDropdown);
-          $document.unbind('keydown', keydown);
-        };
-
-        $scope.$watch('open', function (newVal) {
-          if (newVal) {
-            $document.bind('click', closeDropdown);
-            $document.bind('keydown', keydown);
-          }
-        });
-      }
-    };
-  };
-
-  function DropdownMenuDirective($animate) {
-    return {
-      restrict: 'C',
-      require: '?^dropdown',
-      link: function link($scope, $elm, $attrs, ctrl) {
-        $scope.$watch('open', function () {
-          $animate[$scope.open ? 'addClass' : 'removeClass']($elm, 'ddm-open');
-        });
-      }
-    };
-  };
-
-  function DropdownToggleDirective($timeout) {
-    return {
-      restrict: 'C',
-      controller: 'DropdownController',
-      require: '?^dropdown',
-      link: function link($scope, $elm, $attrs, ctrl) {
-
-        function toggleClick(event) {
-          event.preventDefault();
-          $timeout(function () {
-            ctrl.toggle($scope);
-          });
-        };
-
-        function toggleDestroy() {
-          $elm.unbind('click', toggleClick);
-        };
-
-        $elm.bind('click', toggleClick);
-        $scope.$on('$destroy', toggleDestroy);
-      }
-    };
-  };
-
-  module.exports = _angular2['default'].module('dt.dropdown', []).controller('DropdownController', DropdownController).directive('dropdown', DropdownDirective).directive('dropdownToggle', DropdownToggleDirective).directive('dropdownMenu', DropdownMenuDirective);
-});
-define('components/menu/menu', ['exports', 'module', 'angular', './dropdown'], function (exports, module, _angular, _dropdown) {
-  'use strict';
-
-  var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
-
-  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-
-  function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
-
-  var _angular2 = _interopRequireDefault(_angular);
-
-  var _Dropdown = _interopRequireDefault(_dropdown);
-
-  var DataTableMenuController = (function () {
-    /*@ngInject*/
-
-    function DataTableMenuController($scope, $timeout) {
-      _classCallCheck(this, DataTableMenuController);
-
-      this.$scope = $scope;
-    }
-    DataTableMenuController.$inject = ["$scope", "$timeout"];
-
-    _createClass(DataTableMenuController, [{
-      key: 'getColumnIndex',
-      value: function getColumnIndex(model) {
-        return this.$scope.current.findIndex(function (col) {
-          return model.name == col.name;
-        });
-      }
-    }, {
-      key: 'isChecked',
-      value: function isChecked(model) {
-        return this.getColumnIndex(model) > -1;
-      }
-    }, {
-      key: 'onCheck',
-      value: function onCheck(model) {
-        var idx = this.getColumnIndex(model);
-        if (idx === -1) {
-          this.$scope.current.push(model);
-        } else {
-          this.$scope.current.splice(idx, 1);
-        }
-      }
-    }]);
-
-    return DataTableMenuController;
-  })();
-
-  function DataTableMenuDirective() {
-    return {
-      restrict: 'E',
-      controller: 'DataTableMenuController',
-      controllerAs: 'dtm',
-      scope: {
-        current: '=',
-        available: '='
-      },
-      template: '<div class="dt-menu dropdown" close-on-click="false">\n        <a href="#" class="dropdown-toggle icon-add">\n          Configure Columns\n        </a>\n        <div class="dropdown-menu" role="menu" aria-labelledby="dropdown">\n          <div class="keywords">\n            <input type="text" \n                   click-select\n                   placeholder="Filter columns..." \n                   ng-model="columnKeyword" \n                   autofocus />\n          </div>\n          <ul>\n            <li ng-repeat="column in available | filter:columnKeyword">\n              <label class="dt-checkbox">\n                <input type="checkbox" \n                       ng-checked="dtm.isChecked(column)"\n                       ng-click="dtm.onCheck(column)">\n                {{column.name}}\n              </label>\n            </li>\n          </ul>\n        </div>\n      </div>'
-    };
-  };
-
-  module.exports = _angular2['default'].module('dt.menu', [_Dropdown['default'].name]).controller('DataTableMenuController', DataTableMenuController).directive('dtm', DataTableMenuDirective);
-});
 define('components/header/header-cell', ['exports', 'angular', 'utils/resizable'], function (exports, _angular, _utilsResizable) {
   'use strict';
 
@@ -2914,6 +2739,206 @@ define('components/header/header', ['exports', 'angular', 'utils/sortable'], fun
   }
 
   ;
+});
+define('components/menu/context', ['exports', 'module', 'angular', './dropdown'], function (exports, module, _angular, _dropdown) {
+  'use strict';
+
+  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+  function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+  var _angular2 = _interopRequireDefault(_angular);
+
+  var _Dropdown = _interopRequireDefault(_dropdown);
+
+  var ContextMenuController = function ContextMenuController() {
+    _classCallCheck(this, ContextMenuController);
+  };
+
+  function ContextMenuDirective() {
+    return {
+      restrict: 'C',
+      controller: 'ContextMenuController',
+      link: function link($scope, $elm, $attrs, ctrl) {}
+    };
+  }
+
+  module.exports = _angular2['default'].module('contextmenu', [_Dropdown['default'].name]).directive('contextMenu', ContextMenuDirective);
+});
+define('components/menu/dropdown', ['exports', 'module', 'angular'], function (exports, module, _angular) {
+  'use strict';
+
+  var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+  function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+  var _angular2 = _interopRequireDefault(_angular);
+
+  var DropdownController = (function () {
+    /*@ngInject*/
+
+    function DropdownController($scope) {
+      _classCallCheck(this, DropdownController);
+
+      $scope.open = false;
+    }
+    DropdownController.$inject = ["$scope"];
+
+    _createClass(DropdownController, [{
+      key: 'toggle',
+      value: function toggle(scope) {
+        scope.open = !scope.open;
+      }
+    }]);
+
+    return DropdownController;
+  })();
+
+  function DropdownDirective($document, $timeout) {
+    return {
+      restrict: 'C',
+      controller: 'DropdownController',
+      link: function link($scope, $elm, $attrs) {
+
+        function closeDropdown(ev) {
+          if ($elm[0].contains(ev.target)) {
+            return;
+          }
+
+          $timeout(function () {
+            $scope.open = false;
+            off();
+          });
+        };
+
+        function keydown(ev) {
+          if (ev.which === 27) {
+            $timeout(function () {
+              $scope.open = false;
+              off();
+            });
+          }
+        };
+
+        function off() {
+          $document.unbind('click', closeDropdown);
+          $document.unbind('keydown', keydown);
+        };
+
+        $scope.$watch('open', function (newVal) {
+          if (newVal) {
+            $document.bind('click', closeDropdown);
+            $document.bind('keydown', keydown);
+          }
+        });
+      }
+    };
+  };
+
+  function DropdownMenuDirective($animate) {
+    return {
+      restrict: 'C',
+      require: '?^dropdown',
+      link: function link($scope, $elm, $attrs, ctrl) {
+        $scope.$watch('open', function () {
+          $animate[$scope.open ? 'addClass' : 'removeClass']($elm, 'ddm-open');
+        });
+      }
+    };
+  };
+
+  function DropdownToggleDirective($timeout) {
+    return {
+      restrict: 'C',
+      controller: 'DropdownController',
+      require: '?^dropdown',
+      link: function link($scope, $elm, $attrs, ctrl) {
+
+        function toggleClick(event) {
+          event.preventDefault();
+          $timeout(function () {
+            ctrl.toggle($scope);
+          });
+        };
+
+        function toggleDestroy() {
+          $elm.unbind('click', toggleClick);
+        };
+
+        $elm.bind('click', toggleClick);
+        $scope.$on('$destroy', toggleDestroy);
+      }
+    };
+  };
+
+  module.exports = _angular2['default'].module('dt.dropdown', []).controller('DropdownController', DropdownController).directive('dropdown', DropdownDirective).directive('dropdownToggle', DropdownToggleDirective).directive('dropdownMenu', DropdownMenuDirective);
+});
+define('components/menu/menu', ['exports', 'module', 'angular', './dropdown'], function (exports, module, _angular, _dropdown) {
+  'use strict';
+
+  var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+  function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+  var _angular2 = _interopRequireDefault(_angular);
+
+  var _Dropdown = _interopRequireDefault(_dropdown);
+
+  var DataTableMenuController = (function () {
+    /*@ngInject*/
+
+    function DataTableMenuController($scope, $timeout) {
+      _classCallCheck(this, DataTableMenuController);
+
+      this.$scope = $scope;
+    }
+    DataTableMenuController.$inject = ["$scope", "$timeout"];
+
+    _createClass(DataTableMenuController, [{
+      key: 'getColumnIndex',
+      value: function getColumnIndex(model) {
+        return this.$scope.current.findIndex(function (col) {
+          return model.name == col.name;
+        });
+      }
+    }, {
+      key: 'isChecked',
+      value: function isChecked(model) {
+        return this.getColumnIndex(model) > -1;
+      }
+    }, {
+      key: 'onCheck',
+      value: function onCheck(model) {
+        var idx = this.getColumnIndex(model);
+        if (idx === -1) {
+          this.$scope.current.push(model);
+        } else {
+          this.$scope.current.splice(idx, 1);
+        }
+      }
+    }]);
+
+    return DataTableMenuController;
+  })();
+
+  function DataTableMenuDirective() {
+    return {
+      restrict: 'E',
+      controller: 'DataTableMenuController',
+      controllerAs: 'dtm',
+      scope: {
+        current: '=',
+        available: '='
+      },
+      template: '<div class="dt-menu dropdown" close-on-click="false">\n        <a href="#" class="dropdown-toggle icon-add">\n          Configure Columns\n        </a>\n        <div class="dropdown-menu" role="menu" aria-labelledby="dropdown">\n          <div class="keywords">\n            <input type="text" \n                   click-select\n                   placeholder="Filter columns..." \n                   ng-model="columnKeyword" \n                   autofocus />\n          </div>\n          <ul>\n            <li ng-repeat="column in available | filter:columnKeyword">\n              <label class="dt-checkbox">\n                <input type="checkbox" \n                       ng-checked="dtm.isChecked(column)"\n                       ng-click="dtm.onCheck(column)">\n                {{column.name}}\n              </label>\n            </li>\n          </ul>\n        </div>\n      </div>'
+    };
+  };
+
+  module.exports = _angular2['default'].module('dt.menu', [_Dropdown['default'].name]).controller('DataTableMenuController', DataTableMenuController).directive('dtm', DataTableMenuDirective);
 });
 define('components/popover/directive', ['exports', 'angular'], function (exports, _angular) {
   'use strict';
