@@ -124,10 +124,10 @@ class DataTableController {
   adjustColumns(){
     // todo: combine these
     if(this.$scope.options.forceFillColumns){
-      ForceFillColumnWidths(this.$scope.options.columns, 
+      ForceFillColumnWidths(this.$scope.options.columns,
         this.$scope.options.internal.innerWidth);
     } else {
-      AdjustColumnWidths(this.$scope.options.columns, 
+      AdjustColumnWidths(this.$scope.options.columns,
         this.$scope.options.internal.innerWidth);
     }
   }
@@ -368,5 +368,5 @@ export default angular
   .directive('dtFooter', FooterDirective)
 
   .controller('PagerController', PagerController)
-  .directive('pager', PagerDirective)
+  .directive('dtPager', PagerDirective)
 

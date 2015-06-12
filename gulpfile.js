@@ -9,13 +9,7 @@ var Builder = require('systemjs-builder');
 var vinylPaths = require('vinyl-paths');
 var del = require('del');
 var ngAnnotate = require('gulp-ng-annotate');
-
-var compilerOptions = {
-  modules: 'system',
-  moduleIds: false,
-  comments: true,
-  compact: false
-};
+var concat = require('gulp-concat');
 
 var path = {
   source:'src/**/*.js',
@@ -28,16 +22,84 @@ var path = {
 //
 // Compile Tasks
 // ------------------------------------------------------------
+
+/*
+  Compiles to System modules
+ */
 gulp.task('es6', function () {
   return gulp.src(path.source)
     .pipe(plumber())
     .pipe(changed(path.output, { extension: '.js' }))
-    .pipe(babel(compilerOptions))
+    .pipe(babel({
+      modules: 'system',
+      moduleIds: false,
+      comments: true,
+      compact: false
+    }))
     .pipe(ngAnnotate({
       gulpWarnings: false
     }))
     .pipe(gulp.dest(path.output))
     .pipe(browserSync.reload({ stream: true }));
+});
+
+gulp.task('compile', function (callback) {
+  return runSequence(
+    ['less', 'es6'],
+    callback
+  );
+});
+
+/*
+  Compiles to AMD modules
+ */
+gulp.task('es6-amd', function () {
+  return gulp.src(path.source)
+    .pipe(plumber())
+    .pipe(changed(path.output, { extension: '.js' }))
+    .pipe(babel({
+      modules: 'amd',
+      moduleIds: true,
+      comments: true,
+    }))
+    .pipe(ngAnnotate({
+      gulpWarnings: false
+    }))
+    .pipe(gulp.dest(path.output))
+    .pipe(browserSync.reload({ stream: true }));
+});
+
+gulp.task('compile-amd', function (callback) {
+  return runSequence(
+    ['less', 'es6-amd'],
+    callback
+  );
+});
+
+/*
+  Compiles to CommonJS modules
+ */
+gulp.task('es6-common', function () {
+  return gulp.src(path.source)
+    .pipe(plumber())
+    .pipe(changed(path.output, { extension: '.js' }))
+    .pipe(babel({
+      modules: 'common',
+      moduleIds: true,
+      comments: true,
+    }))
+    .pipe(ngAnnotate({
+      gulpWarnings: false
+    }))
+    .pipe(gulp.dest(path.output))
+    .pipe(browserSync.reload({ stream: true }));
+});
+
+gulp.task('compile-common', function (callback) {
+  return runSequence(
+    ['less', 'es6-common'],
+    callback
+  );
 });
 
 gulp.task('less', function () {
@@ -50,16 +112,16 @@ gulp.task('less', function () {
 });
 
 gulp.task('clean', function() {
-  return gulp.src([path.output, path.release])
+  return gulp.src([path.output])
     .pipe(vinylPaths(del));
 });
 
-gulp.task('compile', function (callback) {
-  return runSequence(
-    ['less', 'es6'],
-    callback
-  );
+gulp.task('clean-release', function() {
+  return gulp.src([path.release])
+    .pipe(vinylPaths(del));
 });
+
+
 
 //
 // Dev Mode Tasks
@@ -88,24 +150,40 @@ gulp.task('watch', ['serve'], function() {
 //
 // Release Tasks
 // ------------------------------------------------------------
-var excludes = {
-  buildCSS: false,
-  meta: {
-    'npm:angular@1.4.0': {
-      build: false
-    }
-  }
-};
 
-gulp.task('release', function(callback) {
+gulp.task('release', function(callback){
+  return runSequence(
+    'clean-release',
+    'release-less',
+    'build-system',
+    'build-common',
+    'build-amd'
+  );
+});
+
+gulp.task('build-system', function(callback) {
   return runSequence(
     'clean',
     'compile',
-    'release-less',
-    'release-sfx',
-    'release-sfx-min',
-    'release-sfx-runtime',
-    'release-sfx-runtime-min',
+    'concat-system',
+    callback
+  );
+});
+
+gulp.task('build-amd', function(callback){
+  return runSequence(
+    'clean',
+    'compile-amd',
+    'concat-amd',
+    callback
+  );
+});
+
+gulp.task('build-common', function(callback){
+  return runSequence(
+    'clean',
+    'compile-common',
+    'concat-common',
     callback
   );
 });
@@ -116,52 +194,23 @@ gulp.task('release-less', function () {
     .pipe(gulp.dest(path.release));
 });
 
-gulp.task('release-sfx', function () {
-  var builder = new Builder();
-  return builder.loadConfig('./config.js').then(function(){
-    builder.config(excludes);
+gulp.task('concat-amd', function(){
+  return gulp.src(['dist/**/*.js'])
+    .pipe(concat('data-table.amd.js'))
+    .pipe(gulp.dest('./release/'));
+})
 
-    return builder.buildSFX('data-table', './release/data-table.js', {
-      runtime: false,
-      mangle: false
-    })
-  });
-});
+gulp.task('concat-system', function(){
+  return gulp.src(['dist/**/*.js'])
+    .pipe(concat('data-table.system.js'))
+    .pipe(gulp.dest('./release/'));
+})
 
-gulp.task('release-sfx-min', function () {
-  var builder = new Builder();
-  return builder.loadConfig('./config.js').then(function(){
-    builder.config(excludes);
+gulp.task('concat-common', function(){
+  return gulp.src(['dist/**/*.js'])
+    .pipe(concat('data-table.common.js'))
+    .pipe(gulp.dest('./release/'));
+})
 
-    return builder.buildSFX('data-table', './release/data-table.min.js', {
-      runtime: false,
-      mangle: false,
-      minify: true
-    })
-  });
-});
 
-gulp.task('release-sfx-runtime', function () {
-  var builder = new Builder();
-  return builder.loadConfig('./config.js').then(function(){
-    builder.config(excludes);
 
-    return builder.buildSFX('data-table', './release/data-table.runtime.js', {
-      runtime: true,
-      mangle: false
-    })
-  });
-});
-
-gulp.task('release-sfx-runtime-min', function () {
-  var builder = new Builder();
-  return builder.loadConfig('./config.js').then(function(){
-    builder.config(excludes);
-
-    return builder.buildSFX('data-table', './release/data-table.runtime.min.js', {
-      runtime: true,
-      mangle: false,
-      minify: true
-    })
-  });
-});

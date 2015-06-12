@@ -27,6 +27,7 @@
     "gulp": "^3.8.11",
     "gulp-babel": "^5.1.0",
     "gulp-changed": "^1.2.1",
+    "gulp-concat": "^2.5.2",
     "gulp-less": "^3.0.3",
     "gulp-ng-annotate": "^1.0.0",
     "gulp-plumber": "^1.0.1",

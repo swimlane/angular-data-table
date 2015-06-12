@@ -51,7 +51,10 @@
 }
 .dt.material .dt-body .dt-row:hover,
 .dt.material .dt-body .dt-row:hover .dt-row-block {
-  background-color: #b3e5fc;
+  background-color: #eee;
+  transition-property: background;
+  transition-duration: .3s;
+  transition-timing-function: linear;
 }
 .dt.material .dt-body .dt-row:hover input[type='checkbox']:after {
   background-color: #b3e5fc;
@@ -71,20 +74,21 @@
   height: 50px;
   padding: 0 1.2rem;
 }
-.dt.material .dt-footer .pagination a {
+.dt.material .dt-footer .pager a {
   height: 50px;
-  color: #2196F3;
-  padding: .5rem .5rem;
+  line-height: 50px;
+  color: rgba(0, 0, 0, 0.54);
+  padding: 0 .5rem;
   text-decoration: none;
 }
-.dt.material .dt-footer .pagination a:hover {
-  color: #999;
+.dt.material .dt-footer .pager a:hover {
+  color: rgba(0, 0, 0, 0.75);
 }
-.dt.material .dt-footer .pagination .disabled a {
+.dt.material .dt-footer .pager .disabled a {
   cursor: not-allowed;
   color: rgba(0, 0, 0, 0.26) !important;
 }
-.dt.material .dt-footer .pagination .active a {
+.dt.material .dt-footer .pager .active a {
   font-weight: bold;
 }
 .dt.material .empty-row {

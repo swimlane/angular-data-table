@@ -126,18 +126,18 @@
 .dt .dt-footer .page-count {
   display: inline-block;
 }
-.dt .dt-footer .pagination,
-.dt .dt-footer .pagination li {
+.dt .dt-footer .dt-pager {
+  display: inline-block;
+  float: right;
+}
+.dt .dt-footer .dt-pager .pager,
+.dt .dt-footer .dt-pager .pager li {
   padding: 0;
   margin: 0;
   list-style: none;
 }
-.dt .dt-footer .pagination {
-  display: inline-block;
-  float: right;
-}
-.dt .dt-footer .pagination li,
-.dt .dt-footer .pagination li a {
+.dt .dt-footer .dt-pager .pager li,
+.dt .dt-footer .dt-pager .pager li a {
   display: inline-block;
   outline: none;
 }

@@ -46,15 +46,15 @@ export function FooterDirective(){
       paging: '=',
       onPage: '&'
     },
-    template: 
+    template:
       `<div class="dt-footer">
         <div class="page-count">{{paging.count}} total</div>
-        <pager page="page"
+        <dt-pager page="page"
                size="paging.size"
                count="paging.count"
                on-page="footer.onPage(this, page)"
                ng-show="paging.count > 1">
-         </pager>
+         </dt-pager>
       </div>`,
     replace: true
   };
