@@ -2,7 +2,6 @@ import angular from 'angular';
 
 import './utils/polyfill';
 import { debounce, throttle } from './utils/throttle';
-import Pager from './components/footer/pager';
 
 import { Resizable } from './utils/resizable';
 import { Sortable } from './utils/sortable';
@@ -20,6 +19,7 @@ import { GroupRowController, GroupRowDirective } from './components/body/group-r
 import { CellController, CellDirective } from './components/body/cell';
 
 import { FooterController, FooterDirective } from './components/footer/footer';
+import { PagerController, PagerDirective } from './components/footer/pager';
 
 class DataTableController {
 
@@ -215,11 +215,6 @@ class DataTableController {
         offsetY = pageBlockSize * offset;
 
     BodyHelper.setYOffset(offsetY);
-
-    scope.onPage({
-      offset: offset,
-      size: size
-    });
   }
 
   /**
@@ -341,7 +336,7 @@ function DataTableDirective($window, $timeout, throttle){
 };
 
 export default angular
-  .module('data-table', [ Pager.name ])
+  .module('data-table', [])
 
   .controller('DataTable', DataTableController)
   .directive('dt', DataTableDirective)
@@ -371,4 +366,7 @@ export default angular
 
   .controller('FooterController', FooterController)
   .directive('dtFooter', FooterDirective)
+
+  .controller('PagerController', PagerController)
+  .directive('pager', PagerDirective)
 

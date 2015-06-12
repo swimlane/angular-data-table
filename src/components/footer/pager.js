@@ -1,242 +1,138 @@
-// Slightly modified from: https://github.com/angular-ui/bootstrap
+import angular from 'angular';
 
-var pagerConfig = {
-    itemsPerPage: 10,
-    previousText: '« Previous',
-    nextText: 'Next »',
-    align: true
-  },
-  paginationConfig = {
-    itemsPerPage: 10,
-    boundaryLinks: false,
-    directionLinks: true,
-    firstText: 'First',
-    previousText: 'Previous',
-    nextText: 'Next',
-    lastText: 'Last',
-    rotate: true
-  };
+export class PagerController {
 
-function PaginationController ($scope, $attrs, $parse) {
-  var self = this,
-      ngModelCtrl = { $setViewValue: angular.noop }, // nullModelCtrl
-      setNumPages = $attrs.numPages ? $parse($attrs.numPages).assign : angular.noop;
+  /**
+   * Creates an instance of the Pager Controller
+   * @param  {object} $scope   
+   */
+  /*@ngInject*/
+  constructor($scope){
+    angular.extend(this, {
+      size: $scope.size,
+      count: $scope.count
+    });
 
-  this.init = function(ngModelCtrl_, config) {
-    ngModelCtrl = ngModelCtrl_;
-    this.config = config;
+    this.totalPages = this.calcTotalPages();
+    $scope.$watch('page', (newVal) => {
+      if (newVal !== 0 && newVal <= this.totalPages) {
+        this.getPages(newVal);
+      }
+    });
+  }
 
-    ngModelCtrl.$render = function() {
-      self.render();
-    };
+  /**
+   * Calculates the total number of pages given the count.
+   * @return {int} page count
+   */
+  calcTotalPages() {
+    var count = this.size < 1 ? 1 : 
+      Math.ceil(this.count / this.size);
+    return Math.max(count || 0, 1);
+  }
 
-    if ($attrs.itemsPerPage) {
-      $scope.$parent.$watch($parse($attrs.itemsPerPage), function(value) {
-        self.itemsPerPage = parseInt(value, 10);
-        $scope.totalPages = self.calculateTotalPages();
+  /**
+   * Select a page
+   * @param  {object} scope 
+   * @param  {int} num   
+   */
+  selectPage(scope, num){
+    if (num > 0 && num <= this.totalPages) {
+      scope.page = num;
+      scope.onPage({
+        page: num
       });
-    } else {
-      this.itemsPerPage = config.itemsPerPage;
+    }
+  }
+
+  /**
+   * Determines if the pager can go previous
+   * @param  {scope} scope 
+   * @return {boolean}
+   */
+  canPrevious(scope){
+    return scope.page !== 1;
+  }
+
+  /**
+   * Determines if the pager can go forward
+   * @param  {object} scope 
+   * @return {boolean}       
+   */
+  canNext(scope){
+    return scope.page <= this.totalPages;
+  }
+
+  /**
+   * Gets the page set given the current page
+   * @param  {int} page 
+   */
+  getPages(page) {
+    var pages = [],
+        startPage = 1, 
+        endPage = this.totalPages,
+        maxSize = 5,
+        isMaxSized = maxSize < this.totalPages;
+
+    if (isMaxSized) {
+      startPage = ((Math.ceil(page / maxSize) - 1) * maxSize) + 1;
+      endPage = Math.min(startPage + maxSize - 1, this.totalPages);
     }
 
-    $scope.$watch('totalItems', function() {
-      $scope.totalPages = self.calculateTotalPages();
-    });
-
-    $scope.$watch('totalPages', function(value) {
-      setNumPages($scope.$parent, value); // Readonly variable
-
-      if ( $scope.page > value ) {
-        $scope.selectPage(value);
-      } else {
-        ngModelCtrl.$render();
-      }
-    });
-  };
-
-  this.calculateTotalPages = function() {
-    var totalPages = this.itemsPerPage < 1 ? 1 : Math.ceil($scope.totalItems / this.itemsPerPage);
-    return Math.max(totalPages || 0, 1);
-  };
-
-  this.render = function() {
-    $scope.page = parseInt(ngModelCtrl.$viewValue, 10) || 1;
-  };
-
-  $scope.selectPage = function(page, evt) {
-    if ( $scope.page !== page && page > 0 && page <= $scope.totalPages) {
-      if (evt && evt.target) {
-        evt.target.blur();
-      }
-      ngModelCtrl.$setViewValue(page);
-      ngModelCtrl.$render();
+    for (var number = startPage; number <= endPage; number++) {
+      pages.push({
+        number: number,
+        text: number,
+        active: number === page
+      });
     }
-  };
 
-  $scope.getText = function( key ) {
-    return $scope[key + 'Text'] || self.config[key + 'Text'];
-  };
-  $scope.noPrevious = function() {
-    return $scope.page === 1;
-  };
-  $scope.noNext = function() {
-    return $scope.page === $scope.totalPages;
-  };
-};
-
-function pagination($parse, paginationConfig) {
-  return {
-    restrict: 'EA',
-    scope: {
-      totalItems: '=',
-      firstText: '@',
-      previousText: '@',
-      nextText: '@',
-      lastText: '@'
-    },
-    require: ['pagination', '?ngModel'],
-    controller: 'PaginationController',
-    templateUrl: "template/pagination/pagination.html",
-    replace: true,
-    link: function(scope, element, attrs, ctrls) {
-      var paginationCtrl = ctrls[0], ngModelCtrl = ctrls[1];
-
-      if (!ngModelCtrl) {
-         return; // do nothing if no ng-model
-      }
-
-      // Setup configuration parameters
-      var maxSize = angular.isDefined(attrs.maxSize) ? scope.$parent.$eval(attrs.maxSize) : paginationConfig.maxSize,
-          rotate = angular.isDefined(attrs.rotate) ? scope.$parent.$eval(attrs.rotate) : paginationConfig.rotate;
-      scope.boundaryLinks = angular.isDefined(attrs.boundaryLinks) ? scope.$parent.$eval(attrs.boundaryLinks) : paginationConfig.boundaryLinks;
-      scope.directionLinks = angular.isDefined(attrs.directionLinks) ? scope.$parent.$eval(attrs.directionLinks) : paginationConfig.directionLinks;
-
-      paginationCtrl.init(ngModelCtrl, paginationConfig);
-
-      if (attrs.maxSize) {
-        scope.$parent.$watch($parse(attrs.maxSize), function(value) {
-          maxSize = parseInt(value, 10);
-          paginationCtrl.render();
+    if (isMaxSized) {
+      if (startPage > 1) {
+        pages.unshift({
+          number: startPage - 1,
+          text: '...'
         });
       }
 
-      // Create page object used in template
-      function makePage(number, text, isActive) {
-        return {
-          number: number,
-          text: text,
-          active: isActive
-        };
+      if (endPage < this.totalPages) {
+        pages.push({
+          number: endPage + 1,
+          text: '...'
+        });
       }
-
-      function getPages(currentPage, totalPages) {
-        var pages = [];
-
-        // Default page limits
-        var startPage = 1, endPage = totalPages;
-        var isMaxSized = ( angular.isDefined(maxSize) && maxSize < totalPages );
-
-        // recompute if maxSize
-        if ( isMaxSized ) {
-          if ( rotate ) {
-            // Current page is displayed in the middle of the visible ones
-            startPage = Math.max(currentPage - Math.floor(maxSize/2), 1);
-            endPage   = startPage + maxSize - 1;
-
-            // Adjust if limit is exceeded
-            if (endPage > totalPages) {
-              endPage   = totalPages;
-              startPage = endPage - maxSize + 1;
-            }
-          } else {
-            // Visible pages are paginated with maxSize
-            startPage = ((Math.ceil(currentPage / maxSize) - 1) * maxSize) + 1;
-
-            // Adjust last page if limit is exceeded
-            endPage = Math.min(startPage + maxSize - 1, totalPages);
-          }
-        }
-
-        // Add page number links
-        for (var number = startPage; number <= endPage; number++) {
-          var page = makePage(number, number, number === currentPage);
-          pages.push(page);
-        }
-
-        // Add links to move between page sets
-        if ( isMaxSized && ! rotate ) {
-          if ( startPage > 1 ) {
-            var previousPageSet = makePage(startPage - 1, '...', false);
-            pages.unshift(previousPageSet);
-          }
-
-          if ( endPage < totalPages ) {
-            var nextPageSet = makePage(endPage + 1, '...', false);
-            pages.push(nextPageSet);
-          }
-        }
-
-        return pages;
-      }
-
-      var originalRender = paginationCtrl.render;
-      paginationCtrl.render = function() {
-        originalRender();
-        if (scope.page > 0 && scope.page <= scope.totalPages) {
-          scope.pages = getPages(scope.page, scope.totalPages);
-        }
-      };
     }
-  };
+
+    this.pages = pages;
+  }
+
 };
 
-function pager(pagerConfig) {
+export function PagerDirective(){
   return {
-    restrict: 'EA',
+    restrict: 'E',
+    controller: 'PagerController',
+    controllerAs: 'pager',
     scope: {
-      totalItems: '=',
-      previousText: '@',
-      nextText: '@'
+      page: '=',
+      size: '=',
+      count: '=',
+      onPage: '&'
     },
-    require: ['pager', '?ngModel'],
-    controller: 'PaginationController',
-    templateUrl: "template/pagination/pager.html",
-    replace: true,
-    link: function(scope, element, attrs, ctrls) {
-      var paginationCtrl = ctrls[0], ngModelCtrl = ctrls[1];
-
-      if (!ngModelCtrl) {
-         return; // do nothing if no ng-model
-      }
-
-      scope.align = angular.isDefined(attrs.align) ? scope.$parent.$eval(attrs.align) : pagerConfig.align;
-      paginationCtrl.init(ngModelCtrl, pagerConfig);
-    }
+    template: 
+      `<div class="dt-pager">
+        <ul class="pager">
+          <li ng-class="{ disabled: !pager.canPrevious(this) }">
+            <a href ng-click="pager.selectPage(this, 1)" class="icon-left"></a>
+          </li>
+          <li ng-repeat="pg in pager.pages track by $index" ng-class="{ active: pg.active }">
+            <a href ng-click="pager.selectPage(this, pg.number)">{{pg.text}}</a>
+          </li>
+          <li ng-class="{ disabled: !pager.canNext(this) }">
+            <a href ng-click="pager.selectPage(this, pager.totalPages)" class="icon-right"></a>
+          </li>
+        </ul>
+      </div>`,
+    replace: true
   };
 };
-
-function run($templateCache){
-  $templateCache.put("template/pagination/pager.html",
-    "<ul class=\"pager\">\n" +
-    "  <li ng-class=\"{disabled: noPrevious(), previous: align}\"><a href ng-click=\"selectPage(page - 1, $event)\">{{getText('previous')}}</a></li>\n" +
-    "  <li ng-class=\"{disabled: noNext(), next: align}\"><a href ng-click=\"selectPage(page + 1, $event)\">{{getText('next')}}</a></li>\n" +
-    "</ul>");
-
-  $templateCache.put("template/pagination/pagination.html",
-    "<ul class=\"pagination\">\n" +
-    "  <li ng-if=\"boundaryLinks\" ng-class=\"{disabled: noPrevious()}\"><a href ng-click=\"selectPage(1, $event)\">{{getText('first')}}</a></li>\n" +
-    "  <li ng-if=\"directionLinks\" ng-class=\"{disabled: noPrevious()}\"><a href ng-click=\"selectPage(page - 1, $event)\">{{getText('previous')}}</a></li>\n" +
-    "  <li ng-repeat=\"page in pages track by $index\" ng-class=\"{active: page.active}\"><a href ng-click=\"selectPage(page.number, $event)\">{{page.text}}</a></li>\n" +
-    "  <li ng-if=\"directionLinks\" ng-class=\"{disabled: noNext()}\"><a href ng-click=\"selectPage(page + 1, $event)\">{{getText('next')}}</a></li>\n" +
-    "  <li ng-if=\"boundaryLinks\" ng-class=\"{disabled: noNext()}\"><a href ng-click=\"selectPage(totalPages, $event)\">{{getText('last')}}</a></li>\n" +
-    "</ul>");
-}
-
-export default angular
-  .module('pager', [])
-  .run(run)
-  .constant('pagerConfig', pagerConfig)
-  .constant('paginationConfig', paginationConfig)
-  .controller('PaginationController', PaginationController)
-  .directive('pager', pager)
-  .directive('pagination', pagination)
