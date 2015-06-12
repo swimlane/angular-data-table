@@ -266,8 +266,8 @@ function DataTableDirective($window, $timeout, throttle){
     scope: {
       options: '=',
       values: '=',
-      selected: '=',
-      expanded: '=',
+      selected: '=?',
+      expanded: '=?',
       onSelect: '&',
       onSort: '&',
       onTreeToggle: '&',
