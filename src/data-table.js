@@ -6,7 +6,7 @@ import { debounce, throttle } from './utils/throttle';
 import { Resizable } from './utils/resizable';
 import { Sortable } from './utils/sortable';
 import { AdjustColumnWidths, ForceFillColumnWidths } from './utils/math';
-import { ColumnsByPin, ColumnGroupWidths } from 'utils/utils';
+import { ColumnsByPin, ColumnGroupWidths, CamelCase } from 'utils/utils';
 
 import { TableDefaults, ColumnDefaults } from './defaults';
 
@@ -82,13 +82,17 @@ class DataTableController {
    * @param  {Object} columns
    */
   transposeColumnDefaults(columns){
-    for(var i=0, len=columns.length; i < len; i++) {
+    for(var i=0, len = columns.length; i < len; i++) {
       var column = columns[i];
       column = angular.extend(angular.copy(ColumnDefaults), column);
 
       if(!column.name){
         this.$log.warn(`'Name' property expected but not defined.`, column);
         column.name = Math.random();
+      }
+
+      if(column.name && !column.prop){
+        column.prop = CamelCase(column.name);
       }
 
       columns[i] = column;
@@ -266,8 +270,8 @@ function DataTableDirective($window, $timeout, throttle){
     scope: {
       options: '=',
       values: '=',
-      selected: '=',
-      expanded: '=',
+      selected: '=?',
+      expanded: '=?',
       onSelect: '&',
       onSort: '&',
       onTreeToggle: '&',

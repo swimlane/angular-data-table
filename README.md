@@ -1,8 +1,6 @@
 # data-table
 
-A data-table for AngularJS that doesn't suck.  Its ES6, fast, light and awesome!
-
-Only supports [Evergreen Browsers](http://eisenbergeffect.bluespire.com/evergreen-browsers/) and 1.4.x Angular.
+A data-table for AngularJS that doesn't suck.  Its ES6/CSS3/HTML5, fast, light and awesome!  Only supports [Evergreen Browsers](http://eisenbergeffect.bluespire.com/evergreen-browsers/) and 1.4.x Angular.
 
 ## Features
 

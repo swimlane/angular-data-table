@@ -563,8 +563,8 @@ export function BodyDirective($timeout){
       columnWidths: '=',
       values: '=',
       options: '=',
-      selected: '=',
-      expanded: '=',
+      selected: '=?',
+      expanded: '=?',
       onPage: '&',
       onTreeToggle: '&'
     },
