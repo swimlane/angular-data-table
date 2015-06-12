@@ -104,7 +104,7 @@ export class PagerController {
     }
 
     this.pages = pages;
-  }
+  } 
 
 };
 
