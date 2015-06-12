@@ -427,9 +427,13 @@ export class BodyController{
    * @param  {index}
    */
   selectRowsBetween(index){
+    var reverse = index < this.prevIndex;
     for(var i=0, len=this.rows.length; i < len; i++) {
-      var row = this.rows[i];
-      if(i >= this.prevIndex && i <= index){
+      var row = this.rows[i],
+          greater = i >= this.prevIndex && i <= index,
+          lesser = i <= this.prevIndex && i >= index;
+
+      if((reverse && lesser) || (!reverse && greater)){
         var idx = this.selected.indexOf(row);
         if(idx === -1){
           this.selected.push(row);
