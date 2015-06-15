@@ -44,7 +44,7 @@ Website and docs coming soon, in the meantime, 'View Source' is your friend ;)!
 
 #### Build
 
-Build to ES5 via Babel ( excludes helpers ) and compile/concat run: `gulp release`
+`gulp release` to build Modules, ES5 via Babel and compile.
 
 #### Include
 
