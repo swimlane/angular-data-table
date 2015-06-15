@@ -89,18 +89,18 @@ gulp.task('watch', ['serve'], function() {
 // Release Tasks
 // ------------------------------------------------------------
 var excludes = {
-  buildCSS: false,
-  meta: {
-    'npm:angular@1.4.0': {
-      build: false
-    }
+  map: {
+    'angular': '@empty',
+  },
+  paths:{
+    "*": "src/*.js"
   }
 };
 
 gulp.task('release', function(callback) {
   return runSequence(
     'clean',
-    'compile',
+    //'compile',
     'release-less',
     'release-sfx',
     //'release-sfx-min',
@@ -117,51 +117,27 @@ gulp.task('release-less', function () {
 });
 
 gulp.task('release-sfx', function () {
-  var builder = new Builder();
-  return builder.loadConfig('./config.js').then(function(){
-    builder.config(excludes);
+  var config = { 
+    defaultJSExtensions: true,
+    paths:{
+      "*": "src/*",
+      "github:*": "jspm_packages/github/*",
+      "npm:*": "jspm_packages/npm/*"
+    },
+    map: { 
+      'angular': '@empty',
+      "babel": "npm:babel-core@5.5.6",
+      "babel-runtime": "npm:babel-runtime@5.5.6"
+    },
+    transpiler: 'babel'
+  };
 
-    return builder.buildSFX('data-table', './release/data-table.js', {
-      runtime: false,
-      mangle: false
-    })
-  });
-});
-
-gulp.task('release-sfx-min', function () {
-  var builder = new Builder();
-  return builder.loadConfig('./config.js').then(function(){
-    builder.config(excludes);
-
-    return builder.buildSFX('data-table', './release/data-table.min.js', {
-      runtime: false,
-      mangle: false,
-      minify: true
-    })
-  });
-});
-
-gulp.task('release-sfx-runtime', function () {
-  var builder = new Builder();
-  return builder.loadConfig('./config.js').then(function(){
-    builder.config(excludes);
-
-    return builder.buildSFX('data-table', './release/data-table.runtime.js', {
-      runtime: true,
-      mangle: false
-    })
-  });
-});
-
-gulp.task('release-sfx-runtime-min', function () {
-  var builder = new Builder();
-  return builder.loadConfig('./config.js').then(function(){
-    builder.config(excludes);
-
-    return builder.buildSFX('data-table', './release/data-table.runtime.min.js', {
-      runtime: true,
-      mangle: false,
-      minify: true
-    })
-  });
+  var builder = new Builder(config);
+    //return builder.loadConfig('./config.js').then(function(){
+    //builder.config(excludes);
+      return builder.buildSFX('data-table', './release/data-table.js', {
+        runtime: false,
+        mangle: false
+      })
+    //});
 });
