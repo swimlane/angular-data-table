@@ -19,7 +19,7 @@ export class BodyController{
       selected: $scope.selected
     });
 
-    this.rows = [];
+    this.tempRows = [];
     this._viewportRowsStart = 0;
     this._viewportRowsEnd = 0;
 
@@ -35,7 +35,7 @@ export class BodyController{
       $scope.$watch('options.internal.offsetY', throttle(this.getRows.bind(this), 10));
     }
 
-    $scope.$watchCollection('values', (newVal, oldVal) => {
+    $scope.$watchCollection('rows', (newVal, oldVal) => {
       if(newVal) {
         if(!this.options.paging.externalPaging){
           this.options.paging.count = newVal.length;
@@ -50,14 +50,14 @@ export class BodyController{
         if(this.options.scrollbarV){
           this.getRows();
         } else {
-          var values = $scope.values;
+          var rows = $scope.rows;
           if(this.treeColumn){
-            values = this.buildTree();
+            rows = this.buildTree();
           } else if(this.groupColumn){
-            values = this.buildGroups();
+            rows = this.buildGroups();
           }
-          this.rows.splice(0, this.rows.length);
-          this.rows.push(...values);
+          this.tempRows.splice(0, this.tempRows.length);
+          this.tempRows.push(...rows);
         }
       }
     });
@@ -121,8 +121,8 @@ export class BodyController{
       this.treeColumn.relationProp : 
       this.groupColumn.prop;
 
-    for(var i = 0, len = this.$scope.values.length; i < len; i++) {
-      var row = this.$scope.values[i];
+    for(var i = 0, len = this.$scope.rows.length; i < len; i++) {
+      var row = this.$scope.rows[i];
       // build groups
       var relVal = row[parentProp];
       if(relVal){
@@ -183,8 +183,8 @@ export class BodyController{
     var count = 0, 
         temp = [];
 
-    for(var i = 0, len = this.$scope.values.length; i < len; i++) {
-      var row = this.$scope.values[i],
+    for(var i = 0, len = this.$scope.rows.length; i < len; i++) {
+      var row = this.$scope.rows[i],
           relVal = row[this.treeColumn.relationProp],
           keyVal = row[this.treeColumn.prop],
           rows = this.rowsByGroup[keyVal],
@@ -227,7 +227,7 @@ export class BodyController{
         this.count = temp.length;
 
         // have to force reset, optimize this later
-        this.rows.splice(0, this.rows.length);
+        this.tempRows.splice(0, this.tempRows.length);
       }
     } else if(this.groupColumn) {
       temp = this.groupsTemp || [];
@@ -237,7 +237,7 @@ export class BodyController{
         this.count = temp.length;
       }
     } else {
-      temp = this.$scope.values;
+      temp = this.$scope.rows;
     }
 
     var idx = 0,
@@ -250,7 +250,7 @@ export class BodyController{
       var row = temp[rowIndex];
       if(row){
         row.$$index = rowIndex;
-        this.rows[idx] = row;
+        this.tempRows[idx] = row;
       }
 
       idx++;
@@ -428,8 +428,8 @@ export class BodyController{
    */
   selectRowsBetween(index){
     var reverse = index < this.prevIndex;
-    for(var i=0, len=this.rows.length; i < len; i++) {
-      var row = this.rows[i],
+    for(var i=0, len=this.tempRows.length; i < len; i++) {
+      var row = this.tempRows[i],
           greater = i >= this.prevIndex && i <= index,
           lesser = i <= this.prevIndex && i >= index;
 
@@ -458,7 +458,7 @@ export class BodyController{
    * @return {row model}
    */
   getRowValue(idx){
-    return this.rows[idx];
+    return this.tempRows[idx];
   }
 
   /**
@@ -500,8 +500,8 @@ export class BodyController{
       this.getRows(true);
     } else {
       var values = this.buildTree();
-      this.rows.splice(0, this.rows.length);
-      this.rows.push(...values);
+      this.tempRows.splice(0, this.tempRows.length);
+      this.tempRows.push(...values);
     }
 
     scope.onTreeToggle({
@@ -531,8 +531,8 @@ export class BodyController{
       this.getRows(true);
     } else {
       var values = this.buildGroups();
-      this.rows.splice(0, this.rows.length);
-      this.rows.push(...values);
+      this.tempRows.splice(0, this.tempRows.length);
+      this.tempRows.push(...values);
     }
   }
 }
@@ -561,7 +561,7 @@ export function BodyDirective($timeout){
     scope: {
       columns: '=',
       columnWidths: '=',
-      values: '=',
+      rows: '=',
       options: '=',
       selected: '=?',
       expanded: '=?',
@@ -571,7 +571,7 @@ export function BodyDirective($timeout){
     template: `
       <div class="dt-body" ng-style="body.styles()">
         <div class="dt-body-scroller" ng-style="body.scrollerStyles()">
-          <dt-group-row ng-repeat-start="r in body.rows track by $index"
+          <dt-group-row ng-repeat-start="r in body.tempRows track by $index"
                         ng-if="r.group"
                         ng-style="body.groupRowStyles(this, r)" 
                         on-group-toggle="body.onGroupToggle(this, group)"
@@ -598,11 +598,11 @@ export function BodyDirective($timeout){
                   ng-style="body.rowStyles(this, r)">
           </dt-row>
         </div>
-        <div ng-if="values && !values.length" 
+        <div ng-if="rows && !rows.length" 
              class="empty-row" 
              ng-bind="::options.emptyMessage">
        </div>
-       <div ng-if="values === undefined" 
+       <div ng-if="rows === undefined" 
              class="loading-row"
              ng-bind="::options.loadingMessage">
        </div>

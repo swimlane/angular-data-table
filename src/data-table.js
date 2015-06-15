@@ -67,7 +67,7 @@ class DataTableController {
     }
 
     // default sort
-    var watch = $scope.$watch('values', (newVal) => {
+    var watch = $scope.$watch('rows', (newVal) => {
       if(newVal){
         watch();
         this.onSort($scope);
@@ -88,7 +88,7 @@ class DataTableController {
 
       if(!column.name){
         this.$log.warn(`'Name' property expected but not defined.`, column);
-        column.name = Math.random();
+        column.name = new Date() + '';
       }
 
       if(column.name && !column.prop){
@@ -150,7 +150,7 @@ class DataTableController {
    * @param  {scope}
    */
   onSort(scope){
-    if(!scope.values) return;
+    if(!scope.rows) return;
 
     var sorts = scope.options.columns.filter((c) => {
       return c.sort;
@@ -173,9 +173,9 @@ class DataTableController {
       if(clientSorts.length){
         // todo: more ideal to just resort vs splice and repush
         // but wasn't responding to this change ...
-        var sortedValues = this.$filter('orderBy')(scope.values, clientSorts);
-        scope.values.splice(0, scope.values.length);
-        scope.values.push(...sortedValues);
+        var sortedValues = this.$filter('orderBy')(scope.rows, clientSorts);
+        scope.rows.splice(0, scope.rows.length);
+        scope.rows.push(...sortedValues);
       }
     }
 
@@ -226,12 +226,12 @@ class DataTableController {
    * @param  {scope}
    */
   onHeaderCheckboxChange(scope){
-    if(scope.values){
-      var matches = scope.selected.length === scope.values.length;
+    if(scope.rows){
+      var matches = scope.selected.length === scope.rows.length;
       scope.selected.splice(0, scope.selected.length);
 
       if(!matches){
-        scope.selected.push(...scope.values);
+        scope.selected.push(...scope.rows);
       }
     }
   }
@@ -242,8 +242,8 @@ class DataTableController {
    * @return {Boolean} if all selected
    */
   isAllRowsSelected(scope){
-    if(!scope.values) return false;
-    return scope.selected.length === scope.values.length;
+    if(!scope.rows) return false;
+    return scope.selected.length === scope.rows.length;
   }
 
   /**
@@ -269,7 +269,7 @@ function DataTableDirective($window, $timeout, throttle){
     controller: 'DataTable',
     scope: {
       options: '=',
-      values: '=',
+      rows: '=',
       selected: '=?',
       expanded: '=?',
       onSelect: '&',
@@ -279,7 +279,7 @@ function DataTableDirective($window, $timeout, throttle){
     },
     controllerAs: 'dt',
     template:
-      `<div class="dt material" ng-class="dt.tableCss(this)">
+      `<div class="dt" ng-class="dt.tableCss(this)">
         <dt-header options="options"
                    on-checkbox-change="dt.onHeaderCheckboxChange(this)"
                    columns="dt.columnsByPin"
@@ -289,7 +289,7 @@ function DataTableDirective($window, $timeout, throttle){
                    selected="dt.isAllRowsSelected(this)"
                    on-sort="dt.onSort(this)">
         </dt-header>
-        <dt-body values="values"
+        <dt-body rows="rows"
                  selected="selected"
                  expanded="expanded"
                  columns="dt.columnsByPin"
