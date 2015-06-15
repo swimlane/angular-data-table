@@ -1,6 +1,6 @@
 import angular from 'angular';
 import { requestAnimFrame, ColumnsByPin } from '../../utils/utils';
-import { KEYS } from 'utils/keys';
+import { KEYS } from '../../utils/keys';
 
 export class BodyController{
 
@@ -44,7 +44,7 @@ export class BodyController{
         this.count = this.options.paging.count;
 
         if(this.treeColumn || this.groupColumn){
-		      this.buildRowsByGroup();
+          this.buildRowsByGroup();
         }
 
         if(this.options.scrollbarV){
@@ -577,11 +577,11 @@ export function BodyDirective($timeout){
                         on-group-toggle="body.onGroupToggle(this, group)"
                         expanded="body.getRowExpanded(this, r)"
                         tabindex="{{$index}}"
-                        value="r">
+                        row="r">
           </dt-group-row>
           <dt-row ng-repeat-end
                   ng-if="!r.group"
-                  value="body.getRowValue($index)"
+                  row="body.getRowValue($index)"
                   tabindex="{{$index}}"
                   columns="columns"
                   column-widths="columnWidths"

@@ -5,7 +5,7 @@ export class GroupRowController {
   onGroupToggle(evt, scope){
     evt.stopPropagation();
     scope.onGroupToggle({
-      group: scope.value
+      group: scope.row
     });
   }
 
@@ -25,7 +25,7 @@ export function GroupRowDirective(){
     controller: 'GroupRowController',
     controllerAs: 'group',
     scope: {
-      value: '=',
+      row: '=',
       onGroupToggle: '&',
       expanded: '='
     },
@@ -36,7 +36,7 @@ export function GroupRowDirective(){
               ng-click="group.onGroupToggle($event, this)">
         </span>
         <span class="dt-group-row-label">
-          {{value.name}}
+          {{row.name}}
         </span>
       </div>`
   };

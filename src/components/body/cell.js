@@ -94,6 +94,7 @@ export function CellDirective($rootScope, $compile, $log){
       value: '=',
       selected: '=',
       column: '=',
+      row: '=',
       expanded: '=',
       hasChildren: '=',
       onTreeToggle: '&',

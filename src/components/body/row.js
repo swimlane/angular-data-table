@@ -10,7 +10,7 @@ export class RowController {
    * @return {value}
    */
   getValue(scope, col){
-    return DeepValueGetter(scope.value, col.prop);
+    return DeepValueGetter(scope.row, col.prop);
   }
 
   /**
@@ -63,9 +63,9 @@ export function RowDirective(){
   return {
     restrict: 'E',
     controller: 'RowController',
-    controllerAs: 'row',
+    controllerAs: 'rowCtrl',
     scope: {
-      value: '=',
+      row: '=',
       columns: '=',
       columnWidths: '=',
       expanded: '=',
@@ -77,40 +77,43 @@ export function RowDirective(){
     },
     template: `
       <div class="dt-row">
-        <div class="dt-row-left dt-row-block" ng-style="row.stylesByGroup(this, 'left')">
+        <div class="dt-row-left dt-row-block" ng-style="rowCtrl.stylesByGroup(this, 'left')">
           <dt-cell ng-repeat="column in columns['left'] track by $index"
-                   on-tree-toggle="row.onTreeToggle(this, cell)"
+                   on-tree-toggle="rowCtrl.onTreeToggle(this, cell)"
                    column="column"
                    options="options"
                    has-children="hasChildren"
-                   on-checkbox-change="row.onCheckboxChange(this)"
+                   on-checkbox-change="rowCtrl.onCheckboxChange(this)"
                    selected="selected"
                    expanded="expanded"
-                   value="row.getValue(this, column)">
+                   row="row"
+                   value="rowCtrl.getValue(this, column)">
           </dt-cell>
         </div>
-        <div class="dt-row-center dt-row-block" ng-style="row.stylesByGroup(this, 'center')">
+        <div class="dt-row-center dt-row-block" ng-style="rowCtrl.stylesByGroup(this, 'center')">
           <dt-cell ng-repeat="column in columns['center'] track by $index"
-                   on-tree-toggle="row.onTreeToggle(this, cell)"
+                   on-tree-toggle="rowCtrl.onTreeToggle(this, cell)"
                    column="column"
                    options="options"
                    has-children="hasChildren"
                    expanded="expanded"
                    selected="selected"
-                   on-checkbox-change="row.onCheckboxChange(this)"
-                   value="row.getValue(this, column)">
+                   row="row"
+                   on-checkbox-change="rowCtrl.onCheckboxChange(this)"
+                   value="rowCtrl.getValue(this, column)">
           </dt-cell>
         </div>
-        <div class="dt-row-right dt-row-block" ng-style="row.stylesByGroup(this, 'right')">
+        <div class="dt-row-right dt-row-block" ng-style="rowCtrl.stylesByGroup(this, 'right')">
           <dt-cell ng-repeat="column in columns['right'] track by $index"
-                   on-tree-toggle="row.onTreeToggle(this, cell)"
+                   on-tree-toggle="rowCtrl.onTreeToggle(this, cell)"
                    column="column"
                    options="options"
                    has-children="hasChildren"
                    selected="selected"
-                   on-checkbox-change="row.onCheckboxChange(this)"
+                   on-checkbox-change="rowCtrl.onCheckboxChange(this)"
+                   row="row"
                    expanded="expanded"
-                   value="row.getValue(this, column)">
+                   value="rowCtrl.getValue(this, column)">
           </dt-cell>
         </div>
       </div>`,
