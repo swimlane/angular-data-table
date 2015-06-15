@@ -8,20 +8,20 @@ A data-table for AngularJS that doesn't suck.  Its ES6/CSS3/HTML5, fast, light a
 - Left and Right Column Pinning
 - Column Reordering
 - Column Resizing
-- Column Width Flex-grow 
-- Column Add/Removing
+- Intelligent Column Width Algorithms ( Force fill / Flex-grow )
 - Horizontal/Vertical Scrolling
-- Virtual Paging with linked traditional pager
+- Virtual Paging WITH linked traditional pager
 - Tree Grids
-- Cell tooltips for overflow
 - Row Grouping
-- Row Selection ( multi / single / keyboard / touch )
+- Checkbox and Row Selection ( multi / single / keyboard / touch )
 - Light codebase / No external deps
-- Server Pagination / Sorting
-- Client-side Sorting
+- Client-side AND Server Pagination / Sorting
 - Rich header / column templates
 - Fixed AND Fluid height
 - Decoupled themeing with included Google Material theme
+- Decoupled Cell tooltips on overflow
+- Decoupled Column Add/Removing Menu
+- Expressive Syntax
 
 ## Using It
 
