@@ -71,7 +71,13 @@ class DataTableController {
           var attrName = CamelCase(attr.name);
 
           if(ColumnDefaults.hasOwnProperty(attrName)){
-            column[attrName] = attr.value;
+            var val = attr.value;
+
+            if(!isNaN(attr.value)){
+              val = parseInt(attr.value);
+            }
+
+            column[attrName] = val;
           }
 
           if(attrName === 'name'){

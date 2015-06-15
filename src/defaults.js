@@ -27,7 +27,7 @@ export var TableDefaults = Object.freeze({
 
   // The minimum header height in pixels.
   // pass falsey for no header
-  headerHeight: 50,
+  headerHeight: 30,
 
   // The minimum footer height in pixels.
   // pass falsey for no footer
