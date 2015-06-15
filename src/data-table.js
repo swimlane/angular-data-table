@@ -101,7 +101,6 @@ class DataTableController {
       scope.options.columns = columns;
     }
   }
-  }
 
   /**
    * Creates and extends default options for the grid control
