@@ -90,6 +90,7 @@ export function CellDirective($rootScope, $compile, $log){
     controller: 'CellController',
     controllerAs: 'cell',
     scope: {
+      options: '=',
       value: '=',
       selected: '=',
       column: '=',
@@ -118,11 +119,15 @@ export function CellDirective($rootScope, $compile, $log){
       return {
         pre: function($scope, $elm, $attrs, ctrl) {
           var content = angular.element($elm[0].querySelector('.dt-cell-content'));
+          $scope.$outer = $scope.options.$outer;
           
           $scope.$watch('value', () => {
             content.empty();
             
-            if($scope.column.cellRenderer){
+            if($scope.column.template){
+              var elm = angular.element(`<span>${$scope.column.template.trim()}</span>`);
+              content.append($compile(elm)($scope));
+            } else if($scope.column.cellRenderer){
               var elm = angular.element($scope.column.cellRenderer($scope, content));
               content.append($compile(elm)($scope));
             } else {

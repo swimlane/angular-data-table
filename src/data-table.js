@@ -29,12 +29,15 @@ class DataTableController {
    * @param  {filter}
    */
   /*@ngInject*/
-	constructor($scope, $filter, $log){
+	constructor($scope, $filter, $log, $transclude){
     angular.extend(this, {
       $scope: $scope,
       $filter: $filter,
       $log: $log
     });
+
+    // set scope to the parent
+    $scope.options.$outer = $scope.$parent;
 
     this.defaults($scope);
     $scope.$watch('options.columns', (newVal, oldVal) => {
@@ -43,7 +46,49 @@ class DataTableController {
       }
       this.calculateColumns(newVal);
     }, true);
+
+    // Gets the column nodes to transposes to column objects
+    // http://stackoverflow.com/questions/30845397/angular-expressive-directive-design/30847609#30847609
+    $transclude((clone,scope) => {
+      var cols = clone[0].getElementsByTagName('column');
+      this.buildColumns($scope, cols);
+      this.transposeColumnDefaults($scope.options.columns);
+    });
 	}
+
+  /**
+   * Create columns from elements
+   * @param  {array} columnElms 
+   */
+  buildColumns(scope, columnElms){
+    if(columnElms && columnElms.length){
+      var columns = [];
+
+      angular.forEach(columnElms, (c) => {
+        var column = {};
+
+        angular.forEach(c.attributes, (attr) => {
+          var attrName = attr.name;
+
+          if(ColumnDefaults[attrName]){
+            column[attrName] = attr.value;
+          }
+
+          if(attrName === 'name'){
+            column.name = attr.value;
+          }
+        });
+
+        if(c.innerHTML !== ''){
+          column.template = c.innerHTML;
+        }
+
+        columns.push(column);
+      });
+
+      scope.options.columns = columns;
+    }
+  }
 
   /**
    * Creates and extends default options for the grid control
@@ -58,7 +103,7 @@ class DataTableController {
     options.paging = angular.extend(angular.copy(TableDefaults.paging),
       $scope.options.paging);
 
-    this.transposeColumnDefaults(options.columns);
+    //this.transposeColumnDefaults(options.columns);
 
     $scope.options = options;
 
@@ -266,6 +311,7 @@ function DataTableDirective($window, $timeout, throttle){
   return {
     restrict: 'E',
     replace: true,
+    transclude:'element',
     controller: 'DataTable',
     scope: {
       options: '=',
@@ -278,36 +324,35 @@ function DataTableDirective($window, $timeout, throttle){
       onPage: '&'
     },
     controllerAs: 'dt',
-    template:
+    template: 
       `<div class="dt" ng-class="dt.tableCss(this)">
-        <dt-header options="options"
-                   on-checkbox-change="dt.onHeaderCheckboxChange(this)"
+          <dt-header options="options"
+                     on-checkbox-change="dt.onHeaderCheckboxChange(this)"
+                     columns="dt.columnsByPin"
+                     column-widths="dt.columnWidths"
+                     ng-if="options.headerHeight"
+                     on-resize="dt.onResize(this, column, width)"
+                     selected="dt.isAllRowsSelected(this)"
+                     on-sort="dt.onSort(this)">
+          </dt-header>
+          <dt-body rows="rows"
+                   selected="selected"
+                   expanded="expanded"
                    columns="dt.columnsByPin"
                    column-widths="dt.columnWidths"
-                   ng-if="options.headerHeight"
-                   on-resize="dt.onResize(this, column, width)"
-                   selected="dt.isAllRowsSelected(this)"
-                   on-sort="dt.onSort(this)">
-        </dt-header>
-        <dt-body rows="rows"
-                 selected="selected"
-                 expanded="expanded"
-                 columns="dt.columnsByPin"
-                 column-widths="dt.columnWidths"
-                 options="options"
-                 on-page="dt.onBodyPage(this, offset, size)"
-                 on-tree-toggle="dt.onTreeToggle(this, row, cell)">
-         </dt-body>
-        <dt-footer ng-if="options.footerHeight"
-                   ng-style="{ height: options.footerHeight + 'px' }"
-                   on-page="dt.onFooterPage(this, offset, size)"
-                   paging="options.paging">
-         </dt-footer>
-      </div>`,
+                   options="options"
+                   on-page="dt.onBodyPage(this, offset, size)"
+                   on-tree-toggle="dt.onTreeToggle(this, row, cell)">
+           </dt-body>
+          <dt-footer ng-if="options.footerHeight"
+                     ng-style="{ height: options.footerHeight + 'px' }"
+                     on-page="dt.onFooterPage(this, offset, size)"
+                     paging="options.paging">
+           </dt-footer>
+        </div>`,
     compile: function(tElem, tAttrs){
       return {
         pre: function($scope, $elm, $attrs, ctrl){
-
           function resize(){
             $scope.options.internal.innerWidth = $elm[0].offsetWidth;
 
@@ -330,6 +375,7 @@ function DataTableDirective($window, $timeout, throttle){
           }
 
           resize();
+          $elm.addClass('dt-loaded');
           angular.element($window).bind('resize', throttle(() => {
             $timeout(resize);
           }));
