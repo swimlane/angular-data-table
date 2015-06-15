@@ -1,5 +1,5 @@
 import angular from 'angular';
-import { Sortable } from 'utils/sortable';
+import { Sortable } from '../../utils/sortable';
 
 export class HeaderController {
 

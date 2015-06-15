@@ -1,5 +1,5 @@
 import angular from 'angular';
-import { requestAnimFrame, ColumnsByPin } from 'utils/utils';
+import { requestAnimFrame, ColumnsByPin } from '../../utils/utils';
 import { KEYS } from 'utils/keys';
 
 export class BodyController{

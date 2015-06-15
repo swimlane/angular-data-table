@@ -6,7 +6,7 @@ import { debounce, throttle } from './utils/throttle';
 import { Resizable } from './utils/resizable';
 import { Sortable } from './utils/sortable';
 import { AdjustColumnWidths, ForceFillColumnWidths } from './utils/math';
-import { ColumnsByPin, ColumnGroupWidths, CamelCase } from 'utils/utils';
+import { ColumnsByPin, ColumnGroupWidths, CamelCase } from './utils/utils';
 
 import { TableDefaults, ColumnDefaults } from './defaults';
 

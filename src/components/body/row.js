@@ -1,5 +1,5 @@
 import angular from 'angular';
-import { DeepValueGetter } from 'utils/utils';
+import { DeepValueGetter } from '../../utils/utils';
 
 export class RowController {
 

@@ -1,5 +1,5 @@
 import angular from 'angular';
-import { ColumnsByPin, ColumnGroupWidths } from 'utils/utils';
+import { ColumnsByPin, ColumnGroupWidths } from './utils';
 
 /**
  * Calculates the total width of all columns and their groups

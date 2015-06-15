@@ -1,4 +1,4 @@
-import { ColumnTotalWidth } from 'utils/math';
+import { ColumnTotalWidth } from './math';
 
 /**
  * Shim layer with setTimeout fallback

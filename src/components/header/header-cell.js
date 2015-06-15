@@ -1,5 +1,5 @@
 import angular from 'angular';
-import { Resizable } from 'utils/resizable';
+import { Resizable } from '../../utils/resizable';
  
 export class HeaderCellController{
 
