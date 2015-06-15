@@ -60,6 +60,7 @@ export function Sortable($timeout) {
 
       function onDragStart(evt){
         if(!$scope.isSortable) return false;
+        evt = evt.originalEvent || evt;
 
         dragEl = evt.target;
         nextEl = dragEl.nextSibling;

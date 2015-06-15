@@ -61,7 +61,6 @@ class DataTableController {
    * @param  {array} columnElms 
    */
   buildColumns(scope, columnElms){
-  buildColumns(scope, columnElms){
     if(columnElms && columnElms.length){
       var columns = [];
 
