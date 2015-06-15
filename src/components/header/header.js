@@ -102,7 +102,7 @@ export function HeaderDirective($timeout){
                ng-style="header.stylesByGroup(this, 'left')"
                sortable="options.reorderable"
                on-sortable-sort="columnsResorted(event, childScope)">
-            <dt-header-cell ng-repeat="column in columns['left'] track by column.name" 
+            <dt-header-cell ng-repeat="column in columns['left'] track by column.$id" 
                             on-checkbox-change="header.onCheckboxChange(this)"
                             on-sort="header.onSort(this, column)"
                             on-resize="header.onResize(this, column, width)"
@@ -114,7 +114,7 @@ export function HeaderDirective($timeout){
                sortable="options.reorderable"
                ng-style="header.stylesByGroup(this, 'center')"
                on-sortable-sort="columnsResorted(event, childScope)">
-            <dt-header-cell ng-repeat="column in columns['center'] track by column.name" 
+            <dt-header-cell ng-repeat="column in columns['center'] track by column.$id" 
                             on-checkbox-change="header.onCheckboxChange(this)"
                             on-sort="header.onSort(this, column)"
                             selected="header.isSelected(this)"
@@ -126,7 +126,7 @@ export function HeaderDirective($timeout){
                sortable="options.reorderable"
                ng-style="header.stylesByGroup(this, 'right')"
                on-sortable-sort="columnsResorted(event, childScope)">
-            <dt-header-cell ng-repeat="column in columns['right'] track by column.name" 
+            <dt-header-cell ng-repeat="column in columns['right'] track by column.$id" 
                             on-checkbox-change="header.onCheckboxChange(this)"
                             on-sort="header.onSort(this, column)"
                             selected="header.isSelected(this)"

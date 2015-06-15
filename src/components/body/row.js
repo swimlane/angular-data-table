@@ -78,7 +78,7 @@ export function RowDirective(){
     template: `
       <div class="dt-row">
         <div class="dt-row-left dt-row-block" ng-style="rowCtrl.stylesByGroup(this, 'left')">
-          <dt-cell ng-repeat="column in columns['left'] track by $index"
+          <dt-cell ng-repeat="column in columns['left'] track by column.$id"
                    on-tree-toggle="rowCtrl.onTreeToggle(this, cell)"
                    column="column"
                    options="options"
@@ -91,7 +91,7 @@ export function RowDirective(){
           </dt-cell>
         </div>
         <div class="dt-row-center dt-row-block" ng-style="rowCtrl.stylesByGroup(this, 'center')">
-          <dt-cell ng-repeat="column in columns['center'] track by $index"
+          <dt-cell ng-repeat="column in columns['center'] track by column.$id"
                    on-tree-toggle="rowCtrl.onTreeToggle(this, cell)"
                    column="column"
                    options="options"
@@ -104,7 +104,7 @@ export function RowDirective(){
           </dt-cell>
         </div>
         <div class="dt-row-right dt-row-block" ng-style="rowCtrl.stylesByGroup(this, 'right')">
-          <dt-cell ng-repeat="column in columns['right'] track by $index"
+          <dt-cell ng-repeat="column in columns['right'] track by column.$id"
                    on-tree-toggle="rowCtrl.onTreeToggle(this, cell)"
                    column="column"
                    options="options"

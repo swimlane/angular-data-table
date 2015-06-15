@@ -16,6 +16,16 @@ export var requestAnimFrame = (function(){
 })();
 
 /**
+ * Creates a unique object id.
+ */
+export function ObjectId() {
+  var timestamp = (new Date().getTime() / 1000 | 0).toString(16);
+  return timestamp + 'xxxxxxxxxxxxxxxx'.replace(/[x]/g, function () {
+      return (Math.random() * 16 | 0).toString(16);
+  }).toLowerCase();
+};
+
+/**
  * Returns the columns by pin.
  * @param {array} colsumns
  */

@@ -6,7 +6,7 @@ import { debounce, throttle } from './utils/throttle';
 import { Resizable } from './utils/resizable';
 import { Sortable } from './utils/sortable';
 import { AdjustColumnWidths, ForceFillColumnWidths } from './utils/math';
-import { ColumnsByPin, ColumnGroupWidths, CamelCase } from './utils/utils';
+import { ColumnsByPin, ColumnGroupWidths, CamelCase, ObjectId } from './utils/utils';
 
 import { TableDefaults, ColumnDefaults } from './defaults';
 
@@ -109,8 +109,6 @@ class DataTableController {
     options.paging = angular.extend(angular.copy(TableDefaults.paging),
       $scope.options.paging);
 
-    //this.transposeColumnDefaults(options.columns);
-
     $scope.options = options;
 
     if($scope.options.selectable && $scope.options.multiSelect){
@@ -136,11 +134,7 @@ class DataTableController {
     for(var i=0, len = columns.length; i < len; i++) {
       var column = columns[i];
       column = angular.extend(angular.copy(ColumnDefaults), column);
-
-      if(!column.name){
-        this.$log.warn(`'Name' property expected but not defined.`, column);
-        column.name = new Date() + '';
-      }
+      column.$id = ObjectId();
 
       if(column.name && !column.prop){
         column.prop = CamelCase(column.name);
