@@ -1,4 +1,4 @@
-# data-table
+# angular-data-table
 
 A data-table for AngularJS that doesn't suck.  Its ES6/CSS3/HTML5, fast, light and awesome!  Only supports [Evergreen Browsers](http://eisenbergeffect.bluespire.com/evergreen-browsers/) and 1.4.x Angular.
 
@@ -32,13 +32,15 @@ A data-table for AngularJS that doesn't suck.  Its ES6/CSS3/HTML5, fast, light a
 
 or Github download or clone of course!
 
-#### Run Demo
+#### Run Demos
 
-Ensure you have the latest NPM and JSPM installed globally.
+Ensure you have the latest NPM and JSPM installed globally.  If you don't already have JSPM installed run: `npm install jspm -g`.
 
 - `npm install`
 - `gulp watch serve`
 - Open your browser to `http://localhost:9000`
+
+Website and docs coming soon, in the meantime, 'View Source' is your friend ;)!
 
 #### Build
 
@@ -51,7 +53,7 @@ You've got 5 different options to include this in your build depending on your s
 - `./release/data-table.js` - A standalone file that was compiled with Babel and EXCLUDES the Babel runtime.
 - `./release/data-table.helpers.js` - A standalone file that was compiled with Babel and INCLUDES the Babel runtime.
 - `./release/data-table.helpers.min.js` - A standalone file that was compiled with Babel, INCLUDES the Babel runtime and is MINIFIED.
-- `./release/data-table.es6.js` - ES6 Version.
+- `./release/data-table.es6.js` - Raw ES6 Version.
 
 There is also the CSS too:
 
