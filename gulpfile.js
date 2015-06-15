@@ -9,6 +9,9 @@ var Builder = require('systemjs-builder');
 var vinylPaths = require('vinyl-paths');
 var del = require('del');
 var ngAnnotate = require('gulp-ng-annotate');
+var rollup = require( 'rollup' );
+var rename = require('gulp-rename');
+var uglify = require('gulp-uglify');
 
 var compilerOptions = {
   modules: 'system',
@@ -100,9 +103,11 @@ var excludes = {
 gulp.task('release', function(callback) {
   return runSequence(
     'clean',
-    //'compile',
     'release-less',
-    'release-sfx',
+    'release-build',
+    'release-es6',
+    'release-es6-min',
+    //'release-sfx',
     //'release-sfx-min',
     //'release-sfx-runtime',
     //'release-sfx-runtime-min',
@@ -116,7 +121,50 @@ gulp.task('release-less', function () {
     .pipe(gulp.dest(path.release));
 });
 
-gulp.task('release-sfx', function () {
+gulp.task('release-build', function () {
+  return rollup.rollup({
+    entry: 'src/data-table.js',
+    external: [ 'angular' ]
+  }).then( function ( bundle ) {
+    return bundle.write({
+      dest: 'release/data-table.es6.js',
+      format: 'umd',
+      moduleName: 'DataTable'
+    });
+  });
+});
+
+gulp.task('release-es6', function () {
+  return gulp.src('release/data-table.es6.js')
+    .pipe(babel({
+      comments: false,
+      compact: false
+      //optional: ["runtime"]
+    }))
+    .pipe(ngAnnotate({
+      gulpWarnings: false
+    }))
+    .pipe(rename('data-table.js'))
+    .pipe(gulp.dest("release/"))
+});
+
+gulp.task('release-es6-min', function () {
+  return gulp.src('release/data-table.es6.js')
+    .pipe(babel({
+      comments: false,
+      compact: false
+      //optional: ["runtime"]
+    }))
+    .pipe(ngAnnotate({
+      gulpWarnings: false
+    }))
+    .pipe(uglify())
+    .pipe(rename('data-table.min.js'))
+    .pipe(gulp.dest("release/"))
+});
+
+
+/* gulp.task('release-sfx', function () {
   var config = { 
     defaultJSExtensions: true,
     paths:{
@@ -140,4 +188,4 @@ gulp.task('release-sfx', function () {
         mangle: false
       })
     //});
-});
+}); */

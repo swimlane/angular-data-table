@@ -26,6 +26,9 @@
   color: #757575;
   vertical-align: bottom;
 }
+.dt.material .dt-header .dt-resize-handle {
+  border-right: solid 1px #eee;
+}
 .dt.material .dt-header .dt-row-left,
 .dt.material .dt-body .dt-row-left {
   background-color: #FFF;

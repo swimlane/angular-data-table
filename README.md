@@ -48,17 +48,16 @@ Build to ES5 via Babel ( excludes helpers ) and compile/concat run: `gulp releas
 
 You've got 5 different options to include this in your build depending on your setup.
 
-- `./release/data-table.js` - A standalone file that was compiled with Babel and EXCLUDES Babel runtime.
-- `./release/data-table.min.js` - A standalone minimized file that was compiled with Babel and EXCLUDES Babel runtime.
-- `./release/data-table.runtime.js` - A standalone file that was compiled with Babel and INCLUDES Babel runtime.
-- `./release/data-table.runtime.min.js` - A standalone minimized file that was compiled with Babel and INCLUDES Babel runtime.
+- `./release/data-table.js` - A standalone file that was compiled with Babel and INCLUDES Babel runtime.
+- `./release/data-table.min.js` - A standalone file that was compiled with Babel, INCLUDES Babel runtime and is MINIFIED.
+- `./release/data-table.es6.js` - ES6 Version.
 
 There is also the CSS too:
 
 - `./release/data-table.css` - The base CSS, pretty much required
 - `./release/material.css` - Material theme
 
-If none of the above makes any sense just include `./release/data-table.runtime.min.js` and include the css files referenced above.
+If none of the above makes any sense just include `./release/data-table.min.js` and include the css files referenced above.
 
 #### Usage
 

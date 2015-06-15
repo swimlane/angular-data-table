@@ -1,6 +1,10 @@
 .dt {
+  visibility: hidden;
   justify-content: center;
   position: relative;
+}
+.dt.dt-loaded {
+  visibility: visible !important;
 }
 .dt *,
 .dt *:before,
@@ -87,7 +91,6 @@
   bottom: 0;
   width: 5px;
   padding: 0 5px;
-  border-right: solid 1px #eee;
   visibility: hidden;
   cursor: ew-resize;
 }
