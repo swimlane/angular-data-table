@@ -106,7 +106,8 @@ gulp.task('release', function(callback) {
     'release-less',
     'release-build',
     'release-es6',
-    'release-es6-min',
+    'release-es6-helpers',
+    'release-es6-helpers-min',
     //'release-sfx',
     //'release-sfx-min',
     //'release-sfx-runtime',
@@ -138,8 +139,8 @@ gulp.task('release-es6', function () {
   return gulp.src('release/data-table.es6.js')
     .pipe(babel({
       comments: false,
-      compact: false
-      //optional: ["runtime"]
+      compact: false,
+      externalHelpers: true
     }))
     .pipe(ngAnnotate({
       gulpWarnings: false
@@ -148,21 +149,32 @@ gulp.task('release-es6', function () {
     .pipe(gulp.dest("release/"))
 });
 
-gulp.task('release-es6-min', function () {
+gulp.task('release-es6-helpers', function () {
   return gulp.src('release/data-table.es6.js')
     .pipe(babel({
       comments: false,
       compact: false
-      //optional: ["runtime"]
+    }))
+    .pipe(ngAnnotate({
+      gulpWarnings: false
+    }))
+    .pipe(rename('data-table.helpers.js'))
+    .pipe(gulp.dest("release/"))
+});
+
+gulp.task('release-es6-helpers-min', function () {
+  return gulp.src('release/data-table.es6.js')
+    .pipe(babel({
+      comments: false,
+      compact: false
     }))
     .pipe(ngAnnotate({
       gulpWarnings: false
     }))
     .pipe(uglify())
-    .pipe(rename('data-table.min.js'))
+    .pipe(rename('data-table.helpers.min.js'))
     .pipe(gulp.dest("release/"))
 });
-
 
 /* gulp.task('release-sfx', function () {
   var config = { 
