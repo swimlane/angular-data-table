@@ -61,6 +61,7 @@ class DataTableController {
    * @param  {array} columnElms 
    */
   buildColumns(scope, columnElms){
+  buildColumns(scope, columnElms){
     if(columnElms && columnElms.length){
       var columns = [];
 
@@ -80,6 +81,12 @@ class DataTableController {
             column[attrName] = val;
           }
 
+          // cuz putting className vs class on 
+          // a element feels weird
+          if(attrName === 'class'){
+            column.className = attr.value;
+          }
+
           if(attrName === 'name'){
             column.name = attr.value;
           }
@@ -94,6 +101,7 @@ class DataTableController {
 
       scope.options.columns = columns;
     }
+  }
   }
 
   /**
