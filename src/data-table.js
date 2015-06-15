@@ -374,8 +374,8 @@ function DataTableDirective($window, $timeout, throttle){
             ctrl.calculatePageSize();
           }
 
-          resize();
           $elm.addClass('dt-loaded');
+          $timeout(resize);
           angular.element($window).bind('resize', throttle(() => {
             $timeout(resize);
           }));
