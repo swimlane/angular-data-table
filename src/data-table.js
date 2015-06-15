@@ -68,9 +68,9 @@ class DataTableController {
         var column = {};
 
         angular.forEach(c.attributes, (attr) => {
-          var attrName = attr.name;
+          var attrName = CamelCase(attr.name);
 
-          if(ColumnDefaults[attrName]){
+          if(ColumnDefaults.hasOwnProperty(attrName)){
             column[attrName] = attr.value;
           }
 
