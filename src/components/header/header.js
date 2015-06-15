@@ -100,6 +100,7 @@ export function HeaderDirective($timeout){
         <div class="dt-header-inner" ng-style="header.innerStyles(this)">
           <div class="dt-row-left"
                ng-style="header.stylesByGroup(this, 'left')"
+               ng-if="columns['left'].length"
                sortable="options.reorderable"
                on-sortable-sort="columnsResorted(event, childScope)">
             <dt-header-cell ng-repeat="column in columns['left'] track by column.$id" 
@@ -123,6 +124,7 @@ export function HeaderDirective($timeout){
             </dt-header-cell>
           </div>
           <div class="dt-row-right"
+               ng-if="columns['right'].length"
                sortable="options.reorderable"
                ng-style="header.stylesByGroup(this, 'right')"
                on-sortable-sort="columnsResorted(event, childScope)">
