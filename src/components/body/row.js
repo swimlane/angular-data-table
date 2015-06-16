@@ -21,7 +21,7 @@ export class RowController {
   onTreeToggle(scope, cell){
     scope.onTreeToggle({
       cell: cell,
-      row: scope.value
+      row: scope.row
     });
   }
 
@@ -53,7 +53,7 @@ export class RowController {
    */
   onCheckboxChange(scope){
     scope.onCheckboxChange({
-      row: scope.value
+      row: scope.row
     });
   }
 

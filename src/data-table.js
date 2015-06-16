@@ -311,6 +311,28 @@ class DataTableController {
     }
   }
 
+  /**
+   * Occurs when a row was selected
+   * @param  {object} scope 
+   * @param  {object} rows   
+   */
+  onSelect(scope, rows){
+    scope.onSelect({
+      rows: rows
+    });
+  }
+
+  /**
+   * Occurs when a row was click but may not be selected.
+   * @param  {object} scope 
+   * @param  {object} row   
+   */
+  onRowClick(scope, row){
+    scope.onRowClick({
+      row: row
+    });
+  }
+
 }
 
 function DataTableDirective($window, $timeout, throttle){
@@ -327,7 +349,8 @@ function DataTableDirective($window, $timeout, throttle){
       onSelect: '&',
       onSort: '&',
       onTreeToggle: '&',
-      onPage: '&'
+      onPage: '&',
+      onRowClick: '&'
     },
     controllerAs: 'dt',
     template: 
@@ -345,6 +368,8 @@ function DataTableDirective($window, $timeout, throttle){
                    selected="selected"
                    expanded="expanded"
                    columns="dt.columnsByPin"
+                   on-select="dt.onSelect(this, rows)"
+                   on-row-click="dt.onRowClick(this, row)"
                    column-widths="dt.columnWidths"
                    options="options"
                    on-page="dt.onBodyPage(this, offset, size)"

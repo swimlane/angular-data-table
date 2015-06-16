@@ -1,3 +1,9 @@
+/**
+ * angular-data-table - AngularJS data table directive written in ES6.
+ * @version v0.0.14
+ * @link http://swimlane.com/
+ * @license 
+ */
 'use strict';
 
 (function (global, factory) {
@@ -74,7 +80,9 @@
         selected: '=?',
         expanded: '=?',
         onPage: '&',
-        onTreeToggle: '&'
+        onTreeToggle: '&',
+        onSelect: '&',
+        onRowClick: '&'
       },
       template: '\n        <div class="dt-body" ng-style="body.styles()">\n          <div class="dt-body-scroller" ng-style="body.scrollerStyles()">\n            <dt-group-row ng-repeat-start="r in body.tempRows track by $index"\n                          ng-if="r.group"\n                          ng-style="body.groupRowStyles(this, r)" \n                          on-group-toggle="body.onGroupToggle(this, group)"\n                          expanded="body.getRowExpanded(this, r)"\n                          tabindex="{{$index}}"\n                          row="r">\n            </dt-group-row>\n            <dt-row ng-repeat-end\n                    ng-if="!r.group"\n                    row="body.getRowValue($index)"\n                    tabindex="{{$index}}"\n                    columns="columns"\n                    column-widths="columnWidths"\n                    ng-keydown="body.keyDown($event, $index, r)"\n                    ng-click="body.rowClicked($event, $index, r)"\n                    on-tree-toggle="body.onTreeToggle(this, row, cell)"\n                    ng-class="body.rowClasses(this, r)"\n                    options="options"\n                    selected="body.isSelected(r)"\n                    on-checkbox-change="body.onCheckboxChange($index, row)"\n                    columns="body.columnsByPin"\n                    has-children="body.getRowHasChildren(r)"\n                    expanded="body.getRowExpanded(this, r)"\n                    ng-style="body.rowStyles(this, r)">\n            </dt-row>\n          </div>\n          <div ng-if="rows && !rows.length" \n               class="empty-row" \n               ng-bind="::options.emptyMessage">\n         </div>\n         <div ng-if="rows === undefined" \n               class="loading-row"\n               ng-bind="::options.loadingMessage">\n         </div>\n        </div>',
       replace: true,
@@ -639,6 +647,20 @@
           this.calculateColumns(scope.options.columns);
         }
       }
+    }, {
+      key: 'onSelect',
+      value: function onSelect(scope, rows) {
+        scope.onSelect({
+          rows: rows
+        });
+      }
+    }, {
+      key: 'onRowClick',
+      value: function onRowClick(scope, row) {
+        scope.onRowClick({
+          row: row
+        });
+      }
     }]);
     return DataTableController;
   })();
@@ -810,7 +832,7 @@
         onTreeToggle: '&',
         onCheckboxChange: '&'
       },
-      template: '<div class="dt-cell" \n              data-title="{{::column.name}}" \n              ng-style="cell.styles(column)"\n              ng-class="cell.cellClass(column)">\n          <label ng-if="column.isCheckboxColumn" class="dt-checkbox">\n            <input type="checkbox" \n                   ng-checked="selected"\n                   ng-click="cell.onCheckboxChange(this)" />\n          </label>\n          <span ng-if="column.isTreeColumn && hasChildren"\n                ng-class="cell.treeClass(this)"\n                ng-click="cell.onTreeToggle($event, this)"></span>\n          <span class="dt-cell-content"></span>\n        </div>',
+      template: '<div class="dt-cell" \n              data-title="{{::column.name}}" \n              ng-style="cell.styles(column)"\n              ng-class="cell.cellClass(column)">\n          <label ng-if="column.isCheckboxColumn" class="dt-checkbox">\n            <input type="checkbox" \n                   ng-checked="selected"\n                   ng-click="cell.onCheckboxChange($event, this)" />\n          </label>\n          <span ng-if="column.isTreeColumn && hasChildren"\n                ng-class="cell.treeClass(this)"\n                ng-click="cell.onTreeToggle($event, this)"></span>\n          <span class="dt-cell-content"></span>\n        </div>',
       replace: true,
       compile: function compile() {
         return {
@@ -887,7 +909,8 @@
       }
     }, {
       key: 'onCheckboxChange',
-      value: function onCheckboxChange(scope) {
+      value: function onCheckboxChange(event, scope) {
+        event.stopPropagation();
         scope.onCheckboxChange();
       }
     }, {
@@ -995,7 +1018,7 @@
       value: function onTreeToggle(scope, cell) {
         scope.onTreeToggle({
           cell: cell,
-          row: scope.value
+          row: scope.row
         });
       }
     }, {
@@ -1018,7 +1041,7 @@
       key: 'onCheckboxChange',
       value: function onCheckboxChange(scope) {
         scope.onCheckboxChange({
-          row: scope.value
+          row: scope.row
         });
       }
     }]);
@@ -1363,13 +1386,10 @@
       value: function rowClicked(event, index, row) {
         if (!this.options.checkboxSelection) {
           event.preventDefault();
-
           this.selectRow(index, row);
-
-          if (this.$scope.onSelect) {
-            this.$scope.onSelect({ row: row });
-          }
         }
+
+        this.$scope.onRowClick({ row: row });
       }
     }, {
       key: 'selectRow',
@@ -1387,18 +1407,22 @@
                 this.selected.splice(idx, 1);
               } else {
                 this.selected.push(row);
+                this.$scope.onSelect({ rows: [row] });
               }
             }
             this.prevIndex = index;
           } else {
             this.selected = row;
+            this.$scope.onSelect({ rows: [row] });
           }
         }
       }
     }, {
       key: 'selectRowsBetween',
       value: function selectRowsBetween(index) {
-        var reverse = index < this.prevIndex;
+        var reverse = index < this.prevIndex,
+            selecteds = [];
+
         for (var i = 0, len = this.tempRows.length; i < len; i++) {
           var row = this.tempRows[i],
               greater = i >= this.prevIndex && i <= index,
@@ -1408,9 +1432,12 @@
             var idx = this.selected.indexOf(row);
             if (idx === -1) {
               this.selected.push(row);
+              selecteds.push(row);
             }
           }
         }
+
+        this.$scope.onSelect({ rows: selecteds });
       }
     }, {
       key: 'scrollerStyles',
@@ -1901,10 +1928,11 @@
         onSelect: '&',
         onSort: '&',
         onTreeToggle: '&',
-        onPage: '&'
+        onPage: '&',
+        onRowClick: '&'
       },
       controllerAs: 'dt',
-      template: '<div class="dt" ng-class="dt.tableCss(this)">\n            <dt-header options="options"\n                       on-checkbox-change="dt.onHeaderCheckboxChange(this)"\n                       columns="dt.columnsByPin"\n                       column-widths="dt.columnWidths"\n                       ng-if="options.headerHeight"\n                       on-resize="dt.onResize(this, column, width)"\n                       selected="dt.isAllRowsSelected(this)"\n                       on-sort="dt.onSort(this)">\n            </dt-header>\n            <dt-body rows="rows"\n                     selected="selected"\n                     expanded="expanded"\n                     columns="dt.columnsByPin"\n                     column-widths="dt.columnWidths"\n                     options="options"\n                     on-page="dt.onBodyPage(this, offset, size)"\n                     on-tree-toggle="dt.onTreeToggle(this, row, cell)">\n             </dt-body>\n            <dt-footer ng-if="options.footerHeight"\n                       ng-style="{ height: options.footerHeight + \'px\' }"\n                       on-page="dt.onFooterPage(this, offset, size)"\n                       paging="options.paging">\n             </dt-footer>\n          </div>',
+      template: '<div class="dt" ng-class="dt.tableCss(this)">\n            <dt-header options="options"\n                       on-checkbox-change="dt.onHeaderCheckboxChange(this)"\n                       columns="dt.columnsByPin"\n                       column-widths="dt.columnWidths"\n                       ng-if="options.headerHeight"\n                       on-resize="dt.onResize(this, column, width)"\n                       selected="dt.isAllRowsSelected(this)"\n                       on-sort="dt.onSort(this)">\n            </dt-header>\n            <dt-body rows="rows"\n                     selected="selected"\n                     expanded="expanded"\n                     columns="dt.columnsByPin"\n                     on-select="dt.onSelect(this, rows)"\n                     on-row-click="dt.onRowClick(this, row)"\n                     column-widths="dt.columnWidths"\n                     options="options"\n                     on-page="dt.onBodyPage(this, offset, size)"\n                     on-tree-toggle="dt.onTreeToggle(this, row, cell)">\n             </dt-body>\n            <dt-footer ng-if="options.footerHeight"\n                       ng-style="{ height: options.footerHeight + \'px\' }"\n                       on-page="dt.onFooterPage(this, offset, size)"\n                       paging="options.paging">\n             </dt-footer>\n          </div>',
       compile: function compile(tElem, tAttrs) {
         return {
           pre: function pre($scope, $elm, $attrs, ctrl) {

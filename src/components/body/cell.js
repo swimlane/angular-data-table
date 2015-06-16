@@ -62,9 +62,11 @@ export class CellController {
 
   /**
    * Invoked when the checkbox was changed
+   * @param  {object} event 
    * @param  {object} scope 
    */
-  onCheckboxChange(scope){
+  onCheckboxChange(event, scope){
+    event.stopPropagation();
     scope.onCheckboxChange();
   }
 
@@ -108,7 +110,7 @@ export function CellDirective($rootScope, $compile, $log){
         <label ng-if="column.isCheckboxColumn" class="dt-checkbox">
           <input type="checkbox" 
                  ng-checked="selected"
-                 ng-click="cell.onCheckboxChange(this)" />
+                 ng-click="cell.onCheckboxChange($event, this)" />
         </label>
         <span ng-if="column.isTreeColumn && hasChildren"
               ng-class="cell.treeClass(this)"

@@ -378,20 +378,17 @@ export class BodyController{
 
   /**
    * Handler for the row click event
-   * @param  {event}
-   * @param  {index}
-   * @param  {row}
+   * @param  {object} event
+   * @param  {int} index
+   * @param  {object} row
    */
   rowClicked(event, index, row){
     if(!this.options.checkboxSelection){
       event.preventDefault();
-      
       this.selectRow(index, row);
-
-      if(this.$scope.onSelect){
-        this.$scope.onSelect({ row: row });
-      }
     }
+
+    this.$scope.onRowClick({ row: row });
   }
 
   /**
@@ -413,11 +410,13 @@ export class BodyController{
             this.selected.splice(idx, 1);
           } else {
             this.selected.push(row);
+            this.$scope.onSelect({ rows: [ row ] });
           }
         }
         this.prevIndex = index;
       } else {
         this.selected = row;
+        this.$scope.onSelect({ rows: [ row ] });
       }
     }
   }
@@ -427,7 +426,9 @@ export class BodyController{
    * @param  {index}
    */
   selectRowsBetween(index){
-    var reverse = index < this.prevIndex;
+    var reverse = index < this.prevIndex, 
+        selecteds = [];
+
     for(var i=0, len=this.tempRows.length; i < len; i++) {
       var row = this.tempRows[i],
           greater = i >= this.prevIndex && i <= index,
@@ -437,9 +438,12 @@ export class BodyController{
         var idx = this.selected.indexOf(row);
         if(idx === -1){
           this.selected.push(row);
+          selecteds.push(row);
         }
       }
     }
+
+    this.$scope.onSelect({ rows: selecteds });
   }
 
   /**
@@ -566,7 +570,9 @@ export function BodyDirective($timeout){
       selected: '=?',
       expanded: '=?',
       onPage: '&',
-      onTreeToggle: '&'
+      onTreeToggle: '&',
+      onSelect: '&',
+      onRowClick: '&'
     },
     template: `
       <div class="dt-body" ng-style="body.styles()">

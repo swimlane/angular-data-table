@@ -68,7 +68,12 @@
   <body ng-app="app" ng-controller="HomeController">
 
     <div class="wrapper">
-      <dt options="options" rows="data" class="material" selected="selected"></dt>
+      <dt options="options" 
+      rows="data" 
+      on-row-click="onRowClick(row)"
+      class="material" 
+      on-select="onSelect(row)" 
+      selected="selected"></dt>
 
       <div class="selected-box">
         <h5>Selected list</h5>
@@ -101,6 +106,14 @@
           };
 
           $scope.selected = [];
+
+          $scope.onSelect = function(row){
+            console.log('ROW SELECTED!', row);
+          }
+
+          $scope.onRowClick = function(row){
+            console.log('ROW CLICKED', row);
+          }
 
           $http.get('/demos/data/100.json').success(function(data) {
             $scope.data = data.splice(0, 10);

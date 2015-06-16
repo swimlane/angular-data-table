@@ -12,6 +12,7 @@ var ngAnnotate = require('gulp-ng-annotate');
 var rollup = require( 'rollup' );
 var rename = require('gulp-rename');
 var uglify = require('gulp-uglify');
+var header = require('gulp-header');
 
 var compilerOptions = {
   modules: 'system',
@@ -27,6 +28,16 @@ var path = {
   release: 'release/',
   outputCss: 'dist/**/*.css'
 };
+
+var pkg = require('./package.json');
+
+var banner = ['/**',
+  ' * <%= pkg.name %> - <%= pkg.description %>',
+  ' * @version v<%= pkg.version %>',
+  ' * @link <%= pkg.homepage %>',
+  ' * @license <%= pkg.license %>',
+  ' */',
+  ''].join('\n');
 
 //
 // Compile Tasks
@@ -145,6 +156,7 @@ gulp.task('release-es6', function () {
     .pipe(ngAnnotate({
       gulpWarnings: false
     }))
+    .pipe(header(banner, { pkg : pkg } ))
     .pipe(rename('data-table.js'))
     .pipe(gulp.dest("release/"))
 });
@@ -158,6 +170,7 @@ gulp.task('release-es6-helpers', function () {
     .pipe(ngAnnotate({
       gulpWarnings: false
     }))
+    .pipe(header(banner, { pkg : pkg } ))
     .pipe(rename('data-table.helpers.js'))
     .pipe(gulp.dest("release/"))
 });
@@ -172,32 +185,7 @@ gulp.task('release-es6-helpers-min', function () {
       gulpWarnings: false
     }))
     .pipe(uglify())
+    .pipe(header(banner, { pkg : pkg } ))
     .pipe(rename('data-table.helpers.min.js'))
     .pipe(gulp.dest("release/"))
 });
-
-/* gulp.task('release-sfx', function () {
-  var config = { 
-    defaultJSExtensions: true,
-    paths:{
-      "*": "src/*",
-      "github:*": "jspm_packages/github/*",
-      "npm:*": "jspm_packages/npm/*"
-    },
-    map: { 
-      'angular': '@empty',
-      "babel": "npm:babel-core@5.5.6",
-      "babel-runtime": "npm:babel-runtime@5.5.6"
-    },
-    transpiler: 'babel'
-  };
-
-  var builder = new Builder(config);
-    //return builder.loadConfig('./config.js').then(function(){
-    //builder.config(excludes);
-      return builder.buildSFX('data-table', './release/data-table.js', {
-        runtime: false,
-        mangle: false
-      })
-    //});
-}); */

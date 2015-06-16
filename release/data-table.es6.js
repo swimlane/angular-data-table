@@ -89,7 +89,9 @@
         selected: '=?',
         expanded: '=?',
         onPage: '&',
-        onTreeToggle: '&'
+        onTreeToggle: '&',
+        onSelect: '&',
+        onRowClick: '&'
       },
       template: `
         <div class="dt-body" ng-style="body.styles()">
@@ -805,6 +807,28 @@
       }
     }
 
+    /**
+     * Occurs when a row was selected
+     * @param  {object} scope 
+     * @param  {object} rows   
+     */
+    onSelect(scope, rows){
+      scope.onSelect({
+        rows: rows
+      });
+    }
+
+    /**
+     * Occurs when a row was click but may not be selected.
+     * @param  {object} scope 
+     * @param  {object} row   
+     */
+    onRowClick(scope, row){
+      scope.onRowClick({
+        row: row
+      });
+    }
+
   }
 
   function PagerDirective(){
@@ -1028,7 +1052,7 @@
           <label ng-if="column.isCheckboxColumn" class="dt-checkbox">
             <input type="checkbox" 
                    ng-checked="selected"
-                   ng-click="cell.onCheckboxChange(this)" />
+                   ng-click="cell.onCheckboxChange($event, this)" />
           </label>
           <span ng-if="column.isTreeColumn && hasChildren"
                 ng-class="cell.treeClass(this)"
@@ -1123,9 +1147,11 @@
 
     /**
      * Invoked when the checkbox was changed
+     * @param  {object} event 
      * @param  {object} scope 
      */
-    onCheckboxChange(scope){
+    onCheckboxChange(event, scope){
+      event.stopPropagation();
       scope.onCheckboxChange();
     }
 
@@ -1295,7 +1321,7 @@
     onTreeToggle(scope, cell){
       scope.onTreeToggle({
         cell: cell,
-        row: scope.value
+        row: scope.row
       });
     }
 
@@ -1327,7 +1353,7 @@
      */
     onCheckboxChange(scope){
       scope.onCheckboxChange({
-        row: scope.value
+        row: scope.row
       });
     }
 
@@ -1739,20 +1765,17 @@
 
     /**
      * Handler for the row click event
-     * @param  {event}
-     * @param  {index}
-     * @param  {row}
+     * @param  {object} event
+     * @param  {int} index
+     * @param  {object} row
      */
     rowClicked(event, index, row){
       if(!this.options.checkboxSelection){
         event.preventDefault();
-        
         this.selectRow(index, row);
-
-        if(this.$scope.onSelect){
-          this.$scope.onSelect({ row: row });
-        }
       }
+
+      this.$scope.onRowClick({ row: row });
     }
 
     /**
@@ -1774,11 +1797,13 @@
               this.selected.splice(idx, 1);
             } else {
               this.selected.push(row);
+              this.$scope.onSelect({ rows: [ row ] });
             }
           }
           this.prevIndex = index;
         } else {
           this.selected = row;
+          this.$scope.onSelect({ rows: [ row ] });
         }
       }
     }
@@ -1788,7 +1813,9 @@
      * @param  {index}
      */
     selectRowsBetween(index){
-      var reverse = index < this.prevIndex;
+      var reverse = index < this.prevIndex, 
+          selecteds = [];
+
       for(var i=0, len=this.tempRows.length; i < len; i++) {
         var row = this.tempRows[i],
             greater = i >= this.prevIndex && i <= index,
@@ -1798,9 +1825,12 @@
           var idx = this.selected.indexOf(row);
           if(idx === -1){
             this.selected.push(row);
+            selecteds.push(row);
           }
         }
       }
+
+      this.$scope.onSelect({ rows: selecteds });
     }
 
     /**
@@ -2436,7 +2466,8 @@
         onSelect: '&',
         onSort: '&',
         onTreeToggle: '&',
-        onPage: '&'
+        onPage: '&',
+        onRowClick: '&'
       },
       controllerAs: 'dt',
       template: 
@@ -2454,6 +2485,8 @@
                      selected="selected"
                      expanded="expanded"
                      columns="dt.columnsByPin"
+                     on-select="dt.onSelect(this, rows)"
+                     on-row-click="dt.onRowClick(this, row)"
                      column-widths="dt.columnWidths"
                      options="options"
                      on-page="dt.onBodyPage(this, offset, size)"
