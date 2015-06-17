@@ -8,12 +8,11 @@ export class PagerController {
    */
   /*@ngInject*/
   constructor($scope){
-    angular.extend(this, {
-      size: $scope.size,
-      count: $scope.count
+    $scope.$watch('count', (newVal) => {
+      this.calcTotalPages($scope.size, $scope.count);
+      this.getPages($scope.page || 1);
     });
 
-    this.totalPages = this.calcTotalPages();
     $scope.$watch('page', (newVal) => {
       if (newVal !== 0 && newVal <= this.totalPages) {
         this.getPages(newVal);
@@ -25,10 +24,9 @@ export class PagerController {
    * Calculates the total number of pages given the count.
    * @return {int} page count
    */
-  calcTotalPages() {
-    var count = this.size < 1 ? 1 : 
-      Math.ceil(this.count / this.size);
-    return Math.max(count || 0, 1);
+  calcTotalPages(size, count) {
+    var count = size < 1 ? 1 : Math.ceil(count / size);
+    this.totalPages = Math.max(count || 0, 1);
   }
 
   /**
