@@ -1,6 +1,6 @@
 /**
  * angular-data-table - AngularJS data table directive written in ES6.
- * @version v0.0.17
+ * @version v0.0.18
  * @link http://swimlane.com/
  * @license 
  */
@@ -1950,10 +1950,12 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         return {
           pre: function pre($scope, $elm, $attrs, ctrl) {
             function resize() {
-              $scope.options.internal.innerWidth = $elm[0].offsetWidth;
+              var rect = $elm[0].getBoundingClientRect();
+
+              $scope.options.internal.innerWidth = rect.width;
 
               if ($scope.options.scrollbarV) {
-                var height = $elm[0].offsetHeight;
+                var height = rect.height;
 
                 if ($scope.options.headerHeight) {
                   height = height - $scope.options.headerHeight;

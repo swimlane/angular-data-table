@@ -2498,17 +2498,19 @@
       compile: function(tElem, tAttrs){
         return {
           pre: function($scope, $elm, $attrs, ctrl){
-            function resize(){
-              $scope.options.internal.innerWidth = $elm[0].offsetWidth;
+            function resize() {
+              var rect = $elm[0].getBoundingClientRect();
 
-              if($scope.options.scrollbarV){
-                var height = $elm[0].offsetHeight;
+              $scope.options.internal.innerWidth = rect.width;
 
-                if($scope.options.headerHeight){
+              if ($scope.options.scrollbarV) {
+                var height = rect.height;
+
+                if ($scope.options.headerHeight) {
                   height = height - $scope.options.headerHeight;
                 }
 
-                if($scope.options.footerHeight){
+                if ($scope.options.footerHeight) {
                   height = height - $scope.options.footerHeight;
                 }
 
