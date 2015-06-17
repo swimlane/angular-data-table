@@ -20,8 +20,6 @@ export class BodyController{
     });
 
     this.tempRows = [];
-    this._viewportRowsStart = 0;
-    this._viewportRowsEnd = 0;
 
     this.treeColumn = $scope.options.columns.find((c) => {
       return c.isTreeColumn;
@@ -63,6 +61,7 @@ export class BodyController{
     });
 
     if(this.options.scrollbarV){
+      $scope.$watch('options.paging.count', this.updatePage.bind(this));
       $scope.$watch('options.internal.offsetY', this.updatePage.bind(this));
       $scope.$watch('options.paging.offset', (newVal) => {
         $scope.onPage({
@@ -240,22 +239,22 @@ export class BodyController{
       temp = this.$scope.rows;
     }
 
+
     var idx = 0,
         indexes = this.getFirstLastIndexes(),
         rowIndex = indexes.first;
+      console.log(temp)
 
-    while (rowIndex < indexes.last || (this.options.internal.bodyHeight <
-        this._viewportHeight && rowIndex < this.count)) {
-
+    while (rowIndex < indexes.last && rowIndex < this.count) {
       var row = temp[rowIndex];
       if(row){
         row.$$index = rowIndex;
         this.tempRows[idx] = row;
       }
 
-      idx++;
-      this._viewportRowsEnd = rowIndex++;
+      idx++ && rowIndex++;
     }
+    console.log('get rows', rowIndex)
   }
 
   /**

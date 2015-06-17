@@ -1,6 +1,6 @@
 /**
  * angular-data-table - AngularJS data table directive written in ES6.
- * @version v0.0.14
+ * @version v0.0.15
  * @link http://swimlane.com/
  * @license 
  */
@@ -687,12 +687,11 @@
 
       babelHelpers.classCallCheck(this, PagerController);
 
-      angular.extend(this, {
-        size: $scope.size,
-        count: $scope.count
+      $scope.$watch('count', function (newVal) {
+        _this3.calcTotalPages($scope.size, $scope.count);
+        _this3.getPages($scope.page || 1);
       });
 
-      this.totalPages = this.calcTotalPages();
       $scope.$watch('page', function (newVal) {
         if (newVal !== 0 && newVal <= _this3.totalPages) {
           _this3.getPages(newVal);
@@ -703,9 +702,9 @@
 
     babelHelpers.createClass(PagerController, [{
       key: 'calcTotalPages',
-      value: function calcTotalPages() {
-        var count = this.size < 1 ? 1 : Math.ceil(this.count / this.size);
-        return Math.max(count || 0, 1);
+      value: function calcTotalPages(size, count) {
+        var count = size < 1 ? 1 : Math.ceil(count / size);
+        this.totalPages = Math.max(count || 0, 1);
       }
     }, {
       key: 'selectPage',
@@ -1086,8 +1085,6 @@
       });
 
       this.tempRows = [];
-      this._viewportRowsStart = 0;
-      this._viewportRowsEnd = 0;
 
       this.treeColumn = $scope.options.columns.find(function (c) {
         return c.isTreeColumn;
@@ -1131,6 +1128,7 @@
       });
 
       if (this.options.scrollbarV) {
+        $scope.$watch('options.paging.count', this.updatePage.bind(this));
         $scope.$watch('options.internal.offsetY', this.updatePage.bind(this));
         $scope.$watch('options.paging.offset', function (newVal) {
           $scope.onPage({
@@ -1278,18 +1276,18 @@
         var idx = 0,
             indexes = this.getFirstLastIndexes(),
             rowIndex = indexes.first;
+        console.log(temp);
 
-        while (rowIndex < indexes.last || this.options.internal.bodyHeight < this._viewportHeight && rowIndex < this.count) {
-
+        while (rowIndex < indexes.last && rowIndex < this.count) {
           var row = temp[rowIndex];
           if (row) {
             row.$$index = rowIndex;
             this.tempRows[idx] = row;
           }
 
-          idx++;
-          this._viewportRowsEnd = rowIndex++;
+          idx++ && rowIndex++;
         }
+        console.log('get rows', rowIndex);
       }
     }, {
       key: 'styles',

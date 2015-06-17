@@ -868,12 +868,11 @@
      */
     /*@ngInject*/
     constructor($scope){
-      angular.extend(this, {
-        size: $scope.size,
-        count: $scope.count
+      $scope.$watch('count', (newVal) => {
+        this.calcTotalPages($scope.size, $scope.count);
+        this.getPages($scope.page || 1);
       });
 
-      this.totalPages = this.calcTotalPages();
       $scope.$watch('page', (newVal) => {
         if (newVal !== 0 && newVal <= this.totalPages) {
           this.getPages(newVal);
@@ -885,10 +884,9 @@
      * Calculates the total number of pages given the count.
      * @return {int} page count
      */
-    calcTotalPages() {
-      var count = this.size < 1 ? 1 : 
-        Math.ceil(this.count / this.size);
-      return Math.max(count || 0, 1);
+    calcTotalPages(size, count) {
+      var count = size < 1 ? 1 : Math.ceil(count / size);
+      this.totalPages = Math.max(count || 0, 1);
     }
 
     /**
@@ -1407,8 +1405,6 @@
       });
 
       this.tempRows = [];
-      this._viewportRowsStart = 0;
-      this._viewportRowsEnd = 0;
 
       this.treeColumn = $scope.options.columns.find((c) => {
         return c.isTreeColumn;
@@ -1450,6 +1446,7 @@
       });
 
       if(this.options.scrollbarV){
+        $scope.$watch('options.paging.count', this.updatePage.bind(this));
         $scope.$watch('options.internal.offsetY', this.updatePage.bind(this));
         $scope.$watch('options.paging.offset', (newVal) => {
           $scope.onPage({
@@ -1627,22 +1624,22 @@
         temp = this.$scope.rows;
       }
 
+
       var idx = 0,
           indexes = this.getFirstLastIndexes(),
           rowIndex = indexes.first;
+        console.log(temp)
 
-      while (rowIndex < indexes.last || (this.options.internal.bodyHeight <
-          this._viewportHeight && rowIndex < this.count)) {
-
+      while (rowIndex < indexes.last && rowIndex < this.count) {
         var row = temp[rowIndex];
         if(row){
           row.$$index = rowIndex;
           this.tempRows[idx] = row;
         }
 
-        idx++;
-        this._viewportRowsEnd = rowIndex++;
+        idx++ && rowIndex++;
       }
+      console.log('get rows', rowIndex)
     }
 
     /**
