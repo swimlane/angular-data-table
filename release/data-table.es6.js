@@ -878,6 +878,8 @@
           this.getPages(newVal);
         }
       });
+      
+      this.getPages($scope.page || 1);
     }
 
     /**

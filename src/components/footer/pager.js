@@ -18,6 +18,8 @@ export class PagerController {
         this.getPages(newVal);
       }
     });
+    
+    this.getPages($scope.page || 1);
   }
 
   /**

@@ -1,6 +1,6 @@
 /**
  * angular-data-table - AngularJS data table directive written in ES6.
- * @version v0.0.16
+ * @version v0.0.17
  * @link http://swimlane.com/
  * @license 
  */
@@ -704,6 +704,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
           _this3.getPages(newVal);
         }
       });
+
+      this.getPages($scope.page || 1);
     }
     PagerController.$inject = ["$scope"];
 
