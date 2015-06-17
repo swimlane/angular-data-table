@@ -243,7 +243,6 @@ export class BodyController{
     var idx = 0,
         indexes = this.getFirstLastIndexes(),
         rowIndex = indexes.first;
-      console.log(temp)
 
     while (rowIndex < indexes.last && rowIndex < this.count) {
       var row = temp[rowIndex];
@@ -254,7 +253,6 @@ export class BodyController{
 
       idx++ && rowIndex++;
     }
-    console.log('get rows', rowIndex)
   }
 
   /**

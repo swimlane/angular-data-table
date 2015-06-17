@@ -1,6 +1,6 @@
 /**
  * angular-data-table - AngularJS data table directive written in ES6.
- * @version v0.0.15
+ * @version v0.0.16
  * @link http://swimlane.com/
  * @license 
  */
@@ -1288,7 +1288,6 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         var idx = 0,
             indexes = this.getFirstLastIndexes(),
             rowIndex = indexes.first;
-        console.log(temp);
 
         while (rowIndex < indexes.last && rowIndex < this.count) {
           var row = temp[rowIndex];
@@ -1299,7 +1298,6 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
           idx++ && rowIndex++;
         }
-        console.log('get rows', rowIndex);
       }
     }, {
       key: 'styles',
