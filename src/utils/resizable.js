@@ -20,7 +20,8 @@ export function Resizable($document, debounce, $timeout){
       }
 
       var handle = angular.element(`<span class="dt-resize-handle" title="Resize"></span>`),
-          parent = $element.parent();
+          parent = $element.parent(),
+          prevScreenX;
 
       handle.on('mousedown', function(event) {
         if(!$element[0].classList.contains('resizable')) {
@@ -38,8 +39,10 @@ export function Resizable($document, debounce, $timeout){
         event = event.originalEvent || event;
         
         var width = parent[0].scrollWidth,
-            movementX = event.movementX || event.mozMovementX,
+            movementX = event.movementX || event.mozMovementX || (event.screenX - prevScreenX),
             newWidth = width + (movementX || 0);
+
+        prevScreenX = event.screenX;
 
         if((!$scope.minWidth || newWidth >= $scope.minWidth) && (!$scope.maxWidth || newWidth <= $scope.maxWidth)){
           parent.css({
