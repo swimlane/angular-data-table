@@ -77,7 +77,7 @@
           ];
 
           $scope.cur = [ 
-            { name: "Name", prop: "name", width: 200, minWidth: 150, maxWidth: 300 },
+            { name: "Name", prop: "name", width: 200 },
             { name: "Gender", prop: "gender", width: 200 },
             { name: "Company", prop: "company", width: 200 }
           ];
@@ -88,7 +88,8 @@
             footerHeight: false,
             scrollbarV: false,
             selectable: false,
-            columns: $scope.cur
+            columns: $scope.cur,
+            columnMode: 'force'
           };
 
           $scope.$watch('cur', function(n){

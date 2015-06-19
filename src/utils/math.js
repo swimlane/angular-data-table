@@ -3,13 +3,15 @@ import { ColumnsByPin, ColumnGroupWidths } from './utils';
 
 /**
  * Calculates the total width of all columns and their groups
- * @param {int}
+ * @param {array} columns
+ * @param {string} property width to get
  */
-export function ColumnTotalWidth(columns) {
+export function ColumnTotalWidth(columns, prop) {
   var totalWidth = 0;
 
   for (let c of columns) {
-    totalWidth += c.width;
+    var has = prop && c[prop];
+    totalWidth += has ? c[prop] : c.width;
   }
 
   return totalWidth;
@@ -27,6 +29,28 @@ export function GetTotalFlexGrow(columns){
   }
 
   return totalFlexGrow;
+}
+
+/**
+ * Adjusts the column widths.
+ * Inspired by: https://github.com/facebook/fixed-data-table/blob/master/src/FixedDataTableWidthHelper.js
+ * @param {array} all columns
+ * @param {int} width
+ */
+export function AdjustColumnWidths(allColumns, expectedWidth){
+  var columnsWidth = ColumnTotalWidth(allColumns),
+      remainingFlexGrow = GetTotalFlexGrow(allColumns),
+      remainingFlexWidth = Math.max(expectedWidth - columnsWidth, 0),
+      colsByGroup = ColumnsByPin(allColumns);
+
+  angular.forEach(colsByGroup, (cols) => {
+    var columnGroupFlexGrow = GetTotalFlexGrow(cols),
+        columnGroupFlexWidth = Math.floor(columnGroupFlexGrow / remainingFlexGrow * remainingFlexWidth),
+        newColumnSettings = DistributeFlexWidth(cols, columnGroupFlexWidth);
+
+    remainingFlexGrow -= columnGroupFlexGrow;
+    remainingFlexWidth -= columnGroupFlexWidth;
+  });
 }
 
 /**
@@ -78,59 +102,69 @@ export function DistributeFlexWidth(columns, flexWidth) {
 }
 
 /**
- * Adjusts the column widths.
- * Inspired by: https://github.com/facebook/fixed-data-table/blob/master/src/FixedDataTableWidthHelper.js
- * @param {array} all columns
- * @param {int} width
- */
-export function AdjustColumnWidths(allColumns, expectedWidth){
-  var columnsWidth = ColumnTotalWidth(allColumns),
-      remainingFlexGrow = GetTotalFlexGrow(allColumns),
-      remainingFlexWidth = Math.max(expectedWidth - columnsWidth, 0),
-      colsByGroup = ColumnsByPin(allColumns);
-
-  angular.forEach(colsByGroup, (cols) => {
-    var columnGroupFlexGrow = GetTotalFlexGrow(cols),
-        columnGroupFlexWidth = Math.floor(columnGroupFlexGrow / remainingFlexGrow * remainingFlexWidth),
-        newColumnSettings = DistributeFlexWidth(cols, columnGroupFlexWidth);
-
-    remainingFlexGrow -= columnGroupFlexGrow;
-    remainingFlexWidth -= columnGroupFlexWidth;
-  });
-}
-
-/**
  * Forces the width of the columns to 
  * distribute equally but overflowing when nesc.
+ *
+ * Rules:
+ *
+ *  - If combined withs are less than the total width of the grid, 
+ *    proporation the widths given the min / max / noraml widths to fill the width.
+ *
+ *  - If the combined widths, exceed the total width of the grid, 
+ *    use the standard widths.
+ *
+ *  - If a column is resized, it should always use that width
+ *
+ *  - The proporational widths should never fall below min size if specified.
+ *
+ *  - If the grid starts off small but then becomes greater than the size ( + / - )
+ *    the width should use the orginial width; not the newly proporatied widths.
+ * 
  * @param {array} allColumns 
  * @param {int} expectedWidth
  */
-export function ForceFillColumnWidths(allColumns, expectedWidth){
+export function ForceFillColumnWidths(allColumns, expectedWidth, startIdx){
   var colsByGroup = ColumnsByPin(allColumns),
       widthsByGroup = ColumnGroupWidths(colsByGroup, allColumns),
-      availableWidth = expectedWidth - (widthsByGroup.left + widthsByGroup.right);
+      availableWidth = expectedWidth - (widthsByGroup.left + widthsByGroup.right),
+      centerColumns = allColumns.filter((c) => { return !c.frozenLeft && !c.frozenRight });
 
-  for (let column of colsByGroup.center) {
-    if(column.$$oldWidth){
-      column.width = column.$$oldWidth;
+  var columnsToResize = startIdx > -1 ? 
+      allColumns.slice(startIdx, allColumns.length).filter((c) => { return !c.$$resized }) :
+      allColumns.filter((c) => { return !c.$$resized });
+
+  /* var contentWidth = 0;
+  allColumns.forEach((c) => {
+    if(c.$$resized){
+      contentWidth = contentWidth + c.width;
+    } else {
+      contentWidth = contentWidth + c.$$oldWidth;
     }
-  }
+  }); */ 
 
-  var contentWidth = ColumnTotalWidth(colsByGroup.center),
-      remainingWidth = availableWidth - contentWidth,
+  var contentWidth = ColumnTotalWidth(columnsToResize, '$$oldWidth');
+
+  var remainingWidth = availableWidth - contentWidth,
       additionWidthPerColumn = Math.floor(remainingWidth / colsByGroup.center.length),
-      oldLargerThanNew = contentWidth > widthsByGroup.center;
+      exceedsWindow = contentWidth > widthsByGroup.center;
 
-  for(var i=0, len=allColumns.length; i < len; i++) {
-    var column = allColumns[i];
-    if(!column.frozenLeft && !column.frozenRight){
-      // cache first size
+  columnsToResize.forEach((column) => {
+    if(exceedsWindow){
+      column.width = column.$$oldWidth || column.width;
+    } else {
       if(!column.$$oldWidth){
         column.$$oldWidth = column.width;
       }
 
-      var newSize = column.width + additionWidthPerColumn;
-      column.width = oldLargerThanNew ? column.$$oldWidth : newSize;
+      var newSize = column.$$oldWidth + additionWidthPerColumn;
+
+      if(column.minWith && newSize < column.minWidth){
+        column.width = column.minWidth;
+      } else if(column.maxWidth && newSize > column.maxWidth){
+        column.width = column.maxWidth;
+      } else {
+        column.width = newSize;
+      }
     }
-  }
+  });
 }

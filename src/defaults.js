@@ -14,9 +14,10 @@ export var TableDefaults = Object.freeze({
   // to calculate the height for the lazy rendering.
   rowHeight: 30,
 
-  // Expands the columns to fill the given width.
-  // Can NOT be used with flex grow attributes
-  forceFillColumns: false,
+  // flex
+  // force
+  // standard
+  columnMode: 'standard',
 
   // Loading message presented when the array is undefined
   loadingMessage: 'Loading...',

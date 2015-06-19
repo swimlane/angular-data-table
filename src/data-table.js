@@ -44,7 +44,12 @@ class DataTableController {
       if(newVal.length > oldVal.length){
         this.transposeColumnDefaults(newVal);
       }
-      this.calculateColumns(newVal);
+
+      if(newVal.length !== oldVal.length){
+        this.adjustColumns();
+      }
+
+      this.calculateColumns();
     }, true);
 
     // Gets the column nodes to transposes to column objects
@@ -152,9 +157,9 @@ class DataTableController {
 
   /**
    * Calculate column groups and widths
-   * @param  {object} columns
    */
-  calculateColumns(columns){
+  calculateColumns(){
+    var columns = this.$scope.options.columns;
     this.columnsByPin = ColumnsByPin(columns);
     this.columnWidths = ColumnGroupWidths(this.columnsByPin, columns);
   }
@@ -174,15 +179,14 @@ class DataTableController {
 
   /**
    * Adjusts the column widths to handle greed/etc.
-   * @return {[type]}
+   * @param  {int} forceIdx 
    */
-  adjustColumns(){
-    // todo: combine these
-    if(this.$scope.options.forceFillColumns){
-      ForceFillColumnWidths(this.$scope.options.columns,
-        this.$scope.options.internal.innerWidth);
-    } else {
-      AdjustColumnWidths(this.$scope.options.columns,
+  adjustColumns(forceIdx){
+    if(this.$scope.options.columnMode === 'force'){
+      ForceFillColumnWidths(this.$scope.options.columns, 
+          this.$scope.options.internal.innerWidth, forceIdx);
+    } else if(this.$scope.options.columnMode === 'flex') {
+      AdjustColumnWidths(this.$scope.options.columns, 
         this.$scope.options.internal.innerWidth);
     }
   }
@@ -306,8 +310,12 @@ class DataTableController {
   onResize(scope, column, width){
     var idx = scope.options.columns.indexOf(column);
     if(idx > -1){
-      scope.options.columns[idx].width = width;
-      this.calculateColumns(scope.options.columns);
+      var column = scope.options.columns[idx]
+      column.width = width;
+      column.$$resized = true;
+
+      this.adjustColumns(idx);
+      this.calculateColumns();
     }
   }
 
