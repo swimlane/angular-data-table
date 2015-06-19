@@ -127,25 +127,20 @@ export function ForceFillColumnWidths(allColumns, expectedWidth, startIdx){
   var colsByGroup = ColumnsByPin(allColumns),
       widthsByGroup = ColumnGroupWidths(colsByGroup, allColumns),
       availableWidth = expectedWidth - (widthsByGroup.left + widthsByGroup.right),
-      centerColumns = allColumns.filter((c) => { return !c.frozenLeft && !c.frozenRight });
+      centerColumns = allColumns.filter((c) => { return !c.frozenLeft && !c.frozenRight }),
+      contentWidth = 0,
+      columnsToResize = startIdx > -1 ? 
+        allColumns.slice(startIdx, allColumns.length).filter((c) => { return !c.$$resized }) :
+        allColumns.filter((c) => { return !c.$$resized });
 
-  var columnsToResize = startIdx > -1 ? 
-      allColumns.slice(startIdx, allColumns.length).filter((c) => { return !c.$$resized }) :
-      allColumns.filter((c) => { return !c.$$resized });
-
- /* var contentWidth2 = 0;
   allColumns.forEach((c) => {
     if(c.$$resized){
-      contentWidth2 = contentWidth2 + c.width;
+      contentWidth = contentWidth + c.width;
     } else {
-      contentWidth2 = contentWidth2 + (c.$$oldWidth || c.width);
+      contentWidth = contentWidth + (c.$$oldWidth || c.width);
     }
-  }); 
- */
-  var contentWidth = ColumnTotalWidth(columnsToResize, '$$oldWidth');
-
-  //console.log(contentWidth, contentWidth2)
-
+  });
+ 
   var remainingWidth = availableWidth - contentWidth,
       additionWidthPerColumn = Math.floor(remainingWidth / colsByGroup.center.length),
       exceedsWindow = contentWidth > widthsByGroup.center;
@@ -159,7 +154,6 @@ export function ForceFillColumnWidths(allColumns, expectedWidth, startIdx){
       }
 
       var newSize = column.$$oldWidth + additionWidthPerColumn;
-
       if(column.minWith && newSize < column.minWidth){
         column.width = column.minWidth;
       } else if(column.maxWidth && newSize > column.maxWidth){
