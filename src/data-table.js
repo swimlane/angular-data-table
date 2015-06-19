@@ -310,7 +310,7 @@ class DataTableController {
   onResize(scope, column, width){
     var idx = scope.options.columns.indexOf(column);
     if(idx > -1){
-      var column = scope.options.columns[idx]
+      var column = scope.options.columns[idx];
       column.width = width;
       column.$$resized = true;
 
