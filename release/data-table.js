@@ -1,6 +1,6 @@
 /**
  * angular-data-table - AngularJS data table directive written in ES6.
- * @version v0.0.20
+ * @version v0.0.21
  * @link http://swimlane.com/
  * @license 
  */
@@ -1511,7 +1511,7 @@
         selected: '='
       },
       replace: true,
-      template: '<div ng-class="hcell.cellClass(this)"\n              ng-style="hcell.styles(this)"\n              title="{{::column.name}}">\n          <div resizable="column.resizable" \n               on-resize="hcell.onResize(this, width, column)"\n               min-width="column.minWidth"\n               max-width="column.maxWidth">\n            <label ng-if="column.isCheckboxColumn && column.headerCheckbox" class="dt-checkbox">\n              <input type="checkbox" \n                     ng-checked="selected"\n                     ng-click="hcell.onCheckboxChange(this)" />\n            </label>\n            <span class="dt-header-cell-label" \n                  ng-click="hcell.sort(this)">\n            </span>\n            <span ng-class="hcell.sortClass(this)"></span>\n          </div>\n        </div>',
+      template: '<div ng-class="hcell.cellClass(this)"\n              draggable="true"\n              ng-style="hcell.styles(this)"\n              title="{{::column.name}}">\n          <div resizable="column.resizable" \n               on-resize="hcell.onResize(this, width, column)"\n               min-width="column.minWidth"\n               max-width="column.maxWidth">\n            <label ng-if="column.isCheckboxColumn && column.headerCheckbox" class="dt-checkbox">\n              <input type="checkbox" \n                     ng-checked="selected"\n                     ng-click="hcell.onCheckboxChange(this)" />\n            </label>\n            <span class="dt-header-cell-label" \n                  ng-click="hcell.sort(this)">\n            </span>\n            <span ng-class="hcell.sortClass(this)"></span>\n          </div>\n        </div>',
       compile: function compile() {
         return {
           pre: function pre($scope, $elm, $attrs, ctrl) {
@@ -1773,12 +1773,6 @@
             dragEl,
             nextEl,
             dropEl;
-
-        $timeout(function () {
-          angular.forEach(rootEl.children, function (el) {
-            el.draggable = true;
-          });
-        });
 
         function isbefore(a, b) {
           if (a.parentNode == b.parentNode) {

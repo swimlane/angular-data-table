@@ -16,12 +16,6 @@ export function Sortable($timeout) {
     link: function($scope, $element, $attrs){
       var rootEl = $element[0], dragEl, nextEl, dropEl;
 
-      $timeout(() => {
-        angular.forEach(rootEl.children, (el) => {
-          el.draggable = true;
-        });
-      });
-
       function isbefore(a, b) {
         if (a.parentNode == b.parentNode) {
           for (var cur = a; cur; cur = cur.previousSibling) {

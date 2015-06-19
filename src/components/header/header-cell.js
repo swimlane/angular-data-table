@@ -105,6 +105,7 @@ export function HeaderCellDirective($compile){
     replace: true,
     template: 
       `<div ng-class="hcell.cellClass(this)"
+            draggable="true"
             ng-style="hcell.styles(this)"
             title="{{::column.name}}">
         <div resizable="column.resizable" 

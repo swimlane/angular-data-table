@@ -1980,6 +1980,7 @@
       replace: true,
       template: 
         `<div ng-class="hcell.cellClass(this)"
+              draggable="true"
               ng-style="hcell.styles(this)"
               title="{{::column.name}}">
           <div resizable="column.resizable" 
@@ -2356,12 +2357,6 @@
       },
       link: function($scope, $element, $attrs){
         var rootEl = $element[0], dragEl, nextEl, dropEl;
-
-        $timeout(() => {
-          angular.forEach(rootEl.children, (el) => {
-            el.draggable = true;
-          });
-        });
 
         function isbefore(a, b) {
           if (a.parentNode == b.parentNode) {
