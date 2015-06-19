@@ -1,6 +1,6 @@
 /**
  * angular-data-table - AngularJS data table directive written in ES6.
- * @version v0.0.21
+ * @version v0.0.22
  * @link http://swimlane.com/
  * @license 
  */
@@ -1267,13 +1267,16 @@
             indexes = this.getFirstLastIndexes(),
             rowIndex = indexes.first;
 
+        if (indexes.last === 0) {
+          this.tempRows.splice(0, this.tempRows.length);
+        }
+
         while (rowIndex < indexes.last && rowIndex < this.count) {
           var row = temp[rowIndex];
           if (row) {
             row.$$index = rowIndex;
             this.tempRows[idx] = row;
           }
-
           idx++ && rowIndex++;
         }
       }

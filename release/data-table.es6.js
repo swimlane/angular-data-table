@@ -1666,10 +1666,13 @@
         temp = this.$scope.rows;
       }
 
-
       var idx = 0,
           indexes = this.getFirstLastIndexes(),
           rowIndex = indexes.first;
+
+      if(indexes.last === 0){
+        this.tempRows.splice(0, this.tempRows.length);
+      }
 
       while (rowIndex < indexes.last && rowIndex < this.count) {
         var row = temp[rowIndex];
@@ -1677,7 +1680,6 @@
           row.$$index = rowIndex;
           this.tempRows[idx] = row;
         }
-
         idx++ && rowIndex++;
       }
     }
