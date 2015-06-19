@@ -9,10 +9,10 @@ import { ColumnsByPin, ColumnGroupWidths } from './utils';
 export function ColumnTotalWidth(columns, prop) {
   var totalWidth = 0;
 
-  for (let c of columns) {
+  columns.forEach((c) => {
     var has = prop && c[prop];
-    totalWidth += has ? c[prop] : c.width;
-  }
+    totalWidth = totalWidth + (has ? c[prop] : c.width);
+  });
 
   return totalWidth;
 }
@@ -133,16 +133,18 @@ export function ForceFillColumnWidths(allColumns, expectedWidth, startIdx){
       allColumns.slice(startIdx, allColumns.length).filter((c) => { return !c.$$resized }) :
       allColumns.filter((c) => { return !c.$$resized });
 
-  /* var contentWidth = 0;
+ /* var contentWidth2 = 0;
   allColumns.forEach((c) => {
     if(c.$$resized){
-      contentWidth = contentWidth + c.width;
+      contentWidth2 = contentWidth2 + c.width;
     } else {
-      contentWidth = contentWidth + c.$$oldWidth;
+      contentWidth2 = contentWidth2 + (c.$$oldWidth || c.width);
     }
-  }); */ 
-
+  }); 
+ */
   var contentWidth = ColumnTotalWidth(columnsToResize, '$$oldWidth');
+
+  //console.log(contentWidth, contentWidth2)
 
   var remainingWidth = availableWidth - contentWidth,
       additionWidthPerColumn = Math.floor(remainingWidth / colsByGroup.center.length),
