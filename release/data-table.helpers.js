@@ -1,6 +1,6 @@
 /**
  * angular-data-table - AngularJS data table directive written in ES6.
- * @version v0.0.18
+ * @version v0.0.19
  * @link http://swimlane.com/
  * @license 
  */
@@ -156,33 +156,13 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     return totalFlexGrow;
   }
 
-  function ColumnTotalWidth(columns) {
+  function ColumnTotalWidth(columns, prop) {
     var totalWidth = 0;
 
-    var _iteratorNormalCompletion2 = true;
-    var _didIteratorError2 = false;
-    var _iteratorError2 = undefined;
-
-    try {
-      for (var _iterator2 = columns[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
-        var c = _step2.value;
-
-        totalWidth += c.width;
-      }
-    } catch (err) {
-      _didIteratorError2 = true;
-      _iteratorError2 = err;
-    } finally {
-      try {
-        if (!_iteratorNormalCompletion2 && _iterator2['return']) {
-          _iterator2['return']();
-        }
-      } finally {
-        if (_didIteratorError2) {
-          throw _iteratorError2;
-        }
-      }
-    }
+    columns.forEach(function (c) {
+      var has = prop && c[prop];
+      totalWidth = totalWidth + (has ? c[prop] : c.width);
+    });
 
     return totalWidth;
   }
@@ -276,54 +256,50 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     };
   }
 
-  function ForceFillColumnWidths(allColumns, expectedWidth) {
+  function ForceFillColumnWidths(allColumns, expectedWidth, startIdx) {
     var colsByGroup = ColumnsByPin(allColumns),
         widthsByGroup = ColumnGroupWidths(colsByGroup, allColumns),
-        availableWidth = expectedWidth - (widthsByGroup.left + widthsByGroup.right);
+        availableWidth = expectedWidth - (widthsByGroup.left + widthsByGroup.right),
+        centerColumns = allColumns.filter(function (c) {
+      return !c.frozenLeft && !c.frozenRight;
+    }),
+        contentWidth = 0,
+        columnsToResize = startIdx > -1 ? allColumns.slice(startIdx, allColumns.length).filter(function (c) {
+      return !c.$$resized;
+    }) : allColumns.filter(function (c) {
+      return !c.$$resized;
+    });
 
-    var _iteratorNormalCompletion3 = true;
-    var _didIteratorError3 = false;
-    var _iteratorError3 = undefined;
-
-    try {
-      for (var _iterator3 = colsByGroup.center[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
-        var _column = _step3.value;
-
-        if (_column.$$oldWidth) {
-          _column.width = _column.$$oldWidth;
-        }
+    allColumns.forEach(function (c) {
+      if (c.$$resized) {
+        contentWidth = contentWidth + c.width;
+      } else {
+        contentWidth = contentWidth + (c.$$oldWidth || c.width);
       }
-    } catch (err) {
-      _didIteratorError3 = true;
-      _iteratorError3 = err;
-    } finally {
-      try {
-        if (!_iteratorNormalCompletion3 && _iterator3['return']) {
-          _iterator3['return']();
-        }
-      } finally {
-        if (_didIteratorError3) {
-          throw _iteratorError3;
-        }
-      }
-    }
+    });
 
-    var contentWidth = ColumnTotalWidth(colsByGroup.center),
-        remainingWidth = availableWidth - contentWidth,
+    var remainingWidth = availableWidth - contentWidth,
         additionWidthPerColumn = Math.floor(remainingWidth / colsByGroup.center.length),
-        oldLargerThanNew = contentWidth > widthsByGroup.center;
+        exceedsWindow = contentWidth > widthsByGroup.center;
 
-    for (var i = 0, len = allColumns.length; i < len; i++) {
-      var column = allColumns[i];
-      if (!column.frozenLeft && !column.frozenRight) {
+    columnsToResize.forEach(function (column) {
+      if (exceedsWindow) {
+        column.width = column.$$oldWidth || column.width;
+      } else {
         if (!column.$$oldWidth) {
           column.$$oldWidth = column.width;
         }
 
-        var newSize = column.width + additionWidthPerColumn;
-        column.width = oldLargerThanNew ? column.$$oldWidth : newSize;
+        var newSize = column.$$oldWidth + additionWidthPerColumn;
+        if (column.minWith && newSize < column.minWidth) {
+          column.width = column.minWidth;
+        } else if (column.maxWidth && newSize > column.maxWidth) {
+          column.width = column.maxWidth;
+        } else {
+          column.width = newSize;
+        }
       }
-    }
+    });
   }
 
   var CamelCase = function CamelCase(str) {
@@ -390,7 +366,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
     rowHeight: 30,
 
-    forceFillColumns: false,
+    columnMode: 'standard',
 
     loadingMessage: 'Loading...',
 
@@ -446,7 +422,12 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         if (newVal.length > oldVal.length) {
           _this.transposeColumnDefaults(newVal);
         }
-        _this.calculateColumns(newVal);
+
+        if (newVal.length !== oldVal.length) {
+          _this.adjustColumns();
+        }
+
+        _this.calculateColumns();
       }, true);
 
       $transclude(function (clone, scope) {
@@ -539,7 +520,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       }
     }, {
       key: 'calculateColumns',
-      value: function calculateColumns(columns) {
+      value: function calculateColumns() {
+        var columns = this.$scope.options.columns;
         this.columnsByPin = ColumnsByPin(columns);
         this.columnWidths = ColumnGroupWidths(this.columnsByPin, columns);
       }
@@ -554,10 +536,10 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       }
     }, {
       key: 'adjustColumns',
-      value: function adjustColumns() {
-        if (this.$scope.options.forceFillColumns) {
-          ForceFillColumnWidths(this.$scope.options.columns, this.$scope.options.internal.innerWidth);
-        } else {
+      value: function adjustColumns(forceIdx) {
+        if (this.$scope.options.columnMode === 'force') {
+          ForceFillColumnWidths(this.$scope.options.columns, this.$scope.options.internal.innerWidth, forceIdx);
+        } else if (this.$scope.options.columnMode === 'flex') {
           AdjustColumnWidths(this.$scope.options.columns, this.$scope.options.internal.innerWidth);
         }
       }
@@ -649,8 +631,12 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       value: function onResize(scope, column, width) {
         var idx = scope.options.columns.indexOf(column);
         if (idx > -1) {
-          scope.options.columns[idx].width = width;
-          this.calculateColumns(scope.options.columns);
+          var column = scope.options.columns[idx];
+          column.width = width;
+          column.$$resized = true;
+
+          this.adjustColumns(idx);
+          this.calculateColumns();
         }
       }
     }, {
@@ -1883,7 +1869,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         }
 
         var handle = angular.element('<span class="dt-resize-handle" title="Resize"></span>'),
-            parent = $element.parent();
+            parent = $element.parent(),
+            prevScreenX;
 
         handle.on('mousedown', function (event) {
           if (!$element[0].classList.contains('resizable')) {
@@ -1901,7 +1888,10 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
           event = event.originalEvent || event;
 
           var width = parent[0].scrollWidth,
-              newWidth = width + (event.movementX || 0);
+              movementX = event.movementX || event.mozMovementX || event.screenX - prevScreenX,
+              newWidth = width + (movementX || 0);
+
+          prevScreenX = event.screenX;
 
           if ((!$scope.minWidth || newWidth >= $scope.minWidth) && (!$scope.maxWidth || newWidth <= $scope.maxWidth)) {
             parent.css({

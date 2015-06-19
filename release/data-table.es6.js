@@ -183,14 +183,16 @@
 
   /**
    * Calculates the total width of all columns and their groups
-   * @param {int}
+   * @param {array} columns
+   * @param {string} property width to get
    */
-  function ColumnTotalWidth(columns) {
+  function ColumnTotalWidth(columns, prop) {
     var totalWidth = 0;
 
-    for (let c of columns) {
-      totalWidth += c.width;
-    }
+    columns.forEach((c) => {
+      var has = prop && c[prop];
+      totalWidth = totalWidth + (has ? c[prop] : c.width);
+    });
 
     return totalWidth;
   }
@@ -312,37 +314,65 @@
   /**
    * Forces the width of the columns to 
    * distribute equally but overflowing when nesc.
+   *
+   * Rules:
+   *
+   *  - If combined withs are less than the total width of the grid, 
+   *    proporation the widths given the min / max / noraml widths to fill the width.
+   *
+   *  - If the combined widths, exceed the total width of the grid, 
+   *    use the standard widths.
+   *
+   *  - If a column is resized, it should always use that width
+   *
+   *  - The proporational widths should never fall below min size if specified.
+   *
+   *  - If the grid starts off small but then becomes greater than the size ( + / - )
+   *    the width should use the orginial width; not the newly proporatied widths.
+   * 
    * @param {array} allColumns 
    * @param {int} expectedWidth
    */
-  function ForceFillColumnWidths(allColumns, expectedWidth){
+  function ForceFillColumnWidths(allColumns, expectedWidth, startIdx){
     var colsByGroup = ColumnsByPin(allColumns),
         widthsByGroup = ColumnGroupWidths(colsByGroup, allColumns),
-        availableWidth = expectedWidth - (widthsByGroup.left + widthsByGroup.right);
+        availableWidth = expectedWidth - (widthsByGroup.left + widthsByGroup.right),
+        centerColumns = allColumns.filter((c) => { return !c.frozenLeft && !c.frozenRight }),
+        contentWidth = 0,
+        columnsToResize = startIdx > -1 ? 
+          allColumns.slice(startIdx, allColumns.length).filter((c) => { return !c.$$resized }) :
+          allColumns.filter((c) => { return !c.$$resized });
 
-    for (let column of colsByGroup.center) {
-      if(column.$$oldWidth){
-        column.width = column.$$oldWidth;
+    allColumns.forEach((c) => {
+      if(c.$$resized){
+        contentWidth = contentWidth + c.width;
+      } else {
+        contentWidth = contentWidth + (c.$$oldWidth || c.width);
       }
-    }
-
-    var contentWidth = ColumnTotalWidth(colsByGroup.center),
-        remainingWidth = availableWidth - contentWidth,
+    });
+   
+    var remainingWidth = availableWidth - contentWidth,
         additionWidthPerColumn = Math.floor(remainingWidth / colsByGroup.center.length),
-        oldLargerThanNew = contentWidth > widthsByGroup.center;
+        exceedsWindow = contentWidth > widthsByGroup.center;
 
-    for(var i=0, len=allColumns.length; i < len; i++) {
-      var column = allColumns[i];
-      if(!column.frozenLeft && !column.frozenRight){
-        // cache first size
+    columnsToResize.forEach((column) => {
+      if(exceedsWindow){
+        column.width = column.$$oldWidth || column.width;
+      } else {
         if(!column.$$oldWidth){
           column.$$oldWidth = column.width;
         }
 
-        var newSize = column.width + additionWidthPerColumn;
-        column.width = oldLargerThanNew ? column.$$oldWidth : newSize;
+        var newSize = column.$$oldWidth + additionWidthPerColumn;
+        if(column.minWith && newSize < column.minWidth){
+          column.width = column.minWidth;
+        } else if(column.maxWidth && newSize > column.maxWidth){
+          column.width = column.maxWidth;
+        } else {
+          column.width = newSize;
+        }
       }
-    }
+    });
   }
 
 
@@ -463,9 +493,10 @@
     // to calculate the height for the lazy rendering.
     rowHeight: 30,
 
-    // Expands the columns to fill the given width.
-    // Can NOT be used with flex grow attributes
-    forceFillColumns: false,
+    // flex
+    // force
+    // standard
+    columnMode: 'standard',
 
     // Loading message presented when the array is undefined
     loadingMessage: 'Loading...',
@@ -540,7 +571,12 @@
         if(newVal.length > oldVal.length){
           this.transposeColumnDefaults(newVal);
         }
-        this.calculateColumns(newVal);
+
+        if(newVal.length !== oldVal.length){
+          this.adjustColumns();
+        }
+
+        this.calculateColumns();
       }, true);
 
       // Gets the column nodes to transposes to column objects
@@ -648,9 +684,9 @@
 
     /**
      * Calculate column groups and widths
-     * @param  {object} columns
      */
-    calculateColumns(columns){
+    calculateColumns(){
+      var columns = this.$scope.options.columns;
       this.columnsByPin = ColumnsByPin(columns);
       this.columnWidths = ColumnGroupWidths(this.columnsByPin, columns);
     }
@@ -670,15 +706,14 @@
 
     /**
      * Adjusts the column widths to handle greed/etc.
-     * @return {[type]}
+     * @param  {int} forceIdx 
      */
-    adjustColumns(){
-      // todo: combine these
-      if(this.$scope.options.forceFillColumns){
-        ForceFillColumnWidths(this.$scope.options.columns,
-          this.$scope.options.internal.innerWidth);
-      } else {
-        AdjustColumnWidths(this.$scope.options.columns,
+    adjustColumns(forceIdx){
+      if(this.$scope.options.columnMode === 'force'){
+        ForceFillColumnWidths(this.$scope.options.columns, 
+            this.$scope.options.internal.innerWidth, forceIdx);
+      } else if(this.$scope.options.columnMode === 'flex') {
+        AdjustColumnWidths(this.$scope.options.columns, 
           this.$scope.options.internal.innerWidth);
       }
     }
@@ -802,8 +837,12 @@
     onResize(scope, column, width){
       var idx = scope.options.columns.indexOf(column);
       if(idx > -1){
-        scope.options.columns[idx].width = width;
-        this.calculateColumns(scope.options.columns);
+        var column = scope.options.columns[idx];
+        column.width = width;
+        column.$$resized = true;
+
+        this.adjustColumns(idx);
+        this.calculateColumns();
       }
     }
 
@@ -2406,7 +2445,8 @@
         }
 
         var handle = angular.element(`<span class="dt-resize-handle" title="Resize"></span>`),
-            parent = $element.parent();
+            parent = $element.parent(),
+            prevScreenX;
 
         handle.on('mousedown', function(event) {
           if(!$element[0].classList.contains('resizable')) {
@@ -2424,7 +2464,10 @@
           event = event.originalEvent || event;
           
           var width = parent[0].scrollWidth,
-              newWidth = width + (event.movementX || 0);
+              movementX = event.movementX || event.mozMovementX || (event.screenX - prevScreenX),
+              newWidth = width + (movementX || 0);
+
+          prevScreenX = event.screenX;
 
           if((!$scope.minWidth || newWidth >= $scope.minWidth) && (!$scope.maxWidth || newWidth <= $scope.maxWidth)){
             parent.css({
