@@ -1,5 +1,6 @@
 .dt {
   visibility: hidden;
+  overflow: hidden;
   justify-content: center;
   position: relative;
 }

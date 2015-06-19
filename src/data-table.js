@@ -6,7 +6,7 @@ import { debounce, throttle } from './utils/throttle';
 import { Resizable } from './utils/resizable';
 import { Sortable } from './utils/sortable';
 import { AdjustColumnWidths, ForceFillColumnWidths } from './utils/math';
-import { ColumnsByPin, ColumnGroupWidths, CamelCase, ObjectId } from './utils/utils';
+import { ColumnsByPin, ColumnGroupWidths, CamelCase, ObjectId, ScrollbarWidth } from './utils/utils';
 
 import { TableDefaults, ColumnDefaults } from './defaults';
 
@@ -182,12 +182,13 @@ class DataTableController {
    * @param  {int} forceIdx 
    */
   adjustColumns(forceIdx){
+    var width = this.$scope.options.internal.innerWidth - 
+      this.$scope.options.internal.scrollBarWidth;
+      
     if(this.$scope.options.columnMode === 'force'){
-      ForceFillColumnWidths(this.$scope.options.columns, 
-          this.$scope.options.internal.innerWidth, forceIdx);
+      ForceFillColumnWidths(this.$scope.options.columns, width, forceIdx);
     } else if(this.$scope.options.columnMode === 'flex') {
-      AdjustColumnWidths(this.$scope.options.columns, 
-        this.$scope.options.internal.innerWidth);
+      AdjustColumnWidths(this.$scope.options.columns, width);
     }
   }
 
@@ -392,10 +393,12 @@ function DataTableDirective($window, $timeout, throttle){
     compile: function(tElem, tAttrs){
       return {
         pre: function($scope, $elm, $attrs, ctrl){
+          $scope.options.internal.scrollBarWidth = ScrollbarWidth();
+
           function resize() {
             var rect = $elm[0].getBoundingClientRect();
 
-            $scope.options.internal.innerWidth = rect.width;
+            $scope.options.internal.innerWidth = Math.floor(rect.width);
 
             if ($scope.options.scrollbarV) {
               var height = rect.height;
@@ -415,8 +418,8 @@ function DataTableDirective($window, $timeout, throttle){
             ctrl.calculatePageSize();
           }
 
-          $elm.addClass('dt-loaded');
           $timeout(resize);
+          $elm.addClass('dt-loaded');
           angular.element($window).bind('resize', throttle(() => {
             $timeout(resize);
           }));

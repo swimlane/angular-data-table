@@ -90,7 +90,7 @@ export function DeepValueGetter(obj, path) {
  * @param  {string} str 
  * @return {string} camel case string
  */
-export var CamelCase = function(str) {
+export function CamelCase(str) {
   // Replace special characters with a space
   str = str.replace(/[^a-zA-Z0-9 ]/g, " ");
   // put a space before an uppercase letter
@@ -102,4 +102,30 @@ export var CamelCase = function(str) {
       return b.trim()+c.toUpperCase();
   });
   return str;
+};
+
+
+/**
+ * Gets the width of the scrollbar.  Nesc for windows
+ * http://stackoverflow.com/a/13382873/888165
+ * @return {int} width
+ */
+export function ScrollbarWidth() {
+  var outer = document.createElement("div");
+  outer.style.visibility = "hidden";
+  outer.style.width = "100px";
+  outer.style.msOverflowStyle = "scrollbar";
+  document.body.appendChild(outer);
+
+  var widthNoScroll = outer.offsetWidth;
+  outer.style.overflow = "scroll";
+
+  var inner = document.createElement("div");
+  inner.style.width = "100%";
+  outer.appendChild(inner);
+
+  var widthWithScroll = inner.offsetWidth;
+  outer.parentNode.removeChild(outer);
+
+  return widthNoScroll - widthWithScroll;
 };

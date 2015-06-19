@@ -350,7 +350,7 @@
         contentWidth = contentWidth + (c.$$oldWidth || c.width);
       }
     });
-   
+
     var remainingWidth = availableWidth - contentWidth,
         additionWidthPerColumn = Math.floor(remainingWidth / colsByGroup.center.length),
         exceedsWindow = contentWidth > widthsByGroup.center;
@@ -382,7 +382,7 @@
    * @param  {string} str 
    * @return {string} camel case string
    */
-  var CamelCase = function(str) {
+  function CamelCase(str) {
     // Replace special characters with a space
     str = str.replace(/[^a-zA-Z0-9 ]/g, " ");
     // put a space before an uppercase letter
@@ -394,7 +394,7 @@
         return b.trim()+c.toUpperCase();
     });
     return str;
-  };
+  }
 
 
   /**
@@ -709,12 +709,13 @@
      * @param  {int} forceIdx 
      */
     adjustColumns(forceIdx){
+      var width = this.$scope.options.internal.innerWidth - 
+        this.$scope.options.internal.scrollBarWidth;
+        
       if(this.$scope.options.columnMode === 'force'){
-        ForceFillColumnWidths(this.$scope.options.columns, 
-            this.$scope.options.internal.innerWidth, forceIdx);
+        ForceFillColumnWidths(this.$scope.options.columns, width, forceIdx);
       } else if(this.$scope.options.columnMode === 'flex') {
-        AdjustColumnWidths(this.$scope.options.columns, 
-          this.$scope.options.internal.innerWidth);
+        AdjustColumnWidths(this.$scope.options.columns, width);
       }
     }
 
@@ -2492,6 +2493,32 @@
     };
   }
 
+
+  /**
+   * Gets the width of the scrollbar.  Nesc for windows
+   * http://stackoverflow.com/a/13382873/888165
+   * @return {int} width
+   */
+  function ScrollbarWidth() {
+    var outer = document.createElement("div");
+    outer.style.visibility = "hidden";
+    outer.style.width = "100px";
+    outer.style.msOverflowStyle = "scrollbar";
+    document.body.appendChild(outer);
+
+    var widthNoScroll = outer.offsetWidth;
+    outer.style.overflow = "scroll";
+
+    var inner = document.createElement("div");
+    inner.style.width = "100%";
+    outer.appendChild(inner);
+
+    var widthWithScroll = inner.offsetWidth;
+    outer.parentNode.removeChild(outer);
+
+    return widthNoScroll - widthWithScroll;
+  }
+
   function DataTableDirective($window, $timeout, throttle){
     return {
       restrict: 'E',
@@ -2541,10 +2568,12 @@
       compile: function(tElem, tAttrs){
         return {
           pre: function($scope, $elm, $attrs, ctrl){
+            $scope.options.internal.scrollBarWidth = ScrollbarWidth();
+
             function resize() {
               var rect = $elm[0].getBoundingClientRect();
 
-              $scope.options.internal.innerWidth = rect.width;
+              $scope.options.internal.innerWidth = Math.floor(rect.width);
 
               if ($scope.options.scrollbarV) {
                 var height = rect.height;
@@ -2564,8 +2593,8 @@
               ctrl.calculatePageSize();
             }
 
-            $elm.addClass('dt-loaded');
             $timeout(resize);
+            $elm.addClass('dt-loaded');
             angular.element($window).bind('resize', throttle(() => {
               $timeout(resize);
             }));

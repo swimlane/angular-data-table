@@ -1,6 +1,6 @@
 /**
  * angular-data-table - AngularJS data table directive written in ES6.
- * @version v0.0.19
+ * @version v0.0.20
  * @link http://swimlane.com/
  * @license 
  */
@@ -302,7 +302,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     });
   }
 
-  var CamelCase = function CamelCase(str) {
+  function CamelCase(str) {
     str = str.replace(/[^a-zA-Z0-9 ]/g, ' ');
 
     str = str.replace(/([a-z](?=[A-Z]))/g, '$1 ');
@@ -313,7 +313,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       return b.trim() + c.toUpperCase();
     });
     return str;
-  };
+  }
 
   function ObjectId() {
     var timestamp = (new Date().getTime() / 1000 | 0).toString(16);
@@ -537,10 +537,12 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     }, {
       key: 'adjustColumns',
       value: function adjustColumns(forceIdx) {
+        var width = this.$scope.options.internal.innerWidth - this.$scope.options.internal.scrollBarWidth;
+
         if (this.$scope.options.columnMode === 'force') {
-          ForceFillColumnWidths(this.$scope.options.columns, this.$scope.options.internal.innerWidth, forceIdx);
+          ForceFillColumnWidths(this.$scope.options.columns, width, forceIdx);
         } else if (this.$scope.options.columnMode === 'flex') {
-          AdjustColumnWidths(this.$scope.options.columns, this.$scope.options.internal.innerWidth);
+          AdjustColumnWidths(this.$scope.options.columns, width);
         }
       }
     }, {
@@ -1917,6 +1919,26 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
   }
   Resizable.$inject = ["$document", "debounce", "$timeout"];
 
+  function ScrollbarWidth() {
+    var outer = document.createElement('div');
+    outer.style.visibility = 'hidden';
+    outer.style.width = '100px';
+    outer.style.msOverflowStyle = 'scrollbar';
+    document.body.appendChild(outer);
+
+    var widthNoScroll = outer.offsetWidth;
+    outer.style.overflow = 'scroll';
+
+    var inner = document.createElement('div');
+    inner.style.width = '100%';
+    outer.appendChild(inner);
+
+    var widthWithScroll = inner.offsetWidth;
+    outer.parentNode.removeChild(outer);
+
+    return widthNoScroll - widthWithScroll;
+  }
+
   function DataTableDirective($window, $timeout, throttle) {
     return {
       restrict: 'E',
@@ -1939,10 +1961,12 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       compile: function compile(tElem, tAttrs) {
         return {
           pre: function pre($scope, $elm, $attrs, ctrl) {
+            $scope.options.internal.scrollBarWidth = ScrollbarWidth();
+
             function resize() {
               var rect = $elm[0].getBoundingClientRect();
 
-              $scope.options.internal.innerWidth = rect.width;
+              $scope.options.internal.innerWidth = Math.floor(rect.width);
 
               if ($scope.options.scrollbarV) {
                 var height = rect.height;
@@ -1962,8 +1986,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
               ctrl.calculatePageSize();
             }
 
-            $elm.addClass('dt-loaded');
             $timeout(resize);
+            $elm.addClass('dt-loaded');
             angular.element($window).bind('resize', throttle(function () {
               $timeout(resize);
             }));

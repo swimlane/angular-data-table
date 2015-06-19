@@ -140,7 +140,7 @@ export function ForceFillColumnWidths(allColumns, expectedWidth, startIdx){
       contentWidth = contentWidth + (c.$$oldWidth || c.width);
     }
   });
- 
+
   var remainingWidth = availableWidth - contentWidth,
       additionWidthPerColumn = Math.floor(remainingWidth / colsByGroup.center.length),
       exceedsWindow = contentWidth > widthsByGroup.center;
