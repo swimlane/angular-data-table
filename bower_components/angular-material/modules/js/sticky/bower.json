@@ -1,0 +1,8 @@
+{
+  "name": "angular-material-sticky",
+  "version": "0.9.8",
+  "dependencies": {
+    "angular-material-core": "0.9.8",
+    "angular-material-content": "0.9.8"
+  }
+}

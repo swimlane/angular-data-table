@@ -1,0 +1,8 @@
+{
+  "name": "angular-material-toast",
+  "version": "0.9.8",
+  "dependencies": {
+    "angular-material-core": "0.9.8",
+    "angular-material-button": "0.9.8"
+  }
+}
