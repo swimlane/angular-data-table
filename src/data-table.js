@@ -318,7 +318,7 @@ class DataTableController {
     if(idx > -1){
       var column = scope.options.columns[idx];
       column.width = width;
-      column.$$resized = true;
+      column.canAutoResize = false;
 
       this.adjustColumns(idx);
       this.calculateColumns();

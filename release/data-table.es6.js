@@ -340,20 +340,20 @@
         centerColumns = allColumns.filter((c) => { return !c.frozenLeft && !c.frozenRight }),
         contentWidth = 0,
         columnsToResize = startIdx > -1 ? 
-          allColumns.slice(startIdx, allColumns.length).filter((c) => { return !c.$$resized }) :
-          allColumns.filter((c) => { return !c.$$resized });
+          allColumns.slice(startIdx, allColumns.length).filter((c) => { return c.canAutoResize }) :
+          allColumns.filter((c) => { return c.canAutoResize });
 
     allColumns.forEach((c) => {
-      if(c.$$resized){
-        contentWidth = contentWidth + c.width;
+      if(!c.canAutoResize){
+        contentWidth += c.width;
       } else {
-        contentWidth = contentWidth + (c.$$oldWidth || c.width);
+        contentWidth += (c.$$oldWidth || c.width);
       }
     });
 
     var remainingWidth = availableWidth - contentWidth,
-        additionWidthPerColumn = Math.floor(remainingWidth / colsByGroup.center.length),
-        exceedsWindow = contentWidth > widthsByGroup.center;
+        additionWidthPerColumn = Math.floor(remainingWidth / columnsToResize.length),
+        exceedsWindow = contentWidth > expectedWidth;
 
     columnsToResize.forEach((column) => {
       if(exceedsWindow){
@@ -461,7 +461,10 @@
 
     // Toggles the checkbox column in the header
     // for selecting all values given to the grid
-    headerCheckbox: false
+    headerCheckbox: false,
+
+    // Whether the column can automatically resize to fill space in the table.
+    canAutoResize: true
 
   });
 
@@ -845,7 +848,7 @@
       if(idx > -1){
         var column = scope.options.columns[idx];
         column.width = width;
-        column.$$resized = true;
+        column.canAutoResize = false;
 
         this.adjustColumns(idx);
         this.calculateColumns();

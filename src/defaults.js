@@ -133,6 +133,9 @@ export var ColumnDefaults = Object.freeze({
 
   // Toggles the checkbox column in the header
   // for selecting all values given to the grid
-  headerCheckbox: false
+  headerCheckbox: false,
+
+  // Whether the column can automatically resize to fill space in the table.
+  canAutoResize: true
 
 });

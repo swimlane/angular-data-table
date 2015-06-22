@@ -1,6 +1,6 @@
 /**
  * angular-data-table - AngularJS data table directive written in ES6.
- * @version v0.0.26
+ * @version v0.0.27
  * @link http://swimlane.com/
  * @license 
  */
@@ -265,22 +265,22 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     }),
         contentWidth = 0,
         columnsToResize = startIdx > -1 ? allColumns.slice(startIdx, allColumns.length).filter(function (c) {
-      return !c.$$resized;
+      return c.canAutoResize;
     }) : allColumns.filter(function (c) {
-      return !c.$$resized;
+      return c.canAutoResize;
     });
 
     allColumns.forEach(function (c) {
-      if (c.$$resized) {
-        contentWidth = contentWidth + c.width;
+      if (!c.canAutoResize) {
+        contentWidth += c.width;
       } else {
-        contentWidth = contentWidth + (c.$$oldWidth || c.width);
+        contentWidth += c.$$oldWidth || c.width;
       }
     });
 
     var remainingWidth = availableWidth - contentWidth,
-        additionWidthPerColumn = Math.floor(remainingWidth / colsByGroup.center.length),
-        exceedsWindow = contentWidth > widthsByGroup.center;
+        additionWidthPerColumn = Math.floor(remainingWidth / columnsToResize.length),
+        exceedsWindow = contentWidth > expectedWidth;
 
     columnsToResize.forEach(function (column) {
       if (exceedsWindow) {
@@ -350,7 +350,9 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
     isCheckboxColumn: false,
 
-    headerCheckbox: false
+    headerCheckbox: false,
+
+    canAutoResize: true
 
   });
 
@@ -640,7 +642,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         if (idx > -1) {
           var column = scope.options.columns[idx];
           column.width = width;
-          column.$$resized = true;
+          column.canAutoResize = false;
 
           this.adjustColumns(idx);
           this.calculateColumns();
