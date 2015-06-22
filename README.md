@@ -2,6 +2,9 @@
 
 A data-table for AngularJS that doesn't suck.  Its ES6/CSS3/HTML5, fast, light and awesome!  Only supports [Evergreen Browsers](http://eisenbergeffect.bluespire.com/evergreen-browsers/) and 1.4.x Angular.
 
+## Examples
+http://swimlane.github.io/angular-data-table/
+
 ## Features
 
 - Handle large data sets ( Virtual DOM )
