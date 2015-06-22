@@ -1,9 +1,6 @@
 # angular-data-table
 
-A data-table for AngularJS that doesn't suck.  Its ES6/CSS3/HTML5, fast, light and awesome!  Only supports [Evergreen Browsers](http://eisenbergeffect.bluespire.com/evergreen-browsers/) and 1.4.x Angular.
-
-## Examples
-http://swimlane.github.io/angular-data-table/
+A data-table for AngularJS that doesn't suck.  Its ES6/CSS3/HTML5, fast, light and awesome!  Only supports [Evergreen Browsers](http://eisenbergeffect.bluespire.com/evergreen-browsers/) and 1.4.x Angular.  See live demos [here](http://swimlane.github.io/angular-data-table/).
 
 ## Features
 
@@ -43,7 +40,7 @@ Ensure you have the latest NPM and JSPM installed globally.  If you don't alread
 - `gulp watch serve`
 - Open your browser to `http://localhost:9000`
 
-Website and docs coming soon, in the meantime, 'View Source' is your friend ;)!
+docs coming soon, in the meantime, 'View Source' is your friend ;)!
 
 #### Build
 
@@ -73,19 +70,25 @@ Include the module in your angular app module like:
 
     module.controller('HomeController', function($scope){
       $scope.options = {
-        columns: [
-          { name: "Name", prop: "name" }
-        ]
+        scrollbarV: false
       };
 
-      $scope.data = [ { name: 'Austin' } ];
+      $scope.data = [ 
+        { name: 'Austin', gender: 'Male' },
+        { name: 'Marjan', gender: 'Male' } 
+      ];
     });
 
-then in your markup:
+then using expressive markup in your template:
 
-    <dt options="options" values="data"></dt>
+    <dt options="options" rows="data" class="material dt">
+      <column name="Name" width="300" flex-grow="2"></column>
+      <column name="Gender">
+        <strong>{{value}}</strong>
+      </column>
+    </dt>
 
-and your off to the races!  For more information, reference the demo pages until docs are completed.  You can see them live by running the demo.
+and your off to the races! See live demos [here](http://swimlane.github.io/angular-data-table/).
 
 ## Research
 
