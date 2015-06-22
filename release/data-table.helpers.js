@@ -1,6 +1,6 @@
 /**
  * angular-data-table - AngularJS data table directive written in ES6.
- * @version v0.0.25
+ * @version v0.0.26
  * @link http://swimlane.com/
  * @license 
  */
@@ -1336,7 +1336,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         };
 
         if (scope.options.scrollbarV) {
-          styles.transform = 'translate3d(0, ' + row.$$index * scope.options.rowHeight + 'px, 0)';
+          var idx = row ? row.$$index : 0;
+          styles.transform = 'translate3d(0, ' + idx * scope.options.rowHeight + 'px, 0)';
         }
 
         return styles;

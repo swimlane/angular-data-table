@@ -1736,7 +1736,8 @@
       };
 
       if(scope.options.scrollbarV){
-        styles.transform = `translate3d(0, ${row.$$index * scope.options.rowHeight}px, 0)`;
+        var idx = row ? row.$$index : 0;
+        styles.transform = `translate3d(0, ${idx * scope.options.rowHeight}px, 0)`;
       }
 
       return styles;
