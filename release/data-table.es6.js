@@ -1488,8 +1488,13 @@
       });
 
       if(this.options.scrollbarV){
-        $scope.$watch('options.paging.count', this.updatePage.bind(this));
         $scope.$watch('options.internal.offsetY', this.updatePage.bind(this));
+
+        $scope.$watch('options.paging.count', (count) => {
+          this.count = count;
+          this.updatePage();
+        });
+        
         $scope.$watch('options.paging.offset', (newVal) => {
           $scope.onPage({
             offset: newVal,

@@ -1,6 +1,6 @@
 /**
  * angular-data-table - AngularJS data table directive written in ES6.
- * @version v0.0.22
+ * @version v0.0.23
  * @link http://swimlane.com/
  * @license 
  */
@@ -1118,8 +1118,13 @@
       });
 
       if (this.options.scrollbarV) {
-        $scope.$watch('options.paging.count', this.updatePage.bind(this));
         $scope.$watch('options.internal.offsetY', this.updatePage.bind(this));
+
+        $scope.$watch('options.paging.count', function (count) {
+          _this5.count = count;
+          _this5.updatePage();
+        });
+
         $scope.$watch('options.paging.offset', function (newVal) {
           $scope.onPage({
             offset: newVal,
