@@ -1,6 +1,6 @@
 /**
  * angular-data-table - AngularJS data table directive written in ES6.
- * @version v0.0.24
+ * @version v0.0.25
  * @link http://swimlane.com/
  * @license 
  */
@@ -1118,7 +1118,9 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
           }
 
           if (_this5.options.scrollbarV) {
-            _this5.getRows();
+            var refresh = newVal && oldVal && (newVal.length === oldVal.length || newVal.length < oldVal.length);
+
+            _this5.getRows(refresh);
           } else {
             var _tempRows;
 
@@ -1136,6 +1138,12 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
       if (this.options.scrollbarV) {
         $scope.$watch('options.internal.offsetY', this.updatePage.bind(this));
+
+        $scope.$watch('options.paging.size', function (newVal, oldVal) {
+          if (_this5.options.scrollbarV && (!oldVal || newVal > oldVal)) {
+            _this5.getRows();
+          }
+        });
 
         $scope.$watch('options.paging.count', function (count) {
           _this5.count = count;
@@ -1283,15 +1291,14 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
           }
         } else {
           temp = this.$scope.rows;
+          if (refresh === true) {
+            this.tempRows.splice(0, this.tempRows.length);
+          }
         }
 
         var idx = 0,
             indexes = this.getFirstLastIndexes(),
             rowIndex = indexes.first;
-
-        if (indexes.last === 0) {
-          this.tempRows.splice(0, this.tempRows.length);
-        }
 
         while (rowIndex < indexes.last && rowIndex < this.count) {
           var row = temp[rowIndex];

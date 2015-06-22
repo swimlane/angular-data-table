@@ -1478,7 +1478,10 @@
           }
 
           if(this.options.scrollbarV){
-            this.getRows();
+            var refresh = newVal && oldVal && (newVal.length === oldVal.length 
+              || newVal.length < oldVal.length);
+
+            this.getRows(refresh);
           } else {
             var rows = $scope.rows;
             if(this.treeColumn){
@@ -1494,6 +1497,12 @@
 
       if(this.options.scrollbarV){
         $scope.$watch('options.internal.offsetY', this.updatePage.bind(this));
+
+        $scope.$watch('options.paging.size', (newVal, oldVal) => {
+          if(this.options.scrollbarV && (!oldVal || newVal > oldVal)){
+            this.getRows();
+          }
+        });
 
         $scope.$watch('options.paging.count', (count) => {
           this.count = count;
@@ -1674,15 +1683,14 @@
         }
       } else {
         temp = this.$scope.rows;
+         if(refresh === true){
+          this.tempRows.splice(0, this.tempRows.length);
+        }
       }
 
       var idx = 0,
           indexes = this.getFirstLastIndexes(),
           rowIndex = indexes.first;
-
-      if(indexes.last === 0){
-        this.tempRows.splice(0, this.tempRows.length);
-      }
 
       while (rowIndex < indexes.last && rowIndex < this.count) {
         var row = temp[rowIndex];
