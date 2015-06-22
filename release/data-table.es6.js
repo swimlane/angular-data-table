@@ -398,17 +398,6 @@
 
 
   /**
-   * Creates a unique object id.
-   */
-  function ObjectId() {
-    var timestamp = (new Date().getTime() / 1000 | 0).toString(16);
-    return timestamp + 'xxxxxxxxxxxxxxxx'.replace(/[x]/g, function () {
-        return (Math.random() * 16 | 0).toString(16);
-    }).toLowerCase();
-  }
-
-
-  /**
    * Default Column Options
    * @type {object}
    */
@@ -475,6 +464,17 @@
     headerCheckbox: false
 
   });
+
+
+  /**
+   * Creates a unique object id.
+   */
+  function ObjectId() {
+    var timestamp = (new Date().getTime() / 1000 | 0).toString(16);
+    return timestamp + 'xxxxxxxxxxxxxxxx'.replace(/[x]/g, function () {
+        return (Math.random() * 16 | 0).toString(16);
+    }).toLowerCase();
+  }
 
 
   /**
@@ -671,8 +671,13 @@
     transposeColumnDefaults(columns){
       for(var i=0, len = columns.length; i < len; i++) {
         var column = columns[i];
-        column = angular.extend(angular.copy(ColumnDefaults), column);
         column.$id = ObjectId();
+
+        angular.forEach(ColumnDefaults, (v,k) => {
+          if(!column.hasOwnProperty(k)){
+            column[k] = v;
+          }
+        });
 
         if(column.name && !column.prop){
           column.prop = CamelCase(column.name);

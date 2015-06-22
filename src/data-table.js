@@ -144,8 +144,13 @@ class DataTableController {
   transposeColumnDefaults(columns){
     for(var i=0, len = columns.length; i < len; i++) {
       var column = columns[i];
-      column = angular.extend(angular.copy(ColumnDefaults), column);
       column.$id = ObjectId();
+
+      angular.forEach(ColumnDefaults, (v,k) => {
+        if(!column.hasOwnProperty(k)){
+          column[k] = v;
+        }
+      });
 
       if(column.name && !column.prop){
         column.prop = CamelCase(column.name);

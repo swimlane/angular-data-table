@@ -1,6 +1,6 @@
 /**
  * angular-data-table - AngularJS data table directive written in ES6.
- * @version v0.0.23
+ * @version v0.0.24
  * @link http://swimlane.com/
  * @license 
  */
@@ -309,13 +309,6 @@
     return str;
   }
 
-  function ObjectId() {
-    var timestamp = (new Date().getTime() / 1000 | 0).toString(16);
-    return timestamp + 'xxxxxxxxxxxxxxxx'.replace(/[x]/g, function () {
-      return (Math.random() * 16 | 0).toString(16);
-    }).toLowerCase();
-  }
-
   var ColumnDefaults = Object.freeze({
     frozenLeft: false,
 
@@ -354,6 +347,13 @@
     headerCheckbox: false
 
   });
+
+  function ObjectId() {
+    var timestamp = (new Date().getTime() / 1000 | 0).toString(16);
+    return timestamp + 'xxxxxxxxxxxxxxxx'.replace(/[x]/g, function () {
+      return (Math.random() * 16 | 0).toString(16);
+    }).toLowerCase();
+  }
 
   var TableDefaults = Object.freeze({
     scrollbarV: true,
@@ -502,8 +502,13 @@
       value: function transposeColumnDefaults(columns) {
         for (var i = 0, len = columns.length; i < len; i++) {
           var column = columns[i];
-          column = angular.extend(angular.copy(ColumnDefaults), column);
           column.$id = ObjectId();
+
+          angular.forEach(ColumnDefaults, function (v, k) {
+            if (!column.hasOwnProperty(k)) {
+              column[k] = v;
+            }
+          });
 
           if (column.name && !column.prop) {
             column.prop = CamelCase(column.name);
