@@ -1,5 +1,6 @@
 import angular from 'angular';
 import { DeepValueGetter } from '../../utils/utils';
+import { TranslateXY } from '../../utils/translate';
 
 export class RowController {
 
@@ -37,11 +38,11 @@ export class RowController {
     };
 
     if(group === 'left'){
-      styles.transform = `translate3d(${scope.options.internal.offsetX}px, 0, 0)`;
+      TranslateXY(styles, scope.options.internal.offsetX, 0);
     } else if(group === 'right'){
-      var offset = (scope.columnWidths.total - scope.options.internal.innerWidth) -
-        scope.options.internal.offsetX;
-      styles.transform = `translate3d(-${offset}px, 0, 0)`;
+      var offset = ((scope.columnWidths.total - scope.options.internal.innerWidth) -
+        scope.options.internal.offsetX) * -1;
+      TranslateXY(styles, offset, 0);
     }
 
     return styles;

@@ -13,7 +13,8 @@ import { TableDefaults, ColumnDefaults } from './defaults';
 import { HeaderController, HeaderDirective } from './components/header/header';
 import { HeaderCellDirective, HeaderCellController } from './components/header/header-cell';
 
-import { BodyController, BodyHelper, BodyDirective } from './components/body/body';
+import { BodyController, BodyDirective } from './components/body/body';
+import { ScrollerController, ScrollHelper, ScrollerDirective } from './components/body/scroller';
 import { RowController, RowDirective } from './components/body/row';
 import { GroupRowController, GroupRowDirective } from './components/body/group-row';
 import { CellController, CellDirective } from './components/body/cell';
@@ -240,7 +241,7 @@ class DataTableController {
       }
     }
 
-    BodyHelper.setYOffset(0);
+    ScrollHelper.setYOffset(0);
   }
 
   /**
@@ -279,7 +280,7 @@ class DataTableController {
     var pageBlockSize = scope.options.rowHeight * size,
         offsetY = pageBlockSize * offset;
 
-    BodyHelper.setYOffset(offsetY);
+    ScrollHelper.setYOffset(offsetY);
   }
 
   /**
@@ -453,6 +454,9 @@ export default angular
 
   .controller('BodyController', BodyController)
   .directive('dtBody', BodyDirective)
+
+  .controller('ScrollerController', ScrollerController)
+  .directive('dtScroller', ScrollerDirective)
 
   .controller('RowController', RowController)
   .directive('dtRow', RowDirective)

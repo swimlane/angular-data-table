@@ -1,6 +1,7 @@
 import angular from 'angular';
 import { requestAnimFrame, ColumnsByPin } from '../../utils/utils';
 import { KEYS } from '../../utils/keys';
+import { TranslateXY } from '../../utils/translate';
 
 export class BodyController{
 
@@ -39,7 +40,7 @@ export class BodyController{
           this.options.paging.count = newVal.length;
         }
 
-        this.count = this.options.paging.count;
+        $scope.count = this.options.paging.count;
 
         if(this.treeColumn || this.groupColumn){
           this.buildRowsByGroup();
@@ -73,7 +74,7 @@ export class BodyController{
       });
 
       $scope.$watch('options.paging.count', (count) => {
-        this.count = count;
+        $scope.count = count;
         this.updatePage();
       });
       
@@ -93,7 +94,7 @@ export class BodyController{
   getFirstLastIndexes(){
     var firstRowIndex = Math.max(Math.floor((
           this.$scope.options.internal.offsetY || 0) / this.options.rowHeight, 0), 0),
-        endIndex = Math.min(firstRowIndex + this.options.paging.size, this.count);
+        endIndex = Math.min(firstRowIndex + this.options.paging.size, this.$scope.count);
 
     return {
       first: firstRowIndex,
@@ -237,7 +238,7 @@ export class BodyController{
       // cache the tree build
       if((refresh || !this.treeTemp)){
         this.treeTemp = temp = this.buildTree();
-        this.count = temp.length;
+        this.$scope.count = temp.length;
 
         // have to force reset, optimize this later
         this.tempRows.splice(0, this.tempRows.length);
@@ -247,7 +248,7 @@ export class BodyController{
       // cache the group build
       if((refresh || !this.groupsTemp)){
         this.groupsTemp = temp = this.buildGroups();
-        this.count = temp.length;
+        this.$scope.count = temp.length;
       }
     } else {
       temp = this.$scope.rows;
@@ -260,7 +261,7 @@ export class BodyController{
         indexes = this.getFirstLastIndexes(),
         rowIndex = indexes.first;
 
-    while (rowIndex < indexes.last && rowIndex < this.count) {
+    while (rowIndex < indexes.last && rowIndex < this.$scope.count) {
       var row = temp[rowIndex];
       if(row){
         row.$$index = rowIndex;
@@ -304,8 +305,9 @@ export class BodyController{
     };
 
     if(scope.options.scrollbarV){
-      var idx = row ? row.$$index : 0;
-      styles.transform = `translate3d(0, ${idx * scope.options.rowHeight}px, 0)`;
+      var idx = row ? row.$$index : 0,
+          pos = idx * scope.options.rowHeight;
+      TranslateXY(styles, 0, pos);
     }
 
     return styles;
@@ -459,15 +461,7 @@ export class BodyController{
     this.$scope.onSelect({ rows: selecteds });
   }
 
-  /**
-   * Returns the virtual row height.
-   * @return {[height]}
-   */
-  scrollerStyles(){
-    return {
-      height: this.count * this.options.rowHeight + 'px'
-    }
-  }
+
 
   /**
    * Returns the row model for the index in the view.
@@ -589,7 +583,7 @@ export function BodyDirective($timeout){
     },
     template: `
       <div class="dt-body" ng-style="body.styles()">
-        <div class="dt-body-scroller" ng-style="body.scrollerStyles()">
+        <dt-scroller class="dt-body-scroller">
           <dt-group-row ng-repeat-start="r in body.tempRows track by $index"
                         ng-if="r.group"
                         ng-style="body.groupRowStyles(this, r)" 
@@ -616,7 +610,7 @@ export function BodyDirective($timeout){
                   expanded="body.getRowExpanded(this, r)"
                   ng-style="body.rowStyles(this, r)">
           </dt-row>
-        </div>
+        </dt-scroller>
         <div ng-if="rows && !rows.length" 
              class="empty-row" 
              ng-bind="::options.emptyMessage">
@@ -624,37 +618,7 @@ export function BodyDirective($timeout){
        <div ng-if="rows === undefined" 
              class="loading-row"
              ng-bind="::options.loadingMessage">
-       </div>
-      </div>`,
-    replace:true,
-    link: function($scope, $elm, $attrs, ctrl){
-      var ticking = false,
-          lastScrollY = 0,
-          lastScrollX = 0,
-          helper = BodyHelper.create($elm);
-
-      function update(){
-        $timeout(() => {
-          $scope.options.internal.offsetY = lastScrollY;
-          $scope.options.internal.offsetX = lastScrollX;
-          ctrl.updatePage();
-        });
-
-        ticking = false;
-      };
-
-      function requestTick() {
-        if(!ticking) {
-          requestAnimFrame(update);
-          ticking = true;
-        }
-      };
-
-      $elm.on('scroll', function(ev) {
-        lastScrollY = this.scrollTop;
-        lastScrollX = this.scrollLeft;
-        requestTick();
-      });
-    }
+        </div>
+      </div>`
   };
 };

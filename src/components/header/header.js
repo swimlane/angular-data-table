@@ -1,5 +1,6 @@
 import angular from 'angular';
 import { Sortable } from '../../utils/sortable';
+import { TranslateXY } from '../../utils/translate';
 
 export class HeaderController {
 
@@ -49,10 +50,10 @@ export class HeaderController {
     };
 
     if(group === 'center'){
-      styles['transform'] = `translate3d(-${scope.options.internal.offsetX}px, 0, 0)`
+      TranslateXY(styles, scope.options.internal.offsetX * -1, 0);
     } else if(group === 'right'){
-      var offset = (scope.columnWidths.total - scope.options.internal.innerWidth);
-      styles.transform = `translate3d(-${offset}px, 0, 0)`;
+      var offset = (scope.columnWidths.total - scope.options.internal.innerWidth) *-1;
+      TranslateXY(styles, offset, 0);
     }
 
     return styles;

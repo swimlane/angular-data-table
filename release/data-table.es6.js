@@ -48,7 +48,7 @@
    * A helper for scrolling the body to a specific scroll position
    * when the footer pager is invoked.
    */
-  var BodyHelper = function(){
+  var ScrollHelper = function(){
     var _elm;
     return {
       create: function(elm){
@@ -76,68 +76,19 @@
             };
   })();
 
-  function BodyDirective($timeout){
+  function ScrollerDirective($timeout){
     return {
       restrict: 'E',
-      controller: 'BodyController',
-      controllerAs: 'body',
-      scope: {
-        columns: '=',
-        columnWidths: '=',
-        rows: '=',
-        options: '=',
-        selected: '=?',
-        expanded: '=?',
-        onPage: '&',
-        onTreeToggle: '&',
-        onSelect: '&',
-        onRowClick: '&'
-      },
-      template: `
-        <div class="dt-body" ng-style="body.styles()">
-          <div class="dt-body-scroller" ng-style="body.scrollerStyles()">
-            <dt-group-row ng-repeat-start="r in body.tempRows track by $index"
-                          ng-if="r.group"
-                          ng-style="body.groupRowStyles(this, r)" 
-                          on-group-toggle="body.onGroupToggle(this, group)"
-                          expanded="body.getRowExpanded(this, r)"
-                          tabindex="{{$index}}"
-                          row="r">
-            </dt-group-row>
-            <dt-row ng-repeat-end
-                    ng-if="!r.group"
-                    row="body.getRowValue($index)"
-                    tabindex="{{$index}}"
-                    columns="columns"
-                    column-widths="columnWidths"
-                    ng-keydown="body.keyDown($event, $index, r)"
-                    ng-click="body.rowClicked($event, $index, r)"
-                    on-tree-toggle="body.onTreeToggle(this, row, cell)"
-                    ng-class="body.rowClasses(this, r)"
-                    options="options"
-                    selected="body.isSelected(r)"
-                    on-checkbox-change="body.onCheckboxChange($index, row)"
-                    columns="body.columnsByPin"
-                    has-children="body.getRowHasChildren(r)"
-                    expanded="body.getRowExpanded(this, r)"
-                    ng-style="body.rowStyles(this, r)">
-            </dt-row>
-          </div>
-          <div ng-if="rows && !rows.length" 
-               class="empty-row" 
-               ng-bind="::options.emptyMessage">
-         </div>
-         <div ng-if="rows === undefined" 
-               class="loading-row"
-               ng-bind="::options.loadingMessage">
-         </div>
-        </div>`,
-      replace:true,
+      controller: 'ScrollerController',
+      controllerAs: 'scroller',
+      require:'^dtBody',
+      transclude: true,
+      template: `<div ng-style="scroller.scrollerStyles(this)" ng-transclude></div>`,
       link: function($scope, $elm, $attrs, ctrl){
         var ticking = false,
             lastScrollY = 0,
             lastScrollX = 0,
-            helper = BodyHelper.create($elm);
+            helper = ScrollHelper.create($elm);
 
         function update(){
           $timeout(() => {
@@ -156,7 +107,7 @@
           }
         };
 
-        $elm.on('scroll', function(ev) {
+        $elm.parent().on('scroll', function(ev) {
           lastScrollY = this.scrollTop;
           lastScrollX = this.scrollLeft;
           requestTick();
@@ -770,7 +721,7 @@
         }
       }
 
-      BodyHelper.setYOffset(0);
+      ScrollHelper.setYOffset(0);
     }
 
     /**
@@ -809,7 +760,7 @@
       var pageBlockSize = scope.options.rowHeight * size,
           offsetY = pageBlockSize * offset;
 
-      BodyHelper.setYOffset(offsetY);
+      ScrollHelper.setYOffset(offsetY);
     }
 
     /**
@@ -1328,6 +1279,68 @@
     };
   }
 
+  var cache = {},
+      testStyle = document.createElement('div').style;
+
+
+  // Get Prefix
+  // http://davidwalsh.name/vendor-prefix
+  var prefix = (function () {
+    var styles = window.getComputedStyle(document.documentElement, ''),
+      pre = (Array.prototype.slice
+        .call(styles)
+        .join('') 
+        .match(/-(moz|webkit|ms)-/) || (styles.OLink === '' && ['', 'o'])
+      )[1],
+      dom = ('WebKit|Moz|MS|O').match(new RegExp('(' + pre + ')', 'i'))[1];
+    return {
+      dom: dom,
+      lowercase: pre,
+      css: '-' + pre + '-',
+      js: pre[0].toUpperCase() + pre.substr(1)
+    };
+  })();
+
+  /**
+   * @param {string} property Name of a css property to check for.
+   * @return {?string} property name supported in the browser, or null if not
+   * supported.
+   */
+  function GetVendorPrefixedName(property) {
+    var name = CamelCase(property)
+    if(!cache[name]){
+      if(!testStyle[prefix.dom]) {
+        cache[name] = null;
+      } else {
+        cache[name] = prefix.css + property;
+      }
+    }
+    return cache[name];
+  }
+
+
+  // browser detection and prefixing tools
+  var transform = GetVendorPrefixedName('transform'),
+      backfaceVisibility = GetVendorPrefixedName('backfaceVisibility'),
+      hasCSSTransforms = !!GetVendorPrefixedName('transform'),
+      hasCSS3DTransforms = !!GetVendorPrefixedName('perspective'),
+      ua = window.navigator.userAgent,
+      isSafari = (/Safari\//).test(ua) && !(/Chrome\//).test(ua);
+
+  function TranslateXY(styles, x,y){
+    if (hasCSSTransforms) {
+      if (!isSafari && hasCSS3DTransforms) {
+        styles[transform] = `translate3d(${x}px, ${y}px, 0)`;
+        styles[backfaceVisibility] = 'hidden';
+      } else {
+        styles[transform] = `translate(${x}px, ${y}px, 0)`;
+      }
+    } else {
+      styles.top = y + 'px';
+      styles.left = x + 'px';
+    }
+  }
+
 
   /**
    * Returns a deep object given a string. zoo['animal.type']
@@ -1385,11 +1398,11 @@
       };
 
       if(group === 'left'){
-        styles.transform = `translate3d(${scope.options.internal.offsetX}px, 0, 0)`;
+        TranslateXY(styles, scope.options.internal.offsetX, 0);
       } else if(group === 'right'){
-        var offset = (scope.columnWidths.total - scope.options.internal.innerWidth) -
-          scope.options.internal.offsetX;
-        styles.transform = `translate3d(-${offset}px, 0, 0)`;
+        var offset = ((scope.columnWidths.total - scope.options.internal.innerWidth) -
+          scope.options.internal.offsetX) * -1;
+        TranslateXY(styles, offset, 0);
       }
 
       return styles;
@@ -1405,6 +1418,79 @@
       });
     }
 
+  }
+
+  class ScrollerController {
+
+    /**
+     * Returns the virtual row height.
+     * @return {[height]}
+     */
+    scrollerStyles(scope){
+      return {
+        height: scope.count * scope.options.rowHeight + 'px'
+      }
+    }
+
+  }
+
+  function BodyDirective($timeout){
+    return {
+      restrict: 'E',
+      controller: 'BodyController',
+      controllerAs: 'body',
+      scope: {
+        columns: '=',
+        columnWidths: '=',
+        rows: '=',
+        options: '=',
+        selected: '=?',
+        expanded: '=?',
+        onPage: '&',
+        onTreeToggle: '&',
+        onSelect: '&',
+        onRowClick: '&'
+      },
+      template: `
+        <div class="dt-body" ng-style="body.styles()">
+          <dt-scroller class="dt-body-scroller">
+            <dt-group-row ng-repeat-start="r in body.tempRows track by $index"
+                          ng-if="r.group"
+                          ng-style="body.groupRowStyles(this, r)" 
+                          on-group-toggle="body.onGroupToggle(this, group)"
+                          expanded="body.getRowExpanded(this, r)"
+                          tabindex="{{$index}}"
+                          row="r">
+            </dt-group-row>
+            <dt-row ng-repeat-end
+                    ng-if="!r.group"
+                    row="body.getRowValue($index)"
+                    tabindex="{{$index}}"
+                    columns="columns"
+                    column-widths="columnWidths"
+                    ng-keydown="body.keyDown($event, $index, r)"
+                    ng-click="body.rowClicked($event, $index, r)"
+                    on-tree-toggle="body.onTreeToggle(this, row, cell)"
+                    ng-class="body.rowClasses(this, r)"
+                    options="options"
+                    selected="body.isSelected(r)"
+                    on-checkbox-change="body.onCheckboxChange($index, row)"
+                    columns="body.columnsByPin"
+                    has-children="body.getRowHasChildren(r)"
+                    expanded="body.getRowExpanded(this, r)"
+                    ng-style="body.rowStyles(this, r)">
+            </dt-row>
+          </dt-scroller>
+          <div ng-if="rows && !rows.length" 
+               class="empty-row" 
+               ng-bind="::options.emptyMessage">
+         </div>
+         <div ng-if="rows === undefined" 
+               class="loading-row"
+               ng-bind="::options.loadingMessage">
+          </div>
+        </div>`
+    };
   }
 
 
@@ -1474,7 +1560,7 @@
             this.options.paging.count = newVal.length;
           }
 
-          this.count = this.options.paging.count;
+          $scope.count = this.options.paging.count;
 
           if(this.treeColumn || this.groupColumn){
             this.buildRowsByGroup();
@@ -1508,7 +1594,7 @@
         });
 
         $scope.$watch('options.paging.count', (count) => {
-          this.count = count;
+          $scope.count = count;
           this.updatePage();
         });
         
@@ -1528,7 +1614,7 @@
     getFirstLastIndexes(){
       var firstRowIndex = Math.max(Math.floor((
             this.$scope.options.internal.offsetY || 0) / this.options.rowHeight, 0), 0),
-          endIndex = Math.min(firstRowIndex + this.options.paging.size, this.count);
+          endIndex = Math.min(firstRowIndex + this.options.paging.size, this.$scope.count);
 
       return {
         first: firstRowIndex,
@@ -1672,7 +1758,7 @@
         // cache the tree build
         if((refresh || !this.treeTemp)){
           this.treeTemp = temp = this.buildTree();
-          this.count = temp.length;
+          this.$scope.count = temp.length;
 
           // have to force reset, optimize this later
           this.tempRows.splice(0, this.tempRows.length);
@@ -1682,7 +1768,7 @@
         // cache the group build
         if((refresh || !this.groupsTemp)){
           this.groupsTemp = temp = this.buildGroups();
-          this.count = temp.length;
+          this.$scope.count = temp.length;
         }
       } else {
         temp = this.$scope.rows;
@@ -1695,7 +1781,7 @@
           indexes = this.getFirstLastIndexes(),
           rowIndex = indexes.first;
 
-      while (rowIndex < indexes.last && rowIndex < this.count) {
+      while (rowIndex < indexes.last && rowIndex < this.$scope.count) {
         var row = temp[rowIndex];
         if(row){
           row.$$index = rowIndex;
@@ -1739,8 +1825,9 @@
       };
 
       if(scope.options.scrollbarV){
-        var idx = row ? row.$$index : 0;
-        styles.transform = `translate3d(0, ${idx * scope.options.rowHeight}px, 0)`;
+        var idx = row ? row.$$index : 0,
+            pos = idx * scope.options.rowHeight;
+        TranslateXY(styles, 0, pos);
       }
 
       return styles;
@@ -1894,15 +1981,7 @@
       this.$scope.onSelect({ rows: selecteds });
     }
 
-    /**
-     * Returns the virtual row height.
-     * @return {[height]}
-     */
-    scrollerStyles(){
-      return {
-        height: this.count * this.options.rowHeight + 'px'
-      }
-    }
+
 
     /**
      * Returns the row model for the index in the view.
@@ -2264,10 +2343,10 @@
       };
 
       if(group === 'center'){
-        styles['transform'] = `translate3d(-${scope.options.internal.offsetX}px, 0, 0)`
+        TranslateXY(styles, scope.options.internal.offsetX * -1, 0);
       } else if(group === 'right'){
-        var offset = (scope.columnWidths.total - scope.options.internal.innerWidth);
-        styles.transform = `translate3d(-${offset}px, 0, 0)`;
+        var offset = (scope.columnWidths.total - scope.options.internal.innerWidth) *-1;
+        TranslateXY(styles, offset, 0);
       }
 
       return styles;
@@ -2643,6 +2722,9 @@
 
     .controller('BodyController', BodyController)
     .directive('dtBody', BodyDirective)
+
+    .controller('ScrollerController', ScrollerController)
+    .directive('dtScroller', ScrollerDirective)
 
     .controller('RowController', RowController)
     .directive('dtRow', RowDirective)
