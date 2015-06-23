@@ -52,14 +52,6 @@ class DataTableController {
 
       this.calculateColumns();
     }, true);
-
-    // Gets the column nodes to transposes to column objects
-    // http://stackoverflow.com/questions/30845397/angular-expressive-directive-design/30847609#30847609
-    $transclude((clone,scope) => {
-      var cols = clone[0].getElementsByTagName('column');
-      this.buildColumns($scope, cols);
-      this.transposeColumnDefaults($scope.options.columns);
-    });
 	}
 
   /**
@@ -354,7 +346,7 @@ function DataTableDirective($window, $timeout, throttle){
   return {
     restrict: 'E',
     replace: true,
-    transclude:'element',
+    //transclude:'element',
     controller: 'DataTable',
     scope: {
       options: '=',
@@ -368,8 +360,11 @@ function DataTableDirective($window, $timeout, throttle){
       onRowClick: '&'
     },
     controllerAs: 'dt',
-    template: 
-      `<div class="dt" ng-class="dt.tableCss(this)">
+    template: function(element){
+      // Gets the column nodes to transposes to column objects
+      // http://stackoverflow.com/questions/30845397/angular-expressive-directive-design/30847609#30847609
+      element.columns = element[0].getElementsByTagName('column');
+      return `<div class="dt" ng-class="dt.tableCss(this)">
           <dt-header options="options"
                      on-checkbox-change="dt.onHeaderCheckboxChange(this)"
                      columns="dt.columnsByPin"
@@ -395,10 +390,14 @@ function DataTableDirective($window, $timeout, throttle){
                      on-page="dt.onFooterPage(this, offset, size)"
                      paging="options.paging">
            </dt-footer>
-        </div>`,
+        </div>`
+    },
     compile: function(tElem, tAttrs){
       return {
         pre: function($scope, $elm, $attrs, ctrl){
+          ctrl.buildColumns($scope, $elm.columns);
+          ctrl.transposeColumnDefaults($scope.options.columns);
+
           $scope.options.internal.scrollBarWidth = ScrollbarWidth();
 
           function resize() {
