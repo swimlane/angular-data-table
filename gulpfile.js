@@ -140,7 +140,7 @@ gulp.task('release-build', function () {
   }).then( function ( bundle ) {
     return bundle.write({
       dest: 'release/data-table.es6.js',
-      format: 'umd',
+      format: 'amd',
       moduleName: 'DataTable'
     });
   });
