@@ -1,6 +1,6 @@
 /**
  * angular-data-table - AngularJS data table directive written in ES6.
- * @version v0.0.29
+ * @version v0.0.30
  * @link http://swimlane.com/
  * @license 
  */
@@ -12,9 +12,7 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 
-(function (global, factory) {
-  typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory(require('angular')) : typeof define === 'function' && define.amd ? define(['angular'], factory) : global.DataTable = factory(angular);
-})(undefined, function (angular) {
+define(['angular'], function (angular) {
   'use strict';
 
   (function () {

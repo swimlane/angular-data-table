@@ -1,8 +1,4 @@
-(function (global, factory) {
-  typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory(require('angular')) :
-  typeof define === 'function' && define.amd ? define(['angular'], factory) :
-  global.DataTable = factory(angular);
-}(this, function (angular) { 'use strict';
+define(['angular'], function (angular) { 'use strict';
 
   /**
    * Array.prototype.find()
@@ -2742,4 +2738,4 @@
 
   return data_table;
 
-}));
+});
