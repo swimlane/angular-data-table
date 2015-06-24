@@ -44,16 +44,18 @@
 
 
     <dt options="options" rows="data" class="material dt">
-      <column name="Name" width="300" flex-grow="2"></column>
-      <column name="Gender">
+      <column name="Name" width="300" flex-grow="1"></column>
+      <column name="Gender" flex-grow="1">
         {{$outer.monkey}} {{value}}
       </column>
     </dt>
 
     <dt options="options2" rows="data" class="material dt">
       <column name="Name" width="300"></column>
-      <column>
-        {{row.name}} : {{value}}
+      <column name="Company" width="300">
+        <div ng-repeat="v in $outer.vs">
+        {{v}} : {{row.name}} : {{value}}
+        </div>
       </column>
     </dt>
 
@@ -66,10 +68,12 @@
         var module = angular.module('app', [ dt.default.name ]);
 
         module.controller('HomeController', function($scope, $http){
+        $scope.vs = [ 1 ]
           $scope.options = {
             rowHeight: 50,
             footerHeight: false,
             headerHeight: 50,
+            columnMode: 'flex',
             scrollbarV: false,
             selectable: false
           };

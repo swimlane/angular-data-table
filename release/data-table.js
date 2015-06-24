@@ -1,6 +1,6 @@
 /**
  * angular-data-table - AngularJS data table directive written in ES6.
- * @version v0.0.28
+ * @version v0.0.29
  * @link http://swimlane.com/
  * @license 
  */
@@ -414,12 +414,6 @@
 
         _this.calculateColumns();
       }, true);
-
-      $transclude(function (clone, scope) {
-        var cols = clone[0].getElementsByTagName('column');
-        _this.buildColumns($scope, cols);
-        _this.transposeColumnDefaults($scope.options.columns);
-      });
     }
     DataTableController.$inject = ["$scope", "$filter", "$log", "$transclude"];
 
@@ -2014,7 +2008,7 @@
     return {
       restrict: 'E',
       replace: true,
-      transclude: 'element',
+
       controller: 'DataTable',
       scope: {
         options: '=',
@@ -2028,10 +2022,16 @@
         onRowClick: '&'
       },
       controllerAs: 'dt',
-      template: '<div class="dt" ng-class="dt.tableCss(this)">\n            <dt-header options="options"\n                       on-checkbox-change="dt.onHeaderCheckboxChange(this)"\n                       columns="dt.columnsByPin"\n                       column-widths="dt.columnWidths"\n                       ng-if="options.headerHeight"\n                       on-resize="dt.onResize(this, column, width)"\n                       selected="dt.isAllRowsSelected(this)"\n                       on-sort="dt.onSort(this)">\n            </dt-header>\n            <dt-body rows="rows"\n                     selected="selected"\n                     expanded="expanded"\n                     columns="dt.columnsByPin"\n                     on-select="dt.onSelect(this, rows)"\n                     on-row-click="dt.onRowClick(this, row)"\n                     column-widths="dt.columnWidths"\n                     options="options"\n                     on-page="dt.onBodyPage(this, offset, size)"\n                     on-tree-toggle="dt.onTreeToggle(this, row, cell)">\n             </dt-body>\n            <dt-footer ng-if="options.footerHeight"\n                       ng-style="{ height: options.footerHeight + \'px\' }"\n                       on-page="dt.onFooterPage(this, offset, size)"\n                       paging="options.paging">\n             </dt-footer>\n          </div>',
+      template: function template(element) {
+        element.columns = element[0].getElementsByTagName('column');
+        return '<div class="dt" ng-class="dt.tableCss(this)">\n            <dt-header options="options"\n                       on-checkbox-change="dt.onHeaderCheckboxChange(this)"\n                       columns="dt.columnsByPin"\n                       column-widths="dt.columnWidths"\n                       ng-if="options.headerHeight"\n                       on-resize="dt.onResize(this, column, width)"\n                       selected="dt.isAllRowsSelected(this)"\n                       on-sort="dt.onSort(this)">\n            </dt-header>\n            <dt-body rows="rows"\n                     selected="selected"\n                     expanded="expanded"\n                     columns="dt.columnsByPin"\n                     on-select="dt.onSelect(this, rows)"\n                     on-row-click="dt.onRowClick(this, row)"\n                     column-widths="dt.columnWidths"\n                     options="options"\n                     on-page="dt.onBodyPage(this, offset, size)"\n                     on-tree-toggle="dt.onTreeToggle(this, row, cell)">\n             </dt-body>\n            <dt-footer ng-if="options.footerHeight"\n                       ng-style="{ height: options.footerHeight + \'px\' }"\n                       on-page="dt.onFooterPage(this, offset, size)"\n                       paging="options.paging">\n             </dt-footer>\n          </div>';
+      },
       compile: function compile(tElem, tAttrs) {
         return {
           pre: function pre($scope, $elm, $attrs, ctrl) {
+            ctrl.buildColumns($scope, $elm.columns);
+            ctrl.transposeColumnDefaults($scope.options.columns);
+
             $scope.options.internal.scrollBarWidth = ScrollbarWidth();
 
             function resize() {
