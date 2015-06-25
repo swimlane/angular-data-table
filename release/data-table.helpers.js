@@ -1,6 +1,6 @@
 /**
  * angular-data-table - AngularJS data table directive written in ES6.
- * @version v0.0.30
+ * @version v0.0.32
  * @link http://swimlane.com/
  * @license 
  */
@@ -823,18 +823,30 @@ define(['angular'], function (angular) {
       compile: function compile() {
         return {
           pre: function pre($scope, $elm, $attrs, ctrl) {
-            var content = angular.element($elm[0].querySelector('.dt-cell-content'));
-            $scope.$outer = $scope.options.$outer;
+            var content = angular.element($elm[0].querySelector('.dt-cell-content')),
+                cellScope;
+
+            if ($scope.column.template || $scope.column.cellRenderer) {
+              cellScope = $rootScope.$new(true);
+              angular.forEach($scope.options.$outer, function (v, k) {
+                if (k[0] !== '$') {
+                  cellScope[k] = v;
+                }
+              });
+
+              cellScope.value = $scope.value;
+              cellScope.row = $scope.row;
+            }
 
             $scope.$watch('value', function () {
               content.empty();
 
               if ($scope.column.template) {
                 var elm = angular.element('<span>' + $scope.column.template.trim() + '</span>');
-                content.append($compile(elm)($scope));
+                content.append($compile(elm)(cellScope));
               } else if ($scope.column.cellRenderer) {
-                var elm = angular.element($scope.column.cellRenderer($scope, content));
-                content.append($compile(elm)($scope));
+                var elm = angular.element($scope.column.cellRenderer(cellScope, content));
+                content.append($compile(elm)(cellScope));
               } else {
                 content[0].innerHTML = ctrl.getValue($scope);
               }

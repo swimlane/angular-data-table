@@ -46,18 +46,20 @@
     <dt options="options" rows="data" class="material dt">
       <column name="Name" width="300" flex-grow="1"></column>
       <column name="Gender" flex-grow="1">
-        {{$outer.monkey}} {{value}}
+        {{monkey}} {{value}}
       </column>
     </dt>
 
     <dt options="options2" rows="data" class="material dt">
       <column name="Name" width="300"></column>
       <column name="Company" width="300">
-        <div ng-repeat="v in $outer.vs">
+        <div ng-repeat="v in vs">
         {{v}} : {{row.name}} : {{value}}
         </div>
       </column>
     </dt>
+
+    <button type="button" ng-click="changeIt()">Change External Value</input>
 
     <script src="../jspm_packages/system.js"></script>
     <script src="../config.js"></script>
@@ -69,6 +71,11 @@
 
         module.controller('HomeController', function($scope, $http){
         $scope.vs = [ 1 ]
+
+        $scope.changeIt = function(){
+          $scope.vs[0] = 2;
+        }
+
           $scope.options = {
             rowHeight: 50,
             footerHeight: false,
