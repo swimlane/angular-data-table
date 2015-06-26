@@ -513,10 +513,11 @@ define(['angular'], function (angular) { 'use strict';
         $log: $log
       });
 
+      this.defaults($scope);
+
       // set scope to the parent
       $scope.options.$outer = $scope.$parent;
-
-      this.defaults($scope);
+      
       $scope.$watch('options.columns', (newVal, oldVal) => {
         if(newVal.length > oldVal.length){
           this.transposeColumnDefaults(newVal);
@@ -1374,6 +1375,7 @@ define(['angular'], function (angular) { 'use strict';
      * @return {value}
      */
     getValue(scope, col){
+      if(!col.prop) return '';
       return DeepValueGetter(scope.row, col.prop);
     }
 

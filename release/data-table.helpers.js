@@ -1,6 +1,6 @@
 /**
  * angular-data-table - AngularJS data table directive written in ES6.
- * @version v0.0.33
+ * @version v0.0.34
  * @link http://swimlane.com/
  * @license 
  */
@@ -404,9 +404,10 @@ define(['angular'], function (angular) {
         $log: $log
       });
 
+      this.defaults($scope);
+
       $scope.options.$outer = $scope.$parent;
 
-      this.defaults($scope);
       $scope.$watch('options.columns', function (newVal, oldVal) {
         if (newVal.length > oldVal.length) {
           _this.transposeColumnDefaults(newVal);
@@ -1061,6 +1062,7 @@ define(['angular'], function (angular) {
     _createClass(RowController, [{
       key: 'getValue',
       value: function getValue(scope, col) {
+        if (!col.prop) return '';
         return DeepValueGetter(scope.row, col.prop);
       }
     }, {

@@ -11,6 +11,7 @@ export class RowController {
    * @return {value}
    */
   getValue(scope, col){
+    if(!col.prop) return '';
     return DeepValueGetter(scope.row, col.prop);
   }
 
