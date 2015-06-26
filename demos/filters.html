@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset=" utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <meta name="viewport" content="width = device-width, minimal-ui, initial-scale = 1, user-scalable = no" />
+    <meta name="apple-mobile-web-app-title" content="Datagrid">
+    <title>Datagrid - Basic</title>
+    <base href="/">
+    <style>
+      *, *:after, *:before {
+        -webkit-box-sizing: border-box;
+        -moz-box-sizing: border-box;
+        box-sizing: border-box;
+      }
+
+      body{
+        font-family: 'RobotoDraft', 'Roboto', 'Helvetica Neue, Helvetica, Arial', sans-serif;
+        font-style: normal;
+        font-weight: 300;
+        font-size: 1.4rem;
+        line-height: 2rem;
+        letter-spacing: 0.01rem;
+        color: #212121;
+        background-color: #f5f5f5;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        text-rendering: optimizeLegibility;
+      }
+
+      .dt{
+        width:75%;
+        margin:50px auto;
+      }
+
+    </style>
+    <link href="../dist/data-table.css" media="all" rel="stylesheet" />
+    <link href="../dist/themes/material.css" media="all" rel="stylesheet" />
+    <link href="http://fontastic.s3.amazonaws.com/Jnf54BZCm7mSjGCxNRbfp3/icons.css" rel="stylesheet">
+  </head>
+  <body ng-app="app" ng-controller="HomeController">
+
+  <input type="text" ng-model-options="{ debounce: 100 }" placeholder="Filter names"
+           ng-model="$parent.filterKeywords" />
+
+    <dt options="options" rows="data" class="material"></dt>
+
+    <script src="../jspm_packages/system.js"></script>
+    <script src="../config.js"></script>
+
+    <script>
+
+      System.import('data-table').then(function(dt){
+        var module = angular.module('app', [ dt.default.name ]);
+
+        module.controller('HomeController', function($scope, $http){
+          var data;
+
+          $scope.options = {
+            rowHeight: 50,
+            headerHeight: 50,
+            footerHeight: false,
+            scrollbarV: false,
+            selectable: false,
+            columns: [
+              { name: "Name", width: 300 },
+              { name: "Gender" },
+              { name: "Company" }
+            ]
+          };
+
+          $scope.$watch('filterKeywords', function(newVal) {
+            if(!data)return;
+            $scope.data = data.filter(function(d) {
+              console.log(d.name, d.name.indexOf(newVal))
+              return d.name.toLowerCase().indexOf(newVal) !== -1 || !newVal;
+            })
+          });
+
+          $http.get('/demos/data/100.json').success(function(d) {
+            $scope.data = data = d;
+          });
+
+        });
+      });
+    </script>
+
+    <script>
+    // not really needed but just handy
+    // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/filter
+    if (!Array.prototype.filter) {
+        Array.prototype.filter = function(fun/*, thisArg*/) {
+          'use strict';
+
+          if (this === void 0 || this === null) {
+            throw new TypeError();
+          }
+
+          var t = Object(this);
+          var len = t.length >>> 0;
+          if (typeof fun !== 'function') {
+            throw new TypeError();
+          }
+
+          var res = [];
+          var thisArg = arguments.length >= 2 ? arguments[1] : void 0;
+          for (var i = 0; i < len; i++) {
+            if (i in t) {
+              var val = t[i];
+
+              // NOTE: Technically this should Object.defineProperty at
+              //       the next index, as push can be affected by
+              //       properties on Object.prototype and Array.prototype.
+              //       But that method's new, and collisions should be
+              //       rare, so use the more-compatible alternative.
+              if (fun.call(thisArg, val, i, t)) {
+                res.push(val);
+              }
+            }
+          }
+
+          return res;
+        };
+      }
+    </script>
+
+  </body>
+</html>

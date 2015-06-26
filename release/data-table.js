@@ -1,6 +1,6 @@
 /**
  * angular-data-table - AngularJS data table directive written in ES6.
- * @version v0.0.32
+ * @version v0.0.33
  * @link http://swimlane.com/
  * @license 
  */
@@ -824,13 +824,15 @@ define(['angular'], function (angular) {
                   cellScope[k] = v;
                 }
               });
-
-              cellScope.value = $scope.value;
-              cellScope.row = $scope.row;
             }
 
             $scope.$watch('value', function () {
               content.empty();
+
+              if (cellScope) {
+                cellScope.value = $scope.value;
+                cellScope.row = $scope.row;
+              }
 
               if ($scope.column.template) {
                 var elm = angular.element('<span>' + $scope.column.template.trim() + '</span>');

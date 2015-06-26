@@ -132,13 +132,15 @@ export function CellDirective($rootScope, $compile, $log){
                 cellScope[k] = v;
               }
             });
-
-            cellScope.value = $scope.value;
-            cellScope.row = $scope.row;
           }
           
           $scope.$watch('value', () => {
             content.empty();
+
+            if(cellScope){
+              cellScope.value = $scope.value;
+              cellScope.row = $scope.row;
+            }
             
             if($scope.column.template){
               var elm = angular.element(`<span>${$scope.column.template.trim()}</span>`);
