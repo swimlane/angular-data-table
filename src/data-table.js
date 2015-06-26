@@ -37,10 +37,11 @@ class DataTableController {
       $log: $log
     });
 
+    this.defaults($scope);
+
     // set scope to the parent
     $scope.options.$outer = $scope.$parent;
-
-    this.defaults($scope);
+    
     $scope.$watch('options.columns', (newVal, oldVal) => {
       if(newVal.length > oldVal.length){
         this.transposeColumnDefaults(newVal);
