@@ -99,3 +99,8 @@ span.name {
   float: right;
   margin-top:17px;
 }
+
+.footer p{
+  margin-left: 20px;
+  margin-right: 10px;
+}
