@@ -2289,8 +2289,17 @@ define(['angular'], function (angular) { 'use strict';
             angular.forEach($scope.columns, (group) => {
               var idx = group.indexOf(col);
               if(idx > -1){
-                group.splice(idx, 1);
-                group.splice(newIdx, 0, col);
+
+                // this is tricky because we want to update the index
+                // in the orig columns array instead of the grouped one
+                var curColAtIdx = group[newIdx],
+                    siblingIdx = $scope.options.columns.indexOf(curColAtIdx),
+                    curIdx = $scope.options.columns.indexOf(col);
+
+                $scope.options.columns.splice(curIdx, 1);
+                $scope.options.columns.splice(siblingIdx, 0, col);
+
+                return false;
               }
             });
             
@@ -2626,7 +2635,6 @@ define(['angular'], function (angular) { 'use strict';
     return {
       restrict: 'E',
       replace: true,
-      //transclude:'element',
       controller: 'DataTable',
       scope: {
         options: '=',

@@ -347,7 +347,6 @@ function DataTableDirective($window, $timeout, throttle){
   return {
     restrict: 'E',
     replace: true,
-    //transclude:'element',
     controller: 'DataTable',
     scope: {
       options: '=',

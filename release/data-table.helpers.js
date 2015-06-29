@@ -1,6 +1,6 @@
 /**
  * angular-data-table - AngularJS data table directive written in ES6.
- * @version v0.0.34
+ * @version v0.0.35
  * @link http://swimlane.com/
  * @license 
  */
@@ -1753,8 +1753,14 @@ define(['angular'], function (angular) {
             angular.forEach($scope.columns, function (group) {
               var idx = group.indexOf(col);
               if (idx > -1) {
-                group.splice(idx, 1);
-                group.splice(newIdx, 0, col);
+                var curColAtIdx = group[newIdx],
+                    siblingIdx = $scope.options.columns.indexOf(curColAtIdx),
+                    curIdx = $scope.options.columns.indexOf(col);
+
+                $scope.options.columns.splice(curIdx, 1);
+                $scope.options.columns.splice(siblingIdx, 0, col);
+
+                return false;
               }
             });
           });
@@ -2038,7 +2044,6 @@ define(['angular'], function (angular) {
     return {
       restrict: 'E',
       replace: true,
-
       controller: 'DataTable',
       scope: {
         options: '=',
