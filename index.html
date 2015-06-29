@@ -47,7 +47,7 @@
 
     <md-content flex id="content">
         <h2>{{ul.selected.name}}</h2>
-        <p>{{ul.selected.content}}</p>
+        <div ng-include="'src/pages/pages/' + ul.selected.content + '.tpl.html'" ng-if="ul.selected"></div>
 
         <codepen codepen-id="ul.selected.codepen"/>
     </md-content>
