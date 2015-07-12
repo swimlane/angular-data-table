@@ -6,7 +6,7 @@ import angular from 'angular';
  * https://jsfiddle.net/hrohxze0/6/
  * @param {function}
  */
-export function Sortable($timeout) {
+export function SortableDirective($timeout) {
   return {
     restrict: 'AC',
     scope: {

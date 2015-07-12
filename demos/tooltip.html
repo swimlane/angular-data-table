@@ -37,14 +37,14 @@
       }
 
     </style>
-    <link href="../dist/data-table.css" media="all" rel="stylesheet" />
+    <link href="../dist/dataTable.css" media="all" rel="stylesheet" />
     <link href="../dist/themes/material.css" media="all" rel="stylesheet" />
     <link href="../dist/components/popover/popover.css" media="all" rel="stylesheet" />
     <link href="http://fontastic.s3.amazonaws.com/Jnf54BZCm7mSjGCxNRbfp3/icons.css" rel="stylesheet">
   </head>
   <body ng-app="app" ng-controller="HomeController">
 
-    <dt options="options" rows="data" class="material"></dt>
+    <dtable options="options" rows="data" class="material"></dtable>
 
     <script src="../jspm_packages/system.js"></script>
     <script src="../config.js"></script>
@@ -52,7 +52,7 @@
     <script>
 
       Promise.all([
-        System.import('data-table'),
+        System.import('dataTable'),
         System.import('components/popover/popover')
       ]).then(function(modules) {
 
@@ -84,7 +84,7 @@
                 prop: "comments",
                 tooltips: true,
                 cellRenderer: function(scope, elm){
-                  return "<span sw-popover sw-popover-placement='left' sw-popover-text='{{cell.getValue(this)}}'' sw-popover-group='main'>{{cell.getValue(this)}}</span>";
+                  return "<span popover popover-placement='left' popover-text='{{value}}' popover-group='main'>{{value}}</span>";
                 }
 
 

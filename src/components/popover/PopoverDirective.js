@@ -53,14 +53,14 @@ export function PopoverDirective($q, $timeout, $templateCache, $compile, Popover
       $scope.popoverId = Date.now();
 
       $scope.options = {
-        text: $attributes.swPopoverText,
-        template: $attributes.swPopoverTemplate,
-        plain: toBoolean($attributes.swPopoverPlain || false),
-        placement: $attributes.swPopoverPlacement || 'right',
-        alignment: $attributes.swPopoverAlignment  || 'center',
-        group: $attributes.swPopoverGroup,
-        spacing: parseInt($attributes.swPopoverSpacing) || 0,
-        showCaret: toBoolean($attributes.swPopoverPlain || false)
+        text: $attributes.popoverText,
+        template: $attributes.popoverTemplate,
+        plain: toBoolean($attributes.popoverPlain || false),
+        placement: $attributes.popoverPlacement || 'right',
+        alignment: $attributes.popoverAlignment  || 'center',
+        group: $attributes.popoverGroup,
+        spacing: parseInt($attributes.popoverSpacing) || 0,
+        showCaret: toBoolean($attributes.popoverPlain || false)
       };
 
       // attach exit and enter events to element
@@ -80,7 +80,7 @@ export function PopoverDirective($q, $timeout, $templateCache, $compile, Popover
         // Cancel exit timeout
         $timeout.cancel($scope.exitTimeout);
 
-        var elm = document.getElementById(`#sw-${$scope.popoverId}`);
+        var elm = document.getElementById(`#${$scope.popoverId}`);
         if ($scope.popover && elm) return; 
 
         // remove other popovers from the same group
@@ -89,8 +89,8 @@ export function PopoverDirective($q, $timeout, $templateCache, $compile, Popover
         }
 
         if ($scope.options.text && !$scope.options.template){
-          $scope.popover = angular.element(`<div class="sw-popover sw-popover-text 
-            sw-popover${$scope.options.placement}" id="sw-${$scope.popoverId}"></div>`);
+          $scope.popover = angular.element(`<div class="popover popover-text 
+            popover${$scope.options.placement}" id="${$scope.popoverId}"></div>`);
 
           $scope.popover.html($scope.options.text);
           angular.element(document.body).append($scope.popover);
@@ -107,8 +107,8 @@ export function PopoverDirective($q, $timeout, $templateCache, $compile, Popover
               }
             }
 
-            $scope.popover = angular.element(`<div class="sw-popover 
-              sw-popover-${$scope.options.placement}" id="sw-${$scope.popoverId}"></div>`);
+            $scope.popover = angular.element(`<div class="popover 
+              popover-${$scope.options.placement}" id="${$scope.popoverId}"></div>`);
 
             $scope.popover.html(template);
             $compile($scope.popover)($scope);
@@ -185,7 +185,7 @@ export function PopoverDirective($q, $timeout, $templateCache, $compile, Popover
             addCaret($scope.popover, elDimensions, popoverDimensions);
           }
 
-          $animate.addClass($scope.popover, 'sw-popover-animation');
+          $animate.addClass($scope.popover, 'popover-animation');
         }, 50);
       };
 

@@ -43,7 +43,7 @@
       }
 
     </style>
-    <link href="../dist/data-table.css" media="all" rel="stylesheet" />
+    <link href="../dist/dataTable.css" media="all" rel="stylesheet" />
     <link href="../dist/themes/material.css" media="all" rel="stylesheet" />
     <link href="../dist/components/menu/menu.css" media="all" rel="stylesheet" />
     <link href="http://fontastic.s3.amazonaws.com/Jnf54BZCm7mSjGCxNRbfp3/icons.css" rel="stylesheet">
@@ -51,7 +51,7 @@
   <body ng-app="app" ng-controller="HomeController">
 
     <dtm available="all" current="cur" class="my-menu"></dtm>
-    <dt options="options" rows="data" class="material"></dt>
+    <dtable options="options" rows="data" class="material"></dtable>
 
     <script src="../jspm_packages/system.js"></script>
     <script src="../config.js"></script>
@@ -59,7 +59,7 @@
     <script>
 
       Promise.all([
-        System.import('data-table'),
+        System.import('dataTable'),
         System.import('components/menu/menu')
       ]).then(function(modules) {
 

@@ -36,28 +36,28 @@
       }
 
     </style>
-    <link href="../dist/data-table.css" media="all" rel="stylesheet" />
+    <link href="../dist/dataTable.css" media="all" rel="stylesheet" />
     <link href="../dist/themes/material.css" media="all" rel="stylesheet" />
     <link href="http://fontastic.s3.amazonaws.com/Jnf54BZCm7mSjGCxNRbfp3/icons.css" rel="stylesheet">
   </head>
   <body ng-app="app" ng-controller="HomeController">
 
 
-    <dt options="options" rows="data" class="material dt">
+    <dtable options="options" rows="data" class="material dt">
       <column name="Name" width="300" flex-grow="1"></column>
       <column name="Gender" flex-grow="1">
         {{monkey}} {{value}}
       </column>
-    </dt>
+    </dtable>
 
-    <dt options="options2" rows="data" class="material dt">
+    <dtable options="options2" rows="data" class="material dt">
       <column name="Name" width="300"></column>
       <column name="Company" width="300">
         <div ng-repeat="v in vs">
         {{v}} : {{row.name}} : {{value}}
         </div>
       </column>
-    </dt>
+    </dtable>
 
     <button type="button" ng-click="changeIt()">Change External Value</input>
 
@@ -66,7 +66,7 @@
 
     <script>
 
-      System.import('data-table').then(function(dt){
+      System.import('dataTable').then(function(dt){
         var module = angular.module('app', [ dt.default.name ]);
 
         module.controller('HomeController', function($scope, $http){

@@ -37,29 +37,29 @@
       }
 
     </style>
-    <link href="../dist/data-table.css" media="all" rel="stylesheet" />
+    <link href="../dist/dataTable.css" media="all" rel="stylesheet" />
     <link href="../dist/themes/material.css" media="all" rel="stylesheet" />
     <link href="http://fontastic.s3.amazonaws.com/Jnf54BZCm7mSjGCxNRbfp3/icons.css" rel="stylesheet">
   </head>
   <body ng-app="app" ng-controller="HomeController">
 
-    <dt options="options1" rows="data" class="material"></dt>
-    <dt options="options2" rows="data" class="material"></dt>
-    <dt options="options3" rows="data" class="material"></dt>
-    <dt options="options4" rows="data" class="material"></dt>
-    <dt options="options5" rows="data" class="material"></dt>
-    <dt options="options6" rows="data" class="material"></dt>
-    <dt options="options7" rows="data" class="material"></dt>
-    <dt options="options8" rows="data" class="material"></dt>
-    <dt options="options9" rows="data" class="material"></dt>
-    <dt options="options10" rows="data" class="material"></dt>
+    <dtable options="options1" rows="data" class="material"></dtable>
+    <dtable options="options2" rows="data" class="material"></dtable>
+    <dtable options="options3" rows="data" class="material"></dtable>
+    <dtable options="options4" rows="data" class="material"></dtable>
+    <dtable options="options5" rows="data" class="material"></dtable>
+    <dtable options="options6" rows="data" class="material"></dtable>
+    <dtable options="options7" rows="data" class="material"></dtable>
+    <dtable options="options8" rows="data" class="material"></dtable>
+    <dtable options="options9" rows="data" class="material"></dtable>
+    <dtable options="options10" rows="data" class="material"></dtable>
 
     <script src="../jspm_packages/system.js"></script>
     <script src="../config.js"></script>
 
     <script>
 
-      System.import('data-table').then(function(dt){
+      System.import('dataTable').then(function(dt){
         var module = angular.module('app', [ dt.default.name ]);
 
         module.controller('HomeController', function($scope, $http){

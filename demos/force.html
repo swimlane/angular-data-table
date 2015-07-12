@@ -43,7 +43,7 @@
       }
 
     </style>
-    <link href="../dist/data-table.css" media="all" rel="stylesheet" />
+    <link href="../dist/dataTable.css" media="all" rel="stylesheet" />
     <link href="../dist/themes/material.css" media="all" rel="stylesheet" />
     <link href="http://fontastic.s3.amazonaws.com/Jnf54BZCm7mSjGCxNRbfp3/icons.css" rel="stylesheet">
   </head>
@@ -52,14 +52,14 @@
     <button type="button" ng-click="small()">3 Cols</button>
     <button type="button" ng-click="big()">7 Cols</button>
 
-    <dt options="options" rows="data" class="material"></dt>
+    <dtable options="options" rows="data" class="material"></dtable>
 
     <script src="../jspm_packages/system.js"></script>
     <script src="../config.js"></script>
 
     <script>
 
-      System.import('data-table').then(function(dt){
+      System.import('dataTable').then(function(dt){
         var module = angular.module('app', [ dt.default.name ]);
 
         module.controller('HomeController', function($scope, $http){

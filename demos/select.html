@@ -61,19 +61,19 @@
       }
 
     </style>
-    <link href="../dist/data-table.css" media="all" rel="stylesheet" />
+    <link href="../dist/dataTable.css" media="all" rel="stylesheet" />
     <link href="../dist/themes/material.css" media="all" rel="stylesheet" />
     <link href="http://fontastic.s3.amazonaws.com/Jnf54BZCm7mSjGCxNRbfp3/icons.css" rel="stylesheet">
   </head>
   <body ng-app="app" ng-controller="HomeController">
 
     <div class="wrapper">
-      <dt options="options" 
+      <dtable options="options" 
       rows="data" 
       on-row-click="onRowClick(row)"
       class="material" 
       on-select="onSelect(row)" 
-      selected="selected"></dt>
+      selected="selected"></dtable>
 
       <div class="selected-box">
         <h5>Selected list</h5>
@@ -87,7 +87,7 @@
 
     <script>
 
-      System.import('data-table').then(function(dt){
+      System.import('dataTable').then(function(dt){
         var module = angular.module('app', [ dt.default.name ]);
 
         module.controller('HomeController', function($scope, $http){

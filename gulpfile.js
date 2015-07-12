@@ -102,90 +102,83 @@ gulp.task('watch', ['serve'], function() {
 //
 // Release Tasks
 // ------------------------------------------------------------
-var excludes = {
-  map: {
-    'angular': '@empty',
-  },
-  paths:{
-    "*": "src/*.js"
-  }
-};
 
 gulp.task('release', function(callback) {
   return runSequence(
     'clean',
-    'release-less',
-    'release-build',
-    'release-es6',
-    'release-es6-helpers',
+    ['release-less', 'release-build'],
+    'release-es6', 
+    'release-es6-helpers', 
     'release-es6-helpers-min',
-    //'release-sfx',
-    //'release-sfx-min',
-    //'release-sfx-runtime',
-    //'release-sfx-runtime-min',
     callback
   );
 });
 
 gulp.task('release-less', function () {
-  return gulp.src(['src/themes/*.less', 'src/data-table.less'])
+  return gulp.src(['src/themes/*.less', 'src/dataTable.less'])
     .pipe(less())
     .pipe(gulp.dest(path.release));
 });
 
 gulp.task('release-build', function () {
   return rollup.rollup({
-    entry: 'src/data-table.js',
+    entry: 'src/dataTable.js',
     external: [ 'angular' ]
   }).then( function ( bundle ) {
     return bundle.write({
-      dest: 'release/data-table.es6.js',
-      format: 'amd',
+      dest: 'release/dataTable.es6.js',
+      format: 'es6',
       moduleName: 'DataTable'
     });
   });
 });
 
 gulp.task('release-es6', function () {
-  return gulp.src('release/data-table.es6.js')
+  return gulp.src('release/dataTable.es6.js')
     .pipe(babel({
       comments: false,
       compact: false,
-      externalHelpers: true
+      externalHelpers: true,
+      modules: 'umd',
+      moduleId: 'DataTable'
     }))
     .pipe(ngAnnotate({
       gulpWarnings: false
     }))
     .pipe(header(banner, { pkg : pkg } ))
-    .pipe(rename('data-table.js'))
+    .pipe(rename('dataTable.js'))
     .pipe(gulp.dest("release/"))
 });
 
 gulp.task('release-es6-helpers', function () {
-  return gulp.src('release/data-table.es6.js')
+  return gulp.src('release/dataTable.es6.js')
     .pipe(babel({
       comments: false,
-      compact: false
+      compact: false,
+      modules: 'umd',
+      moduleId: 'DataTable'
     }))
     .pipe(ngAnnotate({
       gulpWarnings: false
     }))
     .pipe(header(banner, { pkg : pkg } ))
-    .pipe(rename('data-table.helpers.js'))
+    .pipe(rename('dataTable.helpers.js'))
     .pipe(gulp.dest("release/"))
 });
 
 gulp.task('release-es6-helpers-min', function () {
-  return gulp.src('release/data-table.es6.js')
+  return gulp.src('release/dataTable.es6.js')
     .pipe(babel({
       comments: false,
-      compact: false
+      compact: false,
+      modules: 'umd',
+      moduleId: 'DataTable'
     }))
     .pipe(ngAnnotate({
       gulpWarnings: false
     }))
     .pipe(uglify())
     .pipe(header(banner, { pkg : pkg } ))
-    .pipe(rename('data-table.helpers.min.js'))
+    .pipe(rename('dataTable.helpers.min.js'))
     .pipe(gulp.dest("release/"))
 });

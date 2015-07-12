@@ -1,34 +1,5 @@
 import { requestAnimFrame } from '../../utils/utils';
-
-export class ScrollerController {
-
-  /**
-   * Returns the virtual row height.
-   * @return {[height]}
-   */
-  scrollerStyles(scope){
-    return {
-      height: scope.count * scope.options.rowHeight + 'px'
-    }
-  }
-
-}
-
-/**
- * A helper for scrolling the body to a specific scroll position
- * when the footer pager is invoked.
- */
-export var ScrollHelper = function(){
-  var _elm;
-  return {
-    create: function(elm){
-      _elm = elm;
-    },
-    setYOffset: function(offsetY){
-      _elm[0].scrollTop = offsetY;
-    }
-  }
-}();
+import { scrollHelper } from './scrollHelper';
 
 export function ScrollerDirective($timeout){
   return {
@@ -42,7 +13,7 @@ export function ScrollerDirective($timeout){
       var ticking = false,
           lastScrollY = 0,
           lastScrollX = 0,
-          helper = ScrollHelper.create($elm);
+          helper = scrollHelper.create($elm);
 
       function update(){
         $timeout(() => {

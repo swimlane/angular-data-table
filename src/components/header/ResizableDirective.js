@@ -5,7 +5,7 @@
  * @param {function}
  * @param {function}
  */
-export function Resizable($document, debounce, $timeout){
+export function ResizableDirective($document, debounce, $timeout){
   return {
     restrict: 'AEC',
     scope:{
