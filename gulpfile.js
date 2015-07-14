@@ -107,8 +107,9 @@ gulp.task('release', function(callback) {
   return runSequence(
     'clean',
     ['release-less', 'release-build'],
-    'release-es6', 
-    'release-es6-helpers', 
+    'release-umd',
+    'release-common',
+    'release-es6-helpers',
     'release-es6-helpers-min',
     callback
   );
@@ -133,7 +134,7 @@ gulp.task('release-build', function () {
   });
 });
 
-gulp.task('release-es6', function () {
+gulp.task('release-umd', function () {
   return gulp.src('release/dataTable.es6.js')
     .pipe(babel({
       comments: false,
@@ -147,6 +148,23 @@ gulp.task('release-es6', function () {
     }))
     .pipe(header(banner, { pkg : pkg } ))
     .pipe(rename('dataTable.js'))
+    .pipe(gulp.dest("release/"))
+});
+
+gulp.task('release-common', function () {
+  return gulp.src('release/dataTable.es6.js')
+    .pipe(babel({
+      comments: false,
+      compact: false,
+      externalHelpers: true,
+      modules: 'common',
+      moduleId: 'DataTable'
+    }))
+    .pipe(ngAnnotate({
+      gulpWarnings: false
+    }))
+    .pipe(header(banner, { pkg : pkg } ))
+    .pipe(rename('dataTable.cjs.js'))
     .pipe(gulp.dest("release/"))
 });
 
