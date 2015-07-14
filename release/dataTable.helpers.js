@@ -1,6 +1,6 @@
 /**
  * angular-data-table - AngularJS data table directive written in ES6.
- * @version v0.1.0
+ * @version v0.1.3
  * @link http://swimlane.com/
  * @license 
  */
@@ -1713,23 +1713,8 @@
     });
   }
 
-  function ColumnGroupWidths(groups, all) {
-    return {
-      left: ColumnTotalWidth(groups.left),
-      center: ColumnTotalWidth(groups.center),
-      right: ColumnTotalWidth(groups.right),
-      total: ColumnTotalWidth(all)
-    };
-  }
-
   function ForceFillColumnWidths(allColumns, expectedWidth, startIdx) {
-    var colsByGroup = ColumnsByPin(allColumns),
-        widthsByGroup = ColumnGroupWidths(colsByGroup, allColumns),
-        availableWidth = expectedWidth - (widthsByGroup.left + widthsByGroup.right),
-        centerColumns = allColumns.filter(function (c) {
-      return !c.frozenLeft && !c.frozenRight;
-    }),
-        contentWidth = 0,
+    var contentWidth = 0,
         columnsToResize = startIdx > -1 ? allColumns.slice(startIdx, allColumns.length).filter(function (c) {
       return c.canAutoResize;
     }) : allColumns.filter(function (c) {
@@ -1744,7 +1729,7 @@
       }
     });
 
-    var remainingWidth = availableWidth - contentWidth,
+    var remainingWidth = expectedWidth - contentWidth,
         additionWidthPerColumn = Math.floor(remainingWidth / columnsToResize.length),
         exceedsWindow = contentWidth > expectedWidth;
 
@@ -1766,6 +1751,15 @@
         }
       }
     });
+  }
+
+  function ColumnGroupWidths(groups, all) {
+    return {
+      left: ColumnTotalWidth(groups.left),
+      center: ColumnTotalWidth(groups.center),
+      right: ColumnTotalWidth(groups.right),
+      total: ColumnTotalWidth(all)
+    };
   }
 
   var ColumnDefaults = Object.freeze({

@@ -102,15 +102,15 @@ export function DistributeFlexWidth(columns, flexWidth) {
 }
 
 /**
- * Forces the width of the columns to 
+ * Forces the width of the columns to
  * distribute equally but overflowing when nesc.
  *
  * Rules:
  *
- *  - If combined withs are less than the total width of the grid, 
+ *  - If combined withs are less than the total width of the grid,
  *    proporation the widths given the min / max / noraml widths to fill the width.
  *
- *  - If the combined widths, exceed the total width of the grid, 
+ *  - If the combined widths, exceed the total width of the grid,
  *    use the standard widths.
  *
  *  - If a column is resized, it should always use that width
@@ -119,17 +119,13 @@ export function DistributeFlexWidth(columns, flexWidth) {
  *
  *  - If the grid starts off small but then becomes greater than the size ( + / - )
  *    the width should use the orginial width; not the newly proporatied widths.
- * 
- * @param {array} allColumns 
+ *
+ * @param {array} allColumns
  * @param {int} expectedWidth
  */
 export function ForceFillColumnWidths(allColumns, expectedWidth, startIdx){
-  var colsByGroup = ColumnsByPin(allColumns),
-      widthsByGroup = ColumnGroupWidths(colsByGroup, allColumns),
-      availableWidth = expectedWidth - (widthsByGroup.left + widthsByGroup.right),
-      centerColumns = allColumns.filter((c) => { return !c.frozenLeft && !c.frozenRight }),
-      contentWidth = 0,
-      columnsToResize = startIdx > -1 ? 
+  var contentWidth = 0,
+      columnsToResize = startIdx > -1 ?
         allColumns.slice(startIdx, allColumns.length).filter((c) => { return c.canAutoResize }) :
         allColumns.filter((c) => { return c.canAutoResize });
 
@@ -141,7 +137,7 @@ export function ForceFillColumnWidths(allColumns, expectedWidth, startIdx){
     }
   });
 
-  var remainingWidth = availableWidth - contentWidth,
+  var remainingWidth = expectedWidth - contentWidth,
       additionWidthPerColumn = Math.floor(remainingWidth / columnsToResize.length),
       exceedsWindow = contentWidth > expectedWidth;
 
