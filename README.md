@@ -112,7 +112,9 @@ I looked over all the alternatives out there agnostic to any particular platform
 
 - [UI Grid](http://ui-grid.info) - By far the most popular grid for Angular and has a LOT of features. Problem was I found several bugs ( I'm on a mac, the main devs are windows users ), it supports a ton of browsers ( hacky code and bloat ) and it has a ton of features ( bloat ).
 
-- [Vaadin](http://demo.vaadin.com/sampler/#ui/grids-and-trees/grid) - A nice poylmer project but beta-ish.
+- [Vaadin Poylmer Grid](http://demo.vaadin.com/sampler/#ui/grids-and-trees/grid) - A nice poylmer project but beta-ish.
+
+- [Ember Table](http://addepar.github.io/ember-table/) - A very nice table for Ember but doesn't handle large data sets very nicely and scrolling can be a bit 'janky' sometimes.
 
 #### Design
 
