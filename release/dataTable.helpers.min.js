@@ -1,6 +1,6 @@
 /**
  * angular-data-table - AngularJS data table directive written in ES6.
- * @version v0.1.0
+ * @version v0.1.2
  * @link http://swimlane.com/
  * @license 
  */
