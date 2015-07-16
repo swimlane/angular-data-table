@@ -104,7 +104,7 @@ I looked over all the alternatives out there agnostic to any particular platform
 
 - [Angular Grid](http://www.angulargrid.com/) - A great project by a talented developer, however, lacked many of the core features I needed.  Implementing the ones I needed was huge undertaking as some of the core would need to be re-worked.
 
-- [React Fixed Data Table](https://facebook.github.io/fixed-data-table/) - This is probably the BEST table alternative out there.  Its extremely smooth, handles millions of rows flawlessly, has a great API lacked a few features I needed ( nor am I a react'er ).
+- [React Fixed Data Table](https://facebook.github.io/fixed-data-table/) - This is probably the BEST table alternative out there.  Its extremely smooth, handles millions of rows flawlessly, has a great API but lacked a few features I needed ( nor am I a react'er ).
 
 - [React Data Grid](https://github.com/zippyui/react-datagrid) - Another great alternative out there for react.
 
@@ -125,3 +125,7 @@ The core CSS for the table has no assumptions about the styling of your applicat
 - [Material Table 2](http://danielnagy.me/md-data-table/)
 - [Material Table 3](http://codepen.io/zavoloklom/pen/IGkDz)
 - [Material Design Spec](http://www.google.com/design/spec/components/data-tables.html#data-tables-tables-within-cards)
+
+## Credits
+
+`angular-data-table` is a [Swimlane](http://swimlane.com) open-source project; we believe in giving back to the open-source community by sharing some of the projects we build for our application. Swimlane is an automated cyber security operations and incident response platform that enables cyber security teams to leverage threat intelligence, speed up incident response and automate security operations.
