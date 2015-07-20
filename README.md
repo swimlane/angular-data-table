@@ -54,17 +54,17 @@ docs coming soon, in the meantime, 'View Source' is your friend ;)!
 
 You've got 5 different options to include this in your build depending on your setup.
 
-- `./release/data-table.js` - A standalone file that was compiled with Babel and EXCLUDES the Babel runtime.
-- `./release/data-table.helpers.js` - A standalone file that was compiled with Babel and INCLUDES the Babel runtime.
-- `./release/data-table.helpers.min.js` - A standalone file that was compiled with Babel, INCLUDES the Babel runtime and is MINIFIED.
-- `./release/data-table.es6.js` - Raw ES6 Version.
+- `./release/dataTable.js` - A standalone file that was compiled with Babel and EXCLUDES the Babel runtime.
+- `./release/dataTable.helpers.js` - A standalone file that was compiled with Babel and INCLUDES the Babel runtime.
+- `./release/dataTable.helpers.min.js` - A standalone file that was compiled with Babel, INCLUDES the Babel runtime and is MINIFIED.
+- `./release/dataTable.es6.js` - Raw ES6 Version.
 
 There is also the CSS too:
 
-- `./release/data-table.css` - The base CSS, pretty much required
+- `./release/dataTable.css` - The base CSS, pretty much required
 - `./release/material.css` - Material theme
 
-If none of the above makes any sense just include `./release/data-table.min.js` and include the css files referenced above.
+If none of the above makes any sense just include `./release/dataTable.min.js` and include the css files referenced above.
 
 #### Usage
 
