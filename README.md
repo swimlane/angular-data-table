@@ -64,7 +64,7 @@ There is also the CSS too:
 - `./release/dataTable.css` - The base CSS, pretty much required
 - `./release/material.css` - Material theme
 
-If none of the above makes any sense just include `./release/dataTable.min.js` and include the css files referenced above.
+If none of the above makes any sense just include `./release/dataTable.helpers.min.js` and include the css files referenced above.
 
 #### Usage
 
