@@ -10,7 +10,7 @@ export function FooterDirective(){
     },
     template:
       `<div class="dt-footer">
-        <div class="page-count">{{paging.count}} total</div>
+        <div class="page-count">{{footer.paging.count}} total</div>
         <dt-pager page="footerpage"
                size="footer.paging.size"
                count="footer.paging.count"
