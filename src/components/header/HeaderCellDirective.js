@@ -40,7 +40,7 @@ export function HeaderCellDirective($compile){
           var label = $elm[0].querySelector('.dt-header-cell-label');
 
           if($scope.hcell.column.headerRenderer){
-            var elm = angular.element($scope.column.headerRenderer($scope, $elm));
+            var elm = angular.element($scope.hcell.column.headerRenderer($scope, $elm));
             angular.element(label).append($compile(elm)($scope)[0]);
           } else {
             var val = $scope.hcell.column.name;

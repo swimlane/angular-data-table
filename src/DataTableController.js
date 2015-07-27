@@ -189,7 +189,6 @@ export class DataTableController {
    * @param  {scope}
    */
   onSort(scope){
-    console.log('scope.rows',scope.rows)
     if(!scope.rows) return;
 
     var sorts = scope.options.columns.filter((c) => {

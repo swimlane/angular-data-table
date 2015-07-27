@@ -26,7 +26,7 @@ export class HeaderCellController{
     };
 
     if(scope.hcell.column.heaerClassName){
-      cls[scope.column.headerClassName] = true;
+      cls[scope.hcell.column.headerClassName] = true;
     }
 
     return cls;
@@ -37,17 +37,17 @@ export class HeaderCellController{
    * @param  {scope}
    */
   sort(scope){
-    if(scope.column.sortable){
-      if(!scope.column.sort){
-        scope.column.sort = 'asc';
-      } else if(scope.column.sort === 'asc'){
-        scope.column.sort = 'desc';
-      } else if(scope.column.sort === 'desc'){
-        scope.column.sort = undefined;
+    if(scope.hcell.column.sortable){
+      if(!scope.hcell.column.sort){
+        scope.hcell.column.sort = 'asc';
+      } else if(scope.hcell.column.sort === 'asc'){
+        scope.hcell.column.sort = 'desc';
+      } else if(scope.hcell.column.sort === 'desc'){
+        scope.hcell.column.sort = undefined;
       }
 
-      scope.onSort({
-        column: scope.column
+      scope.hcell.onSort({
+        column: scope.hcell.column
       });
     }
   }
