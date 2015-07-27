@@ -7,8 +7,8 @@ export class FooterController {
    */
   /*@ngInject*/
   constructor($scope){
-    $scope.page = $scope.paging.offset + 1;
-    $scope.$watch('paging.offset', (newVal) => {
+    $scope.page = $scope.footer.paging.offset + 1;
+    $scope.$watch('footer.paging.offset', (newVal) => {
       this.offsetChanged($scope, newVal)
     });
   }
@@ -26,10 +26,10 @@ export class FooterController {
    * @param  {scope}
    */
   onPage(scope, page){
-    scope.paging.offset = page - 1;
-    scope.onPage({
-      offset: scope.paging.offset,
-      size: scope.paging.size
+    scope.footer.paging.offset = page - 1;
+    scope.footer.onPage({
+      offset: scope.footer.paging.offset,
+      size: scope.footer.paging.size
     });
   }
 

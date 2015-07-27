@@ -11,11 +11,11 @@ export function FooterDirective(){
     template:
       `<div class="dt-footer">
         <div class="page-count">{{paging.count}} total</div>
-        <dt-pager page="page"
-               size="paging.size"
-               count="paging.count"
-               on-page="footer.onPage(this, page)"
-               ng-show="paging.count > 1">
+        <dt-pager page="footerpage"
+               size="footer.paging.size"
+               count="footer.paging.count"
+               on-page="footer.onPage(this, footer.page)"
+               ng-show="footer.paging.count > 1">
          </dt-pager>
       </div>`,
     replace: true

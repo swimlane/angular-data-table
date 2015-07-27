@@ -19,9 +19,9 @@ export function HeaderDirective($timeout){
           <div class="dt-row-left"
                ng-style="header.stylesByGroup(this, 'left')"
                ng-if="columns['left'].length"
-               sortable="options.reorderable"
+               sortable="header.options.reorderable"
                on-sortable-sort="columnsResorted(event, childScope)">
-            <dt-header-cell ng-repeat="column in columns['left'] track by column.$id" 
+            <dt-header-cell ng-repeat="column in columns['left'] track by column.$id"
                             on-checkbox-change="header.onCheckboxChange(this)"
                             on-sort="header.onSort(this, column)"
                             on-resize="header.onResize(this, column, width)"
@@ -29,11 +29,11 @@ export function HeaderDirective($timeout){
                             column="column">
             </dt-header-cell>
           </div>
-          <div class="dt-row-center" 
-               sortable="options.reorderable"
+          <div class="dt-row-center"
+               sortable="header.options.reorderable"
                ng-style="header.stylesByGroup(this, 'center')"
                on-sortable-sort="columnsResorted(event, childScope)">
-            <dt-header-cell ng-repeat="column in columns['center'] track by column.$id" 
+            <dt-header-cell ng-repeat="column in columns['center'] track by column.$id"
                             on-checkbox-change="header.onCheckboxChange(this)"
                             on-sort="header.onSort(this, column)"
                             selected="header.isSelected(this)"
@@ -43,10 +43,10 @@ export function HeaderDirective($timeout){
           </div>
           <div class="dt-row-right"
                ng-if="columns['right'].length"
-               sortable="options.reorderable"
+               sortable="header.options.reorderable"
                ng-style="header.stylesByGroup(this, 'right')"
                on-sortable-sort="columnsResorted(event, childScope)">
-            <dt-header-cell ng-repeat="column in columns['right'] track by column.$id" 
+            <dt-header-cell ng-repeat="column in columns['right'] track by column.$id"
                             on-checkbox-change="header.onCheckboxChange(this)"
                             on-sort="header.onSort(this, column)"
                             selected="header.isSelected(this)"
@@ -78,16 +78,16 @@ export function HeaderDirective($timeout){
               // this is tricky because we want to update the index
               // in the orig columns array instead of the grouped one
               var curColAtIdx = group[newIdx],
-                  siblingIdx = $scope.options.columns.indexOf(curColAtIdx),
-                  curIdx = $scope.options.columns.indexOf(col);
+                  siblingIdx = $scope.header.options.columns.indexOf(curColAtIdx),
+                  curIdx = $scope.header.options.columns.indexOf(col);
 
-              $scope.options.columns.splice(curIdx, 1);
-              $scope.options.columns.splice(siblingIdx, 0, col);
+              $scope.header.options.columns.splice(curIdx, 1);
+              $scope.header.options.columns.splice(siblingIdx, 0, col);
 
               return false;
             }
           });
-          
+
         });
       }
     }

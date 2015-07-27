@@ -189,7 +189,7 @@ export class DataTableController {
    * @param  {scope}
    */
   onSort(scope){
-    if(!scope.rows) return;
+    if(!scope.dt.rows) return;
 
     var sorts = scope.options.columns.filter((c) => {
       return c.sort;
@@ -212,9 +212,9 @@ export class DataTableController {
       if(clientSorts.length){
         // todo: more ideal to just resort vs splice and repush
         // but wasn't responding to this change ...
-        var sortedValues = this.$filter('orderBy')(scope.rows, clientSorts);
-        scope.rows.splice(0, scope.rows.length);
-        scope.rows.push(...sortedValues);
+        var sortedValues = this.$filter('orderBy')(scope.dt.rows, clientSorts);
+        scope.dt.rows.splice(0, scope.dt.rows.length);
+        scope.dt.rows.push(...sortedValues);
       }
     }
 
@@ -228,7 +228,7 @@ export class DataTableController {
    * @param  {cell model}
    */
   onTreeToggle(scope, row, cell){
-    scope.onTreeToggle({
+    scope.dt.onTreeToggle({
       row: row,
       cell: cell
     });
@@ -241,7 +241,7 @@ export class DataTableController {
    * @param  {size}
    */
   onBodyPage(scope, offset, size){
-    scope.onPage({
+    scope.dt.onPage({
       offset: offset,
       size: size
     });
@@ -254,7 +254,7 @@ export class DataTableController {
    * @param  {size}
    */
   onFooterPage(scope, offset, size){
-    var pageBlockSize = scope.options.rowHeight * size,
+    var pageBlockSize = scope.dt.options.rowHeight * size,
         offsetY = pageBlockSize * offset;
 
     scrollHelper.setYOffset(offsetY);
@@ -265,12 +265,12 @@ export class DataTableController {
    * @param  {scope}
    */
   onHeaderCheckboxChange(scope){
-    if(scope.rows){
-      var matches = scope.selected.length === scope.rows.length;
+    if(scope.dt.rows){
+      var matches = scope.selected.length === scope.dt.rows.length;
       scope.selected.splice(0, scope.selected.length);
 
       if(!matches){
-        scope.selected.push(...scope.rows);
+        scope.selected.push(...scope.dt.rows);
       }
     }
   }
@@ -281,8 +281,8 @@ export class DataTableController {
    * @return {Boolean} if all selected
    */
   isAllRowsSelected(scope){
-    if(!scope.rows) return false;
-    return scope.selected.length === scope.rows.length;
+    if(!scope.dt.rows) return false;
+    return scope.selected.length === scope.dt.rows.length;
   }
 
   /**

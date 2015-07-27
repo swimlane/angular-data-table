@@ -6,6 +6,7 @@ export function ScrollerDirective($timeout){
     restrict: 'E',
     controller: 'ScrollerController',
     controllerAs: 'scroller',
+    bindToController: true,
     require:'^dtBody',
     transclude: true,
     template: `<div ng-style="scroller.scrollerStyles(this)" ng-transclude></div>`,
