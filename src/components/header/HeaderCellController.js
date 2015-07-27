@@ -7,10 +7,10 @@ export class HeaderCellController{
    */
   styles(scope){
     return {
-      width: scope.column.width  + 'px',
-      minWidth: scope.column.minWidth  + 'px',
-      maxWidth: scope.column.maxWidth  + 'px',
-      height: scope.column.height  + 'px'
+      width: scope.hcell.column.width  + 'px',
+      minWidth: scope.hcell.column.minWidth  + 'px',
+      maxWidth: scope.hcell.column.maxWidth  + 'px',
+      height: scope.hcell.column.height  + 'px'
     };
   }
 
@@ -20,12 +20,12 @@ export class HeaderCellController{
    */
   cellClass(scope){
     var cls = {
-      'sortable': scope.column.sortable,
+      'sortable': scope.hcell.column.sortable,
       'dt-header-cell': true,
-      'resizable': scope.column.resizable
+      'resizable': scope.hcell.column.resizable
     };
 
-    if(scope.column.heaerClassName){
+    if(scope.hcell.column.heaerClassName){
       cls[scope.column.headerClassName] = true;
     }
 
@@ -59,8 +59,8 @@ export class HeaderCellController{
   sortClass(scope){
     return {
       'sort-btn': true,
-      'sort-asc icon-down': scope.column.sort === 'asc',
-      'sort-desc icon-up': scope.column.sort === 'desc'
+      'sort-asc icon-down': scope.hcell.column.sort === 'asc',
+      'sort-desc icon-up': scope.hcell.column.sort === 'desc'
     };
   }
 
@@ -70,7 +70,7 @@ export class HeaderCellController{
    * @param  {column}
    */
   onResize(scope, width, column){
-    scope.onResize({
+    scope.hcell.onResize({
       column: column,
       width: width
     });
@@ -82,7 +82,7 @@ export class HeaderCellController{
    * @param  {object} scope angularjs scope
    */
   onCheckboxChange(scope){
-    scope.onCheckboxChange();
+    scope.hcell.onCheckboxChange();
   }
 
 }

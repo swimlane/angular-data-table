@@ -3,6 +3,7 @@ export function FooterDirective(){
     restrict: 'E',
     controller: 'FooterController',
     controllerAs: 'footer',
+    bindToController: true,
     scope: {
       paging: '=',
       onPage: '&'

@@ -23,5 +23,5 @@ export class MenuController{
       this.$scope.current.splice(idx, 1);
     }
   }
-  
+
 }
