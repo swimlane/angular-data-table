@@ -108,6 +108,7 @@ export class DataTableController {
     var watch = this.$scope.$watch('dt.rows', (newVal) => {
       if(newVal){
         watch();
+        console.log('this.onSort, $scope = ',$scope);
         this.onSort($scope);
       }
     });
@@ -189,6 +190,7 @@ export class DataTableController {
    * @param  {scope}
    */
   onSort(scope){
+    console.log('onSort from DataTableController.js')
     if(!scope.dt.rows) return;
 
     var sorts = scope.options.columns.filter((c) => {
@@ -196,6 +198,7 @@ export class DataTableController {
     });
 
     if(sorts.length){
+      console.log(this);
       if(this.$scope.onSort){
         this.$scope.onSort({ sorts: sorts });
       }

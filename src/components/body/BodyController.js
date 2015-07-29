@@ -15,44 +15,43 @@ export class BodyController{
   /*@ngInject*/
   constructor($scope, $timeout, throttle){
     angular.extend(this, {
-      $scope: $scope,
-      options: $scope.options,
-      selected: $scope.selected
+      $scope: $scope.body,
+      options: $scope.body.options,
+      selected: $scope.body.selected
     });
 
     this.tempRows = [];
 
-    this.treeColumn = $scope.options.columns.find((c) => {
+    this.treeColumn = $scope.body.options.columns.find((c) => {
       return c.isTreeColumn;
     });
 
-    this.groupColumn = $scope.options.columns.find((c) => {
+    this.groupColumn = $scope.body.options.columns.find((c) => {
       return c.group;
     });
 
     if(this.options.scrollbarV){
-      $scope.$watch('options.internal.offsetY', throttle(this.getRows.bind(this), 10));
+      $scope.$watch('body.options.internal.offsetY', throttle(this.getRows.bind(this), 10));
     }
 
-    $scope.$watchCollection('rows', (newVal, oldVal) => {
+    $scope.$watchCollection('body.rows', (newVal, oldVal) => {
       if(newVal) {
         if(!this.options.paging.externalPaging){
           this.options.paging.count = newVal.length;
         }
 
-        $scope.count = this.options.paging.count;
+        $scope.body.count = this.options.paging.count;
 
         if(this.treeColumn || this.groupColumn){
           this.buildRowsByGroup();
         }
-
         if(this.options.scrollbarV){
-          var refresh = newVal && oldVal && (newVal.length === oldVal.length 
+          var refresh = newVal && oldVal && (newVal.length === oldVal.length
             || newVal.length < oldVal.length);
 
           this.getRows(refresh);
         } else {
-          var rows = $scope.rows;
+          var rows = $scope.body.rows;
           if(this.treeColumn){
             rows = this.buildTree();
           } else if(this.groupColumn){
@@ -65,21 +64,21 @@ export class BodyController{
     });
 
     if(this.options.scrollbarV){
-      $scope.$watch('options.internal.offsetY', this.updatePage.bind(this));
+      $scope.$watch('body.options.internal.offsetY', this.updatePage.bind(this));
 
-      $scope.$watch('options.paging.size', (newVal, oldVal) => {
+      $scope.$watch('body.options.paging.size', (newVal, oldVal) => {
         if(this.options.scrollbarV && (!oldVal || newVal > oldVal)){
           this.getRows();
         }
       });
 
-      $scope.$watch('options.paging.count', (count) => {
+      $scope.$watch('body.options.paging.count', (count) => {
         $scope.count = count;
         this.updatePage();
       });
-      
-      $scope.$watch('options.paging.offset', (newVal) => {
-        $scope.onPage({
+
+      $scope.$watch('body.options.paging.offset', (newVal) => {
+        $scope.body.onPage({
           offset: newVal,
           size: this.options.paging.size
         });
@@ -93,8 +92,8 @@ export class BodyController{
    */
   getFirstLastIndexes(){
     var firstRowIndex = Math.max(Math.floor((
-          this.$scope.options.internal.offsetY || 0) / this.options.rowHeight, 0), 0),
-        endIndex = Math.min(firstRowIndex + this.options.paging.size, this.$scope.count);
+          this.options.internal.offsetY || 0) / this.options.rowHeight, 0), 0),
+        endIndex = Math.min(firstRowIndex + this.options.paging.size, this.options.paging.count);
 
     return {
       first: firstRowIndex,
@@ -114,9 +113,9 @@ export class BodyController{
 
   /**
    * Matches groups to their respective parents by index.
-   * 
+   *
    * Example:
-   * 
+   *
    *  {
    *    "Acme" : [
    *      { name: "Acme Holdings", parent: "Acme" }
@@ -125,18 +124,18 @@ export class BodyController{
    *      { name: "Acme Ltd", parent: "Acme Holdings" }
    *    ]
    *  }
-   * 
+   *
    */
   buildRowsByGroup(){
     this.index = {};
     this.rowsByGroup = {};
 
-    var parentProp = this.treeColumn ? 
-      this.treeColumn.relationProp : 
+    var parentProp = this.treeColumn ?
+      this.treeColumn.relationProp :
       this.groupColumn.prop;
 
-    for(var i = 0, len = this.$scope.rows.length; i < len; i++) {
-      var row = this.$scope.rows[i];
+    for(var i = 0, len = this.$scope.body.rows.length; i < len; i++) {
+      var row = this.$scope.body.rows[i];
       // build groups
       var relVal = row[parentProp];
       if(relVal){
@@ -181,7 +180,7 @@ export class BodyController{
         group: true
       });
 
-      if(this.$scope.expanded[k]){
+      if(this.$scope.body.expanded[k]){
         temp.push(...v);
       }
     });
@@ -194,15 +193,15 @@ export class BodyController{
    * @return {array} the built tree
    */
   buildTree(){
-    var count = 0, 
+    var count = 0,
         temp = [];
 
-    for(var i = 0, len = this.$scope.rows.length; i < len; i++) {
-      var row = this.$scope.rows[i],
+    for(var i = 0, len = this.$scope.body.rows.length; i < len; i++) {
+      var row = this.$scope.body.rows[i],
           relVal = row[this.treeColumn.relationProp],
           keyVal = row[this.treeColumn.prop],
           rows = this.rowsByGroup[keyVal],
-          expanded = this.$scope.expanded[keyVal];
+          expanded = this.$scope.body.expanded[keyVal];
 
       if(!relVal){
         count++;
@@ -224,7 +223,7 @@ export class BodyController{
    * Creates the intermediate collection that is shown in the view.
    * @param  {boolean} refresh - bust the tree/group cache
    */
-  getRows(refresh){    
+  getRows(refresh){
     // only proceed when we have pre-aggregated the values
     if((this.treeColumn || this.groupColumn) && !this.rowsByGroup){
       return false;
@@ -237,7 +236,7 @@ export class BodyController{
       // cache the tree build
       if((refresh || !this.treeTemp)){
         this.treeTemp = temp = this.buildTree();
-        this.$scope.count = temp.length;
+        this.$scope.body.count = temp.length;
 
         // have to force reset, optimize this later
         this.tempRows.splice(0, this.tempRows.length);
@@ -247,10 +246,10 @@ export class BodyController{
       // cache the group build
       if((refresh || !this.groupsTemp)){
         this.groupsTemp = temp = this.buildGroups();
-        this.$scope.count = temp.length;
+        this.$scope.body.count = temp.length;
       }
     } else {
-      temp = this.$scope.rows;
+      temp = this.rows;
        if(refresh === true){
         this.tempRows.splice(0, this.tempRows.length);
       }
@@ -300,12 +299,12 @@ export class BodyController{
    */
   rowStyles(scope, row){
     var styles = {
-      height: scope.options.rowHeight + 'px'
+      height: this.options.rowHeight + 'px'
     };
 
-    if(scope.options.scrollbarV){
+    if(this.options.scrollbarV){
       var idx = row ? row.$$index : 0,
-          pos = idx * scope.options.rowHeight;
+          pos = idx * this.options.rowHeight;
       TranslateXY(styles, 0, pos);
     }
 
@@ -314,8 +313,8 @@ export class BodyController{
 
   /**
    * Builds the styles for the row group directive
-   * @param  {object} scope 
-   * @param  {object} row   
+   * @param  {object} scope
+   * @param  {object} row
    * @return {object} styles
    */
   groupRowStyles(scope, row){
@@ -424,13 +423,13 @@ export class BodyController{
             this.selected.splice(idx, 1);
           } else {
             this.selected.push(row);
-            this.$scope.onSelect({ rows: [ row ] });
+            this.$scope.body.onSelect({ rows: [ row ] });
           }
         }
         this.prevIndex = index;
       } else {
         this.selected = row;
-        this.$scope.onSelect({ rows: [ row ] });
+        this.$scope.body.onSelect({ rows: [ row ] });
       }
     }
   }
@@ -440,7 +439,7 @@ export class BodyController{
    * @param  {index}
    */
   selectRowsBetween(index){
-    var reverse = index < this.prevIndex, 
+    var reverse = index < this.prevIndex,
         selecteds = [];
 
     for(var i=0, len=this.tempRows.length; i < len; i++) {
@@ -457,7 +456,7 @@ export class BodyController{
       }
     }
 
-    this.$scope.onSelect({ rows: selecteds });
+    this.$scope.body.onSelect({ rows: selecteds });
   }
 
 
@@ -531,8 +530,8 @@ export class BodyController{
 
   /**
    * Invoked when the row group directive was expanded
-   * @param  {object} scope 
-   * @param  {object} row   
+   * @param  {object} scope
+   * @param  {object} row
    */
   onGroupToggle(scope, row){
     scope.expanded[row.name] = !scope.expanded[row.name];

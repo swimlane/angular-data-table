@@ -6,7 +6,7 @@ export class ScrollerController {
    */
   scrollerStyles(scope){
     return {
-      height: scope.count * scope.options.rowHeight + 'px'
+      height: scope.count * scope.body.options.rowHeight + 'px'
     }
   }
 

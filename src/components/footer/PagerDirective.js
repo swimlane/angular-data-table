@@ -5,13 +5,14 @@ export function PagerDirective(){
     restrict: 'E',
     controller: 'PagerController',
     controllerAs: 'pager',
+    bindToController: true,
     scope: {
       page: '=',
       size: '=',
       count: '=',
       onPage: '&'
     },
-    template: 
+    template:
       `<div class="dt-pager">
         <ul class="pager">
           <li ng-class="{ disabled: !pager.canPrevious(this) }">

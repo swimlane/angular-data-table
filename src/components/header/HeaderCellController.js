@@ -46,6 +46,7 @@ export class HeaderCellController{
         scope.hcell.column.sort = undefined;
       }
 
+      console.log('scope.hcell.column',scope.hcell.column);
       scope.hcell.onSort({
         column: scope.hcell.column
       });

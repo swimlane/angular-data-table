@@ -34,10 +34,10 @@ export function DataTableDirective($window, $timeout, throttle){
                      on-sort="dt.onSort(this)">
           </dt-header>
           <dt-body rows="dt.rows"
-                   selected="selected"
-                   expanded="expanded"
+                   selected="dt.selected"
+                   expanded="dt.expanded"
                    columns="dt.columnsByPin"
-                   on-select="dt.onSelect(this, dt.rows)"
+                   on-select="dt.onSelect(this, rows)"
                    on-row-click="dt.onRowClick(this, row)"
                    column-widths="dt.columnWidths"
                    options="dt.options"

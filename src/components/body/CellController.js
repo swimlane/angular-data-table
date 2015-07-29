@@ -5,9 +5,9 @@ export class CellController {
    * @param  {column}
    * @return {styles object}
    */
-  styles(col){
+  styles(){
     return {
-      width: col.width  + 'px'
+      width: this.column.width  + 'px'
     };
   }
 
@@ -16,13 +16,13 @@ export class CellController {
    * @param  {column}
    * @return {class object}
    */
-  cellClass(col){
+  cellClass(){
     var style = {
-      'dt-tree-col': col.isTreeColumn
+      'dt-tree-col': this.column.isTreeColumn
     };
 
-    if(col.className){
-      style[col.className] = true;
+    if(this.column.className){
+      style[this.column.className] = true;
     }
 
     return style;
@@ -49,7 +49,7 @@ export class CellController {
   onTreeToggle(evt, scope){
     evt.stopPropagation();
     scope.expanded = !scope.expanded;
-    scope.onTreeToggle({ 
+    scope.onTreeToggle({
       cell: {
         value: scope.value,
         column: scope.column,
@@ -60,8 +60,8 @@ export class CellController {
 
   /**
    * Invoked when the checkbox was changed
-   * @param  {object} event 
-   * @param  {object} scope 
+   * @param  {object} event
+   * @param  {object} scope
    */
   onCheckboxChange(event, scope){
     event.stopPropagation();
@@ -70,11 +70,11 @@ export class CellController {
 
   /**
    * Returns the value in its fomatted form
-   * @param  {object} scope 
+   * @param  {object} scope
    * @return {string} value
    */
   getValue(scope){
-    var val = scope.column.cellDataGetter ? 
+    var val = scope.column.cellDataGetter ?
       scope.column.cellDataGetter(scope.value) : scope.value;
 
     if(val === undefined || val === null) val = '';

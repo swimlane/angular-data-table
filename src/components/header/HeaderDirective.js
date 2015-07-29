@@ -5,11 +5,12 @@ export function HeaderDirective($timeout){
     restrict: 'E',
     controller: 'HeaderController',
     controllerAs: 'header',
+    bindToController: true,
     scope: {
       options: '=',
       columns: '=',
       columnWidths: '=',
-      onSort: '&',
+      header.onSort: '&',
       onResize: '&',
       onCheckboxChange: '&'
     },
@@ -18,10 +19,10 @@ export function HeaderDirective($timeout){
         <div class="dt-header-inner" ng-style="header.innerStyles(this)">
           <div class="dt-row-left"
                ng-style="header.stylesByGroup(this, 'left')"
-               ng-if="columns['left'].length"
+               ng-if="header.columns['left'].length"
                sortable="header.options.reorderable"
                on-sortable-sort="columnsResorted(event, childScope)">
-            <dt-header-cell ng-repeat="column in columns['left'] track by column.$id"
+            <dt-header-cell ng-repeat="column in header.columns['left'] track by column.$id"
                             on-checkbox-change="header.onCheckboxChange(this)"
                             on-sort="header.onSort(this, column)"
                             on-resize="header.onResize(this, column, width)"
@@ -33,7 +34,7 @@ export function HeaderDirective($timeout){
                sortable="header.options.reorderable"
                ng-style="header.stylesByGroup(this, 'center')"
                on-sortable-sort="columnsResorted(event, childScope)">
-            <dt-header-cell ng-repeat="column in columns['center'] track by column.$id"
+            <dt-header-cell ng-repeat="column in header.columns['center'] track by column.$id"
                             on-checkbox-change="header.onCheckboxChange(this)"
                             on-sort="header.onSort(this, column)"
                             selected="header.isSelected(this)"
@@ -46,7 +47,7 @@ export function HeaderDirective($timeout){
                sortable="header.options.reorderable"
                ng-style="header.stylesByGroup(this, 'right')"
                on-sortable-sort="columnsResorted(event, childScope)">
-            <dt-header-cell ng-repeat="column in columns['right'] track by column.$id"
+            <dt-header-cell ng-repeat="column in header.columns['right'] track by column.$id"
                             on-checkbox-change="header.onCheckboxChange(this)"
                             on-sort="header.onSort(this, column)"
                             selected="header.isSelected(this)"

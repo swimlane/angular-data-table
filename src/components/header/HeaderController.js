@@ -9,8 +9,8 @@ export class HeaderController {
    */
   styles(scope) {
     return {
-      width: scope.options.internal.innerWidth + 'px',
-      height: scope.options.headerHeight + 'px'
+      width: scope.header.options.internal.innerWidth + 'px',
+      height: scope.header.options.headerHeight + 'px'
     }
   }
 
@@ -21,7 +21,7 @@ export class HeaderController {
    */
   innerStyles(scope){
     return {
-      width: scope.columnWidths.total + 'px'
+      width: scope.header.columnWidths.total + 'px'
     };
   }
 
@@ -31,7 +31,8 @@ export class HeaderController {
    * @param  {object} column
    */
   onSort(scope, column){
-    scope.onSort({
+    console.log('column',column);
+    scope.header.onSort({
       column: column
     });
   }
@@ -44,13 +45,13 @@ export class HeaderController {
    */
   stylesByGroup(scope, group){
     var styles = {
-      width: scope.columnWidths[group] + 'px'
+      width: scope.header.columnWidths[group] + 'px'
     };
 
     if(group === 'center'){
-      TranslateXY(styles, scope.options.internal.offsetX * -1, 0);
+      TranslateXY(styles, scope.header.options.internal.offsetX * -1, 0);
     } else if(group === 'right'){
-      var offset = (scope.columnWidths.total - scope.options.internal.innerWidth) *-1;
+      var offset = (scope.header.columnWidths.total - scope.header.options.internal.innerWidth) *-1;
       TranslateXY(styles, offset, 0);
     }
 
@@ -62,17 +63,17 @@ export class HeaderController {
    * @param  {scope}
    */
   onCheckboxChange(scope){
-    scope.onCheckboxChange();
+    scope.header.onCheckboxChange();
   }
 
   /**
    * Occurs when a header cell directive triggered a resize
-   * @param  {object} scope  
-   * @param  {object} column 
-   * @param  {int} width  
+   * @param  {object} scope
+   * @param  {object} column
+   * @param  {int} width
    */
   onResize(scope, column, width){
-    scope.onResize({
+    scope.header.onResize({
       column: column,
       width: width
     });

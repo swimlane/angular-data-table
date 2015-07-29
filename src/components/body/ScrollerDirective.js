@@ -18,8 +18,8 @@ export function ScrollerDirective($timeout){
 
       function update(){
         $timeout(() => {
-          $scope.options.internal.offsetY = lastScrollY;
-          $scope.options.internal.offsetX = lastScrollX;
+          $scope.body.options.internal.offsetY = lastScrollY;
+          $scope.body.options.internal.offsetX = lastScrollX;
           ctrl.updatePage();
         });
 

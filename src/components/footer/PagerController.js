@@ -6,18 +6,18 @@ export class PagerController {
    */
   /*@ngInject*/
   constructor($scope){
-    $scope.$watch('count', (newVal) => {
-      this.calcTotalPages($scope.size, $scope.count);
+    $scope.$watch('pager.count', (newVal) => {
+      this.calcTotalPages($scope.pager.size, $scope.pager.count);
       this.getPages($scope.page || 1);
     });
 
-    $scope.$watch('page', (newVal) => {
+    $scope.$watch('pager.page', (newVal) => {
       if (newVal !== 0 && newVal <= this.totalPages) {
         this.getPages(newVal);
       }
     });
 
-    this.getPages($scope.page || 1);
+    this.getPages($scope.pager.page || 1);
   }
 
   /**
@@ -36,8 +36,8 @@ export class PagerController {
    */
   selectPage(scope, num){
     if (num > 0 && num <= this.totalPages) {
-      scope.page = num;
-      scope.onPage({
+      scope.pager.page = num;
+      scope.pager.onPage({
         page: num
       });
     }
@@ -49,7 +49,7 @@ export class PagerController {
    * @return {boolean}
    */
   canPrevious(scope){
-    return scope.page !== 1;
+    return scope.pager.page !== 1;
   }
 
   /**
@@ -58,7 +58,7 @@ export class PagerController {
    * @return {boolean}
    */
   canNext(scope){
-    return scope.page <= this.totalPages;
+    return scope.pager.page <= this.totalPages;
   }
 
   /**
