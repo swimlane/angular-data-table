@@ -15,23 +15,23 @@ export function HeaderCellDirective($compile){
     },
     replace: true,
     template:
-      `<div ng-class="hcell.cellClass(this)"
+      `<div ng-class="hcell.cellClass()"
             draggable="true"
-            ng-style="hcell.styles(this)"
-            title="{{::column.name}}">
-        <div resizable="column.resizable"
-             on-resize="hcell.onResize(this, width, column)"
-             min-width="column.minWidth"
-             max-width="column.maxWidth">
-          <label ng-if="column.isCheckboxColumn && column.headerCheckbox" class="dt-checkbox">
+            ng-style="hcell.styles()"
+            title="{{::hcell.column.name}}">
+        <div resizable="hcell.column.resizable"
+             on-resize="hcell.onResize(width, hcell.column)"
+             min-width="hcell.column.minWidth"
+             max-width="hcell.column.maxWidth">
+          <label ng-if="hcell.column.isCheckboxColumn && hcell.column.headerCheckbox" class="dt-checkbox">
             <input type="checkbox"
                    ng-checked="selected"
-                   ng-click="hcell.onCheckboxChange(this)" />
+                   ng-click="hcell.onCheckboxChange()" />
           </label>
           <span class="dt-header-cell-label"
                 ng-click="hcell.sort(this)">
           </span>
-          <span ng-class="hcell.sortClass(this)"></span>
+          <span ng-class="hcell.sortClass()"></span>
         </div>
       </div>`,
     compile: function() {

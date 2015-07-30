@@ -21,8 +21,8 @@ export function BodyDirective($timeout){
         <dt-scroller class="dt-body-scroller">
           <dt-group-row ng-repeat-start="r in body.tempRows track by $index"
                         ng-if="r.group"
-                        ng-style="body.groupRowStyles(this, r)"
-                        on-group-toggle="body.onGroupToggle(this, group)"
+                        ng-style="body.groupRowStyles(r)"
+                        on-group-toggle="body.onGroupToggle(group)"
                         expanded="body.getRowExpanded(this, r)"
                         tabindex="{{$index}}"
                         row="r">

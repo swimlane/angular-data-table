@@ -14,7 +14,7 @@ export function DataTableDirective($window, $timeout, throttle){
       selected: '=?',
       expanded: '=?',
       onSelect: '&',
-      onSort: '&',
+      onSort: '&?',
       onTreeToggle: '&',
       onPage: '&',
       onRowClick: '&'
@@ -37,7 +37,7 @@ export function DataTableDirective($window, $timeout, throttle){
                    selected="dt.selected"
                    expanded="dt.expanded"
                    columns="dt.columnsByPin"
-                   on-select="dt.onSelect(this, rows)"
+                   on-select="dt.onSelect(this, dt.rows)"
                    on-row-click="dt.onRowClick(this, row)"
                    column-widths="dt.columnWidths"
                    options="dt.options"

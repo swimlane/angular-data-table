@@ -3,8 +3,8 @@ export function GroupRowDirective(){
     restrict: 'E',
     controller: 'GroupRowController',
     controllerAs: 'group',
-    bindToController: true,
-    scope: {
+    scope: true,
+    bindToController: {
       row: '=',
       onGroupToggle: '&',
       expanded: '='

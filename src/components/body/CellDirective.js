@@ -5,8 +5,8 @@ export function CellDirective($rootScope, $compile, $log){
     restrict: 'E',
     controller: 'CellController',
     controllerAs: 'cell',
-    bindToController: true,
-    scope: {
+    scope: true,
+    bindToController: {
       options: '=',
       value: '=',
       selected: '=',

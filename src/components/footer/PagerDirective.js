@@ -5,8 +5,8 @@ export function PagerDirective(){
     restrict: 'E',
     controller: 'PagerController',
     controllerAs: 'pager',
-    bindToController: true,
-    scope: {
+    scope: true,
+    bindToController: {
       page: '=',
       size: '=',
       count: '=',

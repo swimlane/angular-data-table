@@ -1,12 +1,7 @@
 export class MenuController{
 
-  /*@ngInject*/
-  constructor($scope, $timeout){
-    this.$scope = $scope;
-  }
-
   getColumnIndex(model){
-    return this.$scope.current.findIndex((col) => {
+    return this.current.findIndex((col) => {
       return model.name == col.name;
     });
   }
@@ -18,9 +13,9 @@ export class MenuController{
   onCheck(model){
     var idx = this.getColumnIndex(model);
     if(idx === -1){
-      this.$scope.current.push(model);
+      this.current.push(model);
     } else {
-      this.$scope.current.splice(idx, 1);
+      this.current.splice(idx, 1);
     }
   }
 

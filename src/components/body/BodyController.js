@@ -134,8 +134,8 @@ export class BodyController{
       this.treeColumn.relationProp :
       this.groupColumn.prop;
 
-    for(var i = 0, len = this.$scope.body.rows.length; i < len; i++) {
-      var row = this.$scope.body.rows[i];
+    for(var i = 0, len = this.rows.length; i < len; i++) {
+      var row = this.rows[i];
       // build groups
       var relVal = row[parentProp];
       if(relVal){
@@ -180,7 +180,7 @@ export class BodyController{
         group: true
       });
 
-      if(this.$scope.body.expanded[k]){
+      if(this.expanded[k]){
         temp.push(...v);
       }
     });
@@ -196,12 +196,12 @@ export class BodyController{
     var count = 0,
         temp = [];
 
-    for(var i = 0, len = this.$scope.body.rows.length; i < len; i++) {
-      var row = this.$scope.body.rows[i],
+    for(var i = 0, len = this.rows.length; i < len; i++) {
+      var row = this.rows[i],
           relVal = row[this.treeColumn.relationProp],
           keyVal = row[this.treeColumn.prop],
           rows = this.rowsByGroup[keyVal],
-          expanded = this.$scope.body.expanded[keyVal];
+          expanded = this.expanded[keyVal];
 
       if(!relVal){
         count++;
@@ -236,7 +236,7 @@ export class BodyController{
       // cache the tree build
       if((refresh || !this.treeTemp)){
         this.treeTemp = temp = this.buildTree();
-        this.$scope.body.count = temp.length;
+        this.$scope.count = temp.length;
 
         // have to force reset, optimize this later
         this.tempRows.splice(0, this.tempRows.length);
@@ -246,7 +246,7 @@ export class BodyController{
       // cache the group build
       if((refresh || !this.groupsTemp)){
         this.groupsTemp = temp = this.buildGroups();
-        this.$scope.body.count = temp.length;
+        this.$scope.count = temp.length;
       }
     } else {
       temp = this.rows;
@@ -317,9 +317,9 @@ export class BodyController{
    * @param  {object} row
    * @return {object} styles
    */
-  groupRowStyles(scope, row){
+  groupRowStyles(row){
     var styles = this.rowStyles(scope, row);
-    styles.width = scope.columnWidths.total + 'px';
+    styles.width = this.columnWidths.total + 'px';
     return styles;
   }
 
@@ -423,13 +423,13 @@ export class BodyController{
             this.selected.splice(idx, 1);
           } else {
             this.selected.push(row);
-            this.$scope.body.onSelect({ rows: [ row ] });
+            this.onSelect({ rows: [ row ] });
           }
         }
         this.prevIndex = index;
       } else {
         this.selected = row;
-        this.$scope.body.onSelect({ rows: [ row ] });
+        this.onSelect({ rows: [ row ] });
       }
     }
   }
@@ -456,7 +456,7 @@ export class BodyController{
       }
     }
 
-    this.$scope.body.onSelect({ rows: selecteds });
+    this.onSelect({ rows: selecteds });
   }
 
 
@@ -476,11 +476,11 @@ export class BodyController{
    * @param  {row}
    * @return {boolean}
    */
-  getRowExpanded(scope, row){
+  getRowExpanded(row){
     if(this.treeColumn) {
-      return scope.expanded[row[this.treeColumn.prop]];
+      return this.expanded[row[this.treeColumn.prop]];
     } else if(this.groupColumn){
-      return scope.expanded[row.name];
+      return this.expanded[row.name];
     }
   }
 
@@ -533,8 +533,8 @@ export class BodyController{
    * @param  {object} scope
    * @param  {object} row
    */
-  onGroupToggle(scope, row){
-    scope.expanded[row.name] = !scope.expanded[row.name];
+  onGroupToggle(row){
+    this.expanded[row.name] = !this.expanded[row.name];
 
     if(this.options.scrollbarV){
       this.getRows(true);
