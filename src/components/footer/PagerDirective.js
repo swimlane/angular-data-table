@@ -15,14 +15,14 @@ export function PagerDirective(){
     template:
       `<div class="dt-pager">
         <ul class="pager">
-          <li ng-class="{ disabled: !pager.canPrevious(this) }">
-            <a href ng-click="pager.selectPage(this, 1)" class="icon-left"></a>
+          <li ng-class="{ disabled: !pager.canPrevious() }">
+            <a href ng-click="pager.selectPage(1)" class="icon-left"></a>
           </li>
           <li ng-repeat="pg in pager.pages track by $index" ng-class="{ active: pg.active }">
-            <a href ng-click="pager.selectPage(this, pg.number)">{{pg.text}}</a>
+            <a href ng-click="pager.selectPage(pg.number)">{{pg.text}}</a>
           </li>
-          <li ng-class="{ disabled: !pager.canNext(this) }">
-            <a href ng-click="pager.selectPage(this, pager.totalPages)" class="icon-right"></a>
+          <li ng-class="{ disabled: !pager.canNext() }">
+            <a href ng-click="pager.selectPage(pager.totalPages)" class="icon-right"></a>
           </li>
         </ul>
       </div>`,

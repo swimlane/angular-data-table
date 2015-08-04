@@ -7,40 +7,35 @@ export class BodyController{
 
   /**
    * A tale body controller
-   * @param  {$scope}
    * @param  {$timeout}
    * @param  {throttle}
    * @return {BodyController}
    */
   /*@ngInject*/
   constructor($scope, $timeout, throttle){
-    angular.extend(this, {
-      $scope: $scope.body,
-      options: $scope.body.options,
-      selected: $scope.body.selected
-    });
 
+    this.$scope = $scope;
     this.tempRows = [];
 
-    this.treeColumn = $scope.body.options.columns.find((c) => {
+    this.treeColumn = this.options.columns.find((c) => {
       return c.isTreeColumn;
     });
 
-    this.groupColumn = $scope.body.options.columns.find((c) => {
+    this.groupColumn = this.options.columns.find((c) => {
       return c.group;
     });
 
     if(this.options.scrollbarV){
-      $scope.$watch('body.options.internal.offsetY', throttle(this.getRows.bind(this), 10));
+      this.$scope.$watch('body.options.internal.offsetY', throttle(this.getRows.bind(this), 10));
     }
 
-    $scope.$watchCollection('body.rows', (newVal, oldVal) => {
+    this.$scope.$watchCollection('body.rows', (newVal, oldVal) => {
       if(newVal) {
         if(!this.options.paging.externalPaging){
           this.options.paging.count = newVal.length;
         }
 
-        $scope.body.count = this.options.paging.count;
+        this.count = this.options.paging.count;
 
         if(this.treeColumn || this.groupColumn){
           this.buildRowsByGroup();
@@ -51,7 +46,7 @@ export class BodyController{
 
           this.getRows(refresh);
         } else {
-          var rows = $scope.body.rows;
+          var rows = this.rows;
           if(this.treeColumn){
             rows = this.buildTree();
           } else if(this.groupColumn){
@@ -64,21 +59,21 @@ export class BodyController{
     });
 
     if(this.options.scrollbarV){
-      $scope.$watch('body.options.internal.offsetY', this.updatePage.bind(this));
+      this.$scope.$watch('body.options.internal.offsetY', this.updatePage.bind(this));
 
-      $scope.$watch('body.options.paging.size', (newVal, oldVal) => {
+      this.$scope.$watch('body.options.paging.size', (newVal, oldVal) => {
         if(this.options.scrollbarV && (!oldVal || newVal > oldVal)){
           this.getRows();
         }
       });
 
-      $scope.$watch('body.options.paging.count', (count) => {
-        $scope.count = count;
+      this.$scope.$watch('body.options.paging.count', (count) => {
+        this.$scope.count = count;
         this.updatePage();
       });
 
-      $scope.$watch('body.options.paging.offset', (newVal) => {
-        $scope.body.onPage({
+      this.$scope.$watch('body.options.paging.offset', (newVal) => {
+        this.onPage({
           offset: newVal,
           size: this.options.paging.size
         });
@@ -236,7 +231,7 @@ export class BodyController{
       // cache the tree build
       if((refresh || !this.treeTemp)){
         this.treeTemp = temp = this.buildTree();
-        this.$scope.count = temp.length;
+        this.count = temp.length;
 
         // have to force reset, optimize this later
         this.tempRows.splice(0, this.tempRows.length);
@@ -246,7 +241,7 @@ export class BodyController{
       // cache the group build
       if((refresh || !this.groupsTemp)){
         this.groupsTemp = temp = this.buildGroups();
-        this.$scope.count = temp.length;
+        this.count = temp.length;
       }
     } else {
       temp = this.rows;
@@ -259,7 +254,7 @@ export class BodyController{
         indexes = this.getFirstLastIndexes(),
         rowIndex = indexes.first;
 
-    while (rowIndex < indexes.last && rowIndex < this.$scope.count) {
+    while (rowIndex < indexes.last && rowIndex < this.count) {
       var row = temp[rowIndex];
       if(row){
         row.$$index = rowIndex;
@@ -293,11 +288,10 @@ export class BodyController{
 
   /**
    * Returns the styles for the row diretive.
-   * @param  {scope}
    * @param  {row}
    * @return {styles object}
    */
-  rowStyles(scope, row){
+  rowStyles(row){
     var styles = {
       height: this.options.rowHeight + 'px'
     };
@@ -313,23 +307,21 @@ export class BodyController{
 
   /**
    * Builds the styles for the row group directive
-   * @param  {object} scope
    * @param  {object} row
    * @return {object} styles
    */
   groupRowStyles(row){
-    var styles = this.rowStyles(scope, row);
+    var styles = this.rowStyles(row);
     styles.width = this.columnWidths.total + 'px';
     return styles;
   }
 
   /**
    * Returns the css classes for the row directive.
-   * @param  {scope}
    * @param  {row}
    * @return {css class object}
    */
-  rowClasses(scope, row){
+  rowClasses(row){
     var styles = {
       'selected': this.isSelected(row)
     };
@@ -401,7 +393,7 @@ export class BodyController{
       this.selectRow(index, row);
     }
 
-    this.$scope.onRowClick({ row: row });
+    this.onRowClick({ row: row });
   }
 
   /**
@@ -472,7 +464,6 @@ export class BodyController{
 
   /**
    * Calculates if a row is expanded or collasped for tree grids.
-   * @param  {scope}
    * @param  {row}
    * @return {boolean}
    */
@@ -497,13 +488,12 @@ export class BodyController{
 
   /**
    * Tree toggle event from a cell
-   * @param  {scope}
    * @param  {row model}
    * @param  {cell model}
    */
-  onTreeToggle(scope, row, cell){
+  onTreeToggle(row, cell){
     var val  = row[this.treeColumn.prop];
-    scope.expanded[val] = !scope.expanded[val];
+    this.expanded[val] = !this.expanded[val];
 
     if(this.options.scrollbarV){
       this.getRows(true);
@@ -513,7 +503,7 @@ export class BodyController{
       this.tempRows.push(...values);
     }
 
-    scope.onTreeToggle({
+    this.onTreeToggle({
       row: row,
       cell: cell
     });
@@ -530,7 +520,6 @@ export class BodyController{
 
   /**
    * Invoked when the row group directive was expanded
-   * @param  {object} scope
    * @param  {object} row
    */
   onGroupToggle(row){

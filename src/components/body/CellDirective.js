@@ -42,7 +42,7 @@ export function CellDirective($rootScope, $compile, $log){
           // extend the outer scope onto our new cell scope
           if($scope.cell.column.template || $scope.cell.column.cellRenderer){
             cellScope = $rootScope.$new(true);
-            angular.forEach($scope.options.$outer, function(v,k) {
+            angular.forEach($scope.cell.options.$outer, function(v,k) {
               if(k[0] !== '$'){
                 cellScope[k] = v;
               }

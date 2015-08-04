@@ -23,12 +23,12 @@ export function RowDirective(){
           <dt-cell ng-repeat="column in rowCtrl.columns['left'] track by column.$id"
                    on-tree-toggle="rowCtrl.onTreeToggle(cell)"
                    column="column"
-                   options="options"
-                   has-children="hasChildren"
+                   options="rowCtrl.options"
+                   has-children="rowCtrl.hasChildren"
                    on-checkbox-change="rowCtrl.onCheckboxChange()"
-                   selected="selected"
-                   expanded="expanded"
-                   row="row"
+                   selected="rowCtrl.selected"
+                   expanded="rowCtrl.expanded"
+                   row="rowCtrl.row"
                    value="rowCtrl.getValue(column)">
           </dt-cell>
         </div>
@@ -37,27 +37,27 @@ export function RowDirective(){
           <dt-cell ng-repeat="column in rowCtrl.columns['center'] track by column.$id"
                    on-tree-toggle="rowCtrl.onTreeToggle(cell)"
                    column="column"
-                   options="options"
-                   has-children="hasChildren"
-                   expanded="expanded"
-                   selected="selected"
-                   row="row"
+                   options="rowCtrl.options"
+                   has-children="rowCtrl.hasChildren"
+                   expanded="rowCtrl.expanded"
+                   selected="rowCtrl.selected"
+                   row="rowCtrl.row"
                    on-checkbox-change="rowCtrl.onCheckboxChange()"
                    value="rowCtrl.getValue(column)">
           </dt-cell>
         </div>
         <div class="dt-row-right dt-row-block"
-             ng-if="columns['right'].length"
+             ng-if="rowCtrl.columns['right'].length"
              ng-style="rowCtrl.stylesByGroup('right')">
           <dt-cell ng-repeat="column in rowCtrl.columns['right'] track by column.$id"
                    on-tree-toggle="rowCtrl.onTreeToggle(cell)"
                    column="column"
-                   options="options"
-                   has-children="hasChildren"
-                   selected="selected"
+                   options="rowCtrl.options"
+                   has-children="rowCtrl.hasChildren"
+                   selected="rowCtrl.selected"
                    on-checkbox-change="rowCtrl.onCheckboxChange()"
-                   row="row"
-                   expanded="expanded"
+                   row="rowCtrl.row"
+                   expanded="rowCtrl.expanded"
                    value="rowCtrl.getValue(column)">
           </dt-cell>
         </div>

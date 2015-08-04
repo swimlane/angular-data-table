@@ -23,7 +23,7 @@ export function BodyDirective($timeout){
                         ng-if="r.group"
                         ng-style="body.groupRowStyles(r)"
                         on-group-toggle="body.onGroupToggle(group)"
-                        expanded="body.getRowExpanded(this, r)"
+                        expanded="body.getRowExpanded(r)"
                         tabindex="{{$index}}"
                         row="r">
           </dt-group-row>
@@ -35,15 +35,15 @@ export function BodyDirective($timeout){
                   column-widths="body.columnWidths"
                   ng-keydown="body.keyDown($event, $index, r)"
                   ng-click="body.rowClicked($event, $index, r)"
-                  on-tree-toggle="body.onTreeToggle(this, row, cell)"
-                  ng-class="body.rowClasses(this, r)"
+                  on-tree-toggle="body.onTreeToggle(row, cell)"
+                  ng-class="body.rowClasses(r)"
                   options="body.options"
                   selected="body.isSelected(r)"
                   on-checkbox-change="body.onCheckboxChange($index, row)"
                   columns="dt.columnsByPin"
                   has-children="body.getRowHasChildren(r)"
-                  expanded="body.getRowExpanded(this, r)"
-                  ng-style="body.rowStyles(this, r)">
+                  expanded="body.getRowExpanded(r)"
+                  ng-style="body.rowStyles(r)">
           </dt-row>
         </dt-scroller>
         <div ng-if="body.rows && !body.rows.length"

@@ -13,18 +13,20 @@ export class DataTableController {
    */
   /*@ngInject*/
   constructor($scope, $filter, $log){
-    angular.extend(this, {
-      $scope: $scope,
-      $filter: $filter,
-      $log: $log
-    });
+    // angular.extend(this, {
+    //   $scope: $scope,
+    //   $filter: $filter,
+    //   $log: $log
+    // });
 
     this.$scope = $scope;
+    this.$filter = $filter;
+    this.$log =  $log;
 
     this.defaults($scope);
 
     // set scope to the parent
-    this.options.$outer = this.$parent;
+    this.options.$outer = this.$scope.$parent;
 
     this.$scope.$watch('dt.options.columns', (newVal, oldVal) => {
       if(newVal.length > oldVal.length){
@@ -90,7 +92,7 @@ export class DataTableController {
    * @param  {scope}
    */
   defaults($scope){
-    $scope.expanded = $scope.expanded || {};
+    this.expanded = $scope.expanded || {};
 
     var options = angular.extend(angular.
       copy(TableDefaults), this.options);
