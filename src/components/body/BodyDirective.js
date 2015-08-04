@@ -22,7 +22,7 @@ export function BodyDirective($timeout){
           <dt-group-row ng-repeat-start="r in body.tempRows track by $index"
                         ng-if="r.group"
                         ng-style="body.groupRowStyles(r)"
-                        on-group-toggle="body.onGroupToggle(group)"
+                        on-group-toggle="body.onGroupToggle(r)"
                         expanded="body.getRowExpanded(r)"
                         tabindex="{{$index}}"
                         row="r">
