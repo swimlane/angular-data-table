@@ -16,7 +16,7 @@ export function GroupRowDirective(){
               ng-click="group.onGroupToggle($event)">
         </span>
         <span class="dt-group-row-label">
-          {{row.name}}
+          {{group.row.name}}
         </span>
       </div>`
   };

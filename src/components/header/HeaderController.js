@@ -27,7 +27,7 @@ export class HeaderController {
    * Invoked when a column sort direction has changed
    * @param  {object} column
    */
-  onSort(scope, column){
+  onSort(column){
     this.onSort({
       column: column
     });
