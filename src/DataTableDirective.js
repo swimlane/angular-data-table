@@ -23,30 +23,30 @@ export function DataTableDirective($window, $timeout, throttle){
       // Gets the column nodes to transposes to column objects
       // http://stackoverflow.com/questions/30845397/angular-expressive-directive-design/30847609#30847609
       element.columns = element[0].getElementsByTagName('column');
-      return `<div class="dt" ng-class="dt.tableCss(this)">
+      return `<div class="dt" ng-class="dt.tableCss()">
           <dt-header options="dt.options"
-                     on-checkbox-change="dt.onHeaderCheckboxChange(this)"
+                     on-checkbox-change="dt.onHeaderCheckboxChange()"
                      columns="dt.columnsByPin"
                      column-widths="dt.columnWidths"
                      ng-if="dt.options.headerHeight"
-                     on-resize="dt.onResize(this, column, width)"
-                     selected="dt.isAllRowsSelected(this)"
+                     on-resize="dt.onResize(column, width)"
+                     selected="dt.isAllRowsSelected()"
                      on-sort="dt.onSort(this)">
           </dt-header>
           <dt-body rows="dt.rows"
                    selected="dt.selected"
                    expanded="dt.expanded"
                    columns="dt.columnsByPin"
-                   on-select="dt.onSelect(this, dt.rows)"
-                   on-row-click="dt.onRowClick(this, row)"
+                   on-select="dt.onSelect(dt.rows)"
+                   on-row-click="dt.onRowClick(row)"
                    column-widths="dt.columnWidths"
                    options="dt.options"
-                   on-page="dt.onBodyPage(this, offset, size)"
-                   on-tree-toggle="dt.onTreeToggle(this, row, cell)">
+                   on-page="dt.onBodyPage(offset, size)"
+                   on-tree-toggle="dt.onTreeToggle(row, cell)">
            </dt-body>
           <dt-footer ng-if="dt.options.footerHeight"
                      ng-style="{ height: dt.options.footerHeight + 'px' }"
-                     on-page="dt.onFooterPage(this, offset, size)"
+                     on-page="dt.onFooterPage(offset, size)"
                      paging="dt.options.paging">
            </dt-footer>
         </div>`

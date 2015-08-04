@@ -110,7 +110,7 @@ export class DataTableController {
     var watch = this.$scope.$watch('dt.rows', (newVal) => {
       if(newVal){
         watch();
-        this.onSort($scope);
+        this.onSort();
       }
     });
   }
@@ -151,10 +151,9 @@ export class DataTableController {
 
   /**
    * Returns the css classes for the data table.
-   * @param  {scope}
    * @return {style object}
    */
-  tableCss(scope){
+  tableCss(){
     return {
       'fixed': this.options.scrollbarV,
       'selectable': this.options.selectable,
@@ -188,12 +187,11 @@ export class DataTableController {
 
   /**
    * Sorts the values of the grid for client side sorting.
-   * @param  {scope}
    */
-  onSort(scope){
-    if(!scope.dt.rows) return;
+  onSort(){
+    if(!this.rows) return;
 
-    var sorts = scope.options.columns.filter((c) => {
+    var sorts = this.options.columns.filter((c) => {
       return c.sort;
     });
 
@@ -214,9 +212,9 @@ export class DataTableController {
       if(clientSorts.length){
         // todo: more ideal to just resort vs splice and repush
         // but wasn't responding to this change ...
-        var sortedValues = this.$filter('orderBy')(scope.dt.rows, clientSorts);
-        scope.dt.rows.splice(0, scope.dt.rows.length);
-        scope.dt.rows.push(...sortedValues);
+        var sortedValues = this.$filter('orderBy')(this.rows, clientSorts);
+        this.rows.splice(0, this.rows.length);
+        this.rows.push(...sortedValues);
       }
     }
 
@@ -225,12 +223,11 @@ export class DataTableController {
 
   /**
    * Invoked when a tree is collasped/expanded
-   * @param  {scope}
    * @param  {row model}
    * @param  {cell model}
    */
-  onTreeToggle(scope, row, cell){
-    scope.dt.onTreeToggle({
+  onTreeToggle(row, cell){
+    this.onTreeToggle({
       row: row,
       cell: cell
     });
@@ -238,12 +235,11 @@ export class DataTableController {
 
   /**
    * Invoked when the body triggers a page change.
-   * @param  {scope}
    * @param  {offset}
    * @param  {size}
    */
-  onBodyPage(scope, offset, size){
-    scope.dt.onPage({
+  onBodyPage(offset, size){
+    this.onPage({
       offset: offset,
       size: size
     });
@@ -251,12 +247,11 @@ export class DataTableController {
 
   /**
    * Invoked when the footer triggers a page change.
-   * @param  {scope}
    * @param  {offset}
    * @param  {size}
    */
-  onFooterPage(scope, offset, size){
-    var pageBlockSize = scope.dt.options.rowHeight * size,
+  onFooterPage(offset, size){
+    var pageBlockSize = this.options.rowHeight * size,
         offsetY = pageBlockSize * offset;
 
     scrollHelper.setYOffset(offsetY);
@@ -264,39 +259,36 @@ export class DataTableController {
 
   /**
    * Invoked when the header checkbox directive has changed.
-   * @param  {scope}
    */
-  onHeaderCheckboxChange(scope){
-    if(scope.dt.rows){
-      var matches = scope.selected.length === scope.dt.rows.length;
-      scope.selected.splice(0, scope.selected.length);
+  onHeaderCheckboxChange(){
+    if(this.rows){
+      var matches = this.selected.length === this.rows.length;
+      this.selected.splice(0, this.selected.length);
 
       if(!matches){
-        scope.selected.push(...scope.dt.rows);
+        this.selected.push(...this.rows);
       }
     }
   }
 
   /**
    * Returns if all the rows are selected
-   * @param  {scope}  scope
    * @return {Boolean} if all selected
    */
-  isAllRowsSelected(scope){
-    if(!scope.dt.rows) return false;
-    return scope.selected.length === scope.dt.rows.length;
+  isAllRowsSelected(){
+    if(!this.rows) return false;
+    return this.selected.length === this.rows.length;
   }
 
   /**
    * Occurs when a header directive triggered a resize event
-   * @param  {object} scope
    * @param  {object} column
    * @param  {int} width
    */
-  onResize(scope, column, width){
-    var idx = scope.options.columns.indexOf(column);
+  onResize(column, width){
+    var idx = this.options.columns.indexOf(column);
     if(idx > -1){
-      var column = scope.options.columns[idx];
+      var column = this.options.columns[idx];
       column.width = width;
       column.canAutoResize = false;
 
@@ -307,22 +299,20 @@ export class DataTableController {
 
   /**
    * Occurs when a row was selected
-   * @param  {object} scope
    * @param  {object} rows
    */
-  onSelect(scope, rows){
-    scope.onSelect({
+  onSelect(rows){
+    this.onSelect({
       rows: rows
     });
   }
 
   /**
    * Occurs when a row was click but may not be selected.
-   * @param  {object} scope
    * @param  {object} row
    */
-  onRowClick(scope, row){
-    scope.onRowClick({
+  onRowClick(row){
+    this.onRowClick({
       row: row
     });
   }

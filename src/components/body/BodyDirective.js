@@ -3,8 +3,8 @@ export function BodyDirective($timeout){
     restrict: 'E',
     controller: 'BodyController',
     controllerAs: 'body',
-    bindToController: true,
-    scope: {
+    scope: true,
+    bindToController: {
       columns: '=',
       columnWidths: '=',
       rows: '=',
@@ -35,7 +35,7 @@ export function BodyDirective($timeout){
                   column-widths="body.columnWidths"
                   ng-keydown="body.keyDown($event, $index, r)"
                   ng-click="body.rowClicked($event, $index, r)"
-                  on-tree-toggle="body.onTreeToggle(r, cell)"
+                  on-tree-toggle="body.onTreeToggle(row, cell)"
                   ng-class="body.rowClasses(r)"
                   options="body.options"
                   selected="body.isSelected(r)"
