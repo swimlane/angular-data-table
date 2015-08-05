@@ -7,8 +7,18 @@ export function DataTableDirective($window, $timeout, throttle){
     replace: true,
     controller: 'DataTable',
     controllerAs: 'dt',
-    bindToController: true,
     scope: {
+      options: '=',
+      rows: '=',
+      selected: '=?',
+      expanded: '=?',
+      onSelect: '&',
+      onSort: '&?',
+      onTreeToggle: '&',
+      onPage: '&',
+      onRowClick: '&'
+    },
+    bindToController: {
       options: '=',
       rows: '=',
       selected: '=?',
