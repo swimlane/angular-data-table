@@ -12,18 +12,13 @@ export class DataTableController {
    * @param  {filter}
    */
   /*@ngInject*/
-  constructor($scope, $filter, $log){
-    // angular.extend(this, {
-    //   $scope: $scope,
-    //   $filter: $filter,
-    //   $log: $log
-    // });
+  constructor($scope, $filter){
+    angular.extend(this, {
+      $scope: $scope,
+      $filter: $filter
+    });
 
-    this.$scope = $scope;
-    this.$filter = $filter;
-    this.$log =  $log;
-
-    this.defaults($scope);
+    this.defaults();
 
     // set scope to the parent
     this.options.$outer = this.$scope.$parent;
@@ -91,8 +86,8 @@ export class DataTableController {
    * Creates and extends default options for the grid control
    * @param  {scope}
    */
-  defaults($scope){
-    this.expanded = $scope.expanded || {};
+  defaults(){
+    this.expanded = this.expanded || {};
 
     var options = angular.extend(angular.
       copy(TableDefaults), this.options);
@@ -100,10 +95,10 @@ export class DataTableController {
     options.paging = angular.extend(angular.copy(TableDefaults.paging),
       this.options.paging);
 
-    this.options = this.$scope.options = options;
+    this.options = options;
 
     if(this.options.selectable && this.options.multiSelect){
-      $scope.selected = $scope.selected || [];
+      this.selected = this.selected || [];
     }
 
     // default sort

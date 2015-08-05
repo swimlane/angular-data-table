@@ -2,7 +2,7 @@
  * Default Table Options
  * @type {object}
  */
-export var TableDefaults = Object.freeze({
+export const TableDefaults = {
 
   // Enable vertical scrollbars
   scrollbarV: true,
@@ -67,13 +67,13 @@ export var TableDefaults = Object.freeze({
     bodyHeight: 300
   }
 
-});
+};
 
 /**
  * Default Column Options
  * @type {object}
  */
-export var ColumnDefaults = Object.freeze({
+export const ColumnDefaults = {
 
   // pinned to the left
   frozenLeft: false,
@@ -138,4 +138,4 @@ export var ColumnDefaults = Object.freeze({
   // Whether the column can automatically resize to fill space in the table.
   canAutoResize: true
 
-});
+};

@@ -18,17 +18,7 @@ export function DataTableDirective($window, $timeout, throttle){
       onPage: '&',
       onRowClick: '&'
     },
-    bindToController: {
-      options: '=',
-      rows: '=',
-      selected: '=?',
-      expanded: '=?',
-      onSelect: '&',
-      onSort: '&?',
-      onTreeToggle: '&',
-      onPage: '&',
-      onRowClick: '&'
-    },
+    bindToController: true,
     template: function(element){
       // Gets the column nodes to transposes to column objects
       // http://stackoverflow.com/questions/30845397/angular-expressive-directive-design/30847609#30847609
