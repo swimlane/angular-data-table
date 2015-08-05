@@ -6,43 +6,40 @@ export class RowController {
 
   /**
    * Returns the value for a given column
-   * @param  {scope}
    * @param  {col}
    * @return {value}
    */
-  getValue(scope, col){
+  getValue(col){
     if(!col.prop) return '';
-    return DeepValueGetter(scope.row, col.prop);
+    return DeepValueGetter(this.row, col.prop);
   }
 
   /**
    * Invoked when a cell triggers the tree toggle
-   * @param  {scope}
    * @param  {cell}
    */
-  onTreeToggle(scope, cell){
-    scope.onTreeToggle({
+  treeToggled(cell){
+    this.onTreeToggle({
       cell: cell,
-      row: scope.row
+      row: this.row
     });
   }
 
   /**
    * Calculates the styles for a pin group
-   * @param  {scope}
    * @param  {group}
    * @return {styles object}
    */
-  stylesByGroup(scope, group){
+  stylesByGroup(group){
     var styles = {
-      width: scope.columnWidths[group] + 'px'
+      width: this.columnWidths[group] + 'px'
     };
 
     if(group === 'left'){
-      TranslateXY(styles, scope.options.internal.offsetX, 0);
+      TranslateXY(styles, this.options.internal.offsetX, 0);
     } else if(group === 'right'){
-      var offset = ((scope.columnWidths.total - scope.options.internal.innerWidth) -
-        scope.options.internal.offsetX) * -1;
+      var offset = ((this.columnWidths.total - this.options.internal.innerWidth) -
+        this.options.internal.offsetX) * -1;
       TranslateXY(styles, offset, 0);
     }
 
@@ -51,11 +48,10 @@ export class RowController {
 
   /**
    * Invoked when the cell directive's checkbox changed state
-   * @param  {scope}
    */
-  onCheckboxChange(scope){
-    scope.onCheckboxChange({
-      row: scope.row
+  onCheckboxChange(){
+    this.onCheckboxChange({
+      row: this.row
     });
   }
 

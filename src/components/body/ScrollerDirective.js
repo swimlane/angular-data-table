@@ -6,6 +6,7 @@ export function ScrollerDirective($timeout){
     restrict: 'E',
     controller: 'ScrollerController',
     controllerAs: 'scroller',
+    bindToController: true,
     require:'^dtBody',
     transclude: true,
     template: `<div ng-style="scroller.scrollerStyles(this)" ng-transclude></div>`,
@@ -17,8 +18,8 @@ export function ScrollerDirective($timeout){
 
       function update(){
         $timeout(() => {
-          $scope.options.internal.offsetY = lastScrollY;
-          $scope.options.internal.offsetX = lastScrollX;
+          $scope.body.options.internal.offsetY = lastScrollY;
+          $scope.body.options.internal.offsetX = lastScrollX;
           ctrl.updatePage();
         });
 

@@ -3,7 +3,8 @@ export function BodyDirective($timeout){
     restrict: 'E',
     controller: 'BodyController',
     controllerAs: 'body',
-    scope: {
+    scope: true,
+    bindToController: {
       columns: '=',
       columnWidths: '=',
       rows: '=',
@@ -20,9 +21,9 @@ export function BodyDirective($timeout){
         <dt-scroller class="dt-body-scroller">
           <dt-group-row ng-repeat-start="r in body.tempRows track by $index"
                         ng-if="r.group"
-                        ng-style="body.groupRowStyles(this, r)" 
-                        on-group-toggle="body.onGroupToggle(this, group)"
-                        expanded="body.getRowExpanded(this, r)"
+                        ng-style="body.groupRowStyles(r)"
+                        on-group-toggle="body.onGroupToggle(r)"
+                        expanded="body.getRowExpanded(r)"
                         tabindex="{{$index}}"
                         row="r">
           </dt-group-row>
@@ -30,28 +31,28 @@ export function BodyDirective($timeout){
                   ng-if="!r.group"
                   row="body.getRowValue($index)"
                   tabindex="{{$index}}"
-                  columns="columns"
-                  column-widths="columnWidths"
+                  columns="body.columns"
+                  column-widths="body.columnWidths"
                   ng-keydown="body.keyDown($event, $index, r)"
                   ng-click="body.rowClicked($event, $index, r)"
-                  on-tree-toggle="body.onTreeToggle(this, row, cell)"
-                  ng-class="body.rowClasses(this, r)"
-                  options="options"
+                  on-tree-toggle="body.treeToggled(row, cell)"
+                  ng-class="body.rowClasses(r)"
+                  options="body.options"
                   selected="body.isSelected(r)"
-                  on-checkbox-change="body.onCheckboxChange($index, row)"
-                  columns="body.columnsByPin"
+                  on-checkbox-change="body.onCheckboxChange($index, r)"
+                  columns="dt.columnsByPin"
                   has-children="body.getRowHasChildren(r)"
-                  expanded="body.getRowExpanded(this, r)"
-                  ng-style="body.rowStyles(this, r)">
+                  expanded="body.getRowExpanded(r)"
+                  ng-style="body.rowStyles(r)">
           </dt-row>
         </dt-scroller>
-        <div ng-if="rows && !rows.length" 
-             class="empty-row" 
-             ng-bind="::options.emptyMessage">
+        <div ng-if="body.rows && !body.rows.length"
+             class="empty-row"
+             ng-bind="::body.options.emptyMessage">
        </div>
-       <div ng-if="rows === undefined" 
+       <div ng-if="body.rows === undefined"
              class="loading-row"
-             ng-bind="::options.loadingMessage">
+             ng-bind="::body.options.loadingMessage">
         </div>
       </div>`
   };

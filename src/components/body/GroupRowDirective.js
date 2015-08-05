@@ -3,7 +3,8 @@ export function GroupRowDirective(){
     restrict: 'E',
     controller: 'GroupRowController',
     controllerAs: 'group',
-    scope: {
+    scope: true,
+    bindToController: {
       row: '=',
       onGroupToggle: '&',
       expanded: '='
@@ -11,11 +12,11 @@ export function GroupRowDirective(){
     replace:true,
     template: `
       <div class="dt-group-row">
-        <span ng-class="group.treeClass(this)"
-              ng-click="group.onGroupToggle($event, this)">
+        <span ng-class="group.treeClass()"
+              ng-click="group.onGroupToggle($event)">
         </span>
         <span class="dt-group-row-label">
-          {{row.name}}
+          {{group.row.name}}
         </span>
       </div>`
   };

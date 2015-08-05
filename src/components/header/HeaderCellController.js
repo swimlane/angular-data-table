@@ -2,31 +2,29 @@ export class HeaderCellController{
 
   /**
    * Calculates the styles for the header cell directive
-   * @param  {scope}
    * @return {styles}
    */
-  styles(scope){
+  styles(){
     return {
-      width: scope.column.width  + 'px',
-      minWidth: scope.column.minWidth  + 'px',
-      maxWidth: scope.column.maxWidth  + 'px',
-      height: scope.column.height  + 'px'
+      width: this.column.width  + 'px',
+      minWidth: this.column.minWidth  + 'px',
+      maxWidth: this.column.maxWidth  + 'px',
+      height: this.column.height  + 'px'
     };
   }
 
   /**
    * Calculates the css classes for the header cell directive
-   * @param  {scope}
    */
-  cellClass(scope){
+  cellClass(){
     var cls = {
-      'sortable': scope.column.sortable,
+      'sortable': this.column.sortable,
       'dt-header-cell': true,
-      'resizable': scope.column.resizable
+      'resizable': this.column.resizable
     };
 
-    if(scope.column.heaerClassName){
-      cls[scope.column.headerClassName] = true;
+    if(this.column.heaerClassName){
+      cls[this.column.headerClassName] = true;
     }
 
     return cls;
@@ -34,33 +32,31 @@ export class HeaderCellController{
 
   /**
    * Toggles the sorting on the column
-   * @param  {scope}
    */
   sort(scope){
-    if(scope.column.sortable){
-      if(!scope.column.sort){
-        scope.column.sort = 'asc';
-      } else if(scope.column.sort === 'asc'){
-        scope.column.sort = 'desc';
-      } else if(scope.column.sort === 'desc'){
-        scope.column.sort = undefined;
+    if(this.column.sortable){
+      if(!this.column.sort){
+        this.column.sort = 'asc';
+      } else if(this.column.sort === 'asc'){
+        this.column.sort = 'desc';
+      } else if(this.column.sort === 'desc'){
+        this.column.sort = undefined;
       }
 
-      scope.onSort({
-        column: scope.column
+      this.onSort({
+        column: this.column
       });
     }
   }
 
   /**
    * Toggles the css class for the sort button
-   * @param  {scope}
    */
-  sortClass(scope){
+  sortClass(){
     return {
       'sort-btn': true,
-      'sort-asc icon-down': scope.column.sort === 'asc',
-      'sort-desc icon-up': scope.column.sort === 'desc'
+      'sort-asc icon-down': this.column.sort === 'asc',
+      'sort-desc icon-up': this.column.sort === 'desc'
     };
   }
 
@@ -69,8 +65,8 @@ export class HeaderCellController{
    * @param  {width}
    * @param  {column}
    */
-  onResize(scope, width, column){
-    scope.onResize({
+  onResize(width, column){
+    this.onResize({
       column: column,
       width: width
     });
@@ -81,8 +77,8 @@ export class HeaderCellController{
    * Invoked when the header cell directive checkbox was changed
    * @param  {object} scope angularjs scope
    */
-  onCheckboxChange(scope){
-    scope.onCheckboxChange();
+  onCheckboxChange(){
+    this.onCheckboxChange();
   }
 
 }
