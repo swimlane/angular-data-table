@@ -18,7 +18,7 @@ export class RowController {
    * Invoked when a cell triggers the tree toggle
    * @param  {cell}
    */
-  onTreeToggle(cell){
+  treeToggled(cell){
     this.onTreeToggle({
       cell: cell,
       row: this.row

@@ -491,7 +491,7 @@ export class BodyController{
    * @param  {row model}
    * @param  {cell model}
    */
-  onTreeToggle(row, cell){
+  treeToggled(row, cell){
     var val  = row[this.treeColumn.prop];
     this.expanded[val] = !this.expanded[val];
 

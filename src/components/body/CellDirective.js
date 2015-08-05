@@ -29,7 +29,7 @@ export function CellDirective($rootScope, $compile, $log){
         </label>
         <span ng-if="column.isTreeColumn && cell.hasChildren"
               ng-class="cell.treeClass(this)"
-              ng-click="cell.onTreeToggle($event)"></span>
+              ng-click="cell.treeToggled($event)"></span>
         <span class="dt-cell-content"></span>
       </div>`,
     replace: true,

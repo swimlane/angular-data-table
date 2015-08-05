@@ -44,7 +44,7 @@ export class CellController {
    * Invoked when the tree toggle button was clicked.
    * @param  {event}
    */
-  onTreeToggle(evt){
+  treeToggled(evt){
     evt.stopPropagation();
     this.expanded = !this.expanded;
     this.onTreeToggle({
