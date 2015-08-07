@@ -1,17 +1,17 @@
 export class GroupRowController {
 
-  onGroupToggle(evt, scope){
+  onGroupToggled(evt){
     evt.stopPropagation();
-    scope.onGroupToggle({
-      group: scope.row
+    this.onGroupToggle({
+      group: this.row
     });
   }
 
-  treeClass(scope){
+  treeClass(){
     return {
       'dt-tree-toggle': true,
-      'icon-right': !scope.expanded,
-      'icon-down': scope.expanded
+      'icon-right': !this.expanded,
+      'icon-down': this.expanded
     };
   }
 

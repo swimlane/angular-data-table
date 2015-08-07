@@ -4,8 +4,9 @@ export function CellDirective($rootScope, $compile, $log){
   return {
     restrict: 'E',
     controller: 'CellController',
+    scope: true,
     controllerAs: 'cell',
-    scope: {
+    bindToController: {
       options: '=',
       value: '=',
       selected: '=',
@@ -18,17 +19,17 @@ export function CellDirective($rootScope, $compile, $log){
     },
     template: 
       `<div class="dt-cell" 
-            data-title="{{::column.name}}" 
-            ng-style="cell.styles(column)"
-            ng-class="cell.cellClass(column)">
-        <label ng-if="column.isCheckboxColumn" class="dt-checkbox">
+            data-title="{{::cell.column.name}}" 
+            ng-style="cell.styles()"
+            ng-class="cell.cellClass()">
+        <label ng-if="cell.column.isCheckboxColumn" class="dt-checkbox">
           <input type="checkbox" 
-                 ng-checked="selected"
-                 ng-click="cell.onCheckboxChange($event, this)" />
+                 ng-checked="cell.selected"
+                 ng-click="cell.onCheckboxChanged($event)" />
         </label>
-        <span ng-if="column.isTreeColumn && hasChildren"
-              ng-class="cell.treeClass(this)"
-              ng-click="cell.onTreeToggle($event, this)"></span>
+        <span ng-if="cell.column.isTreeColumn && cell.hasChildren"
+              ng-class="cell.treeClass()"
+              ng-click="cell.onTreeToggled($event)"></span>
         <span class="dt-cell-content"></span>
       </div>`,
     replace: true,
@@ -39,9 +40,9 @@ export function CellDirective($rootScope, $compile, $log){
               cellScope;
 
           // extend the outer scope onto our new cell scope
-          if($scope.column.template || $scope.column.cellRenderer){
+          if(ctrl.column.template || ctrl.column.cellRenderer){
             cellScope = $rootScope.$new(true);
-            angular.forEach($scope.options.$outer, function(v,k) {
+            angular.forEach(ctrl.options.$outer, function(v,k) {
               if(k[0] !== '$'){
                 cellScope[k] = v;
               }
@@ -50,22 +51,22 @@ export function CellDirective($rootScope, $compile, $log){
             cellScope.getValue = ctrl.getValue;
           }
           
-          $scope.$watch('value', () => {
+          $scope.$watch('cell.value', () => {
             content.empty();
 
             if(cellScope){
-              cellScope.value = $scope.value;
-              cellScope.row = $scope.row;
+              cellScope.value = ctrl.value;
+              cellScope.row = ctrl.row;
             }
             
-            if($scope.column.template){
-              var elm = angular.element(`<span>${$scope.column.template.trim()}</span>`);
+            if(ctrl.column.template){
+              var elm = angular.element(`<span>${ctrl.column.template.trim()}</span>`);
               content.append($compile(elm)(cellScope));
-            } else if($scope.column.cellRenderer){
-              var elm = angular.element($scope.column.cellRenderer(cellScope, content));
+            } else if(ctrl.column.cellRenderer){
+              var elm = angular.element(ctrl.column.cellRenderer(cellScope, content));
               content.append($compile(elm)(cellScope));
             } else {
-              content[0].innerHTML = ctrl.getValue($scope);
+              content[0].innerHTML = ctrl.getValue();
             }
           });
         }

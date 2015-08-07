@@ -7,10 +7,10 @@ export class HeaderController {
    * @param  {object} scope
    * @return {object} styles
    */
-  styles(scope) {
+  styles() {
     return {
-      width: scope.options.internal.innerWidth + 'px',
-      height: scope.options.headerHeight + 'px'
+      width: this.options.internal.innerWidth + 'px',
+      height: this.options.headerHeight + 'px'
     }
   }
 
@@ -19,9 +19,9 @@ export class HeaderController {
    * @param  {object} scope
    * @return {object} styles
    */
-  innerStyles(scope){
+  innerStyles(){
     return {
-      width: scope.columnWidths.total + 'px'
+      width: this.columnWidths.total + 'px'
     };
   }
 
@@ -30,8 +30,8 @@ export class HeaderController {
    * @param  {object} scope
    * @param  {object} column
    */
-  onSort(scope, column){
-    scope.onSort({
+  onSorted(column){
+    this.onSort({
       column: column
     });
   }
@@ -42,15 +42,15 @@ export class HeaderController {
    * @param  {group}
    * @return {styles object}
    */
-  stylesByGroup(scope, group){
+  stylesByGroup(group){
     var styles = {
-      width: scope.columnWidths[group] + 'px'
+      width: this.columnWidths[group] + 'px'
     };
 
     if(group === 'center'){
-      TranslateXY(styles, scope.options.internal.offsetX * -1, 0);
+      TranslateXY(styles, this.options.internal.offsetX * -1, 0);
     } else if(group === 'right'){
-      var offset = (scope.columnWidths.total - scope.options.internal.innerWidth) *-1;
+      var offset = (this.columnWidths.total - this.options.internal.innerWidth) *-1;
       TranslateXY(styles, offset, 0);
     }
 
@@ -61,8 +61,8 @@ export class HeaderController {
    * Invoked when the header cell directive's checkbox has changed.
    * @param  {scope}
    */
-  onCheckboxChange(scope){
-    scope.onCheckboxChange();
+  onCheckboxChanged(){
+    this.onCheckboxChange();
   }
 
   /**
@@ -71,8 +71,8 @@ export class HeaderController {
    * @param  {object} column 
    * @param  {int} width  
    */
-  onResize(scope, column, width){
-    scope.onResize({
+  onResized(column, width){
+    this.onResize({
       column: column,
       width: width
     });

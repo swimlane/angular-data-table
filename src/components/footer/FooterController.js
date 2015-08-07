@@ -7,9 +7,9 @@ export class FooterController {
    */
   /*@ngInject*/
   constructor($scope){
-    $scope.page = $scope.paging.offset + 1;
-    $scope.$watch('paging.offset', (newVal) => {
-      this.offsetChanged($scope, newVal)
+    this.page = this.paging.offset + 1;
+    $scope.$watch('footer.paging.offset', (newVal) => {
+      this.offsetChanged(newVal)
     });
   }
 
@@ -17,19 +17,19 @@ export class FooterController {
    * The offset ( page ) changed externally, update the page
    * @param  {new offset}
    */
-  offsetChanged(scope, newVal){
-    scope.page = newVal + 1;
+  offsetChanged(newVal){
+    this.page = newVal + 1;
   }
 
   /**
    * The pager was invoked
    * @param  {scope}
    */
-  onPage(scope, page){
-    scope.paging.offset = page - 1;
-    scope.onPage({
-      offset: scope.paging.offset,
-      size: scope.paging.size
+  onPaged(page){
+    this.paging.offset = page - 1;
+    this.onPage({
+      offset: this.paging.offset,
+      size: this.paging.size
     });
   }
 

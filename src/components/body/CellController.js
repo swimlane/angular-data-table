@@ -2,12 +2,11 @@ export class CellController {
 
   /**
    * Calculates the styles for the Cell Directive
-   * @param  {column}
    * @return {styles object}
    */
-  styles(col){
+  styles(){
     return {
-      width: col.width  + 'px'
+      width: this.column.width  + 'px'
     };
   }
 
@@ -16,13 +15,13 @@ export class CellController {
    * @param  {column}
    * @return {class object}
    */
-  cellClass(col){
+  cellClass(){
     var style = {
-      'dt-tree-col': col.isTreeColumn
+      'dt-tree-col': this.column.isTreeColumn
     };
 
-    if(col.className){
-      style[col.className] = true;
+    if(this.column.className){
+      style[this.column.className] = true;
     }
 
     return style;
@@ -30,30 +29,28 @@ export class CellController {
 
   /**
    * Calculates the tree class styles.
-   * @param  {scope}
    * @return {css classes object}
    */
-  treeClass(scope){
+  treeClass(){
     return {
       'dt-tree-toggle': true,
-      'icon-right': !scope.expanded,
-      'icon-down': scope.expanded
+      'icon-right': !this.expanded,
+      'icon-down': this.expanded
     }
   }
 
   /**
    * Invoked when the tree toggle button was clicked.
    * @param  {event}
-   * @param  {scope}
    */
-  onTreeToggle(evt, scope){
+  onTreeToggled(evt){
     evt.stopPropagation();
-    scope.expanded = !scope.expanded;
-    scope.onTreeToggle({ 
+    this.expanded = !this.expanded;
+    this.onTreeToggle({ 
       cell: {
-        value: scope.value,
-        column: scope.column,
-        expanded: scope.expanded
+        value: this.value,
+        column: this.column,
+        expanded: this.expanded
       }
     });
   }
@@ -61,21 +58,19 @@ export class CellController {
   /**
    * Invoked when the checkbox was changed
    * @param  {object} event 
-   * @param  {object} scope 
    */
-  onCheckboxChange(event, scope){
+  onCheckboxChanged(event){
     event.stopPropagation();
-    scope.onCheckboxChange();
+    this.onCheckboxChange();
   }
 
   /**
    * Returns the value in its fomatted form
-   * @param  {object} scope 
    * @return {string} value
    */
-  getValue(scope){
-    var val = scope.column.cellDataGetter ? 
-      scope.column.cellDataGetter(scope.value) : scope.value;
+  getValue(){
+    var val = this.column.cellDataGetter ? 
+      this.column.cellDataGetter(this.value) : this.value;
 
     if(val === undefined || val === null) val = '';
 

@@ -5,7 +5,8 @@ export function HeaderCellDirective($compile){
     restrict: 'E',
     controller: 'HeaderCellController',
     controllerAs: 'hcell',
-    scope: {
+    scope: true,
+    bindToController: {
       column: '=',
       onCheckboxChange: '&',
       onSort: '&',
@@ -14,23 +15,23 @@ export function HeaderCellDirective($compile){
     },
     replace: true,
     template: 
-      `<div ng-class="hcell.cellClass(this)"
+      `<div ng-class="hcell.cellClass()"
             draggable="true"
-            ng-style="hcell.styles(this)"
-            title="{{::column.name}}">
-        <div resizable="column.resizable" 
-             on-resize="hcell.onResize(this, width, column)"
-             min-width="column.minWidth"
-             max-width="column.maxWidth">
-          <label ng-if="column.isCheckboxColumn && column.headerCheckbox" class="dt-checkbox">
+            ng-style="hcell.styles()"
+            title="{{::hcell.column.name}}">
+        <div resizable="hcell.column.resizable" 
+             on-resize="hcell.onResized(width, hcell.column)"
+             min-width="hcell.column.minWidth"
+             max-width="hcell.column.maxWidth">
+          <label ng-if="hcell.column.isCheckboxColumn && hcell.column.headerCheckbox" class="dt-checkbox">
             <input type="checkbox" 
-                   ng-checked="selected"
-                   ng-click="hcell.onCheckboxChange(this)" />
+                   ng-checked="hcell.selected"
+                   ng-click="hcell.onCheckboxChange()" />
           </label>
           <span class="dt-header-cell-label" 
-                ng-click="hcell.sort(this)">
+                ng-click="hcell.onSorted()">
           </span>
-          <span ng-class="hcell.sortClass(this)"></span>
+          <span ng-class="hcell.sortClass()"></span>
         </div>
       </div>`,
     compile: function() {
@@ -38,11 +39,11 @@ export function HeaderCellDirective($compile){
         pre: function($scope, $elm, $attrs, ctrl) {
           var label = $elm[0].querySelector('.dt-header-cell-label');
 
-          if($scope.column.headerRenderer){
-            var elm = angular.element($scope.column.headerRenderer($scope, $elm));
+          if(ctrl.column.headerRenderer){
+            var elm = angular.element(ctrl.column.headerRenderer($elm));
             angular.element(label).append($compile(elm)($scope)[0]);
           } else {
-            var val = $scope.column.name;
+            var val = ctrl.column.name;
             if(val === undefined || val === null) val = '';
             label.innerHTML = val;
           }

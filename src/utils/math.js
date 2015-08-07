@@ -138,7 +138,7 @@ export function ForceFillColumnWidths(allColumns, expectedWidth, startIdx){
   });
 
   var remainingWidth = expectedWidth - contentWidth,
-      additionWidthPerColumn = Math.floor(remainingWidth / columnsToResize.length),
+      additionWidthPerColumn = remainingWidth / columnsToResize.length,
       exceedsWindow = contentWidth > expectedWidth;
 
   columnsToResize.forEach((column) => {

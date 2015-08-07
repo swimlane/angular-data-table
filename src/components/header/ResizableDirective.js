@@ -7,7 +7,7 @@
  */
 export function ResizableDirective($document, debounce, $timeout){
   return {
-    restrict: 'AEC',
+    restrict: 'A',
     scope:{
       isResizable: '=resizable',
       minWidth: '=',

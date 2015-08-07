@@ -18,7 +18,6 @@ import { HeaderCellDirective } from './components/header/HeaderCellDirective';
 import { BodyController } from './components/body/BodyController';
 import { BodyDirective } from './components/body/BodyDirective';
 
-import { ScrollerController,  } from './components/body/ScrollerController';
 import { ScrollerDirective } from './components/body/ScrollerDirective';
 
 import { RowController } from './components/body/RowController';
@@ -39,7 +38,7 @@ import { PagerDirective } from './components/footer/PagerDirective';
 export default angular
   .module('data-table', [])
 
-  .controller('DataTable', DataTableController)
+  .controller('DataTableController', DataTableController)
   .directive('dtable', DataTableDirective)
 
   .directive('resizable', ResizableDirective)
@@ -57,7 +56,6 @@ export default angular
   .controller('BodyController', BodyController)
   .directive('dtBody', BodyDirective)
 
-  .controller('ScrollerController', ScrollerController)
   .directive('dtScroller', ScrollerDirective)
 
   .controller('RowController', RowController)

@@ -4,11 +4,9 @@ import { scrollHelper } from './scrollHelper';
 export function ScrollerDirective($timeout){
   return {
     restrict: 'E',
-    controller: 'ScrollerController',
-    controllerAs: 'scroller',
     require:'^dtBody',
     transclude: true,
-    template: `<div ng-style="scroller.scrollerStyles(this)" ng-transclude></div>`,
+    template: `<div ng-style="scrollerStyles()" ng-transclude></div>`,
     link: function($scope, $elm, $attrs, ctrl){
       var ticking = false,
           lastScrollY = 0,
@@ -17,8 +15,8 @@ export function ScrollerDirective($timeout){
 
       function update(){
         $timeout(() => {
-          $scope.options.internal.offsetY = lastScrollY;
-          $scope.options.internal.offsetX = lastScrollX;
+          ctrl.options.internal.offsetY = lastScrollY;
+          ctrl.options.internal.offsetX = lastScrollX;
           ctrl.updatePage();
         });
 
@@ -37,6 +35,13 @@ export function ScrollerDirective($timeout){
         lastScrollX = this.scrollLeft;
         requestTick();
       });
+
+      $scope.scrollerStyles = function(scope){
+        return {
+          height: ctrl.count * ctrl.options.rowHeight + 'px'
+        }
+      };
+
     }
   };
 };

@@ -8,7 +8,7 @@ import angular from 'angular';
  */
 export function SortableDirective($timeout) {
   return {
-    restrict: 'AC',
+    restrict: 'A',
     scope: {
       isSortable: '=sortable',
       onSortableSort: '&'

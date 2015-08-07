@@ -3,19 +3,19 @@ export function GroupRowDirective(){
     restrict: 'E',
     controller: 'GroupRowController',
     controllerAs: 'group',
-    scope: {
+    bindToController: {
       row: '=',
       onGroupToggle: '&',
       expanded: '='
     },
+    scope: true,
     replace:true,
     template: `
       <div class="dt-group-row">
-        <span ng-class="group.treeClass(this)"
-              ng-click="group.onGroupToggle($event, this)">
+        <span ng-class="group.treeClass()"
+              ng-click="group.onGroupToggled($event)">
         </span>
-        <span class="dt-group-row-label">
-          {{row.name}}
+        <span class="dt-group-row-label" ng-bind="group.row.name">
         </span>
       </div>`
   };

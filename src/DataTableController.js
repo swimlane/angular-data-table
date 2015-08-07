@@ -19,14 +19,14 @@ export class DataTableController {
       $log: $log
     });
 
-    this.defaults($scope);
+    this.defaults();
 
     // set scope to the parent
-    $scope.options.$outer = $scope.$parent;
+    this.options.$outer = $scope.$parent;
     
-    $scope.$watch('options.columns', (newVal, oldVal) => {
+    $scope.$watch('dt.options.columns', (newVal, oldVal) => {
       if(newVal.length > oldVal.length){
-        this.transposeColumnDefaults(newVal);
+        this.transposeColumnDefaults();
       }
 
       if(newVal.length !== oldVal.length){
@@ -35,13 +35,21 @@ export class DataTableController {
 
       this.calculateColumns();
     }, true);
+
+    // default sort
+    var watch = $scope.$watch('dt.rows', (newVal) => {
+      if(newVal){
+        watch();
+        this.onSorted();
+      }
+    });
   }
 
   /**
    * Create columns from elements
    * @param  {array} columnElms 
    */
-  buildColumns(scope, columnElms){
+  buildColumns(columnElms){
     if(columnElms && columnElms.length){
       var columns = [];
 
@@ -67,8 +75,8 @@ export class DataTableController {
             column.className = attr.value;
           }
 
-          if(attrName === 'name'){
-            column.name = attr.value;
+          if(attrName === 'name' || attrName === 'prop'){
+            column[attrName] = attr.value;
           }
         });
 
@@ -79,47 +87,38 @@ export class DataTableController {
         columns.push(column);
       });
 
-      scope.options.columns = columns;
+      this.options.columns = columns;
     }
   }
 
   /**
    * Creates and extends default options for the grid control
-   * @param  {scope}
    */
-  defaults($scope){
-    $scope.expanded = $scope.expanded || {};
+  defaults(){
+    this.expanded = this.expanded || {};
 
-    var options = angular.extend(angular.
-      copy(TableDefaults), $scope.options);
+    this.options = angular.extend(angular.
+      copy(TableDefaults), this.options);
 
-    options.paging = angular.extend(angular.copy(TableDefaults.paging),
-      $scope.options.paging);
-
-    $scope.options = options;
-
-    if($scope.options.selectable && $scope.options.multiSelect){
-      $scope.selected = $scope.selected || [];
-    }
-
-    // default sort
-    var watch = $scope.$watch('rows', (newVal) => {
-      if(newVal){
-        watch();
-        this.onSort($scope);
+    angular.forEach(TableDefaults.paging, (v,k) => {
+      if(!this.options.paging[k]){
+        this.options.paging[k] = v;
       }
     });
+
+    if(this.options.selectable && this.options.multiSelect){
+      this.selected = this.selected || [];
+    }
   }
 
   /**
    * On init or when a column is added, we need to
    * make sure all the columns added have the correct
    * defaults applied.
-   * @param  {Object} columns
    */
-  transposeColumnDefaults(columns){
-    for(var i=0, len = columns.length; i < len; i++) {
-      var column = columns[i];
+  transposeColumnDefaults(){
+    for(var i=0, len = this.options.columns.length; i < len; i++) {
+      var column = this.options.columns[i];
       column.$id = ObjectId();
 
       angular.forEach(ColumnDefaults, (v,k) => {
@@ -132,7 +131,7 @@ export class DataTableController {
         column.prop = CamelCase(column.name);
       }
 
-      columns[i] = column;
+      this.options.columns[i] = column;
     }
   }
 
@@ -140,21 +139,20 @@ export class DataTableController {
    * Calculate column groups and widths
    */
   calculateColumns(){
-    var columns = this.$scope.options.columns;
+    var columns = this.options.columns;
     this.columnsByPin = ColumnsByPin(columns);
     this.columnWidths = ColumnGroupWidths(this.columnsByPin, columns);
   }
 
   /**
    * Returns the css classes for the data table.
-   * @param  {scope}
    * @return {style object}
    */
-  tableCss(scope){
+  tableCss(){
     return {
-      'fixed': scope.options.scrollbarV,
-      'selectable': scope.options.selectable,
-      'checkboxable': scope.options.checkboxSelection
+      'fixed': this.options.scrollbarV,
+      'selectable': this.options.selectable,
+      'checkboxable': this.options.checkboxSelection
     };
   }
 
@@ -163,13 +161,13 @@ export class DataTableController {
    * @param  {int} forceIdx 
    */
   adjustColumns(forceIdx){
-    var width = this.$scope.options.internal.innerWidth - 
-      this.$scope.options.internal.scrollBarWidth;
+    var width = this.options.internal.innerWidth - 
+      this.options.internal.scrollBarWidth;
       
-    if(this.$scope.options.columnMode === 'force'){
-      ForceFillColumnWidths(this.$scope.options.columns, width, forceIdx);
-    } else if(this.$scope.options.columnMode === 'flex') {
-      AdjustColumnWidths(this.$scope.options.columns, width);
+    if(this.options.columnMode === 'force'){
+      ForceFillColumnWidths(this.options.columns, width, forceIdx);
+    } else if(this.options.columnMode === 'flex') {
+      AdjustColumnWidths(this.options.columns, width);
     }
   }
 
@@ -178,25 +176,22 @@ export class DataTableController {
    * @return {[type]}
    */
   calculatePageSize(){
-    this.$scope.options.paging.size = Math.ceil(
-      this.$scope.options.internal.bodyHeight / this.$scope.options.rowHeight) + 1;
+    this.options.paging.size = Math.ceil(
+      this.options.internal.bodyHeight / this.options.rowHeight) + 1;
   }
 
   /**
    * Sorts the values of the grid for client side sorting.
-   * @param  {scope}
    */
-  onSort(scope){
-    if(!scope.rows) return;
+  onSorted(){
+    if(!this.rows) return;
 
-    var sorts = scope.options.columns.filter((c) => {
+    var sorts = this.options.columns.filter((c) => {
       return c.sort;
     });
 
     if(sorts.length){
-      if(this.$scope.onSort){
-        this.$scope.onSort({ sorts: sorts });
-      }
+        this.onSort({ sorts: sorts });
 
       var clientSorts = [];
       for(var i=0, len=sorts.length; i < len; i++) {
@@ -210,9 +205,9 @@ export class DataTableController {
       if(clientSorts.length){
         // todo: more ideal to just resort vs splice and repush
         // but wasn't responding to this change ...
-        var sortedValues = this.$filter('orderBy')(scope.rows, clientSorts);
-        scope.rows.splice(0, scope.rows.length);
-        scope.rows.push(...sortedValues);
+        var sortedValues = this.$filter('orderBy')(this.rows, clientSorts);
+        this.rows.splice(0, this.rows.length);
+        this.rows.push(...sortedValues);
       }
     }
 
@@ -221,12 +216,11 @@ export class DataTableController {
 
   /**
    * Invoked when a tree is collasped/expanded
-   * @param  {scope}
    * @param  {row model}
    * @param  {cell model}
    */
-  onTreeToggle(scope, row, cell){
-    scope.onTreeToggle({
+  onTreeToggled(row, cell){
+    this.onTreeToggle({
       row: row,
       cell: cell
     });
@@ -234,12 +228,11 @@ export class DataTableController {
 
   /**
    * Invoked when the body triggers a page change.
-   * @param  {scope}
    * @param  {offset}
    * @param  {size}
    */
-  onBodyPage(scope, offset, size){
-    scope.onPage({
+  onBodyPage(offset, size){
+    this.onPage({
       offset: offset,
       size: size
     });
@@ -247,12 +240,11 @@ export class DataTableController {
 
   /**
    * Invoked when the footer triggers a page change.
-   * @param  {scope}
    * @param  {offset}
    * @param  {size}
    */
-  onFooterPage(scope, offset, size){
-    var pageBlockSize = scope.options.rowHeight * size,
+  onFooterPage(offset, size){
+    var pageBlockSize = this.options.rowHeight * size,
         offsetY = pageBlockSize * offset;
 
     scrollHelper.setYOffset(offsetY);
@@ -260,39 +252,36 @@ export class DataTableController {
 
   /**
    * Invoked when the header checkbox directive has changed.
-   * @param  {scope}
    */
-  onHeaderCheckboxChange(scope){
-    if(scope.rows){
-      var matches = scope.selected.length === scope.rows.length;
-      scope.selected.splice(0, scope.selected.length);
+  onHeaderCheckboxChange(){
+    if(this.rows){
+      var matches = this.selected.length === this.rows.length;
+      this.selected.splice(0, this.selected.length);
 
       if(!matches){
-        scope.selected.push(...scope.rows);
+        this.selected.push(...this.rows);
       }
     }
   }
 
   /**
    * Returns if all the rows are selected
-   * @param  {scope}  scope
    * @return {Boolean} if all selected
    */
-  isAllRowsSelected(scope){
-    if(!scope.rows) return false;
-    return scope.selected.length === scope.rows.length;
+  isAllRowsSelected(){
+    if(this.rows) return false;
+    return this.selected.length === this.rows.length;
   }
 
   /**
    * Occurs when a header directive triggered a resize event
-   * @param  {object} scope
    * @param  {object} column
    * @param  {int} width
    */
-  onResize(scope, column, width){
-    var idx = scope.options.columns.indexOf(column);
+  onResize(column, width){
+    var idx =this.options.columns.indexOf(column);
     if(idx > -1){
-      var column = scope.options.columns[idx];
+      var column = this.options.columns[idx];
       column.width = width;
       column.canAutoResize = false;
 
@@ -303,22 +292,20 @@ export class DataTableController {
 
   /**
    * Occurs when a row was selected
-   * @param  {object} scope 
    * @param  {object} rows   
    */
-  onSelect(scope, rows){
-    scope.onSelect({
+  onSelected(rows){
+    this.onSelect({
       rows: rows
     });
   }
 
   /**
    * Occurs when a row was click but may not be selected.
-   * @param  {object} scope 
    * @param  {object} row   
    */
-  onRowClick(scope, row){
-    scope.onRowClick({
+  onRowClicked(row){
+    this.onRowClick({
       row: row
     });
   }
