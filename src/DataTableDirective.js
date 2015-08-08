@@ -62,7 +62,7 @@ export function DataTableDirective($window, $timeout, throttle){
     compile: function(tElem, tAttrs){
       return {
         pre: function($scope, $elm, $attrs, ctrl){
-          $elm.columns = angular.element(document).find('body').data($attrs.dtId)
+          $elm.columns = angular.element(document).find('body').data($attrs.dtId);
           ctrl.buildColumns($elm.columns);
           ctrl.transposeColumnDefaults();
 
@@ -94,9 +94,16 @@ export function DataTableDirective($window, $timeout, throttle){
           resize();
           $timeout(resize);
           $elm.addClass('dt-loaded');
-          angular.element($window).bind('resize', throttle(() => {
+          angular.element($window).on('resize', throttle(() => {
             $timeout(resize);
           }));
+
+          $scope.$on('$destroy', () => {
+            // prevent memory leaks
+            angular.element($window).off('resize');
+            // remove column data from DOM
+            angular.element(document).find('body').removeData($attrs.dtId);
+          })
         }
       }
     }
