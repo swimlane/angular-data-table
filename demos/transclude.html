@@ -47,8 +47,10 @@
         <column name="Name" width="300">
           <span>{{value}}</span>
         </column>
-        <column name="Gender" width="700">
-          <span>{{value}} (mainwrapCtrl.bar: {{ mainwrapCtrl.bar }}) {{ foo }}</span>
+        <column name="Gender" width="400">
+          <span>{{value}} <br>mainwrapCtrl.bar: <em>{{ mainwrapCtrl.bar }}</em> <br>$scope.foo: <em>{{ foo }}</em> <br>
+          <button ng-click="mainwrapCtrl.setBar('New Bar!')">Set "New Bar"</button>
+          </span>
         </column>
       </dtable>
     </main-wrap>
@@ -61,8 +63,11 @@
       System.import('dataTable').then(function(dt){
         var module = angular.module('app', [ dt.default.name ]);
 
-        module.controller('MainwrapCtrl', function($scope){
-          $scope.bar = 'valBar';
+        module.controller('MainwrapCtrl', function(){
+          this.bar = 'valBar';
+          this.setBar = function (val) {
+            this.bar = val;
+          };
         });
 
 
@@ -79,7 +84,7 @@
 
         module.controller('HomeController', function($scope, $http){
           $scope.options = {
-            rowHeight: 50,
+            rowHeight: 150,
             headerHeight: 50,
             footerHeight: false,
             scrollbarV: false
