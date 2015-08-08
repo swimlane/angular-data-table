@@ -27,8 +27,14 @@ export function DataTableDirective($window, $timeout, throttle){
           return v.toString(16);
       });
 
-      var columns = element[0].getElementsByTagName('column');
+      // store columns
+      var columnsEl = element[0].getElementsByTagName('column');
+      var columns = [];
 
+      // store only outerHTML rather than the whole DOM node
+      for (var i = 0; i < columnsEl.length; i++) {
+        columns.push( columnsEl[i].outerHTML );
+      };
       angular.element(document).find('body').data(uuid, columns);
 
       return `<div class="dt" ng-class="dt.tableCss()" dt-id="${ uuid }">
@@ -62,8 +68,15 @@ export function DataTableDirective($window, $timeout, throttle){
     compile: function(tElem, tAttrs){
       return {
         pre: function($scope, $elm, $attrs, ctrl){
-          $elm.columns = angular.element(document).find('body').data($attrs.dtId);
-          ctrl.buildColumns($elm.columns);
+          // get the column data stored on `body`
+          var columnSrc = angular.element(document).find('body').data($attrs.dtId);
+          var columnEl = [];
+          // create elements from the fetched template content
+          for (var i = 0; i < columnSrc.length; i++) {
+            columnEl.push( angular.element( columnSrc[i] )[0] );
+          };
+          // build the columns from created elements
+          ctrl.buildColumns(columnEl);
           ctrl.transposeColumnDefaults();
 
           ctrl.options.internal.scrollBarWidth = ScrollbarWidth();
