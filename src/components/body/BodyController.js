@@ -42,7 +42,7 @@ export class BodyController{
         }
 
         if(this.options.scrollbarV){
-          var refresh = newVal && oldVal && (newVal.length === oldVal.length 
+          var refresh = newVal && oldVal && (newVal.length === oldVal.length
             || newVal.length < oldVal.length);
 
           this.getRows(refresh);
@@ -74,7 +74,7 @@ export class BodyController{
         this.count = count;
         this.updatePage();
       });
-      
+
       $scope.$watch('body.options.paging.offset', (newVal) => {
         if(this.options.paging.size){
           this.onPage({
@@ -117,9 +117,9 @@ export class BodyController{
 
   /**
    * Matches groups to their respective parents by index.
-   * 
+   *
    * Example:
-   * 
+   *
    *  {
    *    "Acme" : [
    *      { name: "Acme Holdings", parent: "Acme" }
@@ -128,14 +128,14 @@ export class BodyController{
    *      { name: "Acme Ltd", parent: "Acme Holdings" }
    *    ]
    *  }
-   * 
+   *
    */
   buildRowsByGroup(){
     this.index = {};
     this.rowsByGroup = {};
 
-    var parentProp = this.treeColumn ? 
-      this.treeColumn.relationProp : 
+    var parentProp = this.treeColumn ?
+      this.treeColumn.relationProp :
       this.groupColumn.prop;
 
     for(var i = 0, len = this.rows.length; i < len; i++) {
@@ -197,7 +197,7 @@ export class BodyController{
    * @return {array} the built tree
    */
   buildTree(){
-    var count = 0, 
+    var count = 0,
         temp = [];
 
     for(var i = 0, len = this.rows.length; i < len; i++) {
@@ -227,7 +227,7 @@ export class BodyController{
    * Creates the intermediate collection that is shown in the view.
    * @param  {boolean} refresh - bust the tree/group cache
    */
-  getRows(refresh){    
+  getRows(refresh){
     // only proceed when we have pre-aggregated the values
     if((this.treeColumn || this.groupColumn) && !this.rowsByGroup){
       return false;
@@ -316,7 +316,7 @@ export class BodyController{
 
   /**
    * Builds the styles for the row group directive
-   * @param  {object} row   
+   * @param  {object} row
    * @return {object} styles
    */
   groupRowStyles(row){
@@ -436,11 +436,11 @@ export class BodyController{
   }
 
   /**
-   * Selectes the rows between a index.  Used for shift click selection.
+   * Selects the rows between a index.  Used for shift click selection.
    * @param  {index}
    */
   selectRowsBetween(index){
-    var reverse = index < this.prevIndex, 
+    var reverse = index < this.prevIndex,
         selecteds = [];
 
     for(var i=0, len=this.tempRows.length; i < len; i++) {
@@ -448,14 +448,37 @@ export class BodyController{
           greater = i >= this.prevIndex && i <= index,
           lesser = i <= this.prevIndex && i >= index;
 
+      var range = {};
+      if ( reverse ) {
+        range = {
+          start: index,
+          end: ( this.prevIndex - index )
+        }
+      } else {
+        range = {
+          start: this.prevIndex,
+          end: index + 1
+        }
+      }
+
       if((reverse && lesser) || (!reverse && greater)){
         var idx = this.selected.indexOf(row);
-        if(idx === -1){
-          this.selected.push(row);
-          selecteds.push(row);
+        // if reverse shift selection (unselect) and the
+        // row is already selected, remove it from selected
+        if ( reverse && idx > -1 ) {
+          this.selected.splice(idx, 1);
+          continue;
+        }
+        if( i >= range.start && i < range.end ){
+          if ( idx === -1 ) {
+            this.selected.push(row);
+            selecteds.push(row);
+          }
         }
       }
     }
+
+    // this.selected = selecteds;
 
     this.onSelect({ rows: selecteds });
   }
@@ -529,7 +552,7 @@ export class BodyController{
 
   /**
    * Invoked when the row group directive was expanded
-   * @param  {object} row   
+   * @param  {object} row
    */
   onGroupToggle(row){
     this.expanded[row.name] = !this.expanded[row.name];
