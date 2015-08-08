@@ -7,7 +7,7 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black" />
     <meta name="viewport" content="width = device-width, minimal-ui, initial-scale = 1, user-scalable = no" />
     <meta name="apple-mobile-web-app-title" content="Datagrid">
-    <title>Datagrid - Expressive</title>
+    <title>Datagrid - Sorting</title>
     <base href="/">
     <style>
       *, *:after, *:before {
@@ -42,24 +42,16 @@
   </head>
   <body ng-app="app" ng-controller="HomeController">
 
-
-    <dtable options="options" rows="data" class="material dt">
-      <column name="Name" width="300" flex-grow="1"></column>
-      <column name="Gender" flex-grow="1">
-        {{monkey}} {{value}}
-      </column>
-    </dtable>
-
-    <dtable options="options2" rows="data" class="material dt">
-      <column name="Name" width="300"></column>
-      <column name="Company" width="300">
-        <div ng-repeat="v in vs">
-        {{v}} : {{row.name}} : {{value}}
-        </div>
-      </column>
-    </dtable>
-
-    <button type="button" ng-click="changeIt()">Change External Value</input>
+    <main-wrap>
+      <dtable options="options" rows="data" class="material">
+        <column name="Name" width="300">
+          <span>{{value}}</span>
+        </column>
+        <column name="Gender" width="700">
+          <span>{{value}} (mainwrapCtrl.bar: {{ mainwrapCtrl.bar }}) {{ foo }}</span>
+        </column>
+      </dtable>
+    </main-wrap>
 
     <script src="../jspm_packages/system.js"></script>
     <script src="../config.js"></script>
@@ -69,34 +61,34 @@
       System.import('dataTable').then(function(dt){
         var module = angular.module('app', [ dt.default.name ]);
 
+        module.controller('MainwrapCtrl', function($scope){
+          $scope.bar = 'valBar';
+        });
+
+
+        module.directive('mainWrap', function () {
+          return {
+            template: '<div>Outer template content. <br />Transcluded content:<div ng-transclude></div></div>',
+            restrict: 'EA',
+            transclude: true,
+            controller: 'MainwrapCtrl',
+            controllerAs: 'mainwrapCtrl'
+          };
+        });
+
+
         module.controller('HomeController', function($scope, $http){
-        $scope.vs = [ 1 ]
-
-        $scope.changeIt = function(){
-          $scope.vs[0] = 2;
-        }
-
           $scope.options = {
             rowHeight: 50,
-            footerHeight: false,
-            headerHeight: 50,
-            columnMode: 'flex',
-            scrollbarV: false,
-            selectable: false
-          };
-
-          $scope.options2 = {
-            rowHeight: 50,
             headerHeight: 50,
             footerHeight: false,
-            scrollbarV: false,
-            selectable: false
+            scrollbarV: false
           };
 
-          $scope.monkey = "iz";
+          $scope.foo = 'valFoo';
 
           $http.get('/demos/data/100.json').success(function(data) {
-            $scope.data = data.splice(0, 5);
+            $scope.data = data.splice(0, 15);
           });
 
         });

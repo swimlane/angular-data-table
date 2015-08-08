@@ -20,10 +20,18 @@ export function DataTableDirective($window, $timeout, throttle){
     },
     controllerAs: 'dt',
     template: function(element){
-      // Gets the column nodes to transposes to column objects
-      // http://stackoverflow.com/questions/30845397/angular-expressive-directive-design/30847609#30847609
-      element.columns = element[0].getElementsByTagName('column');
-      return `<div class="dt" ng-class="dt.tableCss()">
+      // workaround for problem storing data on an element that's then
+      // transcluded: https://github.com/Swimlane/angular-data-table/issues/43
+      var uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+          var r = Math.random()*16|0, v = c == 'x' ? r : (r&0x3|0x8);
+          return v.toString(16);
+      });
+
+      var columns = element[0].getElementsByTagName('column');
+
+      angular.element(document).find('body').data(uuid, columns);
+
+      return `<div class="dt" ng-class="dt.tableCss()" dt-id="${ uuid }">
           <dt-header options="dt.options"
                      on-checkbox-change="dt.onHeaderCheckboxChange()"
                      columns="dt.columnsByPin"
@@ -54,6 +62,7 @@ export function DataTableDirective($window, $timeout, throttle){
     compile: function(tElem, tAttrs){
       return {
         pre: function($scope, $elm, $attrs, ctrl){
+          $elm.columns = angular.element(document).find('body').data($attrs.dtId)
           ctrl.buildColumns($elm.columns);
           ctrl.transposeColumnDefaults();
 
