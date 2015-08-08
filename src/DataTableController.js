@@ -21,8 +21,9 @@ export class DataTableController {
 
     this.defaults();
 
-    // set scope to the parent
-    this.options.$outer = $scope.$parent;
+    // set scope to the parent, unless it's $$transcluded, in which
+    // case it needs to be set to grandparent
+    this.options.$outer = $scope.$parent.$$transcluded ? $scope.$parent.$parent : $scope.$parent;
 
     $scope.$watch('dt.options.columns', (newVal, oldVal) => {
       if(newVal.length > oldVal.length){
