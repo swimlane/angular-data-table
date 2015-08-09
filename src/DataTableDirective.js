@@ -110,13 +110,6 @@ export function DataTableDirective($window, $timeout, throttle){
           angular.element($window).on('resize', throttle(() => {
             $timeout(resize);
           }));
-
-          $scope.$on('$destroy', () => {
-            // prevent memory leaks
-            angular.element($window).off('resize');
-            // remove column data from DOM
-            angular.element(document).find('body').removeData($attrs.dtId);
-          })
         }
       }
     }
