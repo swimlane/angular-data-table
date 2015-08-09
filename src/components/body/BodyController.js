@@ -472,6 +472,8 @@ export class BodyController{
           this.selected.splice(idx, 1);
           continue;
         }
+        // if in the positive range to be added to `selected`, and
+        // not already in the selected array, add it
         if( i >= range.start && i < range.end ){
           if ( idx === -1 ) {
             this.selected.push(row);
