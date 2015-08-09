@@ -423,6 +423,9 @@ export class BodyController{
           if(idx > -1){
             this.selected.splice(idx, 1);
           } else {
+            if(this.options.multiSelectOnShift && this.selected.length === 1) {
+              this.selected.splice(0, 1);
+            }
             this.selected.push(row);
             this.onSelect({ rows: [ row ] });
           }
