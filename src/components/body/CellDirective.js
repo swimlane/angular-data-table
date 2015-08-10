@@ -1,6 +1,6 @@
 import angular from 'angular';
 
-export function CellDirective($rootScope, $compile, $log){
+export function CellDirective($rootScope, $compile, $log, $timeout){
   return {
     restrict: 'E',
     controller: 'CellController',
@@ -36,18 +36,11 @@ export function CellDirective($rootScope, $compile, $log){
     compile: function() {
       return {
         pre: function($scope, $elm, $attrs, ctrl) {
-          var content = angular.element($elm[0].querySelector('.dt-cell-content')), 
-              cellScope;
+          var content = angular.element($elm[0].querySelector('.dt-cell-content')), cellScope;
 
           // extend the outer scope onto our new cell scope
           if(ctrl.column.template || ctrl.column.cellRenderer){
-            cellScope = $rootScope.$new(true);
-            angular.forEach(ctrl.options.$outer, function(v,k) {
-              if(k[0] !== '$'){
-                cellScope[k] = v;
-              }
-            });
-
+            cellScope = ctrl.options.$outer.$new(false);
             cellScope.getValue = ctrl.getValue;
           }
           

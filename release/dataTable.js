@@ -1,6 +1,6 @@
 /**
  * angular-data-table - AngularJS data table directive written in ES6.
- * @version v0.3.1
+ * @version v0.3.2
  * @link http://swimlane.com/
  * @license 
  */
@@ -211,7 +211,7 @@
     return FooterController;
   })();
 
-  function CellDirective($rootScope, $compile, $log) {
+  function CellDirective($rootScope, $compile, $log, $timeout) {
     return {
       restrict: 'E',
       controller: 'CellController',
@@ -237,13 +237,7 @@
                 cellScope;
 
             if (ctrl.column.template || ctrl.column.cellRenderer) {
-              cellScope = $rootScope.$new(true);
-              angular.forEach(ctrl.options.$outer, function (v, k) {
-                if (k[0] !== '$') {
-                  cellScope[k] = v;
-                }
-              });
-
+              cellScope = ctrl.options.$outer.$new(false);
               cellScope.getValue = ctrl.getValue;
             }
 
@@ -270,7 +264,7 @@
       }
     };
   }
-  CellDirective.$inject = ["$rootScope", "$compile", "$log"];
+  CellDirective.$inject = ["$rootScope", "$compile", "$log", "$timeout"];
 
   var CellController = (function () {
     function CellController() {

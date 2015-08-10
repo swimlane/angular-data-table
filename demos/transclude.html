@@ -7,7 +7,7 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black" />
     <meta name="viewport" content="width = device-width, minimal-ui, initial-scale = 1, user-scalable = no" />
     <meta name="apple-mobile-web-app-title" content="Datagrid">
-    <title>Datagrid - Sorting</title>
+    <title>Datagrid - Transclude</title>
     <base href="/">
     <style>
       *, *:after, *:before {
@@ -46,11 +46,11 @@
       <inner-wrap>
         <dtable options="options" rows="data" class="material">
           <column name="Name" width="300">
-            <span>{{$cell}}</span>
+            <span>{{value}}</span>
           </column>
           <column name="Gender" width="400">
-            <span>{{$cell}} <br>mainwrapCtrl.bar: <em>{{ mainwrapCtrl.bar }}</em> <br>$scope.foo: <em>{{ foo }}</em> <br>
-            <button ng-click="mainwrapCtrl.setBar('New Bar!')">Set "New Bar"</button>
+            <span>{{value}} <br>outerwrapCtrl.bar: <em>{{ outerwrapCtrl.bar }}</em> <br>foo: <em>{{ foo }}</em> <br>
+            <button ng-click="outerwrapCtrl.setBar('New Bar!')">Set "New Bar"</button>
             </span>
           </column>
         </dtable>
@@ -68,6 +68,7 @@
         module.controller('OuterwrapCtrl', function(){
           this.bar = 'valBar';
           this.setBar = function (val) {
+            alert('bar')
             this.bar = val;
           };
         });
@@ -75,6 +76,7 @@
         module.controller('InnerwrapCtrl', function(){
           this.foo = 'valFoo';
           this.setFoo = function (val) {
+            alert('foo')
             this.foo = val;
           };
         });
@@ -87,7 +89,6 @@
             transclude: true,
             controller: 'OuterwrapCtrl',
             controllerAs: 'outerwrapCtrl',
-            scope: true,
             bindToController: true
           };
         });
@@ -99,7 +100,6 @@
             transclude: true,
             controller: 'InnerwrapCtrl',
             controllerAs: 'innerwrapCtrl',
-            scope: true,
             bindToController: true
           };
         });
