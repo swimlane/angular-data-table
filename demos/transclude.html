@@ -42,18 +42,20 @@
   </head>
   <body ng-app="app" ng-controller="HomeController">
 
-    <main-wrap>
-      <dtable options="options" rows="data" class="material">
-        <column name="Name" width="300">
-          <span>{{value}}</span>
-        </column>
-        <column name="Gender" width="400">
-          <span>{{value}} <br>mainwrapCtrl.bar: <em>{{ mainwrapCtrl.bar }}</em> <br>$scope.foo: <em>{{ foo }}</em> <br>
-          <button ng-click="mainwrapCtrl.setBar('New Bar!')">Set "New Bar"</button>
-          </span>
-        </column>
-      </dtable>
-    </main-wrap>
+    <outer-wrap>
+      <inner-wrap>
+        <dtable options="options" rows="data" class="material">
+          <column name="Name" width="300">
+            <span>{{value}}</span>
+          </column>
+          <column name="Gender" width="400">
+            <span>{{value}} <br>mainwrapCtrl.bar: <em>{{ mainwrapCtrl.bar }}</em> <br>$scope.foo: <em>{{ foo }}</em> <br>
+            <button ng-click="mainwrapCtrl.setBar('New Bar!')">Set "New Bar"</button>
+            </span>
+          </column>
+        </dtable>
+      </inner-wrap>
+    </outer-wrap>
 
     <script src="../jspm_packages/system.js"></script>
     <script src="../config.js"></script>
@@ -63,21 +65,42 @@
       System.import('dataTable').then(function(dt){
         var module = angular.module('app', [ dt.default.name ]);
 
-        module.controller('MainwrapCtrl', function(){
+        module.controller('OuterwrapCtrl', function(){
           this.bar = 'valBar';
           this.setBar = function (val) {
             this.bar = val;
           };
         });
 
+        module.controller('InnerwrapCtrl', function(){
+          this.foo = 'valFoo';
+          this.setFoo = function (val) {
+            this.foo = val;
+          };
+        });
 
-        module.directive('mainWrap', function () {
+
+        module.directive('outerWrap', function () {
           return {
-            template: '<div>Outer template content. <br />Transcluded content:<div ng-transclude></div></div>',
+            template: '<div>Outer directive template content. <br />Transcluded content:<div ng-transclude></div></div>',
             restrict: 'EA',
             transclude: true,
-            controller: 'MainwrapCtrl',
-            controllerAs: 'mainwrapCtrl'
+            controller: 'OuterwrapCtrl',
+            controllerAs: 'outerwrapCtrl',
+            scope: true,
+            bindToController: true
+          };
+        });
+
+        module.directive('innerWrap', function () {
+          return {
+            template: '<div>Inner directive template content. <br />Transcluded content:<div ng-transclude></div></div>',
+            restrict: 'EA',
+            transclude: true,
+            controller: 'InnerwrapCtrl',
+            controllerAs: 'innerwrapCtrl',
+            scope: true,
+            bindToController: true
           };
         });
 
