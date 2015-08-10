@@ -6,12 +6,13 @@ export function ScrollerDirective($timeout){
     restrict: 'E',
     require:'^dtBody',
     transclude: true,
+    replace: true,
     template: `<div ng-style="scrollerStyles()" ng-transclude></div>`,
     link: function($scope, $elm, $attrs, ctrl){
       var ticking = false,
           lastScrollY = 0,
           lastScrollX = 0,
-          helper = scrollHelper.create($elm);
+          helper = scrollHelper.create($elm.parent());
 
       function update(){
         $timeout(() => {
