@@ -88,7 +88,7 @@ then using expressive markup in your template:
     <dtable options="options" rows="data" class="material dt">
       <column name="Name" width="300" flex-grow="2"></column>
       <column name="Gender">
-        <strong>{{value}}</strong>
+        <strong>{{$row.name}}</strong>: {{$cell}}
       </column>
     </dtable>
 

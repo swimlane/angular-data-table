@@ -6,8 +6,9 @@ import { debounce, throttle } from './utils/throttle';
 import { ResizableDirective } from './components/header/ResizableDirective';
 import { SortableDirective } from './components/header/SortableDirective';
 
-import { DataTableController } from './DataTableController';
-import { DataTableDirective } from './DataTableDirective';
+import { DataTableController } from './components/DataTableController';
+import { DataTableDirective } from './components/DataTableDirective';
+import { DataTableService } from './components/DataTableService';
 
 import { HeaderController } from './components/header/HeaderController';
 import { HeaderDirective } from './components/header/HeaderDirective';
@@ -40,6 +41,7 @@ export default angular
 
   .controller('DataTableController', DataTableController)
   .directive('dtable', DataTableDirective)
+  .factory('DataTableService', DataTableService)
 
   .directive('resizable', ResizableDirective)
   .directive('sortable', SortableDirective)

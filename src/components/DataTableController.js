@@ -1,8 +1,8 @@
 import angular from 'angular';
-import { scrollHelper } from './components/body/scrollHelper';
-import { TableDefaults, ColumnDefaults } from './defaults';
-import { AdjustColumnWidths, ForceFillColumnWidths } from './utils/math';
-import { ColumnsByPin, ColumnGroupWidths, CamelCase, ObjectId, ScrollbarWidth } from './utils/utils';
+import { scrollHelper } from './body/scrollHelper';
+import { TableDefaults, ColumnDefaults } from '../defaults';
+import { AdjustColumnWidths, ForceFillColumnWidths } from '../utils/math';
+import { ColumnsByPin, ColumnGroupWidths, CamelCase, ObjectId, ScrollbarWidth } from '../utils/utils';
 
 export class DataTableController {
 
@@ -43,52 +43,6 @@ export class DataTableController {
         this.onSorted();
       }
     });
-  }
-
-  /**
-   * Create columns from elements
-   * @param  {array} columnElms 
-   */
-  buildColumns(columnElms){
-    if(columnElms && columnElms.length){
-      var columns = [];
-
-      angular.forEach(columnElms, (c) => {
-        var column = {};
-
-        angular.forEach(c.attributes, (attr) => {
-          var attrName = CamelCase(attr.name);
-
-          if(ColumnDefaults.hasOwnProperty(attrName)){
-            var val = attr.value;
-
-            if(!isNaN(attr.value)){
-              val = parseInt(attr.value);
-            }
-
-            column[attrName] = val;
-          }
-
-          // cuz putting className vs class on 
-          // a element feels weird
-          if(attrName === 'class'){
-            column.className = attr.value;
-          }
-
-          if(attrName === 'name' || attrName === 'prop'){
-            column[attrName] = attr.value;
-          }
-        });
-
-        if(c.innerHTML !== ''){
-          column.template = c.innerHTML;
-        }
-
-        columns.push(column);
-      });
-
-      this.options.columns = columns;
-    }
   }
 
   /**

@@ -55,8 +55,8 @@ export function CellDirective($rootScope, $compile, $log){
             content.empty();
 
             if(cellScope){
-              cellScope.value = ctrl.value;
-              cellScope.row = ctrl.row;
+              cellScope.$cell = ctrl.value;
+              cellScope.$row = ctrl.row;
             }
             
             if(ctrl.column.template){

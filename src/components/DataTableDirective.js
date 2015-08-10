@@ -1,7 +1,7 @@
 import angular from 'angular';
-import { ScrollbarWidth } from './utils/utils';
+import { ScrollbarWidth, ObjectId } from '../utils/utils';
 
-export function DataTableDirective($window, $timeout, throttle){
+export function DataTableDirective($window, $timeout, throttle, DataTableService){
   return {
     restrict: 'E',
     replace: true,
@@ -22,8 +22,10 @@ export function DataTableDirective($window, $timeout, throttle){
     template: function(element){
       // Gets the column nodes to transposes to column objects
       // http://stackoverflow.com/questions/30845397/angular-expressive-directive-design/30847609#30847609
-      element.columns = element[0].getElementsByTagName('column');
-      return `<div class="dt" ng-class="dt.tableCss()">
+      var columns = element[0].getElementsByTagName('column'), id = ObjectId();
+      DataTableService.buildAndSaveColumns(id, columns);
+
+      return `<div class="dt" ng-class="dt.tableCss()" data-column-id="${id}">
           <dt-header options="dt.options"
                      on-checkbox-change="dt.onHeaderCheckboxChange()"
                      columns="dt.columnsByPin"
@@ -54,9 +56,15 @@ export function DataTableDirective($window, $timeout, throttle){
     compile: function(tElem, tAttrs){
       return {
         pre: function($scope, $elm, $attrs, ctrl){
-          ctrl.buildColumns($elm.columns);
-          ctrl.transposeColumnDefaults();
+          // Check and see if we had expressive columns
+          // and if so, lets use those
+          var id = $elm.attr('data-column-id'),
+              columns = DataTableService.columns[id];
+          if(columns){
+            ctrl.options.columns = columns;
+          }
 
+          ctrl.transposeColumnDefaults();
           ctrl.options.internal.scrollBarWidth = ScrollbarWidth();
 
           function resize() {
@@ -88,6 +96,11 @@ export function DataTableDirective($window, $timeout, throttle){
           angular.element($window).bind('resize', throttle(() => {
             $timeout(resize);
           }));
+
+          $scope.$on('$destroy', () => {
+            // prevent memory leaks
+            angular.element($window).off('resize');
+          });
         }
       }
     }
