@@ -12,7 +12,7 @@ export class DataTableController {
    * @param  {filter}
    */
   /*@ngInject*/
-  constructor($scope, $filter, $log, $transclude){
+  constructor($scope, $filter, $log){
     angular.extend(this, {
       $scope: $scope,
       $filter: $filter,
@@ -21,9 +21,10 @@ export class DataTableController {
 
     this.defaults();
 
-    // set scope to the parent
-    this.options.$outer = $scope.$parent;
-    
+    // set scope to the parent, unless it's $$transcluded, in which
+    // case it needs to be set to grandparent
+    this.options.$outer = $scope.$parent.$$transcluded ? $scope.$parent.$parent : $scope.$parent;
+
     $scope.$watch('dt.options.columns', (newVal, oldVal) => {
       if(newVal.length > oldVal.length){
         this.transposeColumnDefaults();
@@ -47,7 +48,7 @@ export class DataTableController {
 
   /**
    * Create columns from elements
-   * @param  {array} columnElms 
+   * @param  {array} columnElms
    */
   buildColumns(columnElms){
     if(columnElms && columnElms.length){
@@ -69,7 +70,7 @@ export class DataTableController {
             column[attrName] = val;
           }
 
-          // cuz putting className vs class on 
+          // cuz putting className vs class on
           // a element feels weird
           if(attrName === 'class'){
             column.className = attr.value;
@@ -158,12 +159,12 @@ export class DataTableController {
 
   /**
    * Adjusts the column widths to handle greed/etc.
-   * @param  {int} forceIdx 
+   * @param  {int} forceIdx
    */
   adjustColumns(forceIdx){
-    var width = this.options.internal.innerWidth - 
+    var width = this.options.internal.innerWidth -
       this.options.internal.scrollBarWidth;
-      
+
     if(this.options.columnMode === 'force'){
       ForceFillColumnWidths(this.options.columns, width, forceIdx);
     } else if(this.options.columnMode === 'flex') {
@@ -292,7 +293,7 @@ export class DataTableController {
 
   /**
    * Occurs when a row was selected
-   * @param  {object} rows   
+   * @param  {object} rows
    */
   onSelected(rows){
     this.onSelect({
@@ -302,7 +303,7 @@ export class DataTableController {
 
   /**
    * Occurs when a row was click but may not be selected.
-   * @param  {object} row   
+   * @param  {object} row
    */
   onRowClicked(row){
     this.onRowClick({
