@@ -1,6 +1,6 @@
 /**
  * angular-data-table - AngularJS data table directive written in ES6.
- * @version v0.3.2
+ * @version v0.3.3
  * @link http://swimlane.com/
  * @license 
  */
@@ -511,7 +511,7 @@
         if (group === 'left') {
           TranslateXY(styles, this.options.internal.offsetX, 0);
         } else if (group === 'right') {
-          var offset = (this.columnWidths.total - this.options.internal.innerWidth - this.options.internal.offsetX) * -1;
+          var offset = (this.columnWidths.total - this.options.internal.innerWidth - this.options.internal.offsetX + this.options.internal.scrollBarWidth) * -1;
           TranslateXY(styles, offset, 0);
         }
 
@@ -535,16 +535,21 @@
     };
   })();
 
-  var scrollHelper = (function () {
-    var _elm;
-    return {
-      create: function create(elm) {
-        _elm = elm;
-      },
-      setYOffset: function setYOffset(offsetY) {
-        _elm[0].scrollTop = offsetY;
+  var ScrollHelper = (function () {
+    function ScrollHelper(elm) {
+      _classCallCheck(this, ScrollHelper);
+
+      this._elm = elm;
+    }
+
+    _createClass(ScrollHelper, [{
+      key: "setYOffset",
+      value: function setYOffset(offsetY) {
+        this._elm[0].scrollTop = offsetY;
       }
-    };
+    }]);
+
+    return ScrollHelper;
   })();
 
   function ScrollerDirective($timeout) {
@@ -557,8 +562,9 @@
       link: function link($scope, $elm, $attrs, ctrl) {
         var ticking = false,
             lastScrollY = 0,
-            lastScrollX = 0,
-            helper = scrollHelper.create($elm.parent());
+            lastScrollX = 0;
+
+        ctrl.options.internal.scrollHelper = new ScrollHelper($elm.parent());
 
         function update() {
           $timeout(function () {
@@ -2028,7 +2034,7 @@
     }, {
       key: "adjustColumns",
       value: function adjustColumns(forceIdx) {
-        var width = this.options.internal.innerWidth - this.options.internal.scrollBarWidth;
+        var width = this.options.internal.innerWidth;
 
         if (this.options.columnMode === 'force') {
           ForceFillColumnWidths(this.options.columns, width, forceIdx);
@@ -2071,7 +2077,7 @@
           }
         }
 
-        scrollHelper.setYOffset(0);
+        this.options.internal.scrollHelper.setYOffset(0);
       }
     }, {
       key: "onTreeToggled",
@@ -2095,7 +2101,7 @@
         var pageBlockSize = this.options.rowHeight * size,
             offsetY = pageBlockSize * offset;
 
-        scrollHelper.setYOffset(offsetY);
+        this.options.internal.scrollHelper.setYOffset(offsetY);
       }
     }, {
       key: "onHeaderCheckboxChange",

@@ -633,8 +633,8 @@ class RowController {
     if(group === 'left'){
       TranslateXY(styles, this.options.internal.offsetX, 0);
     } else if(group === 'right'){
-      var offset = ((this.columnWidths.total - this.options.internal.innerWidth) -
-        this.options.internal.offsetX) * -1;
+      var offset = (((this.columnWidths.total - this.options.internal.innerWidth) -
+        this.options.internal.offsetX) + this.options.internal.scrollBarWidth) * -1;
       TranslateXY(styles, offset, 0);
     }
 
@@ -673,17 +673,14 @@ var requestAnimFrame = (function(){
  * A helper for scrolling the body to a specific scroll position
  * when the footer pager is invoked.
  */
-var scrollHelper = function(){
-  var _elm;
-  return {
-    create: function(elm){
-      _elm = elm;
-    },
-    setYOffset: function(offsetY){
-      _elm[0].scrollTop = offsetY;
-    }
+class ScrollHelper {
+  constructor(elm){
+    this._elm = elm;
   }
-}();
+  setYOffset(offsetY){
+    this._elm[0].scrollTop = offsetY;
+  }
+}
 
 function ScrollerDirective($timeout){
   return {
@@ -695,8 +692,10 @@ function ScrollerDirective($timeout){
     link: function($scope, $elm, $attrs, ctrl){
       var ticking = false,
           lastScrollY = 0,
-          lastScrollX = 0,
-          helper = scrollHelper.create($elm.parent());
+          lastScrollX = 0;
+
+      ctrl.options.internal.scrollHelper = 
+        new ScrollHelper($elm.parent());
 
       function update(){
         $timeout(() => {
@@ -1300,8 +1299,6 @@ class BodyController{
         }
       }
     }
-
-    // this.selected = selecteds;
 
     this.onSelect({ rows: selecteds });
   }
@@ -2580,8 +2577,8 @@ class DataTableController {
    * @param  {int} forceIdx 
    */
   adjustColumns(forceIdx){
-    var width = this.options.internal.innerWidth - 
-      this.options.internal.scrollBarWidth;
+    var width = this.options.internal.innerWidth;
+      //this.options.internal.scrollBarWidth;
       
     if(this.options.columnMode === 'force'){
       ForceFillColumnWidths(this.options.columns, width, forceIdx);
@@ -2630,7 +2627,7 @@ class DataTableController {
       }
     }
 
-    scrollHelper.setYOffset(0);
+    this.options.internal.scrollHelper.setYOffset(0);
   }
 
   /**
@@ -2666,7 +2663,7 @@ class DataTableController {
     var pageBlockSize = this.options.rowHeight * size,
         offsetY = pageBlockSize * offset;
 
-    scrollHelper.setYOffset(offsetY);
+    this.options.internal.scrollHelper.setYOffset(offsetY);
   }
 
   /**
