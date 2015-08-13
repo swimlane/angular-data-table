@@ -1,6 +1,6 @@
 /**
  * angular-data-table - AngularJS data table directive written in ES6.
- * @version v0.3.3
+ * @version v0.3.4
  * @link http://swimlane.com/
  * @license 
  */
@@ -2010,7 +2010,7 @@ var DataTableController = (function () {
   }, {
     key: "adjustColumns",
     value: function adjustColumns(forceIdx) {
-      var width = this.options.internal.innerWidth;
+      var width = this.options.internal.innerWidth - this.options.internal.scrollBarWidth;
 
       if (this.options.columnMode === 'force') {
         ForceFillColumnWidths(this.options.columns, width, forceIdx);

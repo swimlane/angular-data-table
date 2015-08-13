@@ -2577,8 +2577,7 @@ class DataTableController {
    * @param  {int} forceIdx 
    */
   adjustColumns(forceIdx){
-    var width = this.options.internal.innerWidth;
-      //this.options.internal.scrollBarWidth;
+    var width = this.options.internal.innerWidth - this.options.internal.scrollBarWidth;
       
     if(this.options.columnMode === 'force'){
       ForceFillColumnWidths(this.options.columns, width, forceIdx);
