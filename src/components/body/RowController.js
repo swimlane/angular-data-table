@@ -38,8 +38,8 @@ export class RowController {
     if(group === 'left'){
       TranslateXY(styles, this.options.internal.offsetX, 0);
     } else if(group === 'right'){
-      var offset = ((this.columnWidths.total - this.options.internal.innerWidth) -
-        this.options.internal.offsetX) * -1;
+      var offset = (((this.columnWidths.total - this.options.internal.innerWidth) -
+        this.options.internal.offsetX) + this.options.internal.scrollBarWidth) * -1;
       TranslateXY(styles, offset, 0);
     }
 

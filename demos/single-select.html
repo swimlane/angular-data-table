@@ -7,7 +7,7 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black" />
     <meta name="viewport" content="width = device-width, minimal-ui, initial-scale = 1, user-scalable = no" />
     <meta name="apple-mobile-web-app-title" content="Datagrid">
-    <title>Datagrid - Checkboxes</title>
+    <title>Datagrid - Single Select</title>
     <base href="/">
     <style>
       *, *:after, *:before {
@@ -72,28 +72,12 @@
       rows="data"
       on-row-click="onRowClick(row)"
       class="material"
-      on-select="onSelect(row)"
-      selected="selected"></dtable>
+      on-select="onSelect(rows)"
+      selected="selectedz"></dtable>
 
       <div class="selected-box">
-        <h5>Selected list</h5>
-        <code>{{selected}}</code>
-      </div>
-
-    </div>
-
-    <div class="wrapper">
-      Multi-select only when SHIFT is held
-      <dtable options="options2"
-      rows="data"
-      on-row-click="onRowClick(row)"
-      class="material"
-      on-select="onSelect(row)"
-      selected="selected2"></dtable>
-
-      <div class="selected-box">
-        <h5>Selected list</h5>
-        <code>{{selected2}}</code>
+        <h5>Selected item</h5>
+        <code>{{selectedz}}</code>
       </div>
 
     </div>
@@ -113,7 +97,7 @@
             scrollbarV: false,
             headerHeight: 50,
             selectable: true,
-            multiSelect: true,
+            multiSelect: false,
             columns: [
               { name: "Name", prop: "name", width: 300 },
               { name: "Gender", prop: "gender" },
@@ -121,23 +105,7 @@
             ]
           };
 
-          $scope.options2 = {
-            rowHeight: 50,
-            footerHeight: false,
-            scrollbarV: false,
-            headerHeight: 50,
-            selectable: true,
-            multiSelect: true,
-            multiSelectOnShift: true,
-            columns: [
-              { name: "Name", prop: "name", width: 300 },
-              { name: "Gender", prop: "gender" },
-              { name: "Company", prop: "company" }
-            ]
-          };
-
-          $scope.selected = [];
-          $scope.selected2 = [];
+          $scope.selectedz = {};
 
           $scope.onSelect = function(row){
             console.log('ROW SELECTED!', row);

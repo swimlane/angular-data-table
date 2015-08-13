@@ -483,8 +483,6 @@ export class BodyController{
       }
     }
 
-    // this.selected = selecteds;
-
     this.onSelect({ rows: selecteds });
   }
 

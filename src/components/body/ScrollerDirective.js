@@ -1,5 +1,5 @@
 import { requestAnimFrame } from '../../utils/utils';
-import { scrollHelper } from './scrollHelper';
+import { ScrollHelper } from './ScrollHelper';
 
 export function ScrollerDirective($timeout){
   return {
@@ -11,8 +11,10 @@ export function ScrollerDirective($timeout){
     link: function($scope, $elm, $attrs, ctrl){
       var ticking = false,
           lastScrollY = 0,
-          lastScrollX = 0,
-          helper = scrollHelper.create($elm.parent());
+          lastScrollX = 0;
+
+      ctrl.options.internal.scrollHelper = 
+        new ScrollHelper($elm.parent());
 
       function update(){
         $timeout(() => {
