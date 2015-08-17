@@ -1,6 +1,6 @@
 /**
  * angular-data-table - AngularJS data table directive written in ES6.
- * @version v0.3.4
+ * @version v0.3.5
  * @link http://swimlane.com/
  * @license 
  */
@@ -550,6 +550,10 @@ function ScrollerDirective($timeout) {
           ctrl.options.internal.offsetY = lastScrollY;
           ctrl.options.internal.offsetX = lastScrollX;
           ctrl.updatePage();
+
+          if (ctrl.options.scrollbarV) {
+            ctrl.getRows();
+          }
         });
 
         ticking = false;
@@ -642,10 +646,6 @@ var BodyController = (function () {
     this.groupColumn = this.options.columns.find(function (c) {
       return c.group;
     });
-
-    if (this.options.scrollbarV) {
-      $scope.$watch('body.options.internal.offsetY', throttle(this.getRows.bind(this), 10));
-    }
 
     $scope.$watchCollection('body.rows', function (newVal, oldVal) {
       if (newVal) {
@@ -881,9 +881,11 @@ var BodyController = (function () {
   }, {
     key: "rowStyles",
     value: function rowStyles(row) {
-      var styles = {
-        height: this.options.rowHeight + 'px'
-      };
+      var styles = {};
+
+      if (this.options.rowHeight === 'auto') {
+        styles.height = this.options.rowHeight + 'px';
+      }
 
       if (this.options.scrollbarV) {
         var idx = row ? row.$$index : 0,
@@ -956,14 +958,14 @@ var BodyController = (function () {
     value: function rowClicked(event, index, row) {
       if (!this.options.checkboxSelection) {
         event.preventDefault();
-        this.selectRow(index, row);
+        this.selectRow(event, index, row);
       }
 
       this.onRowClick({ row: row });
     }
   }, {
     key: "selectRow",
-    value: function selectRow(index, row) {
+    value: function selectRow(event, index, row) {
       if (this.options.selectable) {
         if (this.options.multiSelect) {
           var isCtrlKeyDown = event.ctrlKey || event.metaKey,

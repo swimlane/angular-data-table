@@ -702,6 +702,10 @@ function ScrollerDirective($timeout){
           ctrl.options.internal.offsetY = lastScrollY;
           ctrl.options.internal.offsetX = lastScrollX;
           ctrl.updatePage();
+
+          if(ctrl.options.scrollbarV){
+            ctrl.getRows();
+          }
         });
 
         ticking = false;
@@ -841,10 +845,6 @@ class BodyController{
     this.groupColumn = this.options.columns.find((c) => {
       return c.group;
     });
-
-    if(this.options.scrollbarV){
-      $scope.$watch('body.options.internal.offsetY', throttle(this.getRows.bind(this), 10));
-    }
 
     $scope.$watchCollection('body.rows', (newVal, oldVal) => {
       if(newVal) {
@@ -1118,12 +1118,14 @@ class BodyController{
    * @return {styles object}
    */
   rowStyles(row){
-    var styles = {
-      height: this.options.rowHeight + 'px'
-    };
+    let styles = {};
+
+    if(this.options.rowHeight === 'auto'){
+      styles.height = this.options.rowHeight + 'px';
+    }
 
     if(this.options.scrollbarV){
-      var idx = row ? row.$$index : 0,
+      let idx = row ? row.$$index : 0,
           pos = idx * this.options.rowHeight;
       TranslateXY(styles, 0, pos);
     }
@@ -1216,7 +1218,7 @@ class BodyController{
   rowClicked(event, index, row){
     if(!this.options.checkboxSelection){
       event.preventDefault();
-      this.selectRow(index, row);
+      this.selectRow(event, index, row);
     }
 
     this.onRowClick({ row: row });
@@ -1227,7 +1229,7 @@ class BodyController{
    * @param  {index}
    * @param  {row}
    */
-  selectRow(index, row){
+  selectRow(event, index, row){
     if(this.options.selectable){
       if(this.options.multiSelect){
         var isCtrlKeyDown = event.ctrlKey || event.metaKey,
