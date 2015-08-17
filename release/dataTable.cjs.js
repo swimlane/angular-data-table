@@ -1,6 +1,6 @@
 /**
  * angular-data-table - AngularJS data table directive written in ES6.
- * @version v0.3.5
+ * @version v0.3.4
  * @link http://swimlane.com/
  * @license 
  */
@@ -956,14 +956,14 @@ var BodyController = (function () {
     value: function rowClicked(event, index, row) {
       if (!this.options.checkboxSelection) {
         event.preventDefault();
-        this.selectRow(event, index, row);
+        this.selectRow(index, row);
       }
 
       this.onRowClick({ row: row });
     }
   }, {
     key: "selectRow",
-    value: function selectRow(event, index, row) {
+    value: function selectRow(index, row) {
       if (this.options.selectable) {
         if (this.options.multiSelect) {
           var isCtrlKeyDown = event.ctrlKey || event.metaKey,

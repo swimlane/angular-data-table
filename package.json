@@ -2,7 +2,7 @@
   "name": "angular-data-table",
   "title": "AngularJS Data-Table",
   "description": "AngularJS data table directive written in ES6.",
-  "version": "0.3.5",
+  "version": "0.3.4",
   "repository": {
     "type": "git",
     "url": "git@github.com:Swimlane/angular-data-table.git",

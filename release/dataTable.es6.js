@@ -1216,7 +1216,7 @@ class BodyController{
   rowClicked(event, index, row){
     if(!this.options.checkboxSelection){
       event.preventDefault();
-      this.selectRow(event, index, row);
+      this.selectRow(index, row);
     }
 
     this.onRowClick({ row: row });
@@ -1227,7 +1227,7 @@ class BodyController{
    * @param  {index}
    * @param  {row}
    */
-  selectRow(event, index, row){
+  selectRow(index, row){
     if(this.options.selectable){
       if(this.options.multiSelect){
         var isCtrlKeyDown = event.ctrlKey || event.metaKey,
