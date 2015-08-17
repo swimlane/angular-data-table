@@ -21,6 +21,10 @@ export function ScrollerDirective($timeout){
           ctrl.options.internal.offsetY = lastScrollY;
           ctrl.options.internal.offsetX = lastScrollX;
           ctrl.updatePage();
+
+          if(ctrl.options.scrollbarV){
+            ctrl.getRows();
+          }
         });
 
         ticking = false;

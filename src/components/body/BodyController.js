@@ -25,10 +25,6 @@ export class BodyController{
       return c.group;
     });
 
-    if(this.options.scrollbarV){
-      $scope.$watch('body.options.internal.offsetY', throttle(this.getRows.bind(this), 10));
-    }
-
     $scope.$watchCollection('body.rows', (newVal, oldVal) => {
       if(newVal) {
         if(!this.options.paging.externalPaging){
@@ -301,12 +297,14 @@ export class BodyController{
    * @return {styles object}
    */
   rowStyles(row){
-    var styles = {
-      height: this.options.rowHeight + 'px'
-    };
+    let styles = {};
+
+    if(this.options.rowHeight === 'auto'){
+      styles.height = this.options.rowHeight + 'px';
+    }
 
     if(this.options.scrollbarV){
-      var idx = row ? row.$$index : 0,
+      let idx = row ? row.$$index : 0,
           pos = idx * this.options.rowHeight;
       TranslateXY(styles, 0, pos);
     }

@@ -35,20 +35,10 @@
         margin:50px auto;
       }
 
-      .dt-cell,
-      .dt-header-cell{
-        vertical-align: top;
-        overflow: hidden;
-
-        white-space: normal !important;
-        line-height: 1.4 !important;
-
-        display: block;
-        display: -webkit-box;
-        -webkit-line-clamp: 3;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
-        text-overflow: ellipsis;
+      .dt.row-wrap .dt-cell, 
+      .dt.row-wrap .dt-header-cell {
+        overflow:auto;
+        white-space: normal;
       }
 
     </style>
@@ -58,7 +48,7 @@
   </head>
   <body ng-app="app" ng-controller="HomeController">
 
-    <dtable options="options" rows="data" class="material"></dtable>
+    <dtable options="options" rows="data" class="material row-wrap"></dtable>
 
     <script src="../jspm_packages/system.js"></script>
     <script src="../config.js"></script>
@@ -69,12 +59,12 @@
         var module = angular.module('app', [ dt.default.name ]);
 
         module.controller('HomeController', function($scope, $http){
+
           $scope.options = {
-            rowHeight: 100,
+            rowHeight: 'auto',
             headerHeight: 50,
             footerHeight: false,
             scrollbarV: false,
-            selectable: false,
             columns: [
               { name: "Company", width: 300 },
               { name: "Revenue" },
