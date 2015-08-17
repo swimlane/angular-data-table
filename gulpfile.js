@@ -1,3 +1,4 @@
+var nPath = require('path');
 var gulp = require('gulp');
 var plumber = require('gulp-plumber');
 var babel = require('gulp-babel');
@@ -9,10 +10,13 @@ var Builder = require('systemjs-builder');
 var vinylPaths = require('vinyl-paths');
 var del = require('del');
 var ngAnnotate = require('gulp-ng-annotate');
-var rollup = require( 'rollup' );
+var rollup = require('rollup');
 var rename = require('gulp-rename');
 var uglify = require('gulp-uglify');
 var header = require('gulp-header');
+
+var KarmaServer = require('karma').Server;
+
 
 var compilerOptions = {
   modules: 'system',
@@ -22,9 +26,9 @@ var compilerOptions = {
 };
 
 var path = {
-  source:'src/**/*.js',
+  source: 'src/**/*.js',
   less: 'src/**/*.less',
-  output:'dist/',
+  output: 'dist/',
   release: 'release/',
   outputCss: 'dist/**/*.css'
 };
@@ -56,14 +60,14 @@ gulp.task('es6', function () {
 
 gulp.task('less', function () {
   return gulp.src(path.less)
-    .pipe(changed(path.output, {extension: '.css'}))
+    .pipe(changed(path.output, { extension: '.css' }))
     .pipe(plumber())
     .pipe(less())
     .pipe(gulp.dest(path.output))
     .pipe(browserSync.reload({ stream: true }));
 });
 
-gulp.task('clean', function() {
+gulp.task('clean', function () {
   return gulp.src([path.output, path.release])
     .pipe(vinylPaths(del));
 });
@@ -72,7 +76,7 @@ gulp.task('compile', function (callback) {
   return runSequence(
     ['less', 'es6'],
     callback
-  );
+    );
 });
 
 //
@@ -92,9 +96,9 @@ gulp.task('serve', ['compile'], function (done) {
   }, done);
 });
 
-gulp.task('watch', ['serve'], function() {
+gulp.task('watch', ['serve'], function () {
   var watcher = gulp.watch([path.source, path.less, '*.html'], ['compile']);
-  watcher.on('change', function(event) {
+  watcher.on('change', function (event) {
     console.log('File ' + event.path + ' was ' + event.type + ', running tasks...');
   });
 });
@@ -103,7 +107,7 @@ gulp.task('watch', ['serve'], function() {
 // Release Tasks
 // ------------------------------------------------------------
 
-gulp.task('release', function(callback) {
+gulp.task('release', function (callback) {
   return runSequence(
     'clean',
     ['release-less', 'release-build'],
@@ -112,7 +116,7 @@ gulp.task('release', function(callback) {
     'release-es6-helpers',
     'release-es6-helpers-min',
     callback
-  );
+    );
 });
 
 gulp.task('release-less', function () {
@@ -124,8 +128,8 @@ gulp.task('release-less', function () {
 gulp.task('release-build', function () {
   return rollup.rollup({
     entry: 'src/dataTable.js',
-    external: [ 'angular' ]
-  }).then( function ( bundle ) {
+    external: ['angular']
+  }).then(function (bundle) {
     return bundle.write({
       dest: 'release/dataTable.es6.js',
       format: 'es6',
@@ -146,7 +150,7 @@ gulp.task('release-umd', function () {
     .pipe(ngAnnotate({
       gulpWarnings: false
     }))
-    .pipe(header(banner, { pkg : pkg } ))
+    .pipe(header(banner, { pkg: pkg }))
     .pipe(rename('dataTable.js'))
     .pipe(gulp.dest("release/"))
 });
@@ -163,7 +167,7 @@ gulp.task('release-common', function () {
     .pipe(ngAnnotate({
       gulpWarnings: false
     }))
-    .pipe(header(banner, { pkg : pkg } ))
+    .pipe(header(banner, { pkg: pkg }))
     .pipe(rename('dataTable.cjs.js'))
     .pipe(gulp.dest("release/"))
 });
@@ -179,7 +183,7 @@ gulp.task('release-es6-helpers', function () {
     .pipe(ngAnnotate({
       gulpWarnings: false
     }))
-    .pipe(header(banner, { pkg : pkg } ))
+    .pipe(header(banner, { pkg: pkg }))
     .pipe(rename('dataTable.helpers.js'))
     .pipe(gulp.dest("release/"))
 });
@@ -196,7 +200,34 @@ gulp.task('release-es6-helpers-min', function () {
       gulpWarnings: false
     }))
     .pipe(uglify())
-    .pipe(header(banner, { pkg : pkg } ))
+    .pipe(header(banner, { pkg: pkg }))
     .pipe(rename('dataTable.helpers.min.js'))
     .pipe(gulp.dest("release/"))
+});
+
+
+//
+// Test Tasks
+// ------------------------------------------------------------
+
+gulp.task('test', ['compile'], function (done) {
+  var server = new KarmaServer({
+    configFile: nPath.join(__dirname, 'karma.conf.js'),
+    singleRun: true
+  }, function () {
+    done();
+  });
+
+  server.start();
+});
+
+gulp.task('test-watch', ['compile'], function (done) {
+  var server = new KarmaServer({
+    configFile: nPath.join(__dirname, 'karma.conf.js'),
+    singleRun: false
+  }, function () {
+    done();
+  });
+
+  server.start();
 });
