@@ -31,5 +31,9 @@ module.exports = function (config) {
     browserDisconnectTimeout: 20000
   };
 
+  if(process.env.TRAVIS){
+    configuration.browsers = ['ChromeTravis'];
+    configuration.reporters = ['dots'];
+  }
   config.set(configuration);
 };
