@@ -1,6 +1,6 @@
 /**
  * angular-data-table - AngularJS data table directive written in ES6.
- * @version v0.3.5
+ * @version v0.3.6
  * @link http://swimlane.com/
  * @license 
  */
@@ -332,6 +332,67 @@
     return CellController;
   })();
 
+  var cache = {},
+      testStyle = document.createElement('div').style;
+
+  var prefix = (function () {
+    var styles = window.getComputedStyle(document.documentElement, ''),
+        pre = (Array.prototype.slice.call(styles).join('').match(/-(moz|webkit|ms)-/) || styles.OLink === '' && ['', 'o'])[1],
+        dom = 'WebKit|Moz|MS|O'.match(new RegExp('(' + pre + ')', 'i'))[1];
+    return {
+      dom: dom,
+      lowercase: pre,
+      css: '-' + pre + '-',
+      js: pre[0].toUpperCase() + pre.substr(1)
+    };
+  })();
+
+  function CamelCase(str) {
+    str = str.replace(/[^a-zA-Z0-9 ]/g, " ");
+
+    str = str.replace(/([a-z](?=[A-Z]))/g, '$1 ');
+
+    str = str.replace(/([^a-zA-Z0-9 ])|^[0-9]+/g, '').trim().toLowerCase();
+
+    str = str.replace(/([ 0-9]+)([a-zA-Z])/g, function (a, b, c) {
+      return b.trim() + c.toUpperCase();
+    });
+    return str;
+  }
+
+  function GetVendorPrefixedName(property) {
+    var name = CamelCase(property);
+    if (!cache[name]) {
+      if (testStyle[prefix.css + property] !== undefined) {
+        cache[name] = prefix.css + property;
+      } else if (testStyle[property] !== undefined) {
+        cache[name] = property;
+      }
+    }
+    return cache[name];
+  }
+
+  var transform = GetVendorPrefixedName('transform'),
+      backfaceVisibility = GetVendorPrefixedName('backfaceVisibility'),
+      hasCSSTransforms = !!GetVendorPrefixedName('transform'),
+      hasCSS3DTransforms = !!GetVendorPrefixedName('perspective'),
+      ua = window.navigator.userAgent,
+      isSafari = /Safari\//.test(ua) && !/Chrome\//.test(ua);
+
+  function TranslateXY(styles, x, y) {
+    if (hasCSSTransforms) {
+      if (!isSafari && hasCSS3DTransforms) {
+        styles[transform] = "translate3d(" + x + "px, " + y + "px, 0)";
+        styles[backfaceVisibility] = 'hidden';
+      } else {
+        styles[transform] = "translate(" + x + "px, " + y + "px, 0)";
+      }
+    } else {
+      styles.top = y + 'px';
+      styles.left = x + 'px';
+    }
+  }
+
   function GroupRowDirective() {
     return {
       restrict: 'E',
@@ -340,11 +401,17 @@
       bindToController: {
         row: '=',
         onGroupToggle: '&',
-        expanded: '='
+        expanded: '=',
+        options: '='
       },
       scope: true,
       replace: true,
-      template: "\n      <div class=\"dt-group-row\">\n        <span ng-class=\"group.treeClass()\"\n              ng-click=\"group.onGroupToggled($event)\">\n        </span>\n        <span class=\"dt-group-row-label\" ng-bind=\"group.row.name\">\n        </span>\n      </div>"
+      template: "\n      <div class=\"dt-group-row\">\n        <span ng-class=\"group.treeClass()\"\n              ng-click=\"group.onGroupToggled($event)\">\n        </span>\n        <span class=\"dt-group-row-label\" ng-bind=\"group.row.name\">\n        </span>\n      </div>",
+      link: function link($scope, $elm, $attrs, ctrl) {
+        TranslateXY($elm[0].style, 0, ctrl.row.$$index * ctrl.options.rowHeight);
+
+        ctrl.options.internal.styleTranslator.register($scope.$index, $elm);
+      }
     };
   }
 
@@ -391,70 +458,14 @@
         onCheckboxChange: '&',
         onTreeToggle: '&'
       },
+      link: function link($scope, $elm, $attrs, ctrl) {
+        TranslateXY($elm[0].style, 0, ctrl.row.$$index * ctrl.options.rowHeight);
+
+        ctrl.options.internal.styleTranslator.register($scope.$index, $elm);
+      },
       template: "\n      <div class=\"dt-row\">\n        <div class=\"dt-row-left dt-row-block\" \n             ng-if=\"rowCtrl.columns['left'].length\"\n             ng-style=\"rowCtrl.stylesByGroup('left')\">\n          <dt-cell ng-repeat=\"column in rowCtrl.columns['left'] track by column.$id\"\n                   on-tree-toggle=\"rowCtrl.onTreeToggled(cell)\"\n                   column=\"column\"\n                   options=\"rowCtrl.options\"\n                   has-children=\"rowCtrl.hasChildren\"\n                   on-checkbox-change=\"rowCtrl.onCheckboxChanged()\"\n                   selected=\"rowCtrl.selected\"\n                   expanded=\"rowCtrl.expanded\"\n                   row=\"rowCtrl.row\"\n                   value=\"rowCtrl.getValue(column)\">\n          </dt-cell>\n        </div>\n        <div class=\"dt-row-center dt-row-block\" \n             ng-style=\"rowCtrl.stylesByGroup('center')\">\n          <dt-cell ng-repeat=\"column in rowCtrl.columns['center'] track by column.$id\"\n                   on-tree-toggle=\"rowCtrl.onTreeToggled(cell)\"\n                   column=\"column\"\n                   options=\"rowCtrl.options\"\n                   has-children=\"rowCtrl.hasChildren\"\n                   expanded=\"rowCtrl.expanded\"\n                   selected=\"rowCtrl.selected\"\n                   row=\"rowCtrl.row\"\n                   on-checkbox-change=\"rowCtrl.onCheckboxChanged()\"\n                   value=\"rowCtrl.getValue(column)\">\n          </dt-cell>\n        </div>\n        <div class=\"dt-row-right dt-row-block\" \n             ng-if=\"rowCtrl.columns['right'].length\"\n             ng-style=\"rowCtrl.stylesByGroup('right')\">\n          <dt-cell ng-repeat=\"column in rowCtrl.columns['right'] track by column.$id\"\n                   on-tree-toggle=\"rowCtrl.onTreeToggled(cell)\"\n                   column=\"column\"\n                   options=\"rowCtrl.options\"\n                   has-children=\"rowCtrl.hasChildren\"\n                   selected=\"rowCtrl.selected\"\n                   on-checkbox-change=\"rowCtrl.onCheckboxChanged()\"\n                   row=\"rowCtrl.row\"\n                   expanded=\"rowCtrl.expanded\"\n                   value=\"rowCtrl.getValue(column)\">\n          </dt-cell>\n        </div>\n      </div>",
       replace: true
     };
-  }
-
-  var cache = {},
-      testStyle = document.createElement('div').style;
-
-  var prefix = (function () {
-    var styles = window.getComputedStyle(document.documentElement, ''),
-        pre = (Array.prototype.slice.call(styles).join('').match(/-(moz|webkit|ms)-/) || styles.OLink === '' && ['', 'o'])[1],
-        dom = 'WebKit|Moz|MS|O'.match(new RegExp('(' + pre + ')', 'i'))[1];
-    return {
-      dom: dom,
-      lowercase: pre,
-      css: '-' + pre + '-',
-      js: pre[0].toUpperCase() + pre.substr(1)
-    };
-  })();
-
-  function CamelCase(str) {
-    str = str.replace(/[^a-zA-Z0-9 ]/g, " ");
-
-    str = str.replace(/([a-z](?=[A-Z]))/g, '$1 ');
-
-    str = str.replace(/([^a-zA-Z0-9 ])|^[0-9]+/g, '').trim().toLowerCase();
-
-    str = str.replace(/([ 0-9]+)([a-zA-Z])/g, function (a, b, c) {
-      return b.trim() + c.toUpperCase();
-    });
-    return str;
-  }
-
-  function GetVendorPrefixedName(property) {
-    var name = CamelCase(property);
-    if (!cache[name]) {
-      if (!testStyle[prefix.dom]) {
-        cache[name] = null;
-      } else {
-        cache[name] = prefix.css + property;
-      }
-    }
-    return cache[name];
-  }
-
-  var transform = GetVendorPrefixedName('transform'),
-      backfaceVisibility = GetVendorPrefixedName('backfaceVisibility'),
-      hasCSSTransforms = !!GetVendorPrefixedName('transform'),
-      hasCSS3DTransforms = !!GetVendorPrefixedName('perspective'),
-      ua = window.navigator.userAgent,
-      isSafari = /Safari\//.test(ua) && !/Chrome\//.test(ua);
-
-  function TranslateXY(styles, x, y) {
-    if (hasCSSTransforms) {
-      if (!isSafari && hasCSS3DTransforms) {
-        styles[transform] = "translate3d(" + x + "px, " + y + "px, 0)";
-        styles[backfaceVisibility] = 'hidden';
-      } else {
-        styles[transform] = "translate(" + x + "px, " + y + "px, 0)";
-      }
-    } else {
-      styles.top = y + 'px';
-      styles.left = x + 'px';
-    }
   }
 
   function DeepValueGetter(obj, path) {
@@ -524,6 +535,36 @@
     };
   })();
 
+  var StyleTranslator = (function () {
+    function StyleTranslator(height) {
+      babelHelpers.classCallCheck(this, StyleTranslator);
+
+      this.height = height;
+      this.map = new Map();
+    }
+
+    babelHelpers.createClass(StyleTranslator, [{
+      key: "update",
+      value: function update(rows) {
+        var n = 0;
+        while (n <= this.map.size) {
+          var dom = this.map.get(n);
+          var model = rows[n];
+          if (dom) {
+            TranslateXY(dom[0].style, 0, model.$$index * this.height);
+          }
+          n++;
+        }
+      }
+    }, {
+      key: "register",
+      value: function register(idx, dom) {
+        this.map.set(idx, dom);
+      }
+    }]);
+    return StyleTranslator;
+  })();
+
   var ScrollHelper = (function () {
     function ScrollHelper(elm) {
       babelHelpers.classCallCheck(this, ScrollHelper);
@@ -554,6 +595,8 @@
 
         ctrl.options.internal.scrollHelper = new ScrollHelper($elm.parent());
 
+        ctrl.options.internal.styleTranslator = new StyleTranslator(ctrl.options.rowHeight);
+
         function update() {
           $timeout(function () {
             ctrl.options.internal.offsetY = lastScrollY;
@@ -561,7 +604,8 @@
             ctrl.updatePage();
 
             if (ctrl.options.scrollbarV) {
-              ctrl.getRows();
+              var rows = ctrl.getRows();
+              ctrl.options.internal.styleTranslator.update(rows);
             }
           });
 
@@ -609,7 +653,7 @@
         onRowClick: '&'
       },
       scope: true,
-      template: "\n      <div class=\"dt-body\" ng-style=\"body.styles()\">\n        <dt-scroller class=\"dt-body-scroller\">\n          <dt-group-row ng-repeat-start=\"r in body.tempRows track by $index\"\n                        ng-if=\"r.group\"\n                        ng-style=\"body.groupRowStyles(r)\" \n                        on-group-toggle=\"body.onGroupToggle(group)\"\n                        expanded=\"body.getRowExpanded(r)\"\n                        tabindex=\"{{$index}}\"\n                        row=\"r\">\n          </dt-group-row>\n          <dt-row ng-repeat-end\n                  ng-if=\"!r.group\"\n                  row=\"body.getRowValue($index)\"\n                  tabindex=\"{{$index}}\"\n                  columns=\"body.columns\"\n                  column-widths=\"body.columnWidths\"\n                  ng-keydown=\"body.keyDown($event, $index, r)\"\n                  ng-click=\"body.rowClicked($event, $index, r)\"\n                  on-tree-toggle=\"body.onTreeToggled(row, cell)\"\n                  ng-class=\"body.rowClasses(r)\"\n                  options=\"body.options\"\n                  selected=\"body.isSelected(r)\"\n                  on-checkbox-change=\"body.onCheckboxChange($index, row)\"\n                  columns=\"body.columnsByPin\"\n                  has-children=\"body.getRowHasChildren(r)\"\n                  expanded=\"body.getRowExpanded(r)\"\n                  ng-style=\"body.rowStyles(r)\">\n          </dt-row>\n        </dt-scroller>\n        <div ng-if=\"body.rows && !body.rows.length\" \n             class=\"empty-row\" \n             ng-bind=\"::body.options.emptyMessage\">\n       </div>\n       <div ng-if=\"body.rows === undefined\" \n             class=\"loading-row\"\n             ng-bind=\"::body.options.loadingMessage\">\n        </div>\n      </div>"
+      template: "\n      <div class=\"dt-body\" ng-style=\"body.styles()\">\n        <dt-scroller class=\"dt-body-scroller\">\n          <dt-group-row ng-repeat-start=\"r in body.tempRows track by $index\"\n                        ng-if=\"r.group\"\n                        ng-style=\"body.groupRowStyles(r)\" \n                        options=\"body.options\"\n                        on-group-toggle=\"body.onGroupToggle(group)\"\n                        expanded=\"body.getRowExpanded(r)\"\n                        tabindex=\"{{$index}}\"\n                        row=\"r\">\n          </dt-group-row>\n          <dt-row ng-repeat-end\n                  ng-if=\"!r.group\"\n                  row=\"body.getRowValue($index)\"\n                  tabindex=\"{{$index}}\"\n                  columns=\"body.columns\"\n                  column-widths=\"body.columnWidths\"\n                  ng-keydown=\"body.keyDown($event, $index, r)\"\n                  ng-click=\"body.rowClicked($event, $index, r)\"\n                  on-tree-toggle=\"body.onTreeToggled(row, cell)\"\n                  ng-class=\"body.rowClasses(r)\"\n                  options=\"body.options\"\n                  selected=\"body.isSelected(r)\"\n                  on-checkbox-change=\"body.onCheckboxChange($index, row)\"\n                  columns=\"body.columnsByPin\"\n                  has-children=\"body.getRowHasChildren(r)\"\n                  expanded=\"body.getRowExpanded(r)\"\n                  ng-style=\"body.rowStyles(r)\">\n          </dt-row>\n        </dt-scroller>\n        <div ng-if=\"body.rows && !body.rows.length\" \n             class=\"empty-row\" \n             ng-bind=\"::body.options.emptyMessage\">\n       </div>\n       <div ng-if=\"body.rows === undefined\" \n             class=\"loading-row\"\n             ng-bind=\"::body.options.loadingMessage\">\n        </div>\n      </div>"
     };
   }
   BodyDirective.$inject = ["$timeout"];
@@ -640,7 +684,7 @@
   };
 
   var BodyController = (function () {
-    function BodyController($scope, $timeout, throttle) {
+    function BodyController($scope, $timeout) {
       var _this3 = this;
 
       babelHelpers.classCallCheck(this, BodyController);
@@ -688,8 +732,6 @@
       });
 
       if (this.options.scrollbarV) {
-        $scope.$watch('body.options.internal.offsetY', this.updatePage.bind(this));
-
         var sized = false;
         $scope.$watch('body.options.paging.size', function (newVal, oldVal) {
           if (!sized || newVal > oldVal) {
@@ -713,7 +755,7 @@
         });
       }
     }
-    BodyController.$inject = ["$scope", "$timeout", "throttle"];
+    BodyController.$inject = ["$scope", "$timeout"];
 
     babelHelpers.createClass(BodyController, [{
       key: "getFirstLastIndexes",
@@ -865,8 +907,11 @@
             row.$$index = rowIndex;
             this.tempRows[idx] = row;
           }
-          idx++ && rowIndex++;
+          idx++;
+          rowIndex++;
         }
+
+        return this.tempRows;
       }
     }, {
       key: "styles",
@@ -894,12 +939,6 @@
 
         if (this.options.rowHeight === 'auto') {
           styles.height = this.options.rowHeight + 'px';
-        }
-
-        if (this.options.scrollbarV) {
-          var idx = row ? row.$$index : 0,
-              pos = idx * this.options.rowHeight;
-          TranslateXY(styles, 0, pos);
         }
 
         return styles;

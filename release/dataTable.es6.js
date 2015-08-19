@@ -382,116 +382,6 @@ class CellController {
 
 }
 
-function GroupRowDirective(){
-  return {
-    restrict: 'E',
-    controller: 'GroupRowController',
-    controllerAs: 'group',
-    bindToController: {
-      row: '=',
-      onGroupToggle: '&',
-      expanded: '='
-    },
-    scope: true,
-    replace:true,
-    template: `
-      <div class="dt-group-row">
-        <span ng-class="group.treeClass()"
-              ng-click="group.onGroupToggled($event)">
-        </span>
-        <span class="dt-group-row-label" ng-bind="group.row.name">
-        </span>
-      </div>`
-  };
-}
-
-class GroupRowController {
-
-  onGroupToggled(evt){
-    evt.stopPropagation();
-    this.onGroupToggle({
-      group: this.row
-    });
-  }
-
-  treeClass(){
-    return {
-      'dt-tree-toggle': true,
-      'icon-right': !this.expanded,
-      'icon-down': this.expanded
-    };
-  }
-
-}
-
-function RowDirective(){
-  return {
-    restrict: 'E',
-    controller: 'RowController',
-    controllerAs: 'rowCtrl',
-    scope: true,
-    bindToController: {
-      row: '=',
-      columns: '=',
-      columnWidths: '=',
-      expanded: '=',
-      selected: '=',
-      hasChildren: '=',
-      options: '=',
-      onCheckboxChange: '&',
-      onTreeToggle: '&'
-    },
-    template: `
-      <div class="dt-row">
-        <div class="dt-row-left dt-row-block" 
-             ng-if="rowCtrl.columns['left'].length"
-             ng-style="rowCtrl.stylesByGroup('left')">
-          <dt-cell ng-repeat="column in rowCtrl.columns['left'] track by column.$id"
-                   on-tree-toggle="rowCtrl.onTreeToggled(cell)"
-                   column="column"
-                   options="rowCtrl.options"
-                   has-children="rowCtrl.hasChildren"
-                   on-checkbox-change="rowCtrl.onCheckboxChanged()"
-                   selected="rowCtrl.selected"
-                   expanded="rowCtrl.expanded"
-                   row="rowCtrl.row"
-                   value="rowCtrl.getValue(column)">
-          </dt-cell>
-        </div>
-        <div class="dt-row-center dt-row-block" 
-             ng-style="rowCtrl.stylesByGroup('center')">
-          <dt-cell ng-repeat="column in rowCtrl.columns['center'] track by column.$id"
-                   on-tree-toggle="rowCtrl.onTreeToggled(cell)"
-                   column="column"
-                   options="rowCtrl.options"
-                   has-children="rowCtrl.hasChildren"
-                   expanded="rowCtrl.expanded"
-                   selected="rowCtrl.selected"
-                   row="rowCtrl.row"
-                   on-checkbox-change="rowCtrl.onCheckboxChanged()"
-                   value="rowCtrl.getValue(column)">
-          </dt-cell>
-        </div>
-        <div class="dt-row-right dt-row-block" 
-             ng-if="rowCtrl.columns['right'].length"
-             ng-style="rowCtrl.stylesByGroup('right')">
-          <dt-cell ng-repeat="column in rowCtrl.columns['right'] track by column.$id"
-                   on-tree-toggle="rowCtrl.onTreeToggled(cell)"
-                   column="column"
-                   options="rowCtrl.options"
-                   has-children="rowCtrl.hasChildren"
-                   selected="rowCtrl.selected"
-                   on-checkbox-change="rowCtrl.onCheckboxChanged()"
-                   row="rowCtrl.row"
-                   expanded="rowCtrl.expanded"
-                   value="rowCtrl.getValue(column)">
-          </dt-cell>
-        </div>
-      </div>`,
-    replace:true
-  };
-}
-
 var cache = {},
     testStyle = document.createElement('div').style;
 
@@ -544,10 +434,10 @@ function CamelCase(str) {
 function GetVendorPrefixedName(property) {
   var name = CamelCase(property)
   if(!cache[name]){
-    if(!testStyle[prefix.dom]) {
-      cache[name] = null;
-    } else {
+    if(testStyle[prefix.css + property] !== undefined) {
       cache[name] = prefix.css + property;
+    } else if(testStyle[property] !== undefined){
+      cache[name] = property;
     }
   }
   return cache[name];
@@ -574,6 +464,131 @@ function TranslateXY(styles, x,y){
     styles.top = y + 'px';
     styles.left = x + 'px';
   }
+}
+
+function GroupRowDirective(){
+  return {
+    restrict: 'E',
+    controller: 'GroupRowController',
+    controllerAs: 'group',
+    bindToController: {
+      row: '=',
+      onGroupToggle: '&',
+      expanded: '=',
+      options: '='
+    },
+    scope: true,
+    replace:true,
+    template: `
+      <div class="dt-group-row">
+        <span ng-class="group.treeClass()"
+              ng-click="group.onGroupToggled($event)">
+        </span>
+        <span class="dt-group-row-label" ng-bind="group.row.name">
+        </span>
+      </div>`,
+    link: function($scope, $elm, $attrs, ctrl){
+      // inital render position
+      TranslateXY($elm[0].style, 0, ctrl.row.$$index * ctrl.options.rowHeight);
+
+      // register w/ the style translator
+      ctrl.options.internal.styleTranslator.register($scope.$index, $elm);
+    }
+  };
+}
+
+class GroupRowController {
+
+  onGroupToggled(evt){
+    evt.stopPropagation();
+    this.onGroupToggle({
+      group: this.row
+    });
+  }
+
+  treeClass(){
+    return {
+      'dt-tree-toggle': true,
+      'icon-right': !this.expanded,
+      'icon-down': this.expanded
+    };
+  }
+
+}
+
+function RowDirective(){
+  return {
+    restrict: 'E',
+    controller: 'RowController',
+    controllerAs: 'rowCtrl',
+    scope: true,
+    bindToController: {
+      row: '=',
+      columns: '=',
+      columnWidths: '=',
+      expanded: '=',
+      selected: '=',
+      hasChildren: '=',
+      options: '=',
+      onCheckboxChange: '&',
+      onTreeToggle: '&'
+    },
+    link: function($scope, $elm, $attrs, ctrl){
+      // inital render position
+      TranslateXY($elm[0].style, 0, ctrl.row.$$index * ctrl.options.rowHeight);
+
+      // register w/ the style translator
+      ctrl.options.internal.styleTranslator.register($scope.$index, $elm);
+    },
+    template: `
+      <div class="dt-row">
+        <div class="dt-row-left dt-row-block" 
+             ng-if="rowCtrl.columns['left'].length"
+             ng-style="rowCtrl.stylesByGroup('left')">
+          <dt-cell ng-repeat="column in rowCtrl.columns['left'] track by column.$id"
+                   on-tree-toggle="rowCtrl.onTreeToggled(cell)"
+                   column="column"
+                   options="rowCtrl.options"
+                   has-children="rowCtrl.hasChildren"
+                   on-checkbox-change="rowCtrl.onCheckboxChanged()"
+                   selected="rowCtrl.selected"
+                   expanded="rowCtrl.expanded"
+                   row="rowCtrl.row"
+                   value="rowCtrl.getValue(column)">
+          </dt-cell>
+        </div>
+        <div class="dt-row-center dt-row-block" 
+             ng-style="rowCtrl.stylesByGroup('center')">
+          <dt-cell ng-repeat="column in rowCtrl.columns['center'] track by column.$id"
+                   on-tree-toggle="rowCtrl.onTreeToggled(cell)"
+                   column="column"
+                   options="rowCtrl.options"
+                   has-children="rowCtrl.hasChildren"
+                   expanded="rowCtrl.expanded"
+                   selected="rowCtrl.selected"
+                   row="rowCtrl.row"
+                   on-checkbox-change="rowCtrl.onCheckboxChanged()"
+                   value="rowCtrl.getValue(column)">
+          </dt-cell>
+        </div>
+        <div class="dt-row-right dt-row-block" 
+             ng-if="rowCtrl.columns['right'].length"
+             ng-style="rowCtrl.stylesByGroup('right')">
+          <dt-cell ng-repeat="column in rowCtrl.columns['right'] track by column.$id"
+                   on-tree-toggle="rowCtrl.onTreeToggled(cell)"
+                   column="column"
+                   options="rowCtrl.options"
+                   has-children="rowCtrl.hasChildren"
+                   selected="rowCtrl.selected"
+                   on-checkbox-change="rowCtrl.onCheckboxChanged()"
+                   row="rowCtrl.row"
+                   expanded="rowCtrl.expanded"
+                   value="rowCtrl.getValue(column)">
+          </dt-cell>
+        </div>
+      </div>`,
+    replace:true
+  };
 }
 
 
@@ -670,6 +685,45 @@ var requestAnimFrame = (function(){
 
 
 /**
+ * This translates the dom position based on the model row index.
+ * This only exists because Angular's binding process is too slow.
+ */
+class StyleTranslator{
+
+  constructor(height){
+    this.height = height;
+    this.map = new Map();
+  }
+  
+  /**
+   * Update the rows
+   * @param  {Array} rows 
+   */
+  update(rows){
+    let n = 0;
+    while (n <= this.map.size) {
+      let dom = this.map.get(n);
+      let model = rows[n];
+      if(dom){
+        TranslateXY(dom[0].style, 0, model.$$index * this.height);
+      }
+      n++;
+    }
+  }
+
+  /**
+   * Register the row
+   * @param  {int} idx 
+   * @param  {dom} dom 
+   */
+  register(idx, dom){
+    this.map.set(idx, dom);
+  }
+
+}
+
+
+/**
  * A helper for scrolling the body to a specific scroll position
  * when the footer pager is invoked.
  */
@@ -697,6 +751,9 @@ function ScrollerDirective($timeout){
       ctrl.options.internal.scrollHelper = 
         new ScrollHelper($elm.parent());
 
+      ctrl.options.internal.styleTranslator = 
+        new StyleTranslator(ctrl.options.rowHeight);
+
       function update(){
         $timeout(() => {
           ctrl.options.internal.offsetY = lastScrollY;
@@ -704,7 +761,8 @@ function ScrollerDirective($timeout){
           ctrl.updatePage();
 
           if(ctrl.options.scrollbarV){
-            ctrl.getRows();
+            let rows = ctrl.getRows();
+            ctrl.options.internal.styleTranslator.update(rows);
           }
         });
 
@@ -758,6 +816,7 @@ function BodyDirective($timeout){
           <dt-group-row ng-repeat-start="r in body.tempRows track by $index"
                         ng-if="r.group"
                         ng-style="body.groupRowStyles(r)" 
+                        options="body.options"
                         on-group-toggle="body.onGroupToggle(group)"
                         expanded="body.getRowExpanded(r)"
                         tabindex="{{$index}}"
@@ -830,11 +889,10 @@ class BodyController{
    * A tale body controller
    * @param  {$scope}
    * @param  {$timeout}
-   * @param  {throttle}
    * @return {BodyController}
    */
   /*@ngInject*/
-  constructor($scope, $timeout, throttle){
+  constructor($scope, $timeout){
     this.$scope = $scope;
     this.tempRows = [];
 
@@ -877,8 +935,6 @@ class BodyController{
     });
 
     if(this.options.scrollbarV){
-      $scope.$watch('body.options.internal.offsetY', this.updatePage.bind(this));
-
       var sized = false;
       $scope.$watch('body.options.paging.size', (newVal, oldVal) => {
         if(!sized || newVal > oldVal){
@@ -1086,8 +1142,11 @@ class BodyController{
         row.$$index = rowIndex;
         this.tempRows[idx] = row;
       }
-      idx++ && rowIndex++;
+      idx++;
+      rowIndex++;
     }
+
+    return this.tempRows;
   }
 
   /**
@@ -1122,12 +1181,6 @@ class BodyController{
 
     if(this.options.rowHeight === 'auto'){
       styles.height = this.options.rowHeight + 'px';
-    }
-
-    if(this.options.scrollbarV){
-      let idx = row ? row.$$index : 0,
-          pos = idx * this.options.rowHeight;
-      TranslateXY(styles, 0, pos);
     }
 
     return styles;
