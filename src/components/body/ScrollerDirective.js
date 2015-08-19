@@ -30,6 +30,7 @@ export function ScrollerDirective($timeout){
           if(ctrl.options.scrollbarV){
             let rows = ctrl.getRows();
             ctrl.options.internal.styleTranslator.update(rows);
+            $elm.removeClass('dt-scrolling')
           }
         });
 
@@ -46,6 +47,7 @@ export function ScrollerDirective($timeout){
       $elm.parent().on('scroll', function(ev) {
         lastScrollY = this.scrollTop;
         lastScrollX = this.scrollLeft;
+        $elm.addClass('dt-scrolling');
         requestTick();
       });
 

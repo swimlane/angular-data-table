@@ -255,6 +255,9 @@ export class BodyController{
         indexes = this.getFirstLastIndexes(),
         rowIndex = indexes.first;
 
+    // slice out the old rows so we don't have duplicates
+    this.tempRows.splice(indexes.first, indexes.last);
+
     while (rowIndex < indexes.last && rowIndex < this.count) {
       var row = temp[rowIndex];
       if(row){
@@ -333,6 +336,12 @@ export class BodyController{
       styles['dt-has-leafs'] = this.rowsByGroup[row[this.treeColumn.prop]];
       // the depth
       styles['dt-depth-' + row.$$depth] = true;
+    }
+
+    if(row.$$index%2 == 0){
+      styles['dt-row-even'] = true;
+    } else {
+      styles['dt-row-odd'] = true;
     }
 
     return styles;

@@ -69,9 +69,19 @@
             ]
           };
 
-          $http.get('/demos/data/columns.json').success(function(data) {
-            $scope.data = data;
-          });
+          $scope.data = [];
+
+          for (var i = 0; i < 10; i++) {
+            $scope.data.push({
+              "name": "Ethel Price",
+              "gender": "female",
+              "company": "Enersol",
+              "dept": "Human Resources",
+              "age": i,
+              "dob": "Wed May 27 2015 18:08:22 GMT-0400 (EDT)",
+              "clearance": "Top Secret"
+            })
+          };
 
         });
       });
