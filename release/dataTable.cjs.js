@@ -1,6 +1,6 @@
 /**
  * angular-data-table - AngularJS data table directive written in ES6.
- * @version v0.3.7
+ * @version v0.3.8
  * @link http://swimlane.com/
  * @license 
  */
@@ -450,7 +450,9 @@ function RowDirective() {
       onTreeToggle: '&'
     },
     link: function link($scope, $elm, $attrs, ctrl) {
-      TranslateXY($elm[0].style, 0, ctrl.row.$$index * ctrl.options.rowHeight);
+      if (ctrl.row) {
+        TranslateXY($elm[0].style, 0, ctrl.row.$$index * ctrl.options.rowHeight);
+      }
 
       ctrl.options.internal.styleTranslator.register($scope.$index, $elm);
     },

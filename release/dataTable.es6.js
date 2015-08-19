@@ -534,8 +534,10 @@ function RowDirective(){
       onTreeToggle: '&'
     },
     link: function($scope, $elm, $attrs, ctrl){
-      // inital render position
-      TranslateXY($elm[0].style, 0, ctrl.row.$$index * ctrl.options.rowHeight);
+      if(ctrl.row){
+        // inital render position
+        TranslateXY($elm[0].style, 0, ctrl.row.$$index * ctrl.options.rowHeight);
+      }
 
       // register w/ the style translator
       ctrl.options.internal.styleTranslator.register($scope.$index, $elm);
