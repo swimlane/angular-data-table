@@ -1,6 +1,6 @@
 /**
  * angular-data-table - AngularJS data table directive written in ES6.
- * @version v0.3.8
+ * @version v0.3.9
  * @link http://swimlane.com/
  * @license 
  */
@@ -608,6 +608,7 @@
             if (ctrl.options.scrollbarV) {
               var rows = ctrl.getRows();
               ctrl.options.internal.styleTranslator.update(rows);
+              $elm.removeClass('dt-scrolling');
             }
           });
 
@@ -624,6 +625,7 @@
         $elm.parent().on('scroll', function (ev) {
           lastScrollY = this.scrollTop;
           lastScrollX = this.scrollLeft;
+          $elm.addClass('dt-scrolling');
           requestTick();
         });
 
@@ -903,6 +905,8 @@
             indexes = this.getFirstLastIndexes(),
             rowIndex = indexes.first;
 
+        this.tempRows.splice(indexes.first, indexes.last);
+
         while (rowIndex < indexes.last && rowIndex < this.count) {
           var row = temp[rowIndex];
           if (row) {
@@ -965,6 +969,12 @@
           styles['dt-has-leafs'] = this.rowsByGroup[row[this.treeColumn.prop]];
 
           styles['dt-depth-' + row.$$depth] = true;
+        }
+
+        if (row.$$index % 2 == 0) {
+          styles['dt-row-even'] = true;
+        } else {
+          styles['dt-row-odd'] = true;
         }
 
         return styles;
