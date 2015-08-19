@@ -1,3 +1,5 @@
+import { TranslateXY } from '../../utils/translate';
+
 export function GroupRowDirective(){
   return {
     restrict: 'E',
@@ -6,7 +8,8 @@ export function GroupRowDirective(){
     bindToController: {
       row: '=',
       onGroupToggle: '&',
-      expanded: '='
+      expanded: '=',
+      options: '='
     },
     scope: true,
     replace:true,
@@ -17,6 +20,13 @@ export function GroupRowDirective(){
         </span>
         <span class="dt-group-row-label" ng-bind="group.row.name">
         </span>
-      </div>`
+      </div>`,
+    link: function($scope, $elm, $attrs, ctrl){
+      // inital render position
+      TranslateXY($elm[0].style, 0, ctrl.row.$$index * ctrl.options.rowHeight);
+
+      // register w/ the style translator
+      ctrl.options.internal.styleTranslator.register($scope.$index, $elm);
+    }
   };
 };

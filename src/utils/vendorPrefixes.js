@@ -39,10 +39,10 @@ var prefix = (function () {
 export function GetVendorPrefixedName(property) {
   var name = CamelCase(property)
   if(!cache[name]){
-    if(!testStyle[prefix.dom]) {
-      cache[name] = null;
-    } else {
+    if(testStyle[prefix.css + property] !== undefined) {
       cache[name] = prefix.css + property;
+    } else if(testStyle[property] !== undefined){
+      cache[name] = property;
     }
   }
   return cache[name];

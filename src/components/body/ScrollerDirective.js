@@ -1,5 +1,7 @@
 import { requestAnimFrame } from '../../utils/utils';
 import { ScrollHelper } from './ScrollHelper';
+import { StyleTranslator } from './StyleTranslator';
+import { TranslateXY } from '../../utils/translate';
 
 export function ScrollerDirective($timeout){
   return {
@@ -16,6 +18,9 @@ export function ScrollerDirective($timeout){
       ctrl.options.internal.scrollHelper = 
         new ScrollHelper($elm.parent());
 
+      ctrl.options.internal.styleTranslator = 
+        new StyleTranslator(ctrl.options.rowHeight);
+
       function update(){
         $timeout(() => {
           ctrl.options.internal.offsetY = lastScrollY;
@@ -23,7 +28,8 @@ export function ScrollerDirective($timeout){
           ctrl.updatePage();
 
           if(ctrl.options.scrollbarV){
-            ctrl.getRows();
+            let rows = ctrl.getRows();
+            ctrl.options.internal.styleTranslator.update(rows);
           }
         });
 

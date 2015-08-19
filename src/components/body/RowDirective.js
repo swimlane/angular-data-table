@@ -1,3 +1,5 @@
+import { TranslateXY } from '../../utils/translate';
+
 export function RowDirective(){
   return {
     restrict: 'E',
@@ -14,6 +16,13 @@ export function RowDirective(){
       options: '=',
       onCheckboxChange: '&',
       onTreeToggle: '&'
+    },
+    link: function($scope, $elm, $attrs, ctrl){
+      // inital render position
+      TranslateXY($elm[0].style, 0, ctrl.row.$$index * ctrl.options.rowHeight);
+
+      // register w/ the style translator
+      ctrl.options.internal.styleTranslator.register($scope.$index, $elm);
     },
     template: `
       <div class="dt-row">

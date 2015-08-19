@@ -1,7 +1,6 @@
 import angular from 'angular';
 import { requestAnimFrame, ColumnsByPin } from '../../utils/utils';
 import { KEYS } from '../../utils/keys';
-import { TranslateXY } from '../../utils/translate';
 
 export class BodyController{
 
@@ -9,11 +8,10 @@ export class BodyController{
    * A tale body controller
    * @param  {$scope}
    * @param  {$timeout}
-   * @param  {throttle}
    * @return {BodyController}
    */
   /*@ngInject*/
-  constructor($scope, $timeout, throttle){
+  constructor($scope, $timeout){
     this.$scope = $scope;
     this.tempRows = [];
 
@@ -56,8 +54,6 @@ export class BodyController{
     });
 
     if(this.options.scrollbarV){
-      $scope.$watch('body.options.internal.offsetY', this.updatePage.bind(this));
-
       var sized = false;
       $scope.$watch('body.options.paging.size', (newVal, oldVal) => {
         if(!sized || newVal > oldVal){
@@ -265,8 +261,11 @@ export class BodyController{
         row.$$index = rowIndex;
         this.tempRows[idx] = row;
       }
-      idx++ && rowIndex++;
+      idx++;
+      rowIndex++;
     }
+
+    return this.tempRows;
   }
 
   /**
@@ -301,12 +300,6 @@ export class BodyController{
 
     if(this.options.rowHeight === 'auto'){
       styles.height = this.options.rowHeight + 'px';
-    }
-
-    if(this.options.scrollbarV){
-      let idx = row ? row.$$index : 0,
-          pos = idx * this.options.rowHeight;
-      TranslateXY(styles, 0, pos);
     }
 
     return styles;
