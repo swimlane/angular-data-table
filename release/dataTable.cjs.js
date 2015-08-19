@@ -1,6 +1,6 @@
 /**
  * angular-data-table - AngularJS data table directive written in ES6.
- * @version v0.3.6
+ * @version v0.3.7
  * @link http://swimlane.com/
  * @license 
  */
@@ -541,7 +541,7 @@ var StyleTranslator = (function () {
       while (n <= this.map.size) {
         var dom = this.map.get(n);
         var model = rows[n];
-        if (dom) {
+        if (dom && model) {
           TranslateXY(dom[0].style, 0, model.$$index * this.height);
         }
         n++;

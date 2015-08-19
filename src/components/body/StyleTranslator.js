@@ -20,7 +20,7 @@ export class StyleTranslator{
     while (n <= this.map.size) {
       let dom = this.map.get(n);
       let model = rows[n];
-      if(dom){
+      if(dom && model){
         TranslateXY(dom[0].style, 0, model.$$index * this.height);
       }
       n++;
