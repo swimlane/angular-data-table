@@ -33,7 +33,7 @@
       .dt{
         width:75%;
         margin:50px auto;
-        height:300px;
+        height:400px;
       }
 
     </style>
@@ -73,6 +73,7 @@
           };
 
           $scope.paging = function(offset, size){
+            setTimeout(function(){
             $http.get('/demos/data/100.json').success(function(d) {
               
               $scope.optionz.paging.count = d.length;
@@ -86,6 +87,7 @@
 
               console.log('paging!', offset, size)
             });
+          }, 200)
           };
         });
       });

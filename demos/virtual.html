@@ -61,10 +61,11 @@
           $scope.options = {
             rowHeight: 50,
             headerHeight: 50,
+            columnMode: 'flex',
             columns: [
-              { name: "Name", prop: "name", width: 300 },
-              { name: "Gender", prop: "gender" },
-              { name: "Company", prop: "address.state" }
+              { name: "Name", prop: "name", flexGrow: 2 },
+              { name: "Gender", prop: "gender", flexGrow: 1 },
+              { name: "Company", prop: "address.state", flexGrow: 1 }
             ]
           };
 

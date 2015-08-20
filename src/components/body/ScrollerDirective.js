@@ -22,18 +22,16 @@ export function ScrollerDirective($timeout){
         new StyleTranslator(ctrl.options.rowHeight);
 
       function update(){
-        $timeout(() => {
-          ctrl.options.internal.offsetY = lastScrollY;
-          ctrl.options.internal.offsetX = lastScrollX;
-          ctrl.updatePage();
+        ctrl.options.internal.offsetY = lastScrollY;
+        ctrl.options.internal.offsetX = lastScrollX;
+        ctrl.updatePage();
 
-          if(ctrl.options.scrollbarV){
-            let rows = ctrl.getRows();
-            ctrl.options.internal.styleTranslator.update(rows);
-            $elm.removeClass('dt-scrolling')
-          }
-        });
-
+        if(ctrl.options.scrollbarV){
+          let rows = ctrl.getRows();
+          ctrl.options.internal.styleTranslator.update(rows);
+        }
+        
+        $scope.$digest();
         ticking = false;
       };
 
@@ -47,7 +45,6 @@ export function ScrollerDirective($timeout){
       $elm.parent().on('scroll', function(ev) {
         lastScrollY = this.scrollTop;
         lastScrollX = this.scrollLeft;
-        $elm.addClass('dt-scrolling');
         requestTick();
       });
 

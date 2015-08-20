@@ -326,7 +326,9 @@ export class BodyController{
    */
   rowClasses(row){
     var styles = {
-      'selected': this.isSelected(row)
+      'selected': this.isSelected(row),
+      'dt-row-even': row && row.$$index%2 === 0,
+      'dt-row-odd': row && row.$$index%2 !== 0
     };
 
     if(this.treeColumn){
@@ -336,12 +338,6 @@ export class BodyController{
       styles['dt-has-leafs'] = this.rowsByGroup[row[this.treeColumn.prop]];
       // the depth
       styles['dt-depth-' + row.$$depth] = true;
-    }
-
-    if(row.$$index%2 == 0){
-      styles['dt-row-even'] = true;
-    } else {
-      styles['dt-row-odd'] = true;
     }
 
     return styles;
