@@ -544,7 +544,7 @@ function RowDirective(){
     },
     template: `
       <div class="dt-row">
-        <div class="dt-row-left dt-row-block" 
+        <div class="dt-row-left dt-row-block"
              ng-if="rowCtrl.columns['left'].length"
              ng-style="rowCtrl.stylesByGroup('left')">
           <dt-cell ng-repeat="column in rowCtrl.columns['left'] track by column.$id"
@@ -559,7 +559,7 @@ function RowDirective(){
                    value="rowCtrl.getValue(column)">
           </dt-cell>
         </div>
-        <div class="dt-row-center dt-row-block" 
+        <div class="dt-row-center dt-row-block"
              ng-style="rowCtrl.stylesByGroup('center')">
           <dt-cell ng-repeat="column in rowCtrl.columns['center'] track by column.$id"
                    on-tree-toggle="rowCtrl.onTreeToggled(cell)"
@@ -573,7 +573,7 @@ function RowDirective(){
                    value="rowCtrl.getValue(column)">
           </dt-cell>
         </div>
-        <div class="dt-row-right dt-row-block" 
+        <div class="dt-row-right dt-row-block"
              ng-if="rowCtrl.columns['right'].length"
              ng-style="rowCtrl.stylesByGroup('right')">
           <dt-cell ng-repeat="column in rowCtrl.columns['right'] track by column.$id"
@@ -696,10 +696,10 @@ class StyleTranslator{
     this.height = height;
     this.map = new Map();
   }
-  
+
   /**
    * Update the rows
-   * @param  {Array} rows 
+   * @param  {Array} rows
    */
   update(rows){
     let n = 0;
@@ -715,8 +715,8 @@ class StyleTranslator{
 
   /**
    * Register the row
-   * @param  {int} idx 
-   * @param  {dom} dom 
+   * @param  {int} idx
+   * @param  {dom} dom
    */
   register(idx, dom){
     this.map.set(idx, dom);
@@ -750,25 +750,23 @@ function ScrollerDirective($timeout){
           lastScrollY = 0,
           lastScrollX = 0;
 
-      ctrl.options.internal.scrollHelper = 
+      ctrl.options.internal.scrollHelper =
         new ScrollHelper($elm.parent());
 
-      ctrl.options.internal.styleTranslator = 
+      ctrl.options.internal.styleTranslator =
         new StyleTranslator(ctrl.options.rowHeight);
 
       function update(){
-        $timeout(() => {
-          ctrl.options.internal.offsetY = lastScrollY;
-          ctrl.options.internal.offsetX = lastScrollX;
-          ctrl.updatePage();
+        ctrl.options.internal.offsetY = lastScrollY;
+        ctrl.options.internal.offsetX = lastScrollX;
+        ctrl.updatePage();
 
-          if(ctrl.options.scrollbarV){
-            let rows = ctrl.getRows();
-            ctrl.options.internal.styleTranslator.update(rows);
-            $elm.removeClass('dt-scrolling')
-          }
-        });
+        if(ctrl.options.scrollbarV){
+          let rows = ctrl.getRows();
+          ctrl.options.internal.styleTranslator.update(rows);
+        }
 
+        $scope.$digest();
         ticking = false;
       };
 
@@ -782,7 +780,6 @@ function ScrollerDirective($timeout){
       $elm.parent().on('scroll', function(ev) {
         lastScrollY = this.scrollTop;
         lastScrollX = this.scrollLeft;
-        $elm.addClass('dt-scrolling');
         requestTick();
       });
 
@@ -1141,7 +1138,7 @@ class BodyController{
         rowIndex = indexes.first;
 
     // slice out the old rows so we don't have duplicates
-    this.tempRows.splice(indexes.first, indexes.last);
+    this.tempRows.splice(0, indexes.last - indexes.first);
 
     while (rowIndex < indexes.last && rowIndex < this.count) {
       var row = temp[rowIndex];
@@ -1211,7 +1208,9 @@ class BodyController{
    */
   rowClasses(row){
     var styles = {
-      'selected': this.isSelected(row)
+      'selected': this.isSelected(row),
+      'dt-row-even': row && row.$$index%2 === 0,
+      'dt-row-odd': row && row.$$index%2 !== 0
     };
 
     if(this.treeColumn){
@@ -1221,12 +1220,6 @@ class BodyController{
       styles['dt-has-leafs'] = this.rowsByGroup[row[this.treeColumn.prop]];
       // the depth
       styles['dt-depth-' + row.$$depth] = true;
-    }
-
-    if(row.$$index%2 == 0){
-      styles['dt-row-even'] = true;
-    } else {
-      styles['dt-row-odd'] = true;
     }
 
     return styles;

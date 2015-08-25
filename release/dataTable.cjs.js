@@ -1,6 +1,6 @@
 /**
  * angular-data-table - AngularJS data table directive written in ES6.
- * @version v0.3.9
+ * @version v0.3.10
  * @link http://swimlane.com/
  * @license 
  */
@@ -50,15 +50,15 @@ Object.defineProperty(exports, "__esModule", {
 
 function PagerDirective() {
   return {
-    restrict: 'E',
-    controller: 'PagerController',
-    controllerAs: 'pager',
+    restrict: "E",
+    controller: "PagerController",
+    controllerAs: "pager",
     scope: true,
     bindToController: {
-      page: '=',
-      size: '=',
-      count: '=',
-      onPage: '&'
+      page: "=",
+      size: "=",
+      count: "=",
+      onPage: "&"
     },
     template: "<div class=\"dt-pager\">\n        <ul class=\"pager\">\n          <li ng-class=\"{ disabled: !pager.canPrevious() }\">\n            <a href ng-click=\"pager.selectPage(1)\" class=\"icon-left\"></a>\n          </li>\n          <li ng-repeat=\"pg in pager.pages track by $index\" ng-class=\"{ active: pg.active }\">\n            <a href ng-click=\"pager.selectPage(pg.number)\">{{pg.text}}</a>\n          </li>\n          <li ng-class=\"{ disabled: !pager.canNext() }\">\n            <a href ng-click=\"pager.selectPage(pager.totalPages)\" class=\"icon-right\"></a>\n          </li>\n        </ul>\n      </div>",
     replace: true
@@ -71,12 +71,12 @@ var PagerController = (function () {
 
     babelHelpers.classCallCheck(this, PagerController);
 
-    $scope.$watch('pager.count', function (newVal) {
+    $scope.$watch("pager.count", function (newVal) {
       _this.calcTotalPages(_this.size, _this.count);
       _this.getPages(_this.page || 1);
     });
 
-    $scope.$watch('pager.page', function (newVal) {
+    $scope.$watch("pager.page", function (newVal) {
       if (newVal !== 0 && newVal <= _this.totalPages) {
         _this.getPages(newVal);
       }
@@ -138,14 +138,14 @@ var PagerController = (function () {
         if (startPage > 1) {
           pages.unshift({
             number: startPage - 1,
-            text: '...'
+            text: "..."
           });
         }
 
         if (endPage < this.totalPages) {
           pages.push({
             number: endPage + 1,
-            text: '...'
+            text: "..."
           });
         }
       }
@@ -158,13 +158,13 @@ var PagerController = (function () {
 
 function FooterDirective() {
   return {
-    restrict: 'E',
-    controller: 'FooterController',
-    controllerAs: 'footer',
+    restrict: "E",
+    controller: "FooterController",
+    controllerAs: "footer",
     scope: true,
     bindToController: {
-      paging: '=',
-      onPage: '&'
+      paging: "=",
+      onPage: "&"
     },
     template: "<div class=\"dt-footer\">\n        <div class=\"page-count\">{{footer.paging.count}} total</div>\n        <dt-pager page=\"footer.page\"\n               size=\"footer.paging.size\"\n               count=\"footer.paging.count\"\n               on-page=\"footer.onPaged(page)\"\n               ng-show=\"footer.paging.count > 1\">\n         </dt-pager>\n      </div>",
     replace: true
@@ -178,7 +178,7 @@ var FooterController = (function () {
     babelHelpers.classCallCheck(this, FooterController);
 
     this.page = this.paging.offset + 1;
-    $scope.$watch('footer.paging.offset', function (newVal) {
+    $scope.$watch("footer.paging.offset", function (newVal) {
       _this2.offsetChanged(newVal);
     });
   }
@@ -204,27 +204,27 @@ var FooterController = (function () {
 
 function CellDirective($rootScope, $compile, $log, $timeout) {
   return {
-    restrict: 'E',
-    controller: 'CellController',
+    restrict: "E",
+    controller: "CellController",
     scope: true,
-    controllerAs: 'cell',
+    controllerAs: "cell",
     bindToController: {
-      options: '=',
-      value: '=',
-      selected: '=',
-      column: '=',
-      row: '=',
-      expanded: '=',
-      hasChildren: '=',
-      onTreeToggle: '&',
-      onCheckboxChange: '&'
+      options: "=",
+      value: "=",
+      selected: "=",
+      column: "=",
+      row: "=",
+      expanded: "=",
+      hasChildren: "=",
+      onTreeToggle: "&",
+      onCheckboxChange: "&"
     },
     template: "<div class=\"dt-cell\" \n            data-title=\"{{::cell.column.name}}\" \n            ng-style=\"cell.styles()\"\n            ng-class=\"cell.cellClass()\">\n        <label ng-if=\"cell.column.isCheckboxColumn\" class=\"dt-checkbox\">\n          <input type=\"checkbox\" \n                 ng-checked=\"cell.selected\"\n                 ng-click=\"cell.onCheckboxChanged($event)\" />\n        </label>\n        <span ng-if=\"cell.column.isTreeColumn && cell.hasChildren\"\n              ng-class=\"cell.treeClass()\"\n              ng-click=\"cell.onTreeToggled($event)\"></span>\n        <span class=\"dt-cell-content\"></span>\n      </div>",
     replace: true,
     compile: function compile() {
       return {
         pre: function pre($scope, $elm, $attrs, ctrl) {
-          var content = angular.element($elm[0].querySelector('.dt-cell-content')),
+          var content = angular.element($elm[0].querySelector(".dt-cell-content")),
               cellScope;
 
           if (ctrl.column.template || ctrl.column.cellRenderer) {
@@ -232,7 +232,7 @@ function CellDirective($rootScope, $compile, $log, $timeout) {
             cellScope.getValue = ctrl.getValue;
           }
 
-          $scope.$watch('cell.value', function () {
+          $scope.$watch("cell.value", function () {
             content.empty();
 
             if (cellScope) {
@@ -266,14 +266,14 @@ var CellController = (function () {
     key: "styles",
     value: function styles() {
       return {
-        width: this.column.width + 'px'
+        width: this.column.width + "px"
       };
     }
   }, {
     key: "cellClass",
     value: function cellClass() {
       var style = {
-        'dt-tree-col': this.column.isTreeColumn
+        "dt-tree-col": this.column.isTreeColumn
       };
 
       if (this.column.className) {
@@ -286,9 +286,9 @@ var CellController = (function () {
     key: "treeClass",
     value: function treeClass() {
       return {
-        'dt-tree-toggle': true,
-        'icon-right': !this.expanded,
-        'icon-down': this.expanded
+        "dt-tree-toggle": true,
+        "icon-right": !this.expanded,
+        "icon-down": this.expanded
       };
     }
   }, {
@@ -315,7 +315,7 @@ var CellController = (function () {
     value: function getValue() {
       var val = this.column.cellDataGetter ? this.column.cellDataGetter(this.value) : this.value;
 
-      if (val === undefined || val === null) val = '';
+      if (val === undefined || val === null) val = "";
 
       return val;
     }
@@ -324,16 +324,16 @@ var CellController = (function () {
 })();
 
 var cache = {},
-    testStyle = document.createElement('div').style;
+    testStyle = document.createElement("div").style;
 
 var prefix = (function () {
-  var styles = window.getComputedStyle(document.documentElement, ''),
-      pre = (Array.prototype.slice.call(styles).join('').match(/-(moz|webkit|ms)-/) || styles.OLink === '' && ['', 'o'])[1],
-      dom = 'WebKit|Moz|MS|O'.match(new RegExp('(' + pre + ')', 'i'))[1];
+  var styles = window.getComputedStyle(document.documentElement, ""),
+      pre = (Array.prototype.slice.call(styles).join("").match(/-(moz|webkit|ms)-/) || styles.OLink === "" && ["", "o"])[1],
+      dom = "WebKit|Moz|MS|O".match(new RegExp("(" + pre + ")", "i"))[1];
   return {
     dom: dom,
     lowercase: pre,
-    css: '-' + pre + '-',
+    css: "-" + pre + "-",
     js: pre[0].toUpperCase() + pre.substr(1)
   };
 })();
@@ -341,9 +341,9 @@ var prefix = (function () {
 function CamelCase(str) {
   str = str.replace(/[^a-zA-Z0-9 ]/g, " ");
 
-  str = str.replace(/([a-z](?=[A-Z]))/g, '$1 ');
+  str = str.replace(/([a-z](?=[A-Z]))/g, "$1 ");
 
-  str = str.replace(/([^a-zA-Z0-9 ])|^[0-9]+/g, '').trim().toLowerCase();
+  str = str.replace(/([^a-zA-Z0-9 ])|^[0-9]+/g, "").trim().toLowerCase();
 
   str = str.replace(/([ 0-9]+)([a-zA-Z])/g, function (a, b, c) {
     return b.trim() + c.toUpperCase();
@@ -363,10 +363,10 @@ function GetVendorPrefixedName(property) {
   return cache[name];
 }
 
-var transform = GetVendorPrefixedName('transform'),
-    backfaceVisibility = GetVendorPrefixedName('backfaceVisibility'),
-    hasCSSTransforms = !!GetVendorPrefixedName('transform'),
-    hasCSS3DTransforms = !!GetVendorPrefixedName('perspective'),
+var transform = GetVendorPrefixedName("transform"),
+    backfaceVisibility = GetVendorPrefixedName("backfaceVisibility"),
+    hasCSSTransforms = !!GetVendorPrefixedName("transform"),
+    hasCSS3DTransforms = !!GetVendorPrefixedName("perspective"),
     ua = window.navigator.userAgent,
     isSafari = /Safari\//.test(ua) && !/Chrome\//.test(ua);
 
@@ -374,26 +374,26 @@ function TranslateXY(styles, x, y) {
   if (hasCSSTransforms) {
     if (!isSafari && hasCSS3DTransforms) {
       styles[transform] = "translate3d(" + x + "px, " + y + "px, 0)";
-      styles[backfaceVisibility] = 'hidden';
+      styles[backfaceVisibility] = "hidden";
     } else {
       styles[transform] = "translate(" + x + "px, " + y + "px, 0)";
     }
   } else {
-    styles.top = y + 'px';
-    styles.left = x + 'px';
+    styles.top = y + "px";
+    styles.left = x + "px";
   }
 }
 
 function GroupRowDirective() {
   return {
-    restrict: 'E',
-    controller: 'GroupRowController',
-    controllerAs: 'group',
+    restrict: "E",
+    controller: "GroupRowController",
+    controllerAs: "group",
     bindToController: {
-      row: '=',
-      onGroupToggle: '&',
-      expanded: '=',
-      options: '='
+      row: "=",
+      onGroupToggle: "&",
+      expanded: "=",
+      options: "="
     },
     scope: true,
     replace: true,
@@ -423,9 +423,9 @@ var GroupRowController = (function () {
     key: "treeClass",
     value: function treeClass() {
       return {
-        'dt-tree-toggle': true,
-        'icon-right': !this.expanded,
-        'icon-down': this.expanded
+        "dt-tree-toggle": true,
+        "icon-right": !this.expanded,
+        "icon-down": this.expanded
       };
     }
   }]);
@@ -434,20 +434,20 @@ var GroupRowController = (function () {
 
 function RowDirective() {
   return {
-    restrict: 'E',
-    controller: 'RowController',
-    controllerAs: 'rowCtrl',
+    restrict: "E",
+    controller: "RowController",
+    controllerAs: "rowCtrl",
     scope: true,
     bindToController: {
-      row: '=',
-      columns: '=',
-      columnWidths: '=',
-      expanded: '=',
-      selected: '=',
-      hasChildren: '=',
-      options: '=',
-      onCheckboxChange: '&',
-      onTreeToggle: '&'
+      row: "=",
+      columns: "=",
+      columnWidths: "=",
+      expanded: "=",
+      selected: "=",
+      hasChildren: "=",
+      options: "=",
+      onCheckboxChange: "&",
+      onTreeToggle: "&"
     },
     link: function link($scope, $elm, $attrs, ctrl) {
       if (ctrl.row) {
@@ -456,7 +456,7 @@ function RowDirective() {
 
       ctrl.options.internal.styleTranslator.register($scope.$index, $elm);
     },
-    template: "\n      <div class=\"dt-row\">\n        <div class=\"dt-row-left dt-row-block\" \n             ng-if=\"rowCtrl.columns['left'].length\"\n             ng-style=\"rowCtrl.stylesByGroup('left')\">\n          <dt-cell ng-repeat=\"column in rowCtrl.columns['left'] track by column.$id\"\n                   on-tree-toggle=\"rowCtrl.onTreeToggled(cell)\"\n                   column=\"column\"\n                   options=\"rowCtrl.options\"\n                   has-children=\"rowCtrl.hasChildren\"\n                   on-checkbox-change=\"rowCtrl.onCheckboxChanged()\"\n                   selected=\"rowCtrl.selected\"\n                   expanded=\"rowCtrl.expanded\"\n                   row=\"rowCtrl.row\"\n                   value=\"rowCtrl.getValue(column)\">\n          </dt-cell>\n        </div>\n        <div class=\"dt-row-center dt-row-block\" \n             ng-style=\"rowCtrl.stylesByGroup('center')\">\n          <dt-cell ng-repeat=\"column in rowCtrl.columns['center'] track by column.$id\"\n                   on-tree-toggle=\"rowCtrl.onTreeToggled(cell)\"\n                   column=\"column\"\n                   options=\"rowCtrl.options\"\n                   has-children=\"rowCtrl.hasChildren\"\n                   expanded=\"rowCtrl.expanded\"\n                   selected=\"rowCtrl.selected\"\n                   row=\"rowCtrl.row\"\n                   on-checkbox-change=\"rowCtrl.onCheckboxChanged()\"\n                   value=\"rowCtrl.getValue(column)\">\n          </dt-cell>\n        </div>\n        <div class=\"dt-row-right dt-row-block\" \n             ng-if=\"rowCtrl.columns['right'].length\"\n             ng-style=\"rowCtrl.stylesByGroup('right')\">\n          <dt-cell ng-repeat=\"column in rowCtrl.columns['right'] track by column.$id\"\n                   on-tree-toggle=\"rowCtrl.onTreeToggled(cell)\"\n                   column=\"column\"\n                   options=\"rowCtrl.options\"\n                   has-children=\"rowCtrl.hasChildren\"\n                   selected=\"rowCtrl.selected\"\n                   on-checkbox-change=\"rowCtrl.onCheckboxChanged()\"\n                   row=\"rowCtrl.row\"\n                   expanded=\"rowCtrl.expanded\"\n                   value=\"rowCtrl.getValue(column)\">\n          </dt-cell>\n        </div>\n      </div>",
+    template: "\n      <div class=\"dt-row\">\n        <div class=\"dt-row-left dt-row-block\"\n             ng-if=\"rowCtrl.columns['left'].length\"\n             ng-style=\"rowCtrl.stylesByGroup('left')\">\n          <dt-cell ng-repeat=\"column in rowCtrl.columns['left'] track by column.$id\"\n                   on-tree-toggle=\"rowCtrl.onTreeToggled(cell)\"\n                   column=\"column\"\n                   options=\"rowCtrl.options\"\n                   has-children=\"rowCtrl.hasChildren\"\n                   on-checkbox-change=\"rowCtrl.onCheckboxChanged()\"\n                   selected=\"rowCtrl.selected\"\n                   expanded=\"rowCtrl.expanded\"\n                   row=\"rowCtrl.row\"\n                   value=\"rowCtrl.getValue(column)\">\n          </dt-cell>\n        </div>\n        <div class=\"dt-row-center dt-row-block\"\n             ng-style=\"rowCtrl.stylesByGroup('center')\">\n          <dt-cell ng-repeat=\"column in rowCtrl.columns['center'] track by column.$id\"\n                   on-tree-toggle=\"rowCtrl.onTreeToggled(cell)\"\n                   column=\"column\"\n                   options=\"rowCtrl.options\"\n                   has-children=\"rowCtrl.hasChildren\"\n                   expanded=\"rowCtrl.expanded\"\n                   selected=\"rowCtrl.selected\"\n                   row=\"rowCtrl.row\"\n                   on-checkbox-change=\"rowCtrl.onCheckboxChanged()\"\n                   value=\"rowCtrl.getValue(column)\">\n          </dt-cell>\n        </div>\n        <div class=\"dt-row-right dt-row-block\"\n             ng-if=\"rowCtrl.columns['right'].length\"\n             ng-style=\"rowCtrl.stylesByGroup('right')\">\n          <dt-cell ng-repeat=\"column in rowCtrl.columns['right'] track by column.$id\"\n                   on-tree-toggle=\"rowCtrl.onTreeToggled(cell)\"\n                   column=\"column\"\n                   options=\"rowCtrl.options\"\n                   has-children=\"rowCtrl.hasChildren\"\n                   selected=\"rowCtrl.selected\"\n                   on-checkbox-change=\"rowCtrl.onCheckboxChanged()\"\n                   row=\"rowCtrl.row\"\n                   expanded=\"rowCtrl.expanded\"\n                   value=\"rowCtrl.getValue(column)\">\n          </dt-cell>\n        </div>\n      </div>",
     replace: true
   };
 }
@@ -465,7 +465,7 @@ function DeepValueGetter(obj, path) {
   if (!obj || !path) return obj;
 
   var current = obj,
-      split = path.split('.');
+      split = path.split(".");
 
   if (split.length) {
     for (var i = 0, len = split.length; i < len; i++) {
@@ -484,7 +484,7 @@ var RowController = (function () {
   babelHelpers.createClass(RowController, [{
     key: "getValue",
     value: function getValue(col) {
-      if (!col.prop) return '';
+      if (!col.prop) return "";
       return DeepValueGetter(this.row, col.prop);
     }
   }, {
@@ -499,12 +499,12 @@ var RowController = (function () {
     key: "stylesByGroup",
     value: function stylesByGroup(group) {
       var styles = {
-        width: this.columnWidths[group] + 'px'
+        width: this.columnWidths[group] + "px"
       };
 
-      if (group === 'left') {
+      if (group === "left") {
         TranslateXY(styles, this.options.internal.offsetX, 0);
-      } else if (group === 'right') {
+      } else if (group === "right") {
         var offset = (this.columnWidths.total - this.options.internal.innerWidth - this.options.internal.offsetX + this.options.internal.scrollBarWidth) * -1;
         TranslateXY(styles, offset, 0);
       }
@@ -576,8 +576,8 @@ var ScrollHelper = (function () {
 
 function ScrollerDirective($timeout) {
   return {
-    restrict: 'E',
-    require: '^dtBody',
+    restrict: "E",
+    require: "^dtBody",
     transclude: true,
     replace: true,
     template: "<div ng-style=\"scrollerStyles()\" ng-transclude></div>",
@@ -591,18 +591,16 @@ function ScrollerDirective($timeout) {
       ctrl.options.internal.styleTranslator = new StyleTranslator(ctrl.options.rowHeight);
 
       function update() {
-        $timeout(function () {
-          ctrl.options.internal.offsetY = lastScrollY;
-          ctrl.options.internal.offsetX = lastScrollX;
-          ctrl.updatePage();
+        ctrl.options.internal.offsetY = lastScrollY;
+        ctrl.options.internal.offsetX = lastScrollX;
+        ctrl.updatePage();
 
-          if (ctrl.options.scrollbarV) {
-            var rows = ctrl.getRows();
-            ctrl.options.internal.styleTranslator.update(rows);
-            $elm.removeClass('dt-scrolling');
-          }
-        });
+        if (ctrl.options.scrollbarV) {
+          var rows = ctrl.getRows();
+          ctrl.options.internal.styleTranslator.update(rows);
+        }
 
+        $scope.$digest();
         ticking = false;
       };
 
@@ -613,16 +611,15 @@ function ScrollerDirective($timeout) {
         }
       };
 
-      $elm.parent().on('scroll', function (ev) {
+      $elm.parent().on("scroll", function (ev) {
         lastScrollY = this.scrollTop;
         lastScrollX = this.scrollLeft;
-        $elm.addClass('dt-scrolling');
         requestTick();
       });
 
       $scope.scrollerStyles = function (scope) {
         return {
-          height: ctrl.count * ctrl.options.rowHeight + 'px'
+          height: ctrl.count * ctrl.options.rowHeight + "px"
         };
       };
     }
@@ -632,20 +629,20 @@ ScrollerDirective.$inject = ["$timeout"];
 
 function BodyDirective($timeout) {
   return {
-    restrict: 'E',
-    controller: 'BodyController',
-    controllerAs: 'body',
+    restrict: "E",
+    controller: "BodyController",
+    controllerAs: "body",
     bindToController: {
-      columns: '=',
-      columnWidths: '=',
-      rows: '=',
-      options: '=',
-      selected: '=?',
-      expanded: '=?',
-      onPage: '&',
-      onTreeToggle: '&',
-      onSelect: '&',
-      onRowClick: '&'
+      columns: "=",
+      columnWidths: "=",
+      rows: "=",
+      options: "=",
+      selected: "=?",
+      expanded: "=?",
+      onPage: "&",
+      onTreeToggle: "&",
+      onSelect: "&",
+      onRowClick: "&"
     },
     scope: true,
     template: "\n      <div class=\"dt-body\" ng-style=\"body.styles()\">\n        <dt-scroller class=\"dt-body-scroller\">\n          <dt-group-row ng-repeat-start=\"r in body.tempRows track by $index\"\n                        ng-if=\"r.group\"\n                        ng-style=\"body.groupRowStyles(r)\" \n                        options=\"body.options\"\n                        on-group-toggle=\"body.onGroupToggle(group)\"\n                        expanded=\"body.getRowExpanded(r)\"\n                        tabindex=\"{{$index}}\"\n                        row=\"r\">\n          </dt-group-row>\n          <dt-row ng-repeat-end\n                  ng-if=\"!r.group\"\n                  row=\"body.getRowValue($index)\"\n                  tabindex=\"{{$index}}\"\n                  columns=\"body.columns\"\n                  column-widths=\"body.columnWidths\"\n                  ng-keydown=\"body.keyDown($event, $index, r)\"\n                  ng-click=\"body.rowClicked($event, $index, r)\"\n                  on-tree-toggle=\"body.onTreeToggled(row, cell)\"\n                  ng-class=\"body.rowClasses(r)\"\n                  options=\"body.options\"\n                  selected=\"body.isSelected(r)\"\n                  on-checkbox-change=\"body.onCheckboxChange($index, row)\"\n                  columns=\"body.columnsByPin\"\n                  has-children=\"body.getRowHasChildren(r)\"\n                  expanded=\"body.getRowExpanded(r)\"\n                  ng-style=\"body.rowStyles(r)\">\n          </dt-row>\n        </dt-scroller>\n        <div ng-if=\"body.rows && !body.rows.length\" \n             class=\"empty-row\" \n             ng-bind=\"::body.options.emptyMessage\">\n       </div>\n       <div ng-if=\"body.rows === undefined\" \n             class=\"loading-row\"\n             ng-bind=\"::body.options.loadingMessage\">\n        </div>\n      </div>"
@@ -695,7 +692,7 @@ var BodyController = (function () {
       return c.group;
     });
 
-    $scope.$watchCollection('body.rows', function (newVal, oldVal) {
+    $scope.$watchCollection("body.rows", function (newVal, oldVal) {
       if (newVal) {
         if (!_this3.options.paging.externalPaging) {
           _this3.options.paging.count = newVal.length;
@@ -728,19 +725,19 @@ var BodyController = (function () {
 
     if (this.options.scrollbarV) {
       var sized = false;
-      $scope.$watch('body.options.paging.size', function (newVal, oldVal) {
+      $scope.$watch("body.options.paging.size", function (newVal, oldVal) {
         if (!sized || newVal > oldVal) {
           _this3.getRows();
           sized = true;
         }
       });
 
-      $scope.$watch('body.options.paging.count', function (count) {
+      $scope.$watch("body.options.paging.count", function (count) {
         _this3.count = count;
         _this3.updatePage();
       });
 
-      $scope.$watch('body.options.paging.offset', function (newVal) {
+      $scope.$watch("body.options.paging.offset", function (newVal) {
         if (_this3.options.paging.size) {
           _this3.onPage({
             offset: newVal,
@@ -896,7 +893,7 @@ var BodyController = (function () {
           indexes = this.getFirstLastIndexes(),
           rowIndex = indexes.first;
 
-      this.tempRows.splice(indexes.first, indexes.last);
+      this.tempRows.splice(0, indexes.last - indexes.first);
 
       while (rowIndex < indexes.last && rowIndex < this.count) {
         var row = temp[rowIndex];
@@ -914,17 +911,17 @@ var BodyController = (function () {
     key: "styles",
     value: function styles() {
       var styles = {
-        width: this.options.internal.innerWidth + 'px'
+        width: this.options.internal.innerWidth + "px"
       };
 
       if (!this.options.scrollbarV) {
-        styles.overflowY = 'hidden';
+        styles.overflowY = "hidden";
       } else if (this.options.scrollbarH === false) {
-        styles.overflowX = 'hidden';
+        styles.overflowX = "hidden";
       }
 
       if (this.options.scrollbarV) {
-        styles.height = this.options.internal.bodyHeight + 'px';
+        styles.height = this.options.internal.bodyHeight + "px";
       }
 
       return styles;
@@ -934,8 +931,8 @@ var BodyController = (function () {
     value: function rowStyles(row) {
       var styles = {};
 
-      if (this.options.rowHeight === 'auto') {
-        styles.height = this.options.rowHeight + 'px';
+      if (this.options.rowHeight === "auto") {
+        styles.height = this.options.rowHeight + "px";
       }
 
       return styles;
@@ -944,28 +941,24 @@ var BodyController = (function () {
     key: "groupRowStyles",
     value: function groupRowStyles(row) {
       var styles = this.rowStyles(row);
-      styles.width = this.columnWidths.total + 'px';
+      styles.width = this.columnWidths.total + "px";
       return styles;
     }
   }, {
     key: "rowClasses",
     value: function rowClasses(row) {
       var styles = {
-        'selected': this.isSelected(row)
+        "selected": this.isSelected(row),
+        "dt-row-even": row && row.$$index % 2 === 0,
+        "dt-row-odd": row && row.$$index % 2 !== 0
       };
 
       if (this.treeColumn) {
-        styles['dt-leaf'] = this.rowsByGroup[row[this.treeColumn.relationProp]];
+        styles["dt-leaf"] = this.rowsByGroup[row[this.treeColumn.relationProp]];
 
-        styles['dt-has-leafs'] = this.rowsByGroup[row[this.treeColumn.prop]];
+        styles["dt-has-leafs"] = this.rowsByGroup[row[this.treeColumn.prop]];
 
-        styles['dt-depth-' + row.$$depth] = true;
-      }
-
-      if (row.$$index % 2 == 0) {
-        styles['dt-row-even'] = true;
-      } else {
-        styles['dt-row-odd'] = true;
+        styles["dt-depth-" + row.$$depth] = true;
       }
 
       return styles;
@@ -1154,30 +1147,30 @@ var BodyController = (function () {
 
 function HeaderCellDirective($compile) {
   return {
-    restrict: 'E',
-    controller: 'HeaderCellController',
-    controllerAs: 'hcell',
+    restrict: "E",
+    controller: "HeaderCellController",
+    controllerAs: "hcell",
     scope: true,
     bindToController: {
-      column: '=',
-      onCheckboxChange: '&',
-      onSort: '&',
-      onResize: '&',
-      selected: '='
+      column: "=",
+      onCheckboxChange: "&",
+      onSort: "&",
+      onResize: "&",
+      selected: "="
     },
     replace: true,
     template: "<div ng-class=\"hcell.cellClass()\"\n            draggable=\"true\"\n            ng-style=\"hcell.styles()\"\n            title=\"{{::hcell.column.name}}\">\n        <div resizable=\"hcell.column.resizable\" \n             on-resize=\"hcell.onResized(width, hcell.column)\"\n             min-width=\"hcell.column.minWidth\"\n             max-width=\"hcell.column.maxWidth\">\n          <label ng-if=\"hcell.column.isCheckboxColumn && hcell.column.headerCheckbox\" class=\"dt-checkbox\">\n            <input type=\"checkbox\" \n                   ng-checked=\"hcell.selected\"\n                   ng-click=\"hcell.onCheckboxChange()\" />\n          </label>\n          <span class=\"dt-header-cell-label\" \n                ng-click=\"hcell.onSorted()\">\n          </span>\n          <span ng-class=\"hcell.sortClass()\"></span>\n        </div>\n      </div>",
     compile: function compile() {
       return {
         pre: function pre($scope, $elm, $attrs, ctrl) {
-          var label = $elm[0].querySelector('.dt-header-cell-label');
+          var label = $elm[0].querySelector(".dt-header-cell-label");
 
           if (ctrl.column.headerRenderer) {
             var elm = angular.element(ctrl.column.headerRenderer($elm));
             angular.element(label).append($compile(elm)($scope)[0]);
           } else {
             var val = ctrl.column.name;
-            if (val === undefined || val === null) val = '';
+            if (val === undefined || val === null) val = "";
             label.innerHTML = val;
           }
         }
@@ -1196,19 +1189,19 @@ var HeaderCellController = (function () {
     key: "styles",
     value: function styles() {
       return {
-        width: this.column.width + 'px',
-        minWidth: this.column.minWidth + 'px',
-        maxWidth: this.column.maxWidth + 'px',
-        height: this.column.height + 'px'
+        width: this.column.width + "px",
+        minWidth: this.column.minWidth + "px",
+        maxWidth: this.column.maxWidth + "px",
+        height: this.column.height + "px"
       };
     }
   }, {
     key: "cellClass",
     value: function cellClass() {
       var cls = {
-        'sortable': this.column.sortable,
-        'dt-header-cell': true,
-        'resizable': this.column.resizable
+        "sortable": this.column.sortable,
+        "dt-header-cell": true,
+        "resizable": this.column.resizable
       };
 
       if (this.column.heaerClassName) {
@@ -1222,10 +1215,10 @@ var HeaderCellController = (function () {
     value: function onSorted() {
       if (this.column.sortable) {
         if (!this.column.sort) {
-          this.column.sort = 'asc';
-        } else if (this.column.sort === 'asc') {
-          this.column.sort = 'desc';
-        } else if (this.column.sort === 'desc') {
+          this.column.sort = "asc";
+        } else if (this.column.sort === "asc") {
+          this.column.sort = "desc";
+        } else if (this.column.sort === "desc") {
           this.column.sort = undefined;
         }
 
@@ -1238,9 +1231,9 @@ var HeaderCellController = (function () {
     key: "sortClass",
     value: function sortClass() {
       return {
-        'sort-btn': true,
-        'sort-asc icon-down': this.column.sort === 'asc',
-        'sort-desc icon-up': this.column.sort === 'desc'
+        "sort-btn": true,
+        "sort-asc icon-down": this.column.sort === "asc",
+        "sort-desc icon-up": this.column.sort === "desc"
       };
     }
   }, {
@@ -1262,17 +1255,17 @@ var HeaderCellController = (function () {
 
 function HeaderDirective($timeout) {
   return {
-    restrict: 'E',
-    controller: 'HeaderController',
-    controllerAs: 'header',
+    restrict: "E",
+    controller: "HeaderController",
+    controllerAs: "header",
     scope: true,
     bindToController: {
-      options: '=',
-      columns: '=',
-      columnWidths: '=',
-      onSort: '&',
-      onResize: '&',
-      onCheckboxChange: '&'
+      options: "=",
+      columns: "=",
+      columnWidths: "=",
+      onSort: "&",
+      onResize: "&",
+      onCheckboxChange: "&"
     },
     template: "\n      <div class=\"dt-header\" ng-style=\"header.styles()\">\n        <div class=\"dt-header-inner\" ng-style=\"header.innerStyles()\">\n          <div class=\"dt-row-left\"\n               ng-style=\"header.stylesByGroup('left')\"\n               ng-if=\"header.columns['left'].length\"\n               sortable=\"header.options.reorderable\"\n               on-sortable-sort=\"columnsResorted(event, childScope)\">\n            <dt-header-cell ng-repeat=\"column in header.columns['left'] track by column.$id\" \n                            on-checkbox-change=\"header.onCheckboxChanged()\"\n                            on-sort=\"header.onSorted(column)\"\n                            on-resize=\"header.onResized(column, width)\"\n                            selected=\"header.isSelected()\"\n                            column=\"column\">\n            </dt-header-cell>\n          </div>\n          <div class=\"dt-row-center\" \n               sortable=\"header.options.reorderable\"\n               ng-style=\"header.stylesByGroup('center')\"\n               on-sortable-sort=\"columnsResorted(event, childScope)\">\n            <dt-header-cell ng-repeat=\"column in header.columns['center'] track by column.$id\" \n                            on-checkbox-change=\"header.onCheckboxChanged()\"\n                            on-sort=\"header.onSorted(column)\"\n                            selected=\"header.isSelected()\"\n                            on-resize=\"header.onResized(column, width)\"\n                            column=\"column\">\n            </dt-header-cell>\n          </div>\n          <div class=\"dt-row-right\"\n               ng-if=\"header.columns['right'].length\"\n               sortable=\"header.options.reorderable\"\n               ng-style=\"header.stylesByGroup('right')\"\n               on-sortable-sort=\"columnsResorted(event, childScope)\">\n            <dt-header-cell ng-repeat=\"column in header.columns['right'] track by column.$id\" \n                            on-checkbox-change=\"header.onCheckboxChanged()\"\n                            on-sort=\"header.onSorted(column)\"\n                            selected=\"header.isSelected()\"\n                            on-resize=\"header.onResized(column, width)\"\n                            column=\"column\">\n            </dt-header-cell>\n          </div>\n        </div>\n      </div>",
     replace: true,
@@ -1319,15 +1312,15 @@ var HeaderController = (function () {
     key: "styles",
     value: function styles() {
       return {
-        width: this.options.internal.innerWidth + 'px',
-        height: this.options.headerHeight + 'px'
+        width: this.options.internal.innerWidth + "px",
+        height: this.options.headerHeight + "px"
       };
     }
   }, {
     key: "innerStyles",
     value: function innerStyles() {
       return {
-        width: this.columnWidths.total + 'px'
+        width: this.columnWidths.total + "px"
       };
     }
   }, {
@@ -1341,12 +1334,12 @@ var HeaderController = (function () {
     key: "stylesByGroup",
     value: function stylesByGroup(group) {
       var styles = {
-        width: this.columnWidths[group] + 'px'
+        width: this.columnWidths[group] + "px"
       };
 
-      if (group === 'center') {
+      if (group === "center") {
         TranslateXY(styles, this.options.internal.offsetX * -1, 0);
-      } else if (group === 'right') {
+      } else if (group === "right") {
         var offset = (this.columnWidths.total - this.options.internal.innerWidth) * -1;
         TranslateXY(styles, offset, 0);
       }
@@ -1424,10 +1417,10 @@ function debounce(func, wait, immediate) {
 
 function SortableDirective($timeout) {
   return {
-    restrict: 'A',
+    restrict: "A",
     scope: {
-      isSortable: '=sortable',
-      onSortableSort: '&'
+      isSortable: "=sortable",
+      onSortableSort: "&"
     },
     link: function link($scope, $element, $attrs) {
       var rootEl = $element[0],
@@ -1450,7 +1443,7 @@ function SortableDirective($timeout) {
         var target = e.target;
         if (isbefore(dragEl, target)) {
           target.parentNode.insertBefore(dragEl, target);
-        } else if (target.nextSibling && target.hasAttribute('draggable')) {
+        } else if (target.nextSibling && target.hasAttribute("draggable")) {
           target.parentNode.insertBefore(dragEl, target.nextSibling);
         }
       };
@@ -1458,10 +1451,10 @@ function SortableDirective($timeout) {
       function onDragEnd(evt) {
         evt.preventDefault();
 
-        dragEl.classList.remove('dt-clone');
+        dragEl.classList.remove("dt-clone");
 
-        $element.off('dragend', onDragEnd);
-        $element.off('dragenter', onDragEnter);
+        $element.off("dragend", onDragEnd);
+        $element.off("dragenter", onDragEnter);
 
         if (nextEl !== dragEl.nextSibling) {
           $scope.onSortableSort({
@@ -1477,19 +1470,19 @@ function SortableDirective($timeout) {
 
         dragEl = evt.target;
         nextEl = dragEl.nextSibling;
-        dragEl.classList.add('dt-clone');
+        dragEl.classList.add("dt-clone");
 
-        evt.dataTransfer.effectAllowed = 'move';
-        evt.dataTransfer.setData('Text', dragEl.textContent);
+        evt.dataTransfer.effectAllowed = "move";
+        evt.dataTransfer.setData("Text", dragEl.textContent);
 
-        $element.on('dragenter', onDragEnter);
-        $element.on('dragend', onDragEnd);
+        $element.on("dragenter", onDragEnter);
+        $element.on("dragend", onDragEnd);
       };
 
-      $element.on('dragstart', onDragStart);
+      $element.on("dragstart", onDragStart);
 
-      $scope.$on('$destroy', function () {
-        $element.off('dragstart', onDragStart);
+      $scope.$on("$destroy", function () {
+        $element.off("dragstart", onDragStart);
       });
     }
   };
@@ -1498,32 +1491,32 @@ SortableDirective.$inject = ["$timeout"];
 
 function ResizableDirective($document, debounce, $timeout) {
   return {
-    restrict: 'A',
+    restrict: "A",
     scope: {
-      isResizable: '=resizable',
-      minWidth: '=',
-      maxWidth: '=',
-      onResize: '&'
+      isResizable: "=resizable",
+      minWidth: "=",
+      maxWidth: "=",
+      onResize: "&"
     },
     link: function link($scope, $element, $attrs) {
       if ($scope.isResizable) {
-        $element.addClass('resizable');
+        $element.addClass("resizable");
       }
 
       var handle = angular.element("<span class=\"dt-resize-handle\" title=\"Resize\"></span>"),
           parent = $element.parent(),
           prevScreenX;
 
-      handle.on('mousedown', function (event) {
-        if (!$element[0].classList.contains('resizable')) {
+      handle.on("mousedown", function (event) {
+        if (!$element[0].classList.contains("resizable")) {
           return false;
         }
 
         event.stopPropagation();
         event.preventDefault();
 
-        $document.on('mousemove', mousemove);
-        $document.on('mouseup', mouseup);
+        $document.on("mousemove", mousemove);
+        $document.on("mouseup", mouseup);
       });
 
       function mousemove(event) {
@@ -1537,7 +1530,7 @@ function ResizableDirective($document, debounce, $timeout) {
 
         if ((!$scope.minWidth || newWidth >= $scope.minWidth) && (!$scope.maxWidth || newWidth <= $scope.maxWidth)) {
           parent.css({
-            width: newWidth + 'px'
+            width: newWidth + "px"
           });
         }
       }
@@ -1549,8 +1542,8 @@ function ResizableDirective($document, debounce, $timeout) {
           });
         }
 
-        $document.unbind('mousemove', mousemove);
-        $document.unbind('mouseup', mouseup);
+        $document.unbind("mousemove", mousemove);
+        $document.unbind("mouseup", mouseup);
       }
 
       $element.append(handle);
@@ -1629,16 +1622,16 @@ function DataTableService() {
             column[attrName] = val;
           }
 
-          if (attrName === 'class') {
+          if (attrName === "class") {
             column.className = attr.value;
           }
 
-          if (attrName === 'name' || attrName === 'prop') {
+          if (attrName === "name" || attrName === "prop") {
             column[attrName] = attr.value;
           }
         });
 
-        if (c.innerHTML !== '') {
+        if (c.innerHTML !== "") {
           column.template = c.innerHTML;
         }
 
@@ -1673,31 +1666,31 @@ function ScrollbarWidth() {
 
 function ObjectId() {
   var timestamp = (new Date().getTime() / 1000 | 0).toString(16);
-  return timestamp + 'xxxxxxxxxxxxxxxx'.replace(/[x]/g, function () {
+  return timestamp + "xxxxxxxxxxxxxxxx".replace(/[x]/g, function () {
     return (Math.random() * 16 | 0).toString(16);
   }).toLowerCase();
 }
 
 function DataTableDirective($window, $timeout, throttle, DataTableService) {
   return {
-    restrict: 'E',
+    restrict: "E",
     replace: true,
-    controller: 'DataTableController',
+    controller: "DataTableController",
     scope: true,
     bindToController: {
-      options: '=',
-      rows: '=',
-      selected: '=?',
-      expanded: '=?',
-      onSelect: '&',
-      onSort: '&',
-      onTreeToggle: '&',
-      onPage: '&',
-      onRowClick: '&'
+      options: "=",
+      rows: "=",
+      selected: "=?",
+      expanded: "=?",
+      onSelect: "&",
+      onSort: "&",
+      onTreeToggle: "&",
+      onPage: "&",
+      onRowClick: "&"
     },
-    controllerAs: 'dt',
+    controllerAs: "dt",
     template: function template(element) {
-      var columns = element[0].getElementsByTagName('column'),
+      var columns = element[0].getElementsByTagName("column"),
           id = ObjectId();
       DataTableService.buildAndSaveColumns(id, columns);
 
@@ -1706,7 +1699,7 @@ function DataTableDirective($window, $timeout, throttle, DataTableService) {
     compile: function compile(tElem, tAttrs) {
       return {
         pre: function pre($scope, $elm, $attrs, ctrl) {
-          var id = $elm.attr('data-column-id'),
+          var id = $elm.attr("data-column-id"),
               columns = DataTableService.columns[id];
           if (columns) {
             ctrl.options.columns = columns;
@@ -1740,13 +1733,13 @@ function DataTableDirective($window, $timeout, throttle, DataTableService) {
 
           resize();
           $timeout(resize);
-          $elm.addClass('dt-loaded');
-          angular.element($window).bind('resize', throttle(function () {
+          $elm.addClass("dt-loaded");
+          angular.element($window).bind("resize", throttle(function () {
             $timeout(resize);
           }));
 
-          $scope.$on('$destroy', function () {
-            angular.element($window).off('resize');
+          $scope.$on("$destroy", function () {
+            angular.element($window).off("resize");
           });
         }
       };
@@ -1931,11 +1924,11 @@ var TableDefaults = {
 
   rowHeight: 30,
 
-  columnMode: 'standard',
+  columnMode: "standard",
 
-  loadingMessage: 'Loading...',
+  loadingMessage: "Loading...",
 
-  emptyMessage: 'No data to display',
+  emptyMessage: "No data to display",
 
   headerHeight: 30,
 
@@ -1984,7 +1977,7 @@ var DataTableController = (function () {
 
     this.options.$outer = $scope.$parent;
 
-    $scope.$watch('dt.options.columns', function (newVal, oldVal) {
+    $scope.$watch("dt.options.columns", function (newVal, oldVal) {
       if (newVal.length > oldVal.length) {
         _this5.transposeColumnDefaults();
       }
@@ -1996,7 +1989,7 @@ var DataTableController = (function () {
       _this5.calculateColumns();
     }, true);
 
-    var watch = $scope.$watch('dt.rows', function (newVal) {
+    var watch = $scope.$watch("dt.rows", function (newVal) {
       if (newVal) {
         watch();
         _this5.onSorted();
@@ -2055,9 +2048,9 @@ var DataTableController = (function () {
     key: "tableCss",
     value: function tableCss() {
       return {
-        'fixed': this.options.scrollbarV,
-        'selectable': this.options.selectable,
-        'checkboxable': this.options.checkboxSelection
+        "fixed": this.options.scrollbarV,
+        "selectable": this.options.selectable,
+        "checkboxable": this.options.checkboxSelection
       };
     }
   }, {
@@ -2065,9 +2058,9 @@ var DataTableController = (function () {
     value: function adjustColumns(forceIdx) {
       var width = this.options.internal.innerWidth - this.options.internal.scrollBarWidth;
 
-      if (this.options.columnMode === 'force') {
+      if (this.options.columnMode === "force") {
         ForceFillColumnWidths(this.options.columns, width, forceIdx);
-      } else if (this.options.columnMode === 'flex') {
+      } else if (this.options.columnMode === "flex") {
         AdjustColumnWidths(this.options.columns, width);
       }
     }
@@ -2092,7 +2085,7 @@ var DataTableController = (function () {
         for (var i = 0, len = sorts.length; i < len; i++) {
           var c = sorts[i];
           if (c.comparator !== false) {
-            var dir = c.sort === 'asc' ? '' : '-';
+            var dir = c.sort === "asc" ? "" : "-";
             clientSorts.push(dir + c.prop);
           }
         }
@@ -2100,7 +2093,7 @@ var DataTableController = (function () {
         if (clientSorts.length) {
           var _rows;
 
-          var sortedValues = this.$filter('orderBy')(this.rows, clientSorts);
+          var sortedValues = this.$filter("orderBy")(this.rows, clientSorts);
           this.rows.splice(0, this.rows.length);
           (_rows = this.rows).push.apply(_rows, babelHelpers.toConsumableArray(sortedValues));
         }
@@ -2183,7 +2176,7 @@ var DataTableController = (function () {
   return DataTableController;
 })();
 
-var dataTable = angular.module('data-table', []).controller('DataTableController', DataTableController).directive('dtable', DataTableDirective).factory('DataTableService', DataTableService).directive('resizable', ResizableDirective).directive('sortable', SortableDirective).constant('debounce', debounce).constant('throttle', throttle).controller('HeaderController', HeaderController).directive('dtHeader', HeaderDirective).controller('HeaderCellController', HeaderCellController).directive('dtHeaderCell', HeaderCellDirective).controller('BodyController', BodyController).directive('dtBody', BodyDirective).directive('dtScroller', ScrollerDirective).controller('RowController', RowController).directive('dtRow', RowDirective).controller('GroupRowController', GroupRowController).directive('dtGroupRow', GroupRowDirective).controller('CellController', CellController).directive('dtCell', CellDirective).controller('FooterController', FooterController).directive('dtFooter', FooterDirective).controller('PagerController', PagerController).directive('dtPager', PagerDirective);
+var dataTable = angular.module("data-table", []).controller("DataTableController", DataTableController).directive("dtable", DataTableDirective).factory("DataTableService", DataTableService).directive("resizable", ResizableDirective).directive("sortable", SortableDirective).constant("debounce", debounce).constant("throttle", throttle).controller("HeaderController", HeaderController).directive("dtHeader", HeaderDirective).controller("HeaderCellController", HeaderCellController).directive("dtHeaderCell", HeaderCellDirective).controller("BodyController", BodyController).directive("dtBody", BodyDirective).directive("dtScroller", ScrollerDirective).controller("RowController", RowController).directive("dtRow", RowDirective).controller("GroupRowController", GroupRowController).directive("dtGroupRow", GroupRowDirective).controller("CellController", CellController).directive("dtCell", CellDirective).controller("FooterController", FooterController).directive("dtFooter", FooterDirective).controller("PagerController", PagerController).directive("dtPager", PagerDirective);
 
 exports["default"] = dataTable;
 module.exports = exports["default"];
