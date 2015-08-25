@@ -2,7 +2,7 @@
   "name": "angular-data-table",
   "title": "AngularJS Data-Table",
   "description": "AngularJS data table directive written in ES6.",
-  "version": "0.3.9",
+  "version": "0.3.10",
   "repository": {
     "type": "git",
     "url": "git@github.com:Swimlane/angular-data-table.git",
@@ -39,6 +39,7 @@
     "gulp-rename": "^1.2.2",
     "gulp-replace": "^0.5.3",
     "gulp-uglify": "^1.2.0",
+    "jspm": "^0.16.1",
     "karma": "^0.13.3",
     "karma-angular": "0.0.6",
     "karma-babel-preprocessor": "^5.2.1",

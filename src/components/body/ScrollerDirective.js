@@ -15,10 +15,10 @@ export function ScrollerDirective($timeout){
           lastScrollY = 0,
           lastScrollX = 0;
 
-      ctrl.options.internal.scrollHelper = 
+      ctrl.options.internal.scrollHelper =
         new ScrollHelper($elm.parent());
 
-      ctrl.options.internal.styleTranslator = 
+      ctrl.options.internal.styleTranslator =
         new StyleTranslator(ctrl.options.rowHeight);
 
       function update(){
@@ -30,7 +30,7 @@ export function ScrollerDirective($timeout){
           let rows = ctrl.getRows();
           ctrl.options.internal.styleTranslator.update(rows);
         }
-        
+
         $scope.$digest();
         ticking = false;
       };
