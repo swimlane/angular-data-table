@@ -27,8 +27,7 @@ export function ScrollerDirective($timeout){
         ctrl.updatePage();
 
         if(ctrl.options.scrollbarV){
-          let rows = ctrl.getRows();
-          ctrl.options.internal.styleTranslator.update(rows);
+          ctrl.getRows();
         }
 
         $scope.$digest();

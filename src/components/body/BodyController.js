@@ -268,6 +268,8 @@ export class BodyController{
       rowIndex++;
     }
 
+    this.options.internal.styleTranslator.update(this.tempRows);
+
     return this.tempRows;
   }
 
