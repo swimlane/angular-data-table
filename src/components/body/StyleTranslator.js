@@ -10,10 +10,10 @@ export class StyleTranslator{
     this.height = height;
     this.map = new Map();
   }
-  
+
   /**
    * Update the rows
-   * @param  {Array} rows 
+   * @param  {Array} rows
    */
   update(rows){
     let n = 0;
@@ -29,8 +29,8 @@ export class StyleTranslator{
 
   /**
    * Register the row
-   * @param  {int} idx 
-   * @param  {dom} dom 
+   * @param  {int} idx
+   * @param  {dom} dom
    */
   register(idx, dom){
     this.map.set(idx, dom);

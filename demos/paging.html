@@ -79,7 +79,7 @@
           $scope.paging = function(offset, size){
             setTimeout(function(){
             $http.get('/demos/data/100.json').success(function(d) {
-              
+
               $scope.optionz.paging.count = d.length;
 
               var set = d.splice(offset, size);
