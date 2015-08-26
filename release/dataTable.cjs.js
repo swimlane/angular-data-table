@@ -1,6 +1,6 @@
 /**
  * angular-data-table - AngularJS data table directive written in ES6.
- * @version v0.3.11
+ * @version v0.3.12
  * @link http://swimlane.com/
  * @license 
  */
@@ -376,7 +376,7 @@ function TranslateXY(styles, x, y) {
       styles[transform] = "translate3d(" + x + "px, " + y + "px, 0)";
       styles[backfaceVisibility] = 'hidden';
     } else {
-      styles[transform] = "translate(" + x + "px, " + y + "px, 0)";
+      styles[CamelCase(transform)] = "translate(" + x + "px, " + y + "px)";
     }
   } else {
     styles.top = y + 'px';
