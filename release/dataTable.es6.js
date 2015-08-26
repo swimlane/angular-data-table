@@ -762,8 +762,7 @@ function ScrollerDirective($timeout){
         ctrl.updatePage();
 
         if(ctrl.options.scrollbarV){
-          let rows = ctrl.getRows();
-          ctrl.options.internal.styleTranslator.update(rows);
+          ctrl.getRows();
         }
 
         $scope.$digest();
@@ -1149,6 +1148,8 @@ class BodyController{
       idx++;
       rowIndex++;
     }
+
+    this.options.internal.styleTranslator.update(this.tempRows);
 
     return this.tempRows;
   }
