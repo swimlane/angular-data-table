@@ -19,7 +19,7 @@ export function BodyDirective($timeout){
     },
     scope: true,
     template: `
-      <div class="dt-body" ng-style="body.styles()">
+      <div class="dt-body" ng-style="body.styles()" dt-seletion>
         <dt-scroller class="dt-body-scroller">
           <dt-group-row ng-repeat-start="r in body.tempRows track by $index"
                         ng-if="r.group"
@@ -36,13 +36,13 @@ export function BodyDirective($timeout){
                   tabindex="{{$index}}"
                   columns="body.columns"
                   column-widths="body.columnWidths"
-                  ng-keydown="body.keyDown($event, $index, r)"
-                  ng-click="body.rowClicked($event, $index, r)"
+                  ng-keydown="selCtrl.keyDown($event, $index, r)"
+                  ng-click="selCtrl.rowClicked($event, $index, r)"
                   on-tree-toggle="body.onTreeToggled(row, cell)"
                   ng-class="body.rowClasses(r)"
                   options="body.options"
                   selected="body.isSelected(r)"
-                  on-checkbox-change="body.onCheckboxChange($index, row)"
+                  on-checkbox-change="selCtrl.onCheckboxChange($index, row)"
                   columns="body.columnsByPin"
                   has-children="body.getRowHasChildren(r)"
                   expanded="body.getRowExpanded(r)"

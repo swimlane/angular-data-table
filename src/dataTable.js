@@ -10,7 +10,7 @@ import { HeaderCellController } from './components/header/HeaderCellController';
 import { HeaderCellDirective } from './components/header/HeaderCellDirective';
 import { BodyDirective } from './components/body/BodyDirective';
 import { ScrollerDirective } from './components/body/ScrollerDirective';
-//import { SelectionDirective } from './components/body/SelectionDirective';
+import { SelectionDirective } from './components/body/SelectionDirective';
 import { RowDirective } from './components/body/RowDirective';
 import { GroupRowDirective } from './components/body/GroupRowDirective';
 import { CellDirective } from './components/body/CellDirective';
@@ -27,7 +27,7 @@ export default angular
   .directive('dtHeaderCell', HeaderCellDirective)
   .directive('dtBody', BodyDirective)
   .directive('dtScroller', ScrollerDirective)
-  //.directive('dtSeletion', SelectionDirective)
+  .directive('dtSeletion', SelectionDirective)
   .directive('dtRow', RowDirective)
   .directive('dtGroupRow', GroupRowDirective)
   .directive('dtCell', CellDirective)
