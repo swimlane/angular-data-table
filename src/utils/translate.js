@@ -1,4 +1,5 @@
 import { GetVendorPrefixedName } from './vendorPrefixes';
+import { CamelCase } from './utils';
 
 // browser detection and prefixing tools
 var transform = GetVendorPrefixedName('transform'),
@@ -14,7 +15,7 @@ export function TranslateXY(styles, x,y){
       styles[transform] = `translate3d(${x}px, ${y}px, 0)`;
       styles[backfaceVisibility] = 'hidden';
     } else {
-      styles[transform] = `translate(${x}px, ${y}px, 0)`;
+      styles[CamelCase(transform)] = `translate(${x}px, ${y}px)`;
     }
   } else {
     styles.top = y + 'px';
