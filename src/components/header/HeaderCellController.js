@@ -19,7 +19,6 @@ export class HeaderCellController{
   cellClass(){
     var cls = {
       'sortable': this.column.sortable,
-      'dt-header-cell': true,
       'resizable': this.column.resizable
     };
 

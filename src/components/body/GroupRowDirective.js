@@ -1,9 +1,10 @@
+import { GroupRowController } from './GroupRowController';
 import { TranslateXY } from '../../utils/translate';
 
 export function GroupRowDirective(){
   return {
     restrict: 'E',
-    controller: 'GroupRowController',
+    controller: GroupRowController,
     controllerAs: 'group',
     bindToController: {
       row: '=',

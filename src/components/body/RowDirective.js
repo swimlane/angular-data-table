@@ -1,9 +1,10 @@
+import { RowController } from './RowController';
 import { TranslateXY } from '../../utils/translate';
 
 export function RowDirective(){
   return {
     restrict: 'E',
-    controller: 'RowController',
+    controller: RowController,
     controllerAs: 'rowCtrl',
     scope: true,
     bindToController: {

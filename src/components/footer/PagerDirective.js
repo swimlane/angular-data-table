@@ -1,4 +1,4 @@
-import angular from 'angular';
+import { PagerController } from './PagerController';
 
 export function PagerDirective(){
   return {

@@ -1,9 +1,10 @@
 import angular from 'angular';
+import { HeaderController } from './HeaderController';
 
 export function HeaderDirective($timeout){
   return {
     restrict: 'E',
-    controller: 'HeaderController',
+    controller: HeaderController,
     controllerAs: 'header',
     scope: true,
     bindToController: {

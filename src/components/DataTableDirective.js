@@ -1,11 +1,13 @@
 import angular from 'angular';
+import { DataTableController } from './DataTableController';
 import { ScrollbarWidth, ObjectId } from '../utils/utils';
+import { throttle } from '../utils/throttle';
 
-export function DataTableDirective($window, $timeout, throttle, DataTableService){
+export function DataTableDirective($window, $timeout, DataTableService){
   return {
     restrict: 'E',
     replace: true,
-    controller: 'DataTableController',
+    controller: DataTableController,
     scope: true,
     bindToController: {
       options: '=',

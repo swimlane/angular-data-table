@@ -1,5 +1,4 @@
 import { requestAnimFrame } from '../../utils/utils';
-import { ScrollHelper } from './ScrollHelper';
 import { StyleTranslator } from './StyleTranslator';
 import { TranslateXY } from '../../utils/translate';
 
@@ -13,13 +12,15 @@ export function ScrollerDirective($timeout){
     link: function($scope, $elm, $attrs, ctrl){
       var ticking = false,
           lastScrollY = 0,
-          lastScrollX = 0;
-
-      ctrl.options.internal.scrollHelper =
-        new ScrollHelper($elm.parent());
+          lastScrollX = 0,
+          parent = $elm.parent();
 
       ctrl.options.internal.styleTranslator =
         new StyleTranslator(ctrl.options.rowHeight);
+
+      ctrl.options.internal.setYOffset = function(offsetY){
+        parent[0].scrollTop = offsetY;
+      };
 
       function update(){
         ctrl.options.internal.offsetY = lastScrollY;

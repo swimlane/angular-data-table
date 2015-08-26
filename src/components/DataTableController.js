@@ -163,7 +163,7 @@ export class DataTableController {
       }
     }
 
-    this.options.internal.scrollHelper.setYOffset(0);
+    this.options.internal.setYOffset(0);
   }
 
   /**
@@ -199,7 +199,7 @@ export class DataTableController {
     var pageBlockSize = this.options.rowHeight * size,
         offsetY = pageBlockSize * offset;
 
-    this.options.internal.scrollHelper.setYOffset(offsetY);
+    this.options.internal.setYOffset(offsetY);
   }
 
   /**

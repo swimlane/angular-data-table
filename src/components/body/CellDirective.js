@@ -1,9 +1,10 @@
 import angular from 'angular';
+import { CellController } from './CellController';
 
 export function CellDirective($rootScope, $compile, $log, $timeout){
   return {
     restrict: 'E',
-    controller: 'CellController',
+    controller: CellController,
     scope: true,
     controllerAs: 'cell',
     bindToController: {

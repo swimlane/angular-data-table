@@ -1,3 +1,5 @@
+import { FooterController } from './FooterController';
+
 export function FooterDirective(){
   return {
     restrict: 'E',

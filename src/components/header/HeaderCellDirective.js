@@ -1,9 +1,10 @@
 import angular from 'angular';
+import { HeaderCellController } from './HeaderCellController';
 
 export function HeaderCellDirective($compile){
   return {
     restrict: 'E',
-    controller: 'HeaderCellController',
+    controller: HeaderCellController,
     controllerAs: 'hcell',
     scope: true,
     bindToController: {
@@ -16,6 +17,7 @@ export function HeaderCellDirective($compile){
     replace: true,
     template: 
       `<div ng-class="hcell.cellClass()"
+            class="dt-header-cell"
             draggable="true"
             ng-style="hcell.styles()"
             title="{{::hcell.column.name}}">

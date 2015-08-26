@@ -1,7 +1,9 @@
+import { BodyController } from './BodyController';
+
 export function BodyDirective($timeout){
   return {
     restrict: 'E',
-    controller: 'BodyController',
+    controller: BodyController,
     controllerAs: 'body',
     bindToController: {
       columns: '=',
