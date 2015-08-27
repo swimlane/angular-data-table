@@ -4,7 +4,6 @@ import './utils/polyfill';
 import { ResizableDirective } from './components/header/ResizableDirective';
 import { SortableDirective } from './components/header/SortableDirective';
 import { DataTableDirective } from './components/DataTableDirective';
-import { DataTableService } from './components/DataTableService';
 import { HeaderDirective } from './components/header/HeaderDirective';
 import { HeaderCellController } from './components/header/HeaderCellController';
 import { HeaderCellDirective } from './components/header/HeaderCellDirective';
@@ -20,7 +19,6 @@ import { PagerDirective } from './components/footer/PagerDirective';
 export default angular
   .module('data-table', [])
   .directive('dtable', DataTableDirective)
-  .factory('DataTableService', DataTableService)
   .directive('resizable', ResizableDirective)
   .directive('sortable', SortableDirective)
   .directive('dtHeader', HeaderDirective)

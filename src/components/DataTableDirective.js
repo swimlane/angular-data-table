@@ -2,8 +2,9 @@ import angular from 'angular';
 import { DataTableController } from './DataTableController';
 import { ScrollbarWidth, ObjectId } from '../utils/utils';
 import { throttle } from '../utils/throttle';
+import { DataTableService } from './DataTableService';
 
-export function DataTableDirective($window, $timeout, DataTableService){
+export function DataTableDirective($window, $timeout){
   return {
     restrict: 'E',
     replace: true,
