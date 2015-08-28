@@ -46,7 +46,7 @@ export class CellController {
   onTreeToggled(evt){
     evt.stopPropagation();
     this.expanded = !this.expanded;
-    this.onTreeToggle({ 
+    this.onTreeToggle({
       cell: {
         value: this.value,
         column: this.column,
@@ -57,7 +57,7 @@ export class CellController {
 
   /**
    * Invoked when the checkbox was changed
-   * @param  {object} event 
+   * @param  {object} event
    */
   onCheckboxChanged(event){
     event.stopPropagation();
@@ -69,11 +69,10 @@ export class CellController {
    * @return {string} value
    */
   getValue(){
-    var val = this.column.cellDataGetter ? 
+    var val = this.column.cellDataGetter ?
       this.column.cellDataGetter(this.value) : this.value;
 
     if(val === undefined || val === null) val = '';
-
     return val;
   }
 
