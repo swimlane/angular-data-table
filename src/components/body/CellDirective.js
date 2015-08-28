@@ -18,13 +18,13 @@ export function CellDirective($rootScope, $compile, $log, $timeout){
       onTreeToggle: '&',
       onCheckboxChange: '&'
     },
-    template: 
-      `<div class="dt-cell" 
-            data-title="{{::cell.column.name}}" 
+    template:
+      `<div class="dt-cell"
+            data-title="{{::cell.column.name}}"
             ng-style="cell.styles()"
             ng-class="cell.cellClass()">
         <label ng-if="cell.column.isCheckboxColumn" class="dt-checkbox">
-          <input type="checkbox" 
+          <input type="checkbox"
                  ng-checked="cell.selected"
                  ng-click="cell.onCheckboxChanged($event)" />
         </label>
@@ -44,15 +44,14 @@ export function CellDirective($rootScope, $compile, $log, $timeout){
             cellScope = ctrl.options.$outer.$new(false);
             cellScope.getValue = ctrl.getValue;
           }
-          
-          $scope.$watch('cell.value', () => {
-            content.empty();
 
+          $scope.$watch('cell.row', () => {
+            content.empty();
             if(cellScope){
               cellScope.$cell = ctrl.value;
               cellScope.$row = ctrl.row;
             }
-            
+
             if(ctrl.column.template){
               var elm = angular.element(`<span>${ctrl.column.template.trim()}</span>`);
               content.append($compile(elm)(cellScope));
