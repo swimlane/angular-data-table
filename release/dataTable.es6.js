@@ -37,10 +37,115 @@
   }
 }());
 
+class PagerController {
+
+  /**
+   * Creates an instance of the Pager Controller
+   * @param  {object} $scope   
+   */
+  /*@ngInject*/
+  constructor($scope){
+    $scope.$watch('pager.count', (newVal) => {
+      this.calcTotalPages(this.size, this.count);
+      this.getPages(this.page || 1);
+    });
+
+    $scope.$watch('pager.page', (newVal) => {
+      if (newVal !== 0 && newVal <= this.totalPages) {
+        this.getPages(newVal);
+      }
+    });
+    
+    this.getPages(this.page || 1);
+  }
+
+  /**
+   * Calculates the total number of pages given the count.
+   * @return {int} page count
+   */
+  calcTotalPages(size, count) {
+    var count = size < 1 ? 1 : Math.ceil(count / size);
+    this.totalPages = Math.max(count || 0, 1);
+  }
+
+  /**
+   * Select a page
+   * @param  {int} num   
+   */
+  selectPage(num){
+    if (num > 0 && num <= this.totalPages) {
+      this.page = num;
+      this.onPage({
+        page: num
+      });
+    }
+  }
+
+  /**
+   * Determines if the pager can go previous
+   * @return {boolean}
+   */
+  canPrevious(){
+    return this.page !== 1;
+  }
+
+  /**
+   * Determines if the pager can go forward
+   * @return {boolean}       
+   */
+  canNext(){
+    return this.page <= this.totalPages;
+  }
+
+  /**
+   * Gets the page set given the current page
+   * @param  {int} page 
+   */
+  getPages(page) {
+    var pages = [],
+        startPage = 1, 
+        endPage = this.totalPages,
+        maxSize = 5,
+        isMaxSized = maxSize < this.totalPages;
+
+    if (isMaxSized) {
+      startPage = ((Math.ceil(page / maxSize) - 1) * maxSize) + 1;
+      endPage = Math.min(startPage + maxSize - 1, this.totalPages);
+    }
+
+    for (var number = startPage; number <= endPage; number++) {
+      pages.push({
+        number: number,
+        text: number,
+        active: number === page
+      });
+    }
+
+    if (isMaxSized) {
+      if (startPage > 1) {
+        pages.unshift({
+          number: startPage - 1,
+          text: '...'
+        });
+      }
+
+      if (endPage < this.totalPages) {
+        pages.push({
+          number: endPage + 1,
+          text: '...'
+        });
+      }
+    }
+
+    this.pages = pages;
+  }
+
+}
+
 function PagerDirective(){
   return {
     restrict: 'E',
-    controller: 'PagerController',
+    controller: PagerController,
     controllerAs: 'pager',
     scope: true,
     bindToController: {
@@ -49,7 +154,7 @@ function PagerDirective(){
       count: '=',
       onPage: '&'
     },
-    template: 
+    template:
       `<div class="dt-pager">
         <ul class="pager">
           <li ng-class="{ disabled: !pager.canPrevious() }">
@@ -67,10 +172,47 @@ function PagerDirective(){
   };
 }
 
+class FooterController {
+
+  /**
+   * Creates an instance of the Footer Controller
+   * @param  {scope}
+   * @return {[type]}
+   */
+  /*@ngInject*/
+  constructor($scope){
+    this.page = this.paging.offset + 1;
+    $scope.$watch('footer.paging.offset', (newVal) => {
+      this.offsetChanged(newVal)
+    });
+  }
+
+  /**
+   * The offset ( page ) changed externally, update the page
+   * @param  {new offset}
+   */
+  offsetChanged(newVal){
+    this.page = newVal + 1;
+  }
+
+  /**
+   * The pager was invoked
+   * @param  {scope}
+   */
+  onPaged(page){
+    this.paging.offset = page - 1;
+    this.onPage({
+      offset: this.paging.offset,
+      size: this.paging.size
+    });
+  }
+
+}
+
 function FooterDirective(){
   return {
     restrict: 'E',
-    controller: 'FooterController',
+    controller: FooterController,
     controllerAs: 'footer',
     scope: true,
     bindToController: {

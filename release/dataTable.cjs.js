@@ -1,6 +1,6 @@
 /**
  * angular-data-table - AngularJS data table directive written in ES6.
- * @version v0.3.12
+ * @version v0.3.14
  * @link http://swimlane.com/
  * @license 
  */
@@ -48,10 +48,101 @@ Object.defineProperty(exports, "__esModule", {
   }
 })();
 
+var PagerController = (function () {
+  function PagerController($scope) {
+    var _this = this;
+
+    babelHelpers.classCallCheck(this, PagerController);
+
+    $scope.$watch("pager.count", function (newVal) {
+      _this.calcTotalPages(_this.size, _this.count);
+      _this.getPages(_this.page || 1);
+    });
+
+    $scope.$watch("pager.page", function (newVal) {
+      if (newVal !== 0 && newVal <= _this.totalPages) {
+        _this.getPages(newVal);
+      }
+    });
+
+    this.getPages(this.page || 1);
+  }
+  PagerController.$inject = ["$scope"];
+
+  babelHelpers.createClass(PagerController, [{
+    key: "calcTotalPages",
+    value: function calcTotalPages(size, count) {
+      var count = size < 1 ? 1 : Math.ceil(count / size);
+      this.totalPages = Math.max(count || 0, 1);
+    }
+  }, {
+    key: "selectPage",
+    value: function selectPage(num) {
+      if (num > 0 && num <= this.totalPages) {
+        this.page = num;
+        this.onPage({
+          page: num
+        });
+      }
+    }
+  }, {
+    key: "canPrevious",
+    value: function canPrevious() {
+      return this.page !== 1;
+    }
+  }, {
+    key: "canNext",
+    value: function canNext() {
+      return this.page <= this.totalPages;
+    }
+  }, {
+    key: "getPages",
+    value: function getPages(page) {
+      var pages = [],
+          startPage = 1,
+          endPage = this.totalPages,
+          maxSize = 5,
+          isMaxSized = maxSize < this.totalPages;
+
+      if (isMaxSized) {
+        startPage = (Math.ceil(page / maxSize) - 1) * maxSize + 1;
+        endPage = Math.min(startPage + maxSize - 1, this.totalPages);
+      }
+
+      for (var number = startPage; number <= endPage; number++) {
+        pages.push({
+          number: number,
+          text: number,
+          active: number === page
+        });
+      }
+
+      if (isMaxSized) {
+        if (startPage > 1) {
+          pages.unshift({
+            number: startPage - 1,
+            text: "..."
+          });
+        }
+
+        if (endPage < this.totalPages) {
+          pages.push({
+            number: endPage + 1,
+            text: "..."
+          });
+        }
+      }
+
+      this.pages = pages;
+    }
+  }]);
+  return PagerController;
+})();
+
 function PagerDirective() {
   return {
     restrict: "E",
-    controller: "PagerController",
+    controller: PagerController,
     controllerAs: "pager",
     scope: true,
     bindToController: {
@@ -65,10 +156,41 @@ function PagerDirective() {
   };
 }
 
+var FooterController = (function () {
+  function FooterController($scope) {
+    var _this2 = this;
+
+    babelHelpers.classCallCheck(this, FooterController);
+
+    this.page = this.paging.offset + 1;
+    $scope.$watch("footer.paging.offset", function (newVal) {
+      _this2.offsetChanged(newVal);
+    });
+  }
+  FooterController.$inject = ["$scope"];
+
+  babelHelpers.createClass(FooterController, [{
+    key: "offsetChanged",
+    value: function offsetChanged(newVal) {
+      this.page = newVal + 1;
+    }
+  }, {
+    key: "onPaged",
+    value: function onPaged(page) {
+      this.paging.offset = page - 1;
+      this.onPage({
+        offset: this.paging.offset,
+        size: this.paging.size
+      });
+    }
+  }]);
+  return FooterController;
+})();
+
 function FooterDirective() {
   return {
     restrict: "E",
-    controller: "FooterController",
+    controller: FooterController,
     controllerAs: "footer",
     scope: true,
     bindToController: {
@@ -645,7 +767,7 @@ ScrollerDirective.$inject = ["$timeout"];
 
 var BodyController = (function () {
   function BodyController($scope, $timeout) {
-    var _this = this;
+    var _this3 = this;
 
     babelHelpers.classCallCheck(this, BodyController);
 
@@ -662,31 +784,31 @@ var BodyController = (function () {
 
     $scope.$watchCollection("body.rows", function (newVal, oldVal) {
       if (newVal) {
-        if (!_this.options.paging.externalPaging) {
-          _this.options.paging.count = newVal.length;
+        if (!_this3.options.paging.externalPaging) {
+          _this3.options.paging.count = newVal.length;
         }
 
-        _this.count = _this.options.paging.count;
+        _this3.count = _this3.options.paging.count;
 
-        if (_this.treeColumn || _this.groupColumn) {
-          _this.buildRowsByGroup();
+        if (_this3.treeColumn || _this3.groupColumn) {
+          _this3.buildRowsByGroup();
         }
 
-        if (_this.options.scrollbarV) {
+        if (_this3.options.scrollbarV) {
           var refresh = newVal && oldVal && (newVal.length === oldVal.length || newVal.length < oldVal.length);
 
-          _this.getRows(refresh);
+          _this3.getRows(refresh);
         } else {
           var _tempRows;
 
-          var rows = _this.rows;
-          if (_this.treeColumn) {
-            rows = _this.buildTree();
-          } else if (_this.groupColumn) {
-            rows = _this.buildGroups();
+          var rows = _this3.rows;
+          if (_this3.treeColumn) {
+            rows = _this3.buildTree();
+          } else if (_this3.groupColumn) {
+            rows = _this3.buildGroups();
           }
-          _this.tempRows.splice(0, _this.tempRows.length);
-          (_tempRows = _this.tempRows).push.apply(_tempRows, babelHelpers.toConsumableArray(rows));
+          _this3.tempRows.splice(0, _this3.tempRows.length);
+          (_tempRows = _this3.tempRows).push.apply(_tempRows, babelHelpers.toConsumableArray(rows));
         }
       }
     });
@@ -695,21 +817,21 @@ var BodyController = (function () {
       var sized = false;
       $scope.$watch("body.options.paging.size", function (newVal, oldVal) {
         if (!sized || newVal > oldVal) {
-          _this.getRows();
+          _this3.getRows();
           sized = true;
         }
       });
 
       $scope.$watch("body.options.paging.count", function (count) {
-        _this.count = count;
-        _this.updatePage();
+        _this3.count = count;
+        _this3.updatePage();
       });
 
       $scope.$watch("body.options.paging.offset", function (newVal) {
-        if (_this.options.paging.size) {
-          _this.onPage({
+        if (_this3.options.paging.size) {
+          _this3.onPage({
             offset: newVal,
-            size: _this.options.paging.size
+            size: _this3.options.paging.size
           });
         }
       });
@@ -780,7 +902,7 @@ var BodyController = (function () {
   }, {
     key: "buildGroups",
     value: function buildGroups() {
-      var _this2 = this;
+      var _this4 = this;
 
       var temp = [];
 
@@ -790,7 +912,7 @@ var BodyController = (function () {
           group: true
         });
 
-        if (_this2.expanded[k]) {
+        if (_this4.expanded[k]) {
           temp.push.apply(temp, babelHelpers.toConsumableArray(v));
         }
       });
@@ -1746,7 +1868,7 @@ var TableDefaults = {
 
 var DataTableController = (function () {
   function DataTableController($scope, $filter, $log, $transclude) {
-    var _this3 = this;
+    var _this5 = this;
 
     babelHelpers.classCallCheck(this, DataTableController);
 
@@ -1762,20 +1884,20 @@ var DataTableController = (function () {
 
     $scope.$watch("dt.options.columns", function (newVal, oldVal) {
       if (newVal.length > oldVal.length) {
-        _this3.transposeColumnDefaults();
+        _this5.transposeColumnDefaults();
       }
 
       if (newVal.length !== oldVal.length) {
-        _this3.adjustColumns();
+        _this5.adjustColumns();
       }
 
-      _this3.calculateColumns();
+      _this5.calculateColumns();
     }, true);
 
     var watch = $scope.$watch("dt.rows", function (newVal) {
       if (newVal) {
         watch();
-        _this3.onSorted();
+        _this5.onSorted();
       }
     });
   }
@@ -1784,15 +1906,15 @@ var DataTableController = (function () {
   babelHelpers.createClass(DataTableController, [{
     key: "defaults",
     value: function defaults() {
-      var _this4 = this;
+      var _this6 = this;
 
       this.expanded = this.expanded || {};
 
       this.options = angular.extend(angular.copy(TableDefaults), this.options);
 
       angular.forEach(TableDefaults.paging, function (v, k) {
-        if (!_this4.options.paging[k]) {
-          _this4.options.paging[k] = v;
+        if (!_this6.options.paging[k]) {
+          _this6.options.paging[k] = v;
         }
       });
 

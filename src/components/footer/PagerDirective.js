@@ -3,7 +3,7 @@ import { PagerController } from './PagerController';
 export function PagerDirective(){
   return {
     restrict: 'E',
-    controller: 'PagerController',
+    controller: PagerController,
     controllerAs: 'pager',
     scope: true,
     bindToController: {
@@ -12,7 +12,7 @@ export function PagerDirective(){
       count: '=',
       onPage: '&'
     },
-    template: 
+    template:
       `<div class="dt-pager">
         <ul class="pager">
           <li ng-class="{ disabled: !pager.canPrevious() }">
