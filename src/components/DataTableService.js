@@ -15,7 +15,7 @@ export let DataTableService = {
 
   /**
    * Create columns from elements
-   * @param  {array} columnElms 
+   * @param  {array} columnElms
    */
   buildColumns(columnElms){
     var columns = [];
@@ -31,12 +31,16 @@ export let DataTableService = {
 
           if(!isNaN(attr.value)){
             val = parseInt(attr.value);
+          } else if (attr.value.match(/true/i)) {
+            val = true;
+          } else if (attr.value.match(/false/i)) {
+            val = false;
           }
 
           column[attrName] = val;
         }
 
-        // cuz putting className vs class on 
+        // cuz putting className vs class on
         // a element feels weird
         if(attrName === 'class'){
           column.className = attr.value;
