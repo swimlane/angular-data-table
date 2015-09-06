@@ -1,0 +1,21 @@
+{
+  "name": "angular-data-table",
+  "version": "0.3.14",
+  "homepage": "https://github.com/vishwajeetv/angular-data-table",
+  "authors": [
+    "Vishwajeet Vatharkar <vishwajeetvatharkar@gmail.com>"
+  ],
+  "description": "A feature-rich but lightweight ES6 AngularJS Data Table crafted for large data sets!",
+  "keywords": [
+    "data-table",
+    "material-design"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
