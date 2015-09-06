@@ -1,15 +1,23 @@
 import angular from 'angular';
-import { ColumnDefaults } from '../defaults';
-import { CamelCase } from '../utils/utils';
+import {
+  ColumnDefaults
+}
+from '../defaults';
+import {
+  CamelCase
+}
+from '../utils/utils';
 
 export let DataTableService = {
 
   // id: [ column defs ]
   columns: {},
+  rawColumnElms: {},
 
-  buildAndSaveColumns(id, columnElms){
-    if(columnElms && columnElms.length){
-      this.columns[id] = this.buildColumns(columnElms);
+  saveColumns(id, columnElms) {
+    if (columnElms && columnElms.length) {
+      //this.columns[id] = this.buildColumns(columnElms);
+      this.rawColumnElms[id] = columnElms;
     }
   },
 
@@ -17,48 +25,47 @@ export let DataTableService = {
    * Create columns from elements
    * @param  {array} columnElms
    */
-  buildColumns(columnElms){
-    var columns = [];
+  buildColumns(scope) {
+    angular.forEach(this.rawColumnElms, (columnElms, id) => {
+      this.columns[id] = [];
 
-    angular.forEach(columnElms, (c) => {
-      var column = {};
+      angular.forEach(columnElms, (c) => {
+        var column = {};
 
-      angular.forEach(c.attributes, (attr) => {
-        var attrName = CamelCase(attr.name);
+        angular.forEach(c.attributes, (attr) => {
+          var attrName = CamelCase(attr.name);
 
-        if(ColumnDefaults.hasOwnProperty(attrName)){
-          var val = attr.value;
+          if (ColumnDefaults.hasOwnProperty(attrName)) {
+            var val = attr.value;
 
-          if(!isNaN(attr.value)){
-            val = parseInt(attr.value);
-          } else if (attr.value.match(/true/i)) {
-            val = true;
-          } else if (attr.value.match(/false/i)) {
-            val = false;
+            if (!isNaN(attr.value)) {
+              val = parseInt(attr.value);
+            } else if (attr.value.match(/true/i)) {
+              val = true;
+            } else if (attr.value.match(/false/i)) {
+              val = false;
+            }
+
+            column[attrName] = val;
           }
 
-          column[attrName] = val;
+          // cuz putting className vs class on
+          // a element feels weird
+          if (attrName === 'class') {
+            column.className = attr.value;
+          }
+
+          if (attrName === 'name' || attrName === 'prop') {
+            column[attrName] = attr.value;
+          }
+        });
+
+        if (c.innerHTML !== '') {
+          column.template = c.innerHTML;
         }
 
-        // cuz putting className vs class on
-        // a element feels weird
-        if(attrName === 'class'){
-          column.className = attr.value;
-        }
-
-        if(attrName === 'name' || attrName === 'prop'){
-          column[attrName] = attr.value;
-        }
+        this.columns[id].push(column);
       });
-
-      if(c.innerHTML !== ''){
-        column.template = c.innerHTML;
-      }
-
-      columns.push(column);
     });
-
-    return columns;
   }
-
 };
