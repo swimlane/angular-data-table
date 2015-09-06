@@ -16,7 +16,6 @@ export let DataTableService = {
 
   saveColumns(id, columnElms) {
     if (columnElms && columnElms.length) {
-      //this.columns[id] = this.buildColumns(columnElms);
       this.rawColumnElms[id] = columnElms;
     }
   },
@@ -25,7 +24,7 @@ export let DataTableService = {
    * Create columns from elements
    * @param  {array} columnElms
    */
-  buildColumns(scope) {
+  buildColumns(scope, parse) {
     angular.forEach(this.rawColumnElms, (columnElms, id) => {
       this.columns[id] = [];
 
@@ -35,28 +34,18 @@ export let DataTableService = {
         angular.forEach(c.attributes, (attr) => {
           var attrName = CamelCase(attr.name);
 
-          if (ColumnDefaults.hasOwnProperty(attrName)) {
-            var val = attr.value;
-
-            if (!isNaN(attr.value)) {
-              val = parseInt(attr.value);
-            } else if (attr.value.match(/true/i)) {
-              val = true;
-            } else if (attr.value.match(/false/i)) {
-              val = false;
-            }
-
-            column[attrName] = val;
-          }
-
           // cuz putting className vs class on
           // a element feels weird
           if (attrName === 'class') {
             column.className = attr.value;
-          }
-
-          if (attrName === 'name' || attrName === 'prop') {
+          } else if (attrName === 'name' || attrName === 'prop') {
             column[attrName] = attr.value;
+          } else if (attrName === 'headerRenderer' ||
+            attrName === 'cellRenderer' ||
+            attrName === 'cellDataGetter') {
+            column[attrName] = parse(attr.value);
+          } else if (ColumnDefaults.hasOwnProperty(attrName)) {
+            column[attrName] = parse(attr.value)(scope);
           }
         });
 

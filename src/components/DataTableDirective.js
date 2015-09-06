@@ -4,7 +4,7 @@ import { ScrollbarWidth, ObjectId } from '../utils/utils';
 import { throttle } from '../utils/throttle';
 import { DataTableService } from './DataTableService';
 
-export function DataTableDirective($window, $timeout){
+export function DataTableDirective($window, $timeout, $parse){
   return {
     restrict: 'E',
     replace: true,
@@ -59,7 +59,7 @@ export function DataTableDirective($window, $timeout){
     compile: function(tElem, tAttrs){
       return {
         pre: function($scope, $elm, $attrs, ctrl){
-          DataTableService.buildColumns($scope);
+          DataTableService.buildColumns($scope, $parse);
 
           // Check and see if we had expressive columns
           // and if so, lets use those
@@ -108,6 +108,6 @@ export function DataTableDirective($window, $timeout){
           });
         }
       };
-    };
+    }
   };
 };
