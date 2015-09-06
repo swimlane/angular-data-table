@@ -12,11 +12,11 @@ export let DataTableService = {
 
   // id: [ column defs ]
   columns: {},
-  rawColumnElms: {},
+  dTables: {},
 
   saveColumns(id, columnElms) {
     if (columnElms && columnElms.length) {
-      this.rawColumnElms[id] = columnElms;
+      this.dTables[id] = columnElms;
     }
   },
 
@@ -25,12 +25,17 @@ export let DataTableService = {
    * @param  {array} columnElms
    */
   buildColumns(scope, parse) {
-    angular.forEach(this.rawColumnElms, (columnElms, id) => {
+    //FIXME: Too many nested for loops.  O(n3)
+
+    // Iterate through each dTable
+    angular.forEach(this.dTables, (columnElms, id) => {
       this.columns[id] = [];
 
+      // Iterate through each column
       angular.forEach(columnElms, (c) => {
         var column = {};
 
+        // Iterate through each attribute
         angular.forEach(c.attributes, (attr) => {
           var attrName = CamelCase(attr.name);
 

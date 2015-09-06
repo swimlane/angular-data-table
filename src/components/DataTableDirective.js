@@ -25,7 +25,8 @@ export function DataTableDirective($window, $timeout, $parse){
     template: function(element){
       // Gets the column nodes to transposes to column objects
       // http://stackoverflow.com/questions/30845397/angular-expressive-directive-design/30847609#30847609
-      var columns = element[0].getElementsByTagName('column'), id = ObjectId();
+      var columns = element[0].getElementsByTagName('column'),
+          id = ObjectId();
       DataTableService.saveColumns(id, columns);
 
       return `<div class="dt" ng-class="dt.tableCss()" data-column-id="${id}">
