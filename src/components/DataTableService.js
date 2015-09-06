@@ -36,16 +36,22 @@ export let DataTableService = {
 
           // cuz putting className vs class on
           // a element feels weird
-          if (attrName === 'class') {
-            column.className = attr.value;
-          } else if (attrName === 'name' || attrName === 'prop') {
-            column[attrName] = attr.value;
-          } else if (attrName === 'headerRenderer' ||
-            attrName === 'cellRenderer' ||
-            attrName === 'cellDataGetter') {
-            column[attrName] = parse(attr.value);
-          } else if (ColumnDefaults.hasOwnProperty(attrName)) {
-            column[attrName] = parse(attr.value)(scope);
+          switch (attrName) {
+            case 'class':
+              column.className = attr.value;
+              break;
+            case 'name':
+            case 'prop':
+              column[attrName] = attr.value;
+              break;
+            case 'headerRenderer':
+            case 'cellRenderer':
+            case 'cellDataGetter':
+              column[attrName] = parse(attr.value);
+              break;
+            default:
+              column[attrName] = parse(attr.value)(scope);
+              break;
           }
         });
 
