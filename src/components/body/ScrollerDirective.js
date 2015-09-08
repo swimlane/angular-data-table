@@ -31,7 +31,7 @@ export function ScrollerDirective($timeout){
           ctrl.getRows();
         }
 
-        $scope.$digest();
+        $scope.$applyAsync();
         ticking = false;
       };
 
