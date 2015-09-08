@@ -1,15 +1,22 @@
 import angular from 'angular';
-import { ColumnDefaults } from '../defaults';
-import { CamelCase } from '../utils/utils';
+import {
+  ColumnDefaults
+}
+from '../defaults';
+import {
+  CamelCase
+}
+from '../utils/utils';
 
 export let DataTableService = {
 
   // id: [ column defs ]
   columns: {},
+  dTables: {},
 
-  buildAndSaveColumns(id, columnElms){
-    if(columnElms && columnElms.length){
-      this.columns[id] = this.buildColumns(columnElms);
+  saveColumns(id, columnElms) {
+    if (columnElms && columnElms.length) {
+      this.dTables[id] = columnElms;
     }
   },
 
@@ -17,48 +24,48 @@ export let DataTableService = {
    * Create columns from elements
    * @param  {array} columnElms
    */
-  buildColumns(columnElms){
-    var columns = [];
+  buildColumns(scope, parse) {
+    //FIXME: Too many nested for loops.  O(n3)
 
-    angular.forEach(columnElms, (c) => {
-      var column = {};
+    // Iterate through each dTable
+    angular.forEach(this.dTables, (columnElms, id) => {
+      this.columns[id] = [];
 
-      angular.forEach(c.attributes, (attr) => {
-        var attrName = CamelCase(attr.name);
+      // Iterate through each column
+      angular.forEach(columnElms, (c) => {
+        var column = {};
 
-        if(ColumnDefaults.hasOwnProperty(attrName)){
-          var val = attr.value;
+        // Iterate through each attribute
+        angular.forEach(c.attributes, (attr) => {
+          var attrName = CamelCase(attr.name);
 
-          if(!isNaN(attr.value)){
-            val = parseInt(attr.value);
-          } else if (attr.value.match(/true/i)) {
-            val = true;
-          } else if (attr.value.match(/false/i)) {
-            val = false;
+          // cuz putting className vs class on
+          // a element feels weird
+          switch (attrName) {
+            case 'class':
+              column.className = attr.value;
+              break;
+            case 'name':
+            case 'prop':
+              column[attrName] = attr.value;
+              break;
+            case 'headerRenderer':
+            case 'cellRenderer':
+            case 'cellDataGetter':
+              column[attrName] = parse(attr.value);
+              break;
+            default:
+              column[attrName] = parse(attr.value)(scope);
+              break;
           }
+        });
 
-          column[attrName] = val;
+        if (c.innerHTML !== '') {
+          column.template = c.innerHTML;
         }
 
-        // cuz putting className vs class on
-        // a element feels weird
-        if(attrName === 'class'){
-          column.className = attr.value;
-        }
-
-        if(attrName === 'name' || attrName === 'prop'){
-          column[attrName] = attr.value;
-        }
+        this.columns[id].push(column);
       });
-
-      if(c.innerHTML !== ''){
-        column.template = c.innerHTML;
-      }
-
-      columns.push(column);
     });
-
-    return columns;
   }
-
 };

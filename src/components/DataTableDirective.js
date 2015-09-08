@@ -4,7 +4,7 @@ import { ScrollbarWidth, ObjectId } from '../utils/utils';
 import { throttle } from '../utils/throttle';
 import { DataTableService } from './DataTableService';
 
-export function DataTableDirective($window, $timeout){
+export function DataTableDirective($window, $timeout, $parse){
   return {
     restrict: 'E',
     replace: true,
@@ -25,8 +25,9 @@ export function DataTableDirective($window, $timeout){
     template: function(element){
       // Gets the column nodes to transposes to column objects
       // http://stackoverflow.com/questions/30845397/angular-expressive-directive-design/30847609#30847609
-      var columns = element[0].getElementsByTagName('column'), id = ObjectId();
-      DataTableService.buildAndSaveColumns(id, columns);
+      var columns = element[0].getElementsByTagName('column'),
+          id = ObjectId();
+      DataTableService.saveColumns(id, columns);
 
       return `<div class="dt" ng-class="dt.tableCss()" data-column-id="${id}">
           <dt-header options="dt.options"
@@ -59,11 +60,13 @@ export function DataTableDirective($window, $timeout){
     compile: function(tElem, tAttrs){
       return {
         pre: function($scope, $elm, $attrs, ctrl){
+          DataTableService.buildColumns($scope, $parse);
+
           // Check and see if we had expressive columns
           // and if so, lets use those
           var id = $elm.attr('data-column-id'),
               columns = DataTableService.columns[id];
-          if(columns){
+          if (columns) {
             ctrl.options.columns = columns;
           }
 
@@ -105,7 +108,7 @@ export function DataTableDirective($window, $timeout){
             angular.element($window).off('resize');
           });
         }
-      }
+      };
     }
   };
 };
