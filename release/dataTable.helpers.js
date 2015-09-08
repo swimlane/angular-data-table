@@ -1,6 +1,6 @@
 /**
  * angular-data-table - AngularJS data table directive written in ES6.
- * @version v0.3.14
+ * @version v0.3.15
  * @link http://swimlane.com/
  * @license 
  */
@@ -760,7 +760,7 @@
             ctrl.getRows();
           }
 
-          $scope.$digest();
+          $scope.$applyAsync();
           ticking = false;
         };
 
@@ -1581,94 +1581,55 @@
     return widthNoScroll - widthWithScroll;
   }
 
-  var ColumnDefaults = {
-    frozenLeft: false,
-
-    frozenRight: false,
-
-    className: undefined,
-
-    heaerClassName: undefined,
-
-    flexGrow: 0,
-
-    minWidth: undefined,
-
-    maxWidth: undefined,
-
-    width: 150,
-
-    resizable: true,
-
-    comparator: undefined,
-
-    sortable: true,
-
-    sort: undefined,
-
-    headerRenderer: undefined,
-
-    cellRenderer: undefined,
-
-    cellDataGetter: undefined,
-
-    isTreeColumn: false,
-
-    isCheckboxColumn: false,
-
-    headerCheckbox: false,
-
-    canAutoResize: true
-
-  };
-
   var DataTableService = {
     columns: {},
+    dTables: {},
 
-    buildAndSaveColumns: function buildAndSaveColumns(id, columnElms) {
+    saveColumns: function saveColumns(id, columnElms) {
       if (columnElms && columnElms.length) {
-        this.columns[id] = this.buildColumns(columnElms);
+        this.dTables[id] = columnElms;
       }
     },
 
-    buildColumns: function buildColumns(columnElms) {
-      var columns = [];
+    buildColumns: function buildColumns(scope, parse) {
+      var _this5 = this;
 
-      angular.forEach(columnElms, function (c) {
-        var column = {};
+      angular.forEach(this.dTables, function (columnElms, id) {
+        _this5.columns[id] = [];
 
-        angular.forEach(c.attributes, function (attr) {
-          var attrName = CamelCase(attr.name);
+        angular.forEach(columnElms, function (c) {
+          var column = {};
 
-          if (ColumnDefaults.hasOwnProperty(attrName)) {
-            var val = attr.value;
+          angular.forEach(c.attributes, function (attr) {
+            var attrName = CamelCase(attr.name);
 
-            if (!isNaN(attr.value)) {
-              val = parseInt(attr.value);
+            switch (attrName) {
+              case "class":
+                column.className = attr.value;
+                break;
+              case "name":
+              case "prop":
+                column[attrName] = attr.value;
+                break;
+              case "headerRenderer":
+              case "cellRenderer":
+              case "cellDataGetter":
+                column[attrName] = parse(attr.value);
+                break;
+              default:
+                column[attrName] = parse(attr.value)(scope);
+                break;
             }
+          });
 
-            column[attrName] = val;
+          if (c.innerHTML !== "") {
+            column.template = c.innerHTML;
           }
 
-          if (attrName === "class") {
-            column.className = attr.value;
-          }
-
-          if (attrName === "name" || attrName === "prop") {
-            column[attrName] = attr.value;
-          }
+          _this5.columns[id].push(column);
         });
-
-        if (c.innerHTML !== "") {
-          column.template = c.innerHTML;
-        }
-
-        columns.push(column);
       });
-
-      return columns;
     }
-
   };
 
   function ObjectId() {
@@ -1849,6 +1810,47 @@
     };
   }
 
+  var ColumnDefaults = {
+    frozenLeft: false,
+
+    frozenRight: false,
+
+    className: undefined,
+
+    heaerClassName: undefined,
+
+    flexGrow: 0,
+
+    minWidth: undefined,
+
+    maxWidth: undefined,
+
+    width: 150,
+
+    resizable: true,
+
+    comparator: undefined,
+
+    sortable: true,
+
+    sort: undefined,
+
+    headerRenderer: undefined,
+
+    cellRenderer: undefined,
+
+    cellDataGetter: undefined,
+
+    isTreeColumn: false,
+
+    isCheckboxColumn: false,
+
+    headerCheckbox: false,
+
+    canAutoResize: true
+
+  };
+
   var TableDefaults = {
     scrollbarV: true,
 
@@ -1893,7 +1895,7 @@
 
   var DataTableController = (function () {
     function DataTableController($scope, $filter, $log, $transclude) {
-      var _this5 = this;
+      var _this6 = this;
 
       _classCallCheck(this, DataTableController);
 
@@ -1909,20 +1911,20 @@
 
       $scope.$watch("dt.options.columns", function (newVal, oldVal) {
         if (newVal.length > oldVal.length) {
-          _this5.transposeColumnDefaults();
+          _this6.transposeColumnDefaults();
         }
 
         if (newVal.length !== oldVal.length) {
-          _this5.adjustColumns();
+          _this6.adjustColumns();
         }
 
-        _this5.calculateColumns();
+        _this6.calculateColumns();
       }, true);
 
       var watch = $scope.$watch("dt.rows", function (newVal) {
         if (newVal) {
           watch();
-          _this5.onSorted();
+          _this6.onSorted();
         }
       });
     }
@@ -1931,15 +1933,15 @@
     _createClass(DataTableController, [{
       key: "defaults",
       value: function defaults() {
-        var _this6 = this;
+        var _this7 = this;
 
         this.expanded = this.expanded || {};
 
         this.options = angular.extend(angular.copy(TableDefaults), this.options);
 
         angular.forEach(TableDefaults.paging, function (v, k) {
-          if (!_this6.options.paging[k]) {
-            _this6.options.paging[k] = v;
+          if (!_this7.options.paging[k]) {
+            _this7.options.paging[k] = v;
           }
         });
 
@@ -2107,7 +2109,7 @@
     return DataTableController;
   })();
 
-  function DataTableDirective($window, $timeout) {
+  function DataTableDirective($window, $timeout, $parse) {
     return {
       restrict: "E",
       replace: true,
@@ -2128,13 +2130,15 @@
       template: function template(element) {
         var columns = element[0].getElementsByTagName("column"),
             id = ObjectId();
-        DataTableService.buildAndSaveColumns(id, columns);
+        DataTableService.saveColumns(id, columns);
 
         return "<div class=\"dt\" ng-class=\"dt.tableCss()\" data-column-id=\"" + id + "\">\n          <dt-header options=\"dt.options\"\n                     on-checkbox-change=\"dt.onHeaderCheckboxChange()\"\n                     columns=\"dt.columnsByPin\"\n                     column-widths=\"dt.columnWidths\"\n                     ng-if=\"dt.options.headerHeight\"\n                     on-resize=\"dt.onResize(column, width)\"\n                     selected=\"dt.isAllRowsSelected()\"\n                     on-sort=\"dt.onSorted()\">\n          </dt-header>\n          <dt-body rows=\"dt.rows\"\n                   selected=\"dt.selected\"\n                   expanded=\"dt.expanded\"\n                   columns=\"dt.columnsByPin\"\n                   on-select=\"dt.onSelected(rows)\"\n                   on-row-click=\"dt.onRowClicked(row)\"\n                   column-widths=\"dt.columnWidths\"\n                   options=\"dt.options\"\n                   on-page=\"dt.onBodyPage(offset, size)\"\n                   on-tree-toggle=\"dt.onTreeToggled(row, cell)\">\n           </dt-body>\n          <dt-footer ng-if=\"dt.options.footerHeight\"\n                     ng-style=\"{ height: dt.options.footerHeight + 'px' }\"\n                     on-page=\"dt.onFooterPage(offset, size)\"\n                     paging=\"dt.options.paging\">\n           </dt-footer>\n        </div>";
       },
       compile: function compile(tElem, tAttrs) {
         return {
           pre: function pre($scope, $elm, $attrs, ctrl) {
+            DataTableService.buildColumns($scope, $parse);
+
             var id = $elm.attr("data-column-id"),
                 columns = DataTableService.columns[id];
             if (columns) {
@@ -2182,7 +2186,7 @@
       }
     };
   }
-  DataTableDirective.$inject = ["$window", "$timeout"];
+  DataTableDirective.$inject = ["$window", "$timeout", "$parse"];
 
   var dataTable = angular.module("data-table", []).directive("dtable", DataTableDirective).directive("resizable", ResizableDirective).directive("sortable", SortableDirective).directive("dtHeader", HeaderDirective).directive("dtHeaderCell", HeaderCellDirective).directive("dtBody", BodyDirective).directive("dtScroller", ScrollerDirective).directive("dtSeletion", SelectionDirective).directive("dtRow", RowDirective).directive("dtGroupRow", GroupRowDirective).directive("dtCell", CellDirective).directive("dtFooter", FooterDirective).directive("dtPager", PagerDirective);
 

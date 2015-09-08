@@ -929,7 +929,7 @@ function ScrollerDirective($timeout){
           ctrl.getRows();
         }
 
-        $scope.$digest();
+        $scope.$applyAsync();
         ticking = false;
       };
 
@@ -1972,133 +1972,66 @@ function ScrollbarWidth() {
   return widthNoScroll - widthWithScroll;
 }
 
-
-/**
- * Default Column Options
- * @type {object}
- */
-const ColumnDefaults = {
-
-  // pinned to the left
-  frozenLeft: false,
-  
-  // pinned to the right
-  frozenRight: false,
-
-  // body cell css class name
-  className: undefined,
-
-  // header cell css class name
-  heaerClassName: undefined,
-
-  // The grow factor relative to other columns. Same as the flex-grow 
-  // API from http://www.w3.org/TR/css3-flexbox/. Basically, 
-  // take any available extra width and distribute it proportionally 
-  // according to all columns' flexGrow values.
-  flexGrow: 0,
-
-  // Minimum width of the column.
-  minWidth: undefined,
-
-  //Maximum width of the column.
-  maxWidth: undefined,
-
-  // The width of the column, by default (in pixels).
-  width: 150,
-
-  // If yes then the column can be resized, otherwise it cannot.
-  resizable: true,
-
-  // Custom sort comparator
-  // pass false if you want to server sort
-  comparator: undefined, 
-
-  // If yes then the column can be sorted.
-  sortable: true,
-
-  // Default sort asecending/descending for the column
-  sort: undefined,
-
-  // The cell renderer that returns content for table column header
-  headerRenderer: undefined,
-
-  // The cell renderer function(scope, elm) that returns React-renderable content for table cell.
-  cellRenderer: undefined,
-
-  // The getter function(value) that returns the cell data for the cellRenderer. 
-  // If not provided, the cell data will be collected from row data instead. 
-  cellDataGetter: undefined,
-
-  // Adds +/- button and makes a secondary call to load nested data
-  isTreeColumn: false,
-
-  // Adds the checkbox selection to the column
-  isCheckboxColumn: false,
-
-  // Toggles the checkbox column in the header
-  // for selecting all values given to the grid
-  headerCheckbox: false,
-
-  // Whether the column can automatically resize to fill space in the table.
-  canAutoResize: true
-
-};
-
 let DataTableService = {
 
   // id: [ column defs ]
   columns: {},
+  dTables: {},
 
-  buildAndSaveColumns(id, columnElms){
-    if(columnElms && columnElms.length){
-      this.columns[id] = this.buildColumns(columnElms);
+  saveColumns(id, columnElms) {
+    if (columnElms && columnElms.length) {
+      this.dTables[id] = columnElms;
     }
   },
 
   /**
    * Create columns from elements
-   * @param  {array} columnElms 
+   * @param  {array} columnElms
    */
-  buildColumns(columnElms){
-    var columns = [];
+  buildColumns(scope, parse) {
+    //FIXME: Too many nested for loops.  O(n3)
 
-    angular.forEach(columnElms, (c) => {
-      var column = {};
+    // Iterate through each dTable
+    angular.forEach(this.dTables, (columnElms, id) => {
+      this.columns[id] = [];
 
-      angular.forEach(c.attributes, (attr) => {
-        var attrName = CamelCase(attr.name);
+      // Iterate through each column
+      angular.forEach(columnElms, (c) => {
+        var column = {};
 
-        if(ColumnDefaults.hasOwnProperty(attrName)){
-          var val = attr.value;
+        // Iterate through each attribute
+        angular.forEach(c.attributes, (attr) => {
+          var attrName = CamelCase(attr.name);
 
-          if(!isNaN(attr.value)){
-            val = parseInt(attr.value);
+          // cuz putting className vs class on
+          // a element feels weird
+          switch (attrName) {
+            case 'class':
+              column.className = attr.value;
+              break;
+            case 'name':
+            case 'prop':
+              column[attrName] = attr.value;
+              break;
+            case 'headerRenderer':
+            case 'cellRenderer':
+            case 'cellDataGetter':
+              column[attrName] = parse(attr.value);
+              break;
+            default:
+              column[attrName] = parse(attr.value)(scope);
+              break;
           }
+        });
 
-          column[attrName] = val;
+        if (c.innerHTML !== '') {
+          column.template = c.innerHTML;
         }
 
-        // cuz putting className vs class on 
-        // a element feels weird
-        if(attrName === 'class'){
-          column.className = attr.value;
-        }
-
-        if(attrName === 'name' || attrName === 'prop'){
-          column[attrName] = attr.value;
-        }
+        this.columns[id].push(column);
       });
-
-      if(c.innerHTML !== ''){
-        column.template = c.innerHTML;
-      }
-
-      columns.push(column);
     });
-
-    return columns;
   }
-
 };
 
 
@@ -2317,6 +2250,78 @@ function ColumnGroupWidths(groups, all){
     total: ColumnTotalWidth(all)
   };
 }
+
+
+/**
+ * Default Column Options
+ * @type {object}
+ */
+const ColumnDefaults = {
+
+  // pinned to the left
+  frozenLeft: false,
+  
+  // pinned to the right
+  frozenRight: false,
+
+  // body cell css class name
+  className: undefined,
+
+  // header cell css class name
+  heaerClassName: undefined,
+
+  // The grow factor relative to other columns. Same as the flex-grow 
+  // API from http://www.w3.org/TR/css3-flexbox/. Basically, 
+  // take any available extra width and distribute it proportionally 
+  // according to all columns' flexGrow values.
+  flexGrow: 0,
+
+  // Minimum width of the column.
+  minWidth: undefined,
+
+  //Maximum width of the column.
+  maxWidth: undefined,
+
+  // The width of the column, by default (in pixels).
+  width: 150,
+
+  // If yes then the column can be resized, otherwise it cannot.
+  resizable: true,
+
+  // Custom sort comparator
+  // pass false if you want to server sort
+  comparator: undefined, 
+
+  // If yes then the column can be sorted.
+  sortable: true,
+
+  // Default sort asecending/descending for the column
+  sort: undefined,
+
+  // The cell renderer that returns content for table column header
+  headerRenderer: undefined,
+
+  // The cell renderer function(scope, elm) that returns React-renderable content for table cell.
+  cellRenderer: undefined,
+
+  // The getter function(value) that returns the cell data for the cellRenderer. 
+  // If not provided, the cell data will be collected from row data instead. 
+  cellDataGetter: undefined,
+
+  // Adds +/- button and makes a secondary call to load nested data
+  isTreeColumn: false,
+
+  // Adds the checkbox selection to the column
+  isCheckboxColumn: false,
+
+  // Toggles the checkbox column in the header
+  // for selecting all values given to the grid
+  headerCheckbox: false,
+
+  // Whether the column can automatically resize to fill space in the table.
+  canAutoResize: true
+
+};
 
 
 /**
@@ -2651,7 +2656,7 @@ class DataTableController {
 
 }
 
-function DataTableDirective($window, $timeout){
+function DataTableDirective($window, $timeout, $parse){
   return {
     restrict: 'E',
     replace: true,
@@ -2672,8 +2677,9 @@ function DataTableDirective($window, $timeout){
     template: function(element){
       // Gets the column nodes to transposes to column objects
       // http://stackoverflow.com/questions/30845397/angular-expressive-directive-design/30847609#30847609
-      var columns = element[0].getElementsByTagName('column'), id = ObjectId();
-      DataTableService.buildAndSaveColumns(id, columns);
+      var columns = element[0].getElementsByTagName('column'),
+          id = ObjectId();
+      DataTableService.saveColumns(id, columns);
 
       return `<div class="dt" ng-class="dt.tableCss()" data-column-id="${id}">
           <dt-header options="dt.options"
@@ -2706,11 +2712,13 @@ function DataTableDirective($window, $timeout){
     compile: function(tElem, tAttrs){
       return {
         pre: function($scope, $elm, $attrs, ctrl){
+          DataTableService.buildColumns($scope, $parse);
+
           // Check and see if we had expressive columns
           // and if so, lets use those
           var id = $elm.attr('data-column-id'),
               columns = DataTableService.columns[id];
-          if(columns){
+          if (columns) {
             ctrl.options.columns = columns;
           }
 
@@ -2752,7 +2760,7 @@ function DataTableDirective($window, $timeout){
             angular.element($window).off('resize');
           });
         }
-      }
+      };
     }
   };
 }
