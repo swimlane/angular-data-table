@@ -3,7 +3,7 @@
   "version": "0.3.14",
   "homepage": "https://github.com/Swimlane/angular-data-table",
   "authors": [
-    "Vishwajeet Vatharkar <vishwajeetvatharkar@gmail.com>"
+    "Austin"
   ],
    "main": [
     "release/dataTable.helpers.js",
