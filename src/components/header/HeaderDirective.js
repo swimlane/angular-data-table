@@ -62,7 +62,7 @@ export function HeaderDirective($timeout){
     link: function($scope, $elm, $attrs, ctrl){
 
       $scope.columnsResorted = function(event, columnId){
-        var col = $scope.findColumnById(columnId),
+        var col = findColumnById(columnId),
             parent = angular.element(event.currentTarget),
             newIdx = -1;
 
@@ -93,7 +93,7 @@ export function HeaderDirective($timeout){
         });
       }
 
-      $scope.findColumnById = function(columnId){
+      var findColumnById = function(columnId){
         var columns = ctrl.columns.left.concat(ctrl.columns.center).concat(ctrl.columns.right)
         return columns.find(function(c){
           return c.$id === columnId;
