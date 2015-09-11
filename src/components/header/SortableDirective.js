@@ -19,7 +19,7 @@ export function SortableDirective($timeout) {
       function isbefore(a, b) {
         if (a.parentNode == b.parentNode) {
           for (var cur = a; cur; cur = cur.previousSibling) {
-            if (cur === b) { 
+            if (cur === b) {
               return true;
             }
           }
@@ -45,9 +45,9 @@ export function SortableDirective($timeout) {
         $element.off('dragenter', onDragEnter);
 
         if (nextEl !== dragEl.nextSibling) {
-          $scope.onSortableSort({ 
-            event: evt, 
-            childScope: angular.element(dragEl).scope() 
+          $scope.onSortableSort({
+            event: evt,
+            columnId: angular.element(dragEl).attr('data-id')
           });
         }
       };
