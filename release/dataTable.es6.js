@@ -921,15 +921,16 @@ function ScrollerDirective($timeout){
       };
 
       function update(){
-        ctrl.options.internal.offsetY = lastScrollY;
-        ctrl.options.internal.offsetX = lastScrollX;
-        ctrl.updatePage();
+        $scope.$applyAsync(() => {
+          ctrl.options.internal.offsetY = lastScrollY;
+          ctrl.options.internal.offsetX = lastScrollX;
+          ctrl.updatePage();
 
-        if(ctrl.options.scrollbarV){
-          ctrl.getRows();
-        }
-
-        $scope.$applyAsync();
+          if(ctrl.options.scrollbarV){
+            ctrl.getRows();
+          }
+        });
+        
         ticking = false;
       };
 
@@ -1548,22 +1549,23 @@ function HeaderCellDirective($compile){
       selected: '='
     },
     replace: true,
-    template: 
+    template:
       `<div ng-class="hcell.cellClass()"
             class="dt-header-cell"
             draggable="true"
+            data-id="{{column.$id}}"
             ng-style="hcell.styles()"
             title="{{::hcell.column.name}}">
-        <div resizable="hcell.column.resizable" 
+        <div resizable="hcell.column.resizable"
              on-resize="hcell.onResized(width, hcell.column)"
              min-width="hcell.column.minWidth"
              max-width="hcell.column.maxWidth">
           <label ng-if="hcell.column.isCheckboxColumn && hcell.column.headerCheckbox" class="dt-checkbox">
-            <input type="checkbox" 
+            <input type="checkbox"
                    ng-checked="hcell.selected"
                    ng-click="hcell.onCheckboxChange()" />
           </label>
-          <span class="dt-header-cell-label" 
+          <span class="dt-header-cell-label"
                 ng-click="hcell.onSorted()">
           </span>
           <span ng-class="hcell.sortClass()"></span>
@@ -1689,8 +1691,8 @@ function HeaderDirective($timeout){
                ng-style="header.stylesByGroup('left')"
                ng-if="header.columns['left'].length"
                sortable="header.options.reorderable"
-               on-sortable-sort="columnsResorted(event, childScope)">
-            <dt-header-cell ng-repeat="column in header.columns['left'] track by column.$id" 
+               on-sortable-sort="columnsResorted(event, columnId)">
+            <dt-header-cell ng-repeat="column in header.columns['left'] track by column.$id"
                             on-checkbox-change="header.onCheckboxChanged()"
                             on-sort="header.onSorted(column)"
                             on-resize="header.onResized(column, width)"
@@ -1698,11 +1700,11 @@ function HeaderDirective($timeout){
                             column="column">
             </dt-header-cell>
           </div>
-          <div class="dt-row-center" 
+          <div class="dt-row-center"
                sortable="header.options.reorderable"
                ng-style="header.stylesByGroup('center')"
-               on-sortable-sort="columnsResorted(event, childScope)">
-            <dt-header-cell ng-repeat="column in header.columns['center'] track by column.$id" 
+               on-sortable-sort="columnsResorted(event, columnId)">
+            <dt-header-cell ng-repeat="column in header.columns['center'] track by column.$id"
                             on-checkbox-change="header.onCheckboxChanged()"
                             on-sort="header.onSorted(column)"
                             selected="header.isSelected()"
@@ -1714,8 +1716,8 @@ function HeaderDirective($timeout){
                ng-if="header.columns['right'].length"
                sortable="header.options.reorderable"
                ng-style="header.stylesByGroup('right')"
-               on-sortable-sort="columnsResorted(event, childScope)">
-            <dt-header-cell ng-repeat="column in header.columns['right'] track by column.$id" 
+               on-sortable-sort="columnsResorted(event, columnId)">
+            <dt-header-cell ng-repeat="column in header.columns['right'] track by column.$id"
                             on-checkbox-change="header.onCheckboxChanged()"
                             on-sort="header.onSorted(column)"
                             selected="header.isSelected()"
@@ -1728,13 +1730,13 @@ function HeaderDirective($timeout){
     replace:true,
     link: function($scope, $elm, $attrs, ctrl){
 
-      $scope.columnsResorted = function(event, childScope){
-        var col = childScope.column,
+      $scope.columnsResorted = function(event, columnId){
+        var col = findColumnById(columnId),
             parent = angular.element(event.currentTarget),
             newIdx = -1;
 
         angular.forEach(parent.children(), (c, i) => {
-          if(childScope === angular.element(c).scope()){
+          if (columnId === angular.element(c).attr('data-id')) {
             newIdx = i;
           }
         });
@@ -1756,8 +1758,15 @@ function HeaderDirective($timeout){
               return false;
             }
           });
-          
+
         });
+      }
+
+      var findColumnById = function(columnId){
+        var columns = ctrl.columns.left.concat(ctrl.columns.center).concat(ctrl.columns.right)
+        return columns.find(function(c){
+          return c.$id === columnId;
+        })
       }
     }
   };
@@ -1783,7 +1792,7 @@ function SortableDirective($timeout) {
       function isbefore(a, b) {
         if (a.parentNode == b.parentNode) {
           for (var cur = a; cur; cur = cur.previousSibling) {
-            if (cur === b) { 
+            if (cur === b) {
               return true;
             }
           }
@@ -1809,9 +1818,9 @@ function SortableDirective($timeout) {
         $element.off('dragenter', onDragEnter);
 
         if (nextEl !== dragEl.nextSibling) {
-          $scope.onSortableSort({ 
-            event: evt, 
-            childScope: angular.element(dragEl).scope() 
+          $scope.onSortableSort({
+            event: evt,
+            columnId: angular.element(dragEl).attr('data-id')
           });
         }
       };
