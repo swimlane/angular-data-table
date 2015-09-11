@@ -23,15 +23,16 @@ export function ScrollerDirective($timeout){
       };
 
       function update(){
-        ctrl.options.internal.offsetY = lastScrollY;
-        ctrl.options.internal.offsetX = lastScrollX;
-        ctrl.updatePage();
+        $scope.$applyAsync(() => {
+          ctrl.options.internal.offsetY = lastScrollY;
+          ctrl.options.internal.offsetX = lastScrollX;
+          ctrl.updatePage();
 
-        if(ctrl.options.scrollbarV){
-          ctrl.getRows();
-        }
-
-        $scope.$applyAsync();
+          if(ctrl.options.scrollbarV){
+            ctrl.getRows();
+          }
+        });
+        
         ticking = false;
       };
 
