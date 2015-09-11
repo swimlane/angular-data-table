@@ -1,7 +1,7 @@
 {
   "name": "angular-data-table",
   "title": "AngularJS Data-Table",
-  "description": "AngularJS data table directive written in ES6.",
+  "description": "A feature-rich but lightweight ES6 AngularJS Data Table crafted for large data sets!",
   "version": "0.3.16",
   "repository": {
     "type": "git",
