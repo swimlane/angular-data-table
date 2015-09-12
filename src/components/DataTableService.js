@@ -67,5 +67,6 @@ export let DataTableService = {
         this.columns[id].push(column);
       });
     });
+    this.dTables = {};
   }
 };
