@@ -1,6 +1,6 @@
 /**
- * angular-data-table - AngularJS data table directive written in ES6.
- * @version v0.3.16
+ * angular-data-table - A feature-rich but lightweight ES6 AngularJS Data Table crafted for large data sets!
+ * @version v0.3.17
  * @link http://swimlane.com/
  * @license 
  */
@@ -1637,6 +1637,7 @@
           _this5.columns[id].push(column);
         });
       });
+      this.dTables = {};
     }
   };
 
@@ -2177,14 +2178,20 @@
 
               ctrl.adjustColumns();
               ctrl.calculatePageSize();
-            }
+            };
 
-            resize();
-            $timeout(resize);
-            $elm.addClass('dt-loaded');
             angular.element($window).bind('resize', throttle(function () {
               $timeout(resize);
             }));
+
+            var checkVisibility = function checkVisibility() {
+              var bounds = $elm[0].getBoundingClientRect(),
+                  visible = bounds.width && bounds.height;
+              if (visible) resize();else $timeout(checkVisibility, 100);
+            };
+            checkVisibility();
+
+            $elm.addClass('dt-loaded');
 
             $scope.$on('$destroy', function () {
               angular.element($window).off('resize');
