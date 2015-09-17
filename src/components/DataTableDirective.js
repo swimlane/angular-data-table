@@ -73,6 +73,9 @@ export function DataTableDirective($window, $timeout, $parse){
           ctrl.transposeColumnDefaults();
           ctrl.options.internal.scrollBarWidth = ScrollbarWidth();
 
+          /**
+           * Invoked on init of control or when the window is resized;
+           */
           function resize() {
             var rect = $elm[0].getBoundingClientRect();
 
@@ -94,17 +97,30 @@ export function DataTableDirective($window, $timeout, $parse){
 
             ctrl.adjustColumns();
             ctrl.calculatePageSize();
-          }
+          };
 
-          resize();
-          $timeout(resize);
+          angular.element($window).bind('resize', 
+            throttle(() => {
+              $timeout(resize);
+            }));
+
+          // When an item is hidden for example
+          // in a tab with display none, the height
+          // is not calculated correrctly.  We need to watch
+          // the visible attribute and resize if this occurs
+          var checkVisibility = function() {
+          var bounds = $elm[0].getBoundingClientRect(),
+              visible = bounds.width && bounds.height;
+            if (visible) resize();
+            else $timeout(checkVisibility, 100);
+          };
+          checkVisibility();
+
+          // add a loaded class to avoid flickering
           $elm.addClass('dt-loaded');
-          angular.element($window).bind('resize', throttle(() => {
-            $timeout(resize);
-          }));
 
+          // prevent memory leaks
           $scope.$on('$destroy', () => {
-            // prevent memory leaks
             angular.element($window).off('resize');
           });
         }
