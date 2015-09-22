@@ -101,10 +101,10 @@ export class BodyController{
     let curPage = this.options.paging.offset;
     let idxs = this.getFirstLastIndexes();
     let newPage = idxs.first / this.options.paging.size;
-    if (newPage < curPage){
+    if (newPage < curPage && (curPage - newPage < 1)) {
       // scrolling up
       newPage = Math.floor(newPage);
-    } else if (newPage > curPage) {
+    } else {
       // scrolling down
       newPage = Math.ceil(newPage);
     }

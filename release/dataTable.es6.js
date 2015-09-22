@@ -1055,10 +1055,18 @@ class BodyController{
    * @param  {paging object}
    */
   updatePage(){
-    var idxs = this.getFirstLastIndexes(),
-        curPage = Math.ceil(idxs.first / this.options.paging.size);
-    if(!isNaN(curPage)){
-      this.options.paging.offset = curPage;
+    let curPage = this.options.paging.offset;
+    let idxs = this.getFirstLastIndexes();
+    let newPage = idxs.first / this.options.paging.size;
+    if (newPage < curPage && (curPage - newPage < 1)) {
+      // scrolling up
+      newPage = Math.floor(newPage);
+    } else {
+      // scrolling down
+      newPage = Math.ceil(newPage);
+    }
+    if(!isNaN(newPage)){
+      this.options.paging.offset = newPage;
     }
   }
 
