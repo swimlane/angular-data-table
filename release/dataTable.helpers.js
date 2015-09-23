@@ -880,12 +880,22 @@
       value: function updatePage() {
         var curPage = this.options.paging.offset;
         var idxs = this.getFirstLastIndexes();
-        var newPage = idxs.first / this.options.paging.size;
-        if (newPage < curPage && curPage - newPage < 1) {
-          newPage = Math.floor(newPage);
-        } else {
-          newPage = Math.ceil(newPage);
+        if (this.options.paging.oldScrollPosition === undefined) {
+          this.options.paging.oldScrollPosition = 0;
         }
+
+        var oldScrollPosition = this.options.paging.oldScrollPosition;
+        var newPage = idxs.first / this.options.paging.size;
+        this.options.paging.oldScrollPosition = newPage;
+
+        if (newPage < oldScrollPosition) {
+          newPage = Math.floor(newPage);
+        } else if (newPage > oldScrollPosition) {
+          newPage = Math.ceil(newPage);
+        } else {
+          newPage = curPage;
+        }
+
         if (!isNaN(newPage)) {
           this.options.paging.offset = newPage;
         }

@@ -100,14 +100,24 @@ export class BodyController{
   updatePage(){
     let curPage = this.options.paging.offset;
     let idxs = this.getFirstLastIndexes();
+    if (this.options.paging.oldScrollPosition === undefined){
+      this.options.paging.oldScrollPosition = 0;
+    }
+
+    let oldScrollPosition = this.options.paging.oldScrollPosition;
     let newPage = idxs.first / this.options.paging.size;
-    if (newPage < curPage && (curPage - newPage < 1)) {
+    this.options.paging.oldScrollPosition = newPage;
+
+    if (newPage < oldScrollPosition) {
       // scrolling up
       newPage = Math.floor(newPage);
-    } else {
-      // scrolling down
+    } else if (newPage > oldScrollPosition){
       newPage = Math.ceil(newPage);
+    } else {
+      // equal, just stay on the current page
+      newPage = curPage;
     }
+
     if(!isNaN(newPage)){
       this.options.paging.offset = newPage;
     }
