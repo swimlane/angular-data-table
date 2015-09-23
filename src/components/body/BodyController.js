@@ -78,7 +78,6 @@ export class BodyController{
 
   /**
    * Gets the first and last indexes based on the offset, row height, page size, and overall count.
-   * @return {object}
    */
   getFirstLastIndexes(){
     var firstRowIndex = Math.max(Math.floor((
@@ -95,23 +94,23 @@ export class BodyController{
 
   /**
    * Updates the page's offset given the scroll position.
-   * @param  {paging object}
    */
   updatePage(){
     let curPage = this.options.paging.offset;
     let idxs = this.getFirstLastIndexes();
-    if (this.options.paging.oldScrollPosition === undefined){
-      this.options.paging.oldScrollPosition = 0;
+    if (this.options.internal.oldScrollPosition === undefined){
+      this.options.internal.oldScrollPosition = 0;
     }
 
-    let oldScrollPosition = this.options.paging.oldScrollPosition;
+    let oldScrollPosition = this.options.internal.oldScrollPosition;
     let newPage = idxs.first / this.options.paging.size;
-    this.options.paging.oldScrollPosition = newPage;
+    this.options.internal.oldScrollPosition = newPage;
 
     if (newPage < oldScrollPosition) {
       // scrolling up
       newPage = Math.floor(newPage);
     } else if (newPage > oldScrollPosition){
+      // scrolling down
       newPage = Math.ceil(newPage);
     } else {
       // equal, just stay on the current page
