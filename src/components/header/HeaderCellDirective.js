@@ -11,6 +11,7 @@ export function HeaderCellDirective($compile){
       column: '=',
       onCheckboxChange: '&',
       onSort: '&',
+      sortType: '=',
       onResize: '&',
       selected: '='
     },

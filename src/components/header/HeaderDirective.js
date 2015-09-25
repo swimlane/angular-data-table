@@ -17,6 +17,7 @@ export function HeaderDirective($timeout){
     },
     template: `
       <div class="dt-header" ng-style="header.styles()">
+
         <div class="dt-header-inner" ng-style="header.innerStyles()">
           <div class="dt-row-left"
                ng-style="header.stylesByGroup('left')"
@@ -26,6 +27,7 @@ export function HeaderDirective($timeout){
             <dt-header-cell ng-repeat="column in header.columns['left'] track by column.$id"
                             on-checkbox-change="header.onCheckboxChanged()"
                             on-sort="header.onSorted(column)"
+                            sort-type="header.options.sortType"
                             on-resize="header.onResized(column, width)"
                             selected="header.isSelected()"
                             column="column">
@@ -38,6 +40,7 @@ export function HeaderDirective($timeout){
             <dt-header-cell ng-repeat="column in header.columns['center'] track by column.$id"
                             on-checkbox-change="header.onCheckboxChanged()"
                             on-sort="header.onSorted(column)"
+                            sort-type="header.options.sortType"
                             selected="header.isSelected()"
                             on-resize="header.onResized(column, width)"
                             column="column">
@@ -51,6 +54,7 @@ export function HeaderDirective($timeout){
             <dt-header-cell ng-repeat="column in header.columns['right'] track by column.$id"
                             on-checkbox-change="header.onCheckboxChanged()"
                             on-sort="header.onSorted(column)"
+                            sort-type="header.options.sortType"
                             selected="header.isSelected()"
                             on-resize="header.onResized(column, width)"
                             column="column">

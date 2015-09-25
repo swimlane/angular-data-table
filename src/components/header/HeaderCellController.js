@@ -33,15 +33,27 @@ export class HeaderCellController{
    * Toggles the sorting on the column
    */
   onSorted(){
-    if(this.column.sortable){
-      if(!this.column.sort){
-        this.column.sort = 'asc';
-      } else if(this.column.sort === 'asc'){
-        this.column.sort = 'desc';
-      } else if(this.column.sort === 'desc'){
-        this.column.sort = undefined;
+    var sortType = this.sortType;
+    function getNextSort(currentSort) {
+      if (sortType === 'simple') {
+        if(currentSort === 'asc'){
+          return 'desc';
+        } else {
+          return 'asc';
+        }
+      } else {
+        if(!currentSort){
+          return 'asc';
+        } else if(currentSort === 'asc'){
+          return 'desc';
+        } else if(currentSort === 'desc'){
+          return undefined;
+        }
       }
+    }
 
+    if(this.column.sortable){
+      this.column.sort = getNextSort(this.column.sort);
       this.onSort({
         column: this.column
       });

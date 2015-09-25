@@ -30,9 +30,23 @@ export class HeaderController {
    * @param  {object} scope
    * @param  {object} column
    */
-  onSorted(column){
+  onSorted(sortedColumn){
+    // if sortType is 'simple' then we don't allow more than one column to be
+    // sorted at once
+    if (this.options.sortType === 'simple') {
+      function unsortColumn(column) {
+        if (column !== sortedColumn) {
+          column.sort = undefined;
+        }
+      }
+
+      this.columns.left.forEach(unsortColumn);
+      this.columns.center.forEach(unsortColumn);
+      this.columns.right.forEach(unsortColumn);
+    }
+
     this.onSort({
-      column: column
+      column: sortedColumn
     });
   }
 
