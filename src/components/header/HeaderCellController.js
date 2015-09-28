@@ -36,7 +36,7 @@ export class HeaderCellController{
     var sortType = this.sortType;
 
     function getNextSort(currentSort) {
-      if (sortType === 'simple') {
+      if (sortType === 'single') {
         if(currentSort === 'asc'){
           return 'desc';
         } else {

@@ -31,8 +31,8 @@ export class HeaderController {
    * @param  {object} column
    */
   onSorted(sortedColumn){
-    if (this.options.sortType === 'simple') {
-      // if sort type is simple, then only one column can be sorted at once,
+    if (this.options.sortType === 'single') {
+      // if sort type is single, then only one column can be sorted at once,
       // so we set the sort to undefined for the other columns
       function unsortColumn(column) {
         if (column !== sortedColumn) {
