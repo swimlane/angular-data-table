@@ -30,9 +30,23 @@ export class HeaderController {
    * @param  {object} scope
    * @param  {object} column
    */
-  onSorted(column){
+  onSorted(sortedColumn){
+    if (this.options.sortType === 'single') {
+      // if sort type is single, then only one column can be sorted at once,
+      // so we set the sort to undefined for the other columns
+      function unsortColumn(column) {
+        if (column !== sortedColumn) {
+          column.sort = undefined;
+        }
+      }
+
+      this.columns.left.forEach(unsortColumn);
+      this.columns.center.forEach(unsortColumn);
+      this.columns.right.forEach(unsortColumn);
+    }
+
     this.onSort({
-      column: column
+      column: sortedColumn
     });
   }
 
