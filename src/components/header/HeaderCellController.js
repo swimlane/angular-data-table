@@ -1,3 +1,5 @@
+import { NextSortDirection } from 'utils/utils';
+
 export class HeaderCellController{
 
   /**
@@ -33,28 +35,9 @@ export class HeaderCellController{
    * Toggles the sorting on the column
    */
   onSorted(){
-    var sortType = this.sortType;
-
-    function getNextSort(currentSort) {
-      if (sortType === 'single') {
-        if(currentSort === 'asc'){
-          return 'desc';
-        } else {
-          return 'asc';
-        }
-      } else {
-        if(!currentSort){
-          return 'asc';
-        } else if(currentSort === 'asc'){
-          return 'desc';
-        } else if(currentSort === 'desc'){
-          return undefined;
-        }
-      }
-    }
-
     if(this.column.sortable){
-      this.column.sort = getNextSort(this.column.sort);
+      this.column.sort = NextSortDirection(this.sortType, this.column.sort);
+
       this.onSort({
         column: this.column
       });

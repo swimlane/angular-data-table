@@ -129,3 +129,21 @@ export function ScrollbarWidth() {
 
   return widthNoScroll - widthWithScroll;
 };
+
+export function NextSortDirection(sortType, currentSort) {
+  if (sortType === 'single') {
+    if(currentSort === 'asc'){
+      return 'desc';
+    } else {
+      return 'asc';
+    }
+  } else {
+    if(!currentSort){
+      return 'asc';
+    } else if(currentSort === 'asc'){
+      return 'desc';
+    } else if(currentSort === 'desc'){
+      return undefined;
+    }
+  }
+};
