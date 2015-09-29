@@ -59,9 +59,10 @@
     "systemjs-builder": "^0.11.3",
     "vinyl-paths": "^1.0.0"
   },
-  "dependencies": {},
+  "dependencies": {
+    "protractor": "^2.2.0"
+  },
   "jspm": {
-    "directories": {},
     "dependencies": {
       "angular": "npm:angular@^1.4.0"
     },
