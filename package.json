@@ -61,7 +61,6 @@
   },
   "dependencies": {},
   "jspm": {
-    "directories": {},
     "dependencies": {
       "angular": "npm:angular@^1.4.0"
     },
