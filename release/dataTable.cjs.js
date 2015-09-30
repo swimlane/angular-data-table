@@ -858,13 +858,13 @@ var BodyController = (function () {
     value: function updatePage() {
       var curPage = this.options.paging.offset;
       var idxs = this.getFirstLastIndexes();
-      if (this.options.paging.oldScrollPosition === undefined) {
-        this.options.paging.oldScrollPosition = 0;
+      if (this.options.internal.oldScrollPosition === undefined) {
+        this.options.internal.oldScrollPosition = 0;
       }
 
-      var oldScrollPosition = this.options.paging.oldScrollPosition;
+      var oldScrollPosition = this.options.internal.oldScrollPosition;
       var newPage = idxs.first / this.options.paging.size;
-      this.options.paging.oldScrollPosition = newPage;
+      this.options.internal.oldScrollPosition = newPage;
 
       if (newPage < oldScrollPosition) {
         newPage = Math.floor(newPage);
@@ -1171,6 +1171,24 @@ function BodyDirective($timeout) {
 }
 BodyDirective.$inject = ["$timeout"];
 
+function NextSortDirection(sortType, currentSort) {
+  if (sortType === "single") {
+    if (currentSort === "asc") {
+      return "desc";
+    } else {
+      return "asc";
+    }
+  } else {
+    if (!currentSort) {
+      return "asc";
+    } else if (currentSort === "asc") {
+      return "desc";
+    } else if (currentSort === "desc") {
+      return undefined;
+    }
+  }
+}
+
 var HeaderCellController = (function () {
   function HeaderCellController() {
     babelHelpers.classCallCheck(this, HeaderCellController);
@@ -1204,13 +1222,7 @@ var HeaderCellController = (function () {
     key: "onSorted",
     value: function onSorted() {
       if (this.column.sortable) {
-        if (!this.column.sort) {
-          this.column.sort = "asc";
-        } else if (this.column.sort === "asc") {
-          this.column.sort = "desc";
-        } else if (this.column.sort === "desc") {
-          this.column.sort = undefined;
-        }
+        this.column.sort = NextSortDirection(this.sortType, this.column.sort);
 
         this.onSort({
           column: this.column
@@ -1253,6 +1265,7 @@ function HeaderCellDirective($compile) {
       column: "=",
       onCheckboxChange: "&",
       onSort: "&",
+      sortType: "=",
       onResize: "&",
       selected: "="
     },
@@ -1300,9 +1313,21 @@ var HeaderController = (function () {
     }
   }, {
     key: "onSorted",
-    value: function onSorted(column) {
+    value: function onSorted(sortedColumn) {
+      if (this.options.sortType === "single") {
+        var unsortColumn = function (column) {
+          if (column !== sortedColumn) {
+            column.sort = undefined;
+          }
+        };
+
+        this.columns.left.forEach(unsortColumn);
+        this.columns.center.forEach(unsortColumn);
+        this.columns.right.forEach(unsortColumn);
+      }
+
       this.onSort({
-        column: column
+        column: sortedColumn
       });
     }
   }, {
@@ -1352,7 +1377,7 @@ function HeaderDirective($timeout) {
       onResize: "&",
       onCheckboxChange: "&"
     },
-    template: "\n      <div class=\"dt-header\" ng-style=\"header.styles()\">\n        <div class=\"dt-header-inner\" ng-style=\"header.innerStyles()\">\n          <div class=\"dt-row-left\"\n               ng-style=\"header.stylesByGroup('left')\"\n               ng-if=\"header.columns['left'].length\"\n               sortable=\"header.options.reorderable\"\n               on-sortable-sort=\"columnsResorted(event, columnId)\">\n            <dt-header-cell ng-repeat=\"column in header.columns['left'] track by column.$id\"\n                            on-checkbox-change=\"header.onCheckboxChanged()\"\n                            on-sort=\"header.onSorted(column)\"\n                            on-resize=\"header.onResized(column, width)\"\n                            selected=\"header.isSelected()\"\n                            column=\"column\">\n            </dt-header-cell>\n          </div>\n          <div class=\"dt-row-center\"\n               sortable=\"header.options.reorderable\"\n               ng-style=\"header.stylesByGroup('center')\"\n               on-sortable-sort=\"columnsResorted(event, columnId)\">\n            <dt-header-cell ng-repeat=\"column in header.columns['center'] track by column.$id\"\n                            on-checkbox-change=\"header.onCheckboxChanged()\"\n                            on-sort=\"header.onSorted(column)\"\n                            selected=\"header.isSelected()\"\n                            on-resize=\"header.onResized(column, width)\"\n                            column=\"column\">\n            </dt-header-cell>\n          </div>\n          <div class=\"dt-row-right\"\n               ng-if=\"header.columns['right'].length\"\n               sortable=\"header.options.reorderable\"\n               ng-style=\"header.stylesByGroup('right')\"\n               on-sortable-sort=\"columnsResorted(event, columnId)\">\n            <dt-header-cell ng-repeat=\"column in header.columns['right'] track by column.$id\"\n                            on-checkbox-change=\"header.onCheckboxChanged()\"\n                            on-sort=\"header.onSorted(column)\"\n                            selected=\"header.isSelected()\"\n                            on-resize=\"header.onResized(column, width)\"\n                            column=\"column\">\n            </dt-header-cell>\n          </div>\n        </div>\n      </div>",
+    template: "\n      <div class=\"dt-header\" ng-style=\"header.styles()\">\n\n        <div class=\"dt-header-inner\" ng-style=\"header.innerStyles()\">\n          <div class=\"dt-row-left\"\n               ng-style=\"header.stylesByGroup('left')\"\n               ng-if=\"header.columns['left'].length\"\n               sortable=\"header.options.reorderable\"\n               on-sortable-sort=\"columnsResorted(event, columnId)\">\n            <dt-header-cell ng-repeat=\"column in header.columns['left'] track by column.$id\"\n                            on-checkbox-change=\"header.onCheckboxChanged()\"\n                            on-sort=\"header.onSorted(column)\"\n                            sort-type=\"header.options.sortType\"\n                            on-resize=\"header.onResized(column, width)\"\n                            selected=\"header.isSelected()\"\n                            column=\"column\">\n            </dt-header-cell>\n          </div>\n          <div class=\"dt-row-center\"\n               sortable=\"header.options.reorderable\"\n               ng-style=\"header.stylesByGroup('center')\"\n               on-sortable-sort=\"columnsResorted(event, columnId)\">\n            <dt-header-cell ng-repeat=\"column in header.columns['center'] track by column.$id\"\n                            on-checkbox-change=\"header.onCheckboxChanged()\"\n                            on-sort=\"header.onSorted(column)\"\n                            sort-type=\"header.options.sortType\"\n                            selected=\"header.isSelected()\"\n                            on-resize=\"header.onResized(column, width)\"\n                            column=\"column\">\n            </dt-header-cell>\n          </div>\n          <div class=\"dt-row-right\"\n               ng-if=\"header.columns['right'].length\"\n               sortable=\"header.options.reorderable\"\n               ng-style=\"header.stylesByGroup('right')\"\n               on-sortable-sort=\"columnsResorted(event, columnId)\">\n            <dt-header-cell ng-repeat=\"column in header.columns['right'] track by column.$id\"\n                            on-checkbox-change=\"header.onCheckboxChanged()\"\n                            on-sort=\"header.onSorted(column)\"\n                            sort-type=\"header.options.sortType\"\n                            selected=\"header.isSelected()\"\n                            on-resize=\"header.onResized(column, width)\"\n                            column=\"column\">\n            </dt-header-cell>\n          </div>\n        </div>\n      </div>",
     replace: true,
     link: function link($scope, $elm, $attrs, ctrl) {
 

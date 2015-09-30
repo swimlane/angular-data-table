@@ -1,4 +1,4 @@
-import { NextSortDirection } from 'utils/utils';
+import { NextSortDirection } from '../../utils/utils';
 
 export class HeaderCellController{
 

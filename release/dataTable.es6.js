@@ -1035,7 +1035,6 @@ class BodyController{
 
   /**
    * Gets the first and last indexes based on the offset, row height, page size, and overall count.
-   * @return {object}
    */
   getFirstLastIndexes(){
     var firstRowIndex = Math.max(Math.floor((
@@ -1052,23 +1051,23 @@ class BodyController{
 
   /**
    * Updates the page's offset given the scroll position.
-   * @param  {paging object}
    */
   updatePage(){
     let curPage = this.options.paging.offset;
     let idxs = this.getFirstLastIndexes();
-    if (this.options.paging.oldScrollPosition === undefined){
-      this.options.paging.oldScrollPosition = 0;
+    if (this.options.internal.oldScrollPosition === undefined){
+      this.options.internal.oldScrollPosition = 0;
     }
 
-    let oldScrollPosition = this.options.paging.oldScrollPosition;
+    let oldScrollPosition = this.options.internal.oldScrollPosition;
     let newPage = idxs.first / this.options.paging.size;
-    this.options.paging.oldScrollPosition = newPage;
+    this.options.internal.oldScrollPosition = newPage;
 
     if (newPage < oldScrollPosition) {
       // scrolling up
       newPage = Math.floor(newPage);
     } else if (newPage > oldScrollPosition){
+      // scrolling down
       newPage = Math.ceil(newPage);
     } else {
       // equal, just stay on the current page
@@ -1471,6 +1470,24 @@ function BodyDirective($timeout){
   };
 }
 
+function NextSortDirection(sortType, currentSort) {
+  if (sortType === 'single') {
+    if(currentSort === 'asc'){
+      return 'desc';
+    } else {
+      return 'asc';
+    }
+  } else {
+    if(!currentSort){
+      return 'asc';
+    } else if(currentSort === 'asc'){
+      return 'desc';
+    } else if(currentSort === 'desc'){
+      return undefined;
+    }
+  }
+}
+
 class HeaderCellController{
 
   /**
@@ -1507,13 +1524,7 @@ class HeaderCellController{
    */
   onSorted(){
     if(this.column.sortable){
-      if(!this.column.sort){
-        this.column.sort = 'asc';
-      } else if(this.column.sort === 'asc'){
-        this.column.sort = 'desc';
-      } else if(this.column.sort === 'desc'){
-        this.column.sort = undefined;
-      }
+      this.column.sort = NextSortDirection(this.sortType, this.column.sort);
 
       this.onSort({
         column: this.column
@@ -1563,6 +1574,7 @@ function HeaderCellDirective($compile){
       column: '=',
       onCheckboxChange: '&',
       onSort: '&',
+      sortType: '=',
       onResize: '&',
       selected: '='
     },
@@ -1638,9 +1650,23 @@ class HeaderController {
    * @param  {object} scope
    * @param  {object} column
    */
-  onSorted(column){
+  onSorted(sortedColumn){
+    if (this.options.sortType === 'single') {
+      // if sort type is single, then only one column can be sorted at once,
+      // so we set the sort to undefined for the other columns
+      function unsortColumn(column) {
+        if (column !== sortedColumn) {
+          column.sort = undefined;
+        }
+      }
+
+      this.columns.left.forEach(unsortColumn);
+      this.columns.center.forEach(unsortColumn);
+      this.columns.right.forEach(unsortColumn);
+    }
+
     this.onSort({
-      column: column
+      column: sortedColumn
     });
   }
 
@@ -1704,6 +1730,7 @@ function HeaderDirective($timeout){
     },
     template: `
       <div class="dt-header" ng-style="header.styles()">
+
         <div class="dt-header-inner" ng-style="header.innerStyles()">
           <div class="dt-row-left"
                ng-style="header.stylesByGroup('left')"
@@ -1713,6 +1740,7 @@ function HeaderDirective($timeout){
             <dt-header-cell ng-repeat="column in header.columns['left'] track by column.$id"
                             on-checkbox-change="header.onCheckboxChanged()"
                             on-sort="header.onSorted(column)"
+                            sort-type="header.options.sortType"
                             on-resize="header.onResized(column, width)"
                             selected="header.isSelected()"
                             column="column">
@@ -1725,6 +1753,7 @@ function HeaderDirective($timeout){
             <dt-header-cell ng-repeat="column in header.columns['center'] track by column.$id"
                             on-checkbox-change="header.onCheckboxChanged()"
                             on-sort="header.onSorted(column)"
+                            sort-type="header.options.sortType"
                             selected="header.isSelected()"
                             on-resize="header.onResized(column, width)"
                             column="column">
@@ -1738,6 +1767,7 @@ function HeaderDirective($timeout){
             <dt-header-cell ng-repeat="column in header.columns['right'] track by column.$id"
                             on-checkbox-change="header.onCheckboxChanged()"
                             on-sort="header.onSorted(column)"
+                            sort-type="header.options.sortType"
                             selected="header.isSelected()"
                             on-resize="header.onResized(column, width)"
                             column="column">
