@@ -1424,7 +1424,7 @@ function SortableDirective($timeout) {
         if (isbefore(dragEl, target)) {
           target.parentNode.insertBefore(dragEl, target);
         } else if (target.nextSibling && target.hasAttribute("draggable")) {
-          target.parentNode.insertBefore(dragEl, target.nextSibling);
+          target.parentNode.insertBefore(dragEl, target.nextSibling.nextSibling);
         }
       };
 
