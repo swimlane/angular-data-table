@@ -65,12 +65,13 @@
             forceFillColumns: true,
             columns: [
               { name: 'Name', prop: 'name', width: 300 },
-              { name: 'Gender', prop: 'gender', group: true },
-              { name: 'Company', prop: 'company' }
+              { name: 'Gender', prop: 'gender' },
+              { name: 'Company', prop: 'company' },
+              { name: 'Foo', prop: 'foo', group: true }
             ]
           };
 
-          $http.get('/demos/data/5.json').success(function(data) {
+          $http.get('/demos/data/10.json').success(function(data) {
             $scope.data = data;
           });
 

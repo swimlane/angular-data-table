@@ -290,8 +290,8 @@ export class BodyController{
         rowIndex = indexes.first;
 
     // slice out the old rows so we don't have duplicates
-    this.tempRows.splice(0, indexes.last - indexes.first);
-    //this.tempRows.splice(0, this.tempRows.length);
+    //this.tempRows.splice(0, this.indexes.last - this.indexes.first);
+    this.tempRows.splice(0, this.tempRows.length);
 
 
     while (rowIndex < indexes.last && rowIndex < this.count) {
