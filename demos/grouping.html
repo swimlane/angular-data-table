@@ -43,8 +43,8 @@
   </head>
   <body ng-app="app" ng-controller="HomeController">
 
-    <button type="button" ng-click="groupCountry()">Group on Country</button>
-    <button type="button" ng-click="groupYear()">Group on Year</button>
+    <button type="button" ng-click="groupBy('country')">Group on Country</button>
+    <button type="button" ng-click="groupBy('year')">Group on Year</button>
 
     <dtable options="options" rows="data" class="material"></dtable>
 
@@ -75,21 +75,11 @@
             $scope.data = data;
           });
 
-          $scope.groupCountry = function(){
-            var col = $scope.options.columns.find(function(c){
-              return c.prop === 'country';
+          $scope.groupBy = function(prop){
+            $scope.options.columns.forEach(function(column){
+              column.group = column.prop === prop;
             });
-
-            col.group = !col.group;
-          };
-
-          $scope.groupYear = function(){
-            var col = $scope.options.columns.find(function(c){
-              return c.prop === 'year';
-            });
-
-            col.group = !col.group;
-          };
+          }
 
         });
       });
