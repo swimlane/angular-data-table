@@ -55,6 +55,8 @@
     <script src="../jspm_packages/system.js"></script>
     <script src="../config.js"></script>
 
+    <code ng-bind="code"></code>
+
     <script>
 
       System.import('dataTable').then(function(dt){
@@ -71,8 +73,8 @@
                 name: "Name", 
                 prop: "name",
                 width: 300,
-                cellRenderer: function(){
-                  return '<div><img width="30" height="30" src="http://thecatapi.com/api/images/get?format=src&type=gif"> <strong>{{value}}</strong></div>';
+                cellRenderer: function($scope){
+                  return '<div><div ng-dblclick="editing = true" ng-show="!editing"><img width="30" height="30" src="http://thecatapi.com/api/images/get?format=src&type=gif"> <strong>{{$cell}}</strong></div><div><input ng-show="editing" type="text" ng-model="$cell" ng-change="changed($cell, $row, $column)" ng-blur="editing = false" /></div>';
                 }
               },
               { 
@@ -98,6 +100,16 @@
           $http.get('/demos/data/100.json').success(function(data) {
             $scope.data = data.splice(0, 15);
           });
+
+          $scope.$watch('data', function(){
+            $scope.code = JSON.stringify($scope.data, 2)
+          }, true)
+
+          $scope.changed = function(cellVal, row, col){
+            var idx = $scope.data.indexOf(row);
+            row[col.prop] = cellVal;
+            $scope.data[idx] = row;
+          }
 
         });
       });

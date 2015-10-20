@@ -16,7 +16,9 @@ export class SelectionController {
    * @param  {row}
    */
   keyDown(ev, index, row){
-    ev.preventDefault();
+    if(KEYS[ev.keyCode]){
+      ev.preventDefault();
+    }
 
     if (ev.keyCode === KEYS.DOWN) {
       var next = ev.target.nextElementSibling;
