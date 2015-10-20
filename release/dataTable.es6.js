@@ -362,6 +362,7 @@ function CellDirective($rootScope, $compile, $log, $timeout){
             if(cellScope){
               cellScope.$cell = ctrl.value;
               cellScope.$row = ctrl.row;
+              cellScope.$column = ctrl.column;
             }
 
             if(ctrl.column.template){
@@ -713,7 +714,9 @@ class SelectionController {
    * @param  {row}
    */
   keyDown(ev, index, row){
-    ev.preventDefault();
+    if(KEYS[ev.keyCode]){
+      ev.preventDefault();
+    }
 
     if (ev.keyCode === KEYS.DOWN) {
       var next = ev.target.nextElementSibling;
