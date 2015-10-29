@@ -16,7 +16,8 @@ export let DataTableService = {
 
   saveColumns(id, columnElms) {
     if (columnElms && columnElms.length) {
-      this.dTables[id] = columnElms;
+      let columnsArray = [].slice.call(columnElms);
+      this.dTables[id] = columnsArray;
     }
   },
 
