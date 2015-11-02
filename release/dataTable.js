@@ -1,6 +1,6 @@
 /**
  * angular-data-table - A feature-rich but lightweight ES6 AngularJS Data Table crafted for large data sets!
- * @version v0.3.20
+ * @version v0.4.0
  * @link http://swimlane.com/
  * @license 
  */
@@ -768,10 +768,12 @@
           requestTick();
         });
 
-        $scope.scrollerStyles = function (scope) {
-          return {
-            height: ctrl.count * ctrl.options.rowHeight + 'px'
-          };
+        $scope.scrollerStyles = function () {
+          if (ctrl.options.scrollbarV) {
+            return {
+              height: ctrl.count * ctrl.options.rowHeight + 'px'
+            };
+          }
         };
       }
     };
@@ -795,38 +797,9 @@
         return c.group;
       });
 
-      $scope.$watchCollection('body.rows', function (newVal, oldVal) {
-        if (newVal) {
-          if (!_this3.options.paging.externalPaging) {
-            _this3.options.paging.count = newVal.length;
-          }
+      $scope.$watchCollection('body.rows', this.rowsUpdated.bind(this));
 
-          _this3.count = _this3.options.paging.count;
-
-          if (_this3.treeColumn || _this3.groupColumn) {
-            _this3.buildRowsByGroup();
-          }
-
-          if (_this3.options.scrollbarV) {
-            var refresh = newVal && oldVal && (newVal.length === oldVal.length || newVal.length < oldVal.length);
-
-            _this3.getRows(refresh);
-          } else {
-            var _tempRows;
-
-            var rows = _this3.rows;
-            if (_this3.treeColumn) {
-              rows = _this3.buildTree();
-            } else if (_this3.groupColumn) {
-              rows = _this3.buildGroups();
-            }
-            _this3.tempRows.splice(0, _this3.tempRows.length);
-            (_tempRows = _this3.tempRows).push.apply(_tempRows, babelHelpers.toConsumableArray(rows));
-          }
-        }
-      });
-
-      if (this.options.scrollbarV) {
+      if (this.options.scrollbarV || !this.options.scrollbarV && this.options.paging.externalPaging) {
         var sized = false;
         $scope.$watch('body.options.paging.size', function (newVal, oldVal) {
           if (!sized || newVal > oldVal) {
@@ -853,6 +826,52 @@
     BodyController.$inject = ["$scope", "$timeout"];
 
     babelHelpers.createClass(BodyController, [{
+      key: "rowsUpdated",
+      value: function rowsUpdated(newVal, oldVal) {
+        if (newVal) {
+          if (!this.options.paging.externalPaging) {
+            this.options.paging.count = newVal.length;
+          }
+
+          this.count = this.options.paging.count;
+
+          if (this.treeColumn || this.groupColumn) {
+            this.buildRowsByGroup();
+          }
+
+          if (this.options.scrollbarV) {
+            var refresh = newVal && oldVal && (newVal.length === oldVal.length || newVal.length < oldVal.length);
+
+            this.getRows(refresh);
+          } else {
+            var rows = this.rows;
+
+            if (this.treeColumn) {
+              rows = this.buildTree();
+            } else if (this.groupColumn) {
+              rows = this.buildGroups();
+            }
+
+            if (this.options.paging.externalPaging) {
+              var firstIdx = this.options.paging.size * this.options.paging.offset,
+                  lastIdx = firstIdx + this.options.paging.size,
+                  idx = firstIdx;
+
+              this.tempRows.splice(0, this.tempRows.length);
+              while (idx < lastIdx) {
+                this.tempRows.push(rows[idx]);
+                idx++;
+              }
+            } else {
+              var _tempRows;
+
+              this.tempRows.splice(0, this.tempRows.length);
+              (_tempRows = this.tempRows).push.apply(_tempRows, babelHelpers.toConsumableArray(rows));
+            }
+          }
+        }
+      }
+    }, {
       key: "getFirstLastIndexes",
       value: function getFirstLastIndexes() {
         var firstRowIndex = Math.max(Math.floor((this.options.internal.offsetY || 0) / this.options.rowHeight, 0), 0),
@@ -868,14 +887,16 @@
     }, {
       key: "updatePage",
       value: function updatePage() {
-        var curPage = this.options.paging.offset;
-        var idxs = this.getFirstLastIndexes();
+        var curPage = this.options.paging.offset,
+            idxs = this.getFirstLastIndexes();
+
         if (this.options.internal.oldScrollPosition === undefined) {
           this.options.internal.oldScrollPosition = 0;
         }
 
-        var oldScrollPosition = this.options.internal.oldScrollPosition;
-        var newPage = idxs.first / this.options.paging.size;
+        var oldScrollPosition = this.options.internal.oldScrollPosition,
+            newPage = idxs.first / this.options.paging.size;
+
         this.options.internal.oldScrollPosition = newPage;
 
         if (newPage < oldScrollPosition) {
@@ -1274,6 +1295,7 @@
       controllerAs: 'hcell',
       scope: true,
       bindToController: {
+        options: '=',
         column: '=',
         onCheckboxChange: '&',
         onSort: '&',
@@ -1286,11 +1308,16 @@
       compile: function compile() {
         return {
           pre: function pre($scope, $elm, $attrs, ctrl) {
-            var label = $elm[0].querySelector('.dt-header-cell-label');
+            var label = $elm[0].querySelector('.dt-header-cell-label'),
+                cellScope = ctrl.options.$outer.$new(false);
+            cellScope.$header = ctrl.column.name;
 
-            if (ctrl.column.headerRenderer) {
+            if (ctrl.column.headerTemplate) {
+              var elm = angular.element("<span>" + ctrl.column.headerTemplate.trim() + "</span>");
+              angular.element(label).append($compile(elm)(cellScope));
+            } else if (ctrl.column.headerRenderer) {
               var elm = angular.element(ctrl.column.headerRenderer($elm));
-              angular.element(label).append($compile(elm)($scope)[0]);
+              angular.element(label).append($compile(elm)(cellScope)[0]);
             } else {
               var val = ctrl.column.name;
               if (val === undefined || val === null) val = '';
@@ -1389,7 +1416,7 @@
         onResize: '&',
         onCheckboxChange: '&'
       },
-      template: "\n      <div class=\"dt-header\" ng-style=\"header.styles()\">\n\n        <div class=\"dt-header-inner\" ng-style=\"header.innerStyles()\">\n          <div class=\"dt-row-left\"\n               ng-style=\"header.stylesByGroup('left')\"\n               ng-if=\"header.columns['left'].length\"\n               sortable=\"header.options.reorderable\"\n               on-sortable-sort=\"columnsResorted(event, columnId)\">\n            <dt-header-cell ng-repeat=\"column in header.columns['left'] track by column.$id\"\n                            on-checkbox-change=\"header.onCheckboxChanged()\"\n                            on-sort=\"header.onSorted(column)\"\n                            sort-type=\"header.options.sortType\"\n                            on-resize=\"header.onResized(column, width)\"\n                            selected=\"header.isSelected()\"\n                            column=\"column\">\n            </dt-header-cell>\n          </div>\n          <div class=\"dt-row-center\"\n               sortable=\"header.options.reorderable\"\n               ng-style=\"header.stylesByGroup('center')\"\n               on-sortable-sort=\"columnsResorted(event, columnId)\">\n            <dt-header-cell ng-repeat=\"column in header.columns['center'] track by column.$id\"\n                            on-checkbox-change=\"header.onCheckboxChanged()\"\n                            on-sort=\"header.onSorted(column)\"\n                            sort-type=\"header.options.sortType\"\n                            selected=\"header.isSelected()\"\n                            on-resize=\"header.onResized(column, width)\"\n                            column=\"column\">\n            </dt-header-cell>\n          </div>\n          <div class=\"dt-row-right\"\n               ng-if=\"header.columns['right'].length\"\n               sortable=\"header.options.reorderable\"\n               ng-style=\"header.stylesByGroup('right')\"\n               on-sortable-sort=\"columnsResorted(event, columnId)\">\n            <dt-header-cell ng-repeat=\"column in header.columns['right'] track by column.$id\"\n                            on-checkbox-change=\"header.onCheckboxChanged()\"\n                            on-sort=\"header.onSorted(column)\"\n                            sort-type=\"header.options.sortType\"\n                            selected=\"header.isSelected()\"\n                            on-resize=\"header.onResized(column, width)\"\n                            column=\"column\">\n            </dt-header-cell>\n          </div>\n        </div>\n      </div>",
+      template: "\n      <div class=\"dt-header\" ng-style=\"header.styles()\">\n\n        <div class=\"dt-header-inner\" ng-style=\"header.innerStyles()\">\n          <div class=\"dt-row-left\"\n               ng-style=\"header.stylesByGroup('left')\"\n               ng-if=\"header.columns['left'].length\"\n               sortable=\"header.options.reorderable\"\n               on-sortable-sort=\"columnsResorted(event, columnId)\">\n            <dt-header-cell\n              ng-repeat=\"column in header.columns['left'] track by column.$id\"\n              on-checkbox-change=\"header.onCheckboxChanged()\"\n              on-sort=\"header.onSorted(column)\"\n              options=\"header.options\"\n              sort-type=\"header.options.sortType\"\n              on-resize=\"header.onResized(column, width)\"\n              selected=\"header.isSelected()\"\n              column=\"column\">\n            </dt-header-cell>\n          </div>\n          <div class=\"dt-row-center\"\n               sortable=\"header.options.reorderable\"\n               ng-style=\"header.stylesByGroup('center')\"\n               on-sortable-sort=\"columnsResorted(event, columnId)\">\n            <dt-header-cell\n              ng-repeat=\"column in header.columns['center'] track by column.$id\"\n              on-checkbox-change=\"header.onCheckboxChanged()\"\n              on-sort=\"header.onSorted(column)\"\n              sort-type=\"header.options.sortType\"\n              selected=\"header.isSelected()\"\n              on-resize=\"header.onResized(column, width)\"\n              options=\"header.options\"\n              column=\"column\">\n            </dt-header-cell>\n          </div>\n          <div class=\"dt-row-right\"\n               ng-if=\"header.columns['right'].length\"\n               sortable=\"header.options.reorderable\"\n               ng-style=\"header.stylesByGroup('right')\"\n               on-sortable-sort=\"columnsResorted(event, columnId)\">\n            <dt-header-cell\n              ng-repeat=\"column in header.columns['right'] track by column.$id\"\n              on-checkbox-change=\"header.onCheckboxChanged()\"\n              on-sort=\"header.onSorted(column)\"\n              sort-type=\"header.options.sortType\"\n              selected=\"header.isSelected()\"\n              on-resize=\"header.onResized(column, width)\"\n              options=\"header.options\"\n              column=\"column\">\n            </dt-header-cell>\n          </div>\n        </div>\n      </div>",
       replace: true,
       link: function link($scope, $elm, $attrs, ctrl) {
 
@@ -1623,7 +1650,8 @@
 
     saveColumns: function saveColumns(id, columnElms) {
       if (columnElms && columnElms.length) {
-        this.dTables[id] = columnElms;
+        var columnsArray = [].slice.call(columnElms);
+        this.dTables[id] = columnsArray;
       }
     },
 
@@ -1658,6 +1686,12 @@
             }
           });
 
+          var header = c.getElementsByTagName('column-header');
+          if (header.length) {
+            column.headerTemplate = header[0].innerHTML;
+            c.removeChild(header[0]);
+          }
+
           if (c.innerHTML !== '') {
             column.template = c.innerHTML;
           }
@@ -1665,6 +1699,7 @@
           _this5.columns[id].push(column);
         });
       });
+
       this.dTables = {};
     }
   };

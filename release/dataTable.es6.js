@@ -933,7 +933,7 @@ function ScrollerDirective($timeout){
             ctrl.getRows();
           }
         });
-        
+
         ticking = false;
       };
 
@@ -950,9 +950,11 @@ function ScrollerDirective($timeout){
         requestTick();
       });
 
-      $scope.scrollerStyles = function(scope){
-        return {
-          height: ctrl.count * ctrl.options.rowHeight + 'px'
+      $scope.scrollerStyles = function(){
+        if(ctrl.options.scrollbarV){
+          return {
+            height: ctrl.count * ctrl.options.rowHeight + 'px'
+          }
         }
       };
 
@@ -981,37 +983,9 @@ class BodyController{
       return c.group;
     });
 
-    $scope.$watchCollection('body.rows', (newVal, oldVal) => {
-      if(newVal) {
-        if(!this.options.paging.externalPaging){
-          this.options.paging.count = newVal.length;
-        }
+    $scope.$watchCollection('body.rows', this.rowsUpdated.bind(this));
 
-        this.count = this.options.paging.count;
-
-        if(this.treeColumn || this.groupColumn){
-          this.buildRowsByGroup();
-        }
-
-        if(this.options.scrollbarV){
-          var refresh = newVal && oldVal && (newVal.length === oldVal.length
-            || newVal.length < oldVal.length);
-
-          this.getRows(refresh);
-        } else {
-          var rows = this.rows;
-          if(this.treeColumn){
-            rows = this.buildTree();
-          } else if(this.groupColumn){
-            rows = this.buildGroups();
-          }
-          this.tempRows.splice(0, this.tempRows.length);
-          this.tempRows.push(...rows);
-        }
-      }
-    });
-
-    if(this.options.scrollbarV){
+    if(this.options.scrollbarV || (!this.options.scrollbarV && this.options.paging.externalPaging)){
       var sized = false;
       $scope.$watch('body.options.paging.size', (newVal, oldVal) => {
         if(!sized || newVal > oldVal){
@@ -1036,6 +1010,50 @@ class BodyController{
     }
   }
 
+  rowsUpdated(newVal, oldVal){
+    if(newVal) {
+      if(!this.options.paging.externalPaging){
+        this.options.paging.count = newVal.length;
+      }
+
+      this.count = this.options.paging.count;
+
+      if(this.treeColumn || this.groupColumn){
+        this.buildRowsByGroup();
+      }
+
+      if(this.options.scrollbarV){
+        let refresh = newVal && oldVal && (newVal.length === oldVal.length
+          || newVal.length < oldVal.length);
+
+        this.getRows(refresh);
+      } else {
+        let rows = this.rows;
+
+        if(this.treeColumn){
+          rows = this.buildTree();
+        } else if(this.groupColumn){
+          rows = this.buildGroups();
+        }
+
+        if(this.options.paging.externalPaging){
+          let firstIdx = this.options.paging.size * this.options.paging.offset,
+              lastIdx = firstIdx + this.options.paging.size,
+              idx = firstIdx;
+
+          this.tempRows.splice(0, this.tempRows.length);
+          while(idx < lastIdx){
+            this.tempRows.push(rows[idx])
+            idx++;
+          }
+        } else {
+          this.tempRows.splice(0, this.tempRows.length);
+          this.tempRows.push(...rows);
+        }
+      }
+    }
+  }
+
   /**
    * Gets the first and last indexes based on the offset, row height, page size, and overall count.
    */
@@ -1056,14 +1074,16 @@ class BodyController{
    * Updates the page's offset given the scroll position.
    */
   updatePage(){
-    let curPage = this.options.paging.offset;
-    let idxs = this.getFirstLastIndexes();
+    let curPage = this.options.paging.offset,
+        idxs = this.getFirstLastIndexes();
+
     if (this.options.internal.oldScrollPosition === undefined){
       this.options.internal.oldScrollPosition = 0;
     }
 
-    let oldScrollPosition = this.options.internal.oldScrollPosition;
-    let newPage = idxs.first / this.options.paging.size;
+    let oldScrollPosition = this.options.internal.oldScrollPosition,
+        newPage = idxs.first / this.options.paging.size;
+
     this.options.internal.oldScrollPosition = newPage;
 
     if (newPage < oldScrollPosition) {
@@ -1574,6 +1594,7 @@ function HeaderCellDirective($compile){
     controllerAs: 'hcell',
     scope: true,
     bindToController: {
+      options: '=',
       column: '=',
       onCheckboxChange: '&',
       onSort: '&',
@@ -1607,13 +1628,18 @@ function HeaderCellDirective($compile){
     compile: function() {
       return {
         pre: function($scope, $elm, $attrs, ctrl) {
-          var label = $elm[0].querySelector('.dt-header-cell-label');
+          let label = $elm[0].querySelector('.dt-header-cell-label'),
+              cellScope = ctrl.options.$outer.$new(false);
+          cellScope.$header = ctrl.column.name;
 
-          if(ctrl.column.headerRenderer){
-            var elm = angular.element(ctrl.column.headerRenderer($elm));
-            angular.element(label).append($compile(elm)($scope)[0]);
+          if(ctrl.column.headerTemplate){
+            let elm = angular.element(`<span>${ctrl.column.headerTemplate.trim()}</span>`);
+            angular.element(label).append($compile(elm)(cellScope));
+          } else if(ctrl.column.headerRenderer){
+            let elm = angular.element(ctrl.column.headerRenderer($elm));
+            angular.element(label).append($compile(elm)(cellScope)[0]);
           } else {
-            var val = ctrl.column.name;
+            let val = ctrl.column.name;
             if(val === undefined || val === null) val = '';
             label.innerHTML = val;
           }
@@ -1740,26 +1766,30 @@ function HeaderDirective($timeout){
                ng-if="header.columns['left'].length"
                sortable="header.options.reorderable"
                on-sortable-sort="columnsResorted(event, columnId)">
-            <dt-header-cell ng-repeat="column in header.columns['left'] track by column.$id"
-                            on-checkbox-change="header.onCheckboxChanged()"
-                            on-sort="header.onSorted(column)"
-                            sort-type="header.options.sortType"
-                            on-resize="header.onResized(column, width)"
-                            selected="header.isSelected()"
-                            column="column">
+            <dt-header-cell
+              ng-repeat="column in header.columns['left'] track by column.$id"
+              on-checkbox-change="header.onCheckboxChanged()"
+              on-sort="header.onSorted(column)"
+              options="header.options"
+              sort-type="header.options.sortType"
+              on-resize="header.onResized(column, width)"
+              selected="header.isSelected()"
+              column="column">
             </dt-header-cell>
           </div>
           <div class="dt-row-center"
                sortable="header.options.reorderable"
                ng-style="header.stylesByGroup('center')"
                on-sortable-sort="columnsResorted(event, columnId)">
-            <dt-header-cell ng-repeat="column in header.columns['center'] track by column.$id"
-                            on-checkbox-change="header.onCheckboxChanged()"
-                            on-sort="header.onSorted(column)"
-                            sort-type="header.options.sortType"
-                            selected="header.isSelected()"
-                            on-resize="header.onResized(column, width)"
-                            column="column">
+            <dt-header-cell
+              ng-repeat="column in header.columns['center'] track by column.$id"
+              on-checkbox-change="header.onCheckboxChanged()"
+              on-sort="header.onSorted(column)"
+              sort-type="header.options.sortType"
+              selected="header.isSelected()"
+              on-resize="header.onResized(column, width)"
+              options="header.options"
+              column="column">
             </dt-header-cell>
           </div>
           <div class="dt-row-right"
@@ -1767,13 +1797,15 @@ function HeaderDirective($timeout){
                sortable="header.options.reorderable"
                ng-style="header.stylesByGroup('right')"
                on-sortable-sort="columnsResorted(event, columnId)">
-            <dt-header-cell ng-repeat="column in header.columns['right'] track by column.$id"
-                            on-checkbox-change="header.onCheckboxChanged()"
-                            on-sort="header.onSorted(column)"
-                            sort-type="header.options.sortType"
-                            selected="header.isSelected()"
-                            on-resize="header.onResized(column, width)"
-                            column="column">
+            <dt-header-cell
+              ng-repeat="column in header.columns['right'] track by column.$id"
+              on-checkbox-change="header.onCheckboxChanged()"
+              on-sort="header.onSorted(column)"
+              sort-type="header.options.sortType"
+              selected="header.isSelected()"
+              on-resize="header.onResized(column, width)"
+              options="header.options"
+              column="column">
             </dt-header-cell>
           </div>
         </div>
@@ -2040,7 +2072,8 @@ let DataTableService = {
 
   saveColumns(id, columnElms) {
     if (columnElms && columnElms.length) {
-      this.dTables[id] = columnElms;
+      let columnsArray = [].slice.call(columnElms);
+      this.dTables[id] = columnsArray;
     }
   },
 
@@ -2057,11 +2090,11 @@ let DataTableService = {
 
       // Iterate through each column
       angular.forEach(columnElms, (c) => {
-        var column = {};
+        let column = {};
 
         // Iterate through each attribute
         angular.forEach(c.attributes, (attr) => {
-          var attrName = CamelCase(attr.name);
+          let attrName = CamelCase(attr.name);
 
           // cuz putting className vs class on
           // a element feels weird
@@ -2084,6 +2117,12 @@ let DataTableService = {
           }
         });
 
+        let header = c.getElementsByTagName('column-header');
+        if(header.length){
+          column.headerTemplate = header[0].innerHTML;
+          c.removeChild(header[0])
+        }
+
         if (c.innerHTML !== '') {
           column.template = c.innerHTML;
         }
@@ -2091,6 +2130,7 @@ let DataTableService = {
         this.columns[id].push(column);
       });
     });
+
     this.dTables = {};
   }
 };

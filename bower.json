@@ -1,6 +1,6 @@
 {
   "name": "angular-data-table",
-  "version": "0.3.20",
+  "version": "0.4.0",
   "homepage": "https://github.com/Swimlane/angular-data-table",
   "author": {
     "name": "Swimlane",
@@ -23,6 +23,7 @@
   "license": "MIT",
   "ignore": [
     "**/.*",
+    "jspm_packages",
     "node_modules",
     "bower_components",
     "test",
