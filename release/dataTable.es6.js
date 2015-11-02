@@ -2515,7 +2515,7 @@ class DataTableController {
 
     // set scope to the parent
     this.options.$outer = $scope.$parent;
-    
+
     $scope.$watch('dt.options.columns', (newVal, oldVal) => {
       if(newVal.length > oldVal.length){
         this.transposeColumnDefaults();
@@ -2604,11 +2604,11 @@ class DataTableController {
 
   /**
    * Adjusts the column widths to handle greed/etc.
-   * @param  {int} forceIdx 
+   * @param  {int} forceIdx
    */
   adjustColumns(forceIdx){
     var width = this.options.internal.innerWidth - this.options.internal.scrollBarWidth;
-      
+
     if(this.options.columnMode === 'force'){
       ForceFillColumnWidths(this.options.columns, width, forceIdx);
     } else if(this.options.columnMode === 'flex') {
@@ -2737,7 +2737,7 @@ class DataTableController {
 
   /**
    * Occurs when a row was selected
-   * @param  {object} rows   
+   * @param  {object} rows
    */
   onSelected(rows){
     this.onSelect({
@@ -2747,7 +2747,7 @@ class DataTableController {
 
   /**
    * Occurs when a row was click but may not be selected.
-   * @param  {object} row   
+   * @param  {object} row
    */
   onRowClicked(row){
     this.onRowClick({
@@ -2846,13 +2846,13 @@ function DataTableDirective($window, $timeout, $parse){
               }
 
               ctrl.options.internal.bodyHeight = height;
+              ctrl.calculatePageSize();
             }
 
             ctrl.adjustColumns();
-            ctrl.calculatePageSize();
           };
 
-          angular.element($window).bind('resize', 
+          angular.element($window).bind('resize',
             throttle(() => {
               $timeout(resize);
             }));

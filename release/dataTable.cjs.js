@@ -1,6 +1,6 @@
 /**
  * angular-data-table - A feature-rich but lightweight ES6 AngularJS Data Table crafted for large data sets!
- * @version v0.4.0
+ * @version v0.4.1
  * @link http://swimlane.com/
  * @license 
  */
@@ -2227,10 +2227,10 @@ function DataTableDirective($window, $timeout, $parse) {
               }
 
               ctrl.options.internal.bodyHeight = height;
+              ctrl.calculatePageSize();
             }
 
             ctrl.adjustColumns();
-            ctrl.calculatePageSize();
           };
 
           angular.element($window).bind('resize', throttle(function () {

@@ -93,13 +93,13 @@ export function DataTableDirective($window, $timeout, $parse){
               }
 
               ctrl.options.internal.bodyHeight = height;
+              ctrl.calculatePageSize();
             }
 
             ctrl.adjustColumns();
-            ctrl.calculatePageSize();
           };
 
-          angular.element($window).bind('resize', 
+          angular.element($window).bind('resize',
             throttle(() => {
               $timeout(resize);
             }));
