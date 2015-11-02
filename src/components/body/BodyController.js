@@ -21,37 +21,9 @@ export class BodyController{
       return c.group;
     });
 
-    $scope.$watchCollection('body.rows', (newVal, oldVal) => {
-      if(newVal) {
-        if(!this.options.paging.externalPaging){
-          this.options.paging.count = newVal.length;
-        }
+    $scope.$watchCollection('body.rows', this.rowsUpdated.bind(this));
 
-        this.count = this.options.paging.count;
-
-        if(this.treeColumn || this.groupColumn){
-          this.buildRowsByGroup();
-        }
-
-        if(this.options.scrollbarV){
-          var refresh = newVal && oldVal && (newVal.length === oldVal.length
-            || newVal.length < oldVal.length);
-
-          this.getRows(refresh);
-        } else {
-          var rows = this.rows;
-          if(this.treeColumn){
-            rows = this.buildTree();
-          } else if(this.groupColumn){
-            rows = this.buildGroups();
-          }
-          this.tempRows.splice(0, this.tempRows.length);
-          this.tempRows.push(...rows);
-        }
-      }
-    });
-
-    if(this.options.scrollbarV){
+    if(this.options.scrollbarV || (!this.options.scrollbarV && this.options.paging.externalPaging)){
       var sized = false;
       $scope.$watch('body.options.paging.size', (newVal, oldVal) => {
         if(!sized || newVal > oldVal){
@@ -76,6 +48,50 @@ export class BodyController{
     }
   }
 
+  rowsUpdated(newVal, oldVal){
+    if(newVal) {
+      if(!this.options.paging.externalPaging){
+        this.options.paging.count = newVal.length;
+      }
+
+      this.count = this.options.paging.count;
+
+      if(this.treeColumn || this.groupColumn){
+        this.buildRowsByGroup();
+      }
+
+      if(this.options.scrollbarV){
+        let refresh = newVal && oldVal && (newVal.length === oldVal.length
+          || newVal.length < oldVal.length);
+
+        this.getRows(refresh);
+      } else {
+        let rows = this.rows;
+
+        if(this.treeColumn){
+          rows = this.buildTree();
+        } else if(this.groupColumn){
+          rows = this.buildGroups();
+        }
+
+        if(this.options.paging.externalPaging){
+          let firstIdx = this.options.paging.size * this.options.paging.offset,
+              lastIdx = firstIdx + this.options.paging.size,
+              idx = firstIdx;
+
+          this.tempRows.splice(0, this.tempRows.length);
+          while(idx < lastIdx){
+            this.tempRows.push(rows[idx])
+            idx++;
+          }
+        } else {
+          this.tempRows.splice(0, this.tempRows.length);
+          this.tempRows.push(...rows);
+        }
+      }
+    }
+  }
+
   /**
    * Gets the first and last indexes based on the offset, row height, page size, and overall count.
    */
@@ -96,14 +112,16 @@ export class BodyController{
    * Updates the page's offset given the scroll position.
    */
   updatePage(){
-    let curPage = this.options.paging.offset;
-    let idxs = this.getFirstLastIndexes();
+    let curPage = this.options.paging.offset,
+        idxs = this.getFirstLastIndexes();
+
     if (this.options.internal.oldScrollPosition === undefined){
       this.options.internal.oldScrollPosition = 0;
     }
 
-    let oldScrollPosition = this.options.internal.oldScrollPosition;
-    let newPage = idxs.first / this.options.paging.size;
+    let oldScrollPosition = this.options.internal.oldScrollPosition,
+        newPage = idxs.first / this.options.paging.size;
+
     this.options.internal.oldScrollPosition = newPage;
 
     if (newPage < oldScrollPosition) {

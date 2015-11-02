@@ -7,7 +7,7 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black" />
     <meta name="viewport" content="width = device-width, minimal-ui, initial-scale = 1, user-scalable = no" />
     <meta name="apple-mobile-web-app-title" content="Datagrid">
-    <title>Datagrid - Basic</title>
+    <title>Datagrid - Templates</title>
     <base href="/">
     <style>
       *, *:after, *:before {
@@ -30,6 +30,12 @@
         text-rendering: optimizeLegibility;
       }
 
+      path{
+        stroke: steelblue;
+        stroke-width:1;
+        fill:none;
+      }
+
       .dt{
         width:75%;
         margin:50px auto;
@@ -39,14 +45,17 @@
     <link href="../dist/dataTable.css" media="all" rel="stylesheet" />
     <link href="../dist/themes/material.css" media="all" rel="stylesheet" />
     <link href="http://fontastic.s3.amazonaws.com/Jnf54BZCm7mSjGCxNRbfp3/icons.css" rel="stylesheet">
+    <script src="http://d3js.org/d3.v3.min.js"></script>
   </head>
   <body ng-app="app" ng-controller="HomeController">
 
-
-    <ui-data-table options="options" rows="data" class="material"></ui-data-table>
+    <p>Double click a name to edit</p>
+    <dtable options="options" rows="data" class="material"></dtable>
 
     <script src="../jspm_packages/system.js"></script>
     <script src="../config.js"></script>
+
+    <code ng-bind="code"></code>
 
     <script>
 
@@ -59,17 +68,39 @@
             headerHeight: 50,
             footerHeight: false,
             scrollbarV: false,
-            selectable: false,
             columns: [
-              { name: "Name", width: 300 },
-              { name: "Gender" },
-              { name: "Company" }
+              {
+                name: "Name",
+                prop: "name",
+                width: 300,
+                cellRenderer: function($scope){
+                  return '<div><div ng-dblclick="editing = true" ng-show="!editing"><strong>{{$cell}}</strong></div><div><input ng-show="editing" type="text" ng-model="$cell" ng-change="changed($cell, $row, $column)" ng-blur="editing = false" /></div>';
+                }
+              },
+              {
+                name: "Gender",
+                prop: "gender"
+              },
+              {
+                name: "Company",
+                prop: "company"
+              }
             ]
           };
 
           $http.get('/demos/data/100.json').success(function(data) {
-            $scope.data = data;
+            $scope.data = data.splice(0, 15);
           });
+
+          $scope.$watch('data', function(){
+            $scope.code = JSON.stringify($scope.data, null, 2)
+          }, true)
+
+          $scope.changed = function(cellVal, row, col){
+            var idx = $scope.data.indexOf(row);
+            row[col.prop] = cellVal;
+            $scope.data[idx] = row;
+          }
 
         });
       });

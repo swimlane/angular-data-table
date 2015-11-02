@@ -7,7 +7,7 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black" />
     <meta name="viewport" content="width = device-width, minimal-ui, initial-scale = 1, user-scalable = no" />
     <meta name="apple-mobile-web-app-title" content="Datagrid">
-    <title>Datagrid - Basic</title>
+    <title>Datagrid - Paging</title>
     <base href="/">
     <style>
       *, *:after, *:before {
@@ -33,6 +33,11 @@
       .dt{
         width:75%;
         margin:50px auto;
+        height:400px;
+      }
+
+      .dt-row-even{
+        background:#f6f7f8;
       }
 
     </style>
@@ -43,7 +48,7 @@
   <body ng-app="app" ng-controller="HomeController">
 
 
-    <ui-data-table options="options" rows="data" class="material"></ui-data-table>
+    <dtable options="optionz" rows="data" class="material" on-page="paging(offset, size)"></dtable>
 
     <script src="../jspm_packages/system.js"></script>
     <script src="../config.js"></script>
@@ -54,23 +59,40 @@
         var module = angular.module('app', [ dt.default.name ]);
 
         module.controller('HomeController', function($scope, $http){
-          $scope.options = {
+          $scope.data = []
+
+          $scope.optionz = {
             rowHeight: 50,
             headerHeight: 50,
-            footerHeight: false,
-            scrollbarV: false,
-            selectable: false,
+            footerHeight: 50,
             columns: [
-              { name: "Name", width: 300 },
-              { name: "Gender" },
-              { name: "Company" }
-            ]
+              { name: "Name", prop: "name" },
+              { name: "Gender", prop: "gender" },
+              { name: "Company", prop: "company" }
+            ],
+            columnMode: 'force',
+            paging: {
+              externalPaging: true
+            }
           };
 
-          $http.get('/demos/data/100.json').success(function(data) {
-            $scope.data = data;
-          });
+          $scope.paging = function(offset, size){
+            setTimeout(function(){
+            $http.get('/demos/data/100.json').success(function(d) {
 
+              $scope.optionz.paging.count = d.length;
+
+              var set = d.splice(offset, size);
+              // only insert items i don't already have
+              set.forEach(function(r, i){
+                var idx = i + (offset * size);
+                $scope.data[idx] = r;
+              });
+
+              console.log('paging!', offset, size)
+            });
+          }, 200)
+          };
         });
       });
     </script>

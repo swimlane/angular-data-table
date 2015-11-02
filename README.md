@@ -1,6 +1,6 @@
 # angular-data-table [![Join the chat at https://gitter.im/Swimlane/angular-data-table](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/Swimlane/angular-data-table?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
-`angular-data-table` is a AngularJS directive for presenting large and complex data.  It has all the features you would expect from any other table but in a light package with _no external depedencies_. The table was designed to be extremely flexible and light; it doesn't make any assumptions about your data or how you: filter, sort or page it. 
+`angular-data-table` is a AngularJS directive for presenting large and complex data.  It has all the features you would expect from any other table but in a light package with _no external depedencies_. The table was designed to be extremely flexible and light; it doesn't make any assumptions about your data or how you: filter, sort or page it.
 
 It was engineered from its conception to handle thousands of rows without sacrificing performance.  It was built for modern browsers using _ES6, CSS3 and HTML5_ and only supports [Evergreen Browsers](http://eisenbergeffect.bluespire.com/evergreen-browsers/) and >= 1.4.x Angular.
 
@@ -41,6 +41,7 @@ or Github download or clone of course!
 Ensure you have the latest NPM and JSPM installed globally.  If you don't already have JSPM installed run: `npm install jspm -g`.
 
 - `npm install`
+- `jspm install`
 - `gulp watch serve`
 - Open your browser to `http://localhost:9000`
 
@@ -77,9 +78,9 @@ Include the module in your angular app module like:
         scrollbarV: false
       };
 
-      $scope.data = [ 
+      $scope.data = [
         { name: 'Austin', gender: 'Male' },
-        { name: 'Marjan', gender: 'Male' } 
+        { name: 'Marjan', gender: 'Male' }
       ];
     });
 

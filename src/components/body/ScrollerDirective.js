@@ -32,7 +32,7 @@ export function ScrollerDirective($timeout){
             ctrl.getRows();
           }
         });
-        
+
         ticking = false;
       };
 
@@ -49,9 +49,11 @@ export function ScrollerDirective($timeout){
         requestTick();
       });
 
-      $scope.scrollerStyles = function(scope){
-        return {
-          height: ctrl.count * ctrl.options.rowHeight + 'px'
+      $scope.scrollerStyles = function(){
+        if(ctrl.options.scrollbarV){
+          return {
+            height: ctrl.count * ctrl.options.rowHeight + 'px'
+          }
         }
       };
 

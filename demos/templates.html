@@ -49,13 +49,10 @@
   </head>
   <body ng-app="app" ng-controller="HomeController">
 
-
     <dtable options="options" rows="data" class="material"></dtable>
 
     <script src="../jspm_packages/system.js"></script>
     <script src="../config.js"></script>
-
-    <code ng-bind="code"></code>
 
     <script>
 
@@ -69,16 +66,16 @@
             footerHeight: false,
             scrollbarV: false,
             columns: [
-              { 
-                name: "Name", 
+              {
+                name: "Name",
                 prop: "name",
                 width: 300,
                 cellRenderer: function($scope){
-                  return '<div><div ng-dblclick="editing = true" ng-show="!editing"><img width="30" height="30" src="http://thecatapi.com/api/images/get?format=src&type=gif"> <strong>{{$cell}}</strong></div><div><input ng-show="editing" type="text" ng-model="$cell" ng-change="changed($cell, $row, $column)" ng-blur="editing = false" /></div>';
+                  return '<div><img width="30" height="30" src="http://thecatapi.com/api/images/get?format=src&type=gif"> <strong>{{$cell}}</strong></div>';
                 }
               },
-              { 
-                name: "Gender", 
+              {
+                name: "Gender",
                 prop: "gender" ,
                 headerRenderer: function(scope, elm){
                   return '<strong>moo</strong>';
@@ -87,8 +84,8 @@
                   displayGraphExample(elm[0], 300, 30, "basis", true, 1000, 1000);
                 }
               },
-              { 
-                name: "Company", 
+              {
+                name: "Company",
                 prop: "company",
                 cellDataGetter: function(val){
                   return new Date().getSeconds() + ' seconds';
@@ -101,22 +98,12 @@
             $scope.data = data.splice(0, 15);
           });
 
-          $scope.$watch('data', function(){
-            $scope.code = JSON.stringify($scope.data, 2)
-          }, true)
-
-          $scope.changed = function(cellVal, row, col){
-            var idx = $scope.data.indexOf(row);
-            row[col.prop] = cellVal;
-            $scope.data[idx] = row;
-          }
-
         });
       });
     </script>
 
   <script>
-  
+
   function displayGraphExample(id, width, height, interpolation, animate, updateDelay, transitionDelay) {
     // create an SVG element inside the #graph div that fills 100% of the div
     var graph = d3.select(id).append("svg:svg").attr("width", "100%").attr("height", "100%");
@@ -132,26 +119,26 @@
     // create a line object that represents the SVN line we're creating
     var line = d3.svg.line()
       // assign the X function to plot our line as we wish
-      .x(function(d,i) { 
+      .x(function(d,i) {
         // verbose logging to show what's actually being done
         //console.log('Plotting X value for data point: ' + d + ' using index: ' + i + ' to be at: ' + x(i) + ' using our xScale.');
         // return the X coordinate where we want to plot this datapoint
-        return x(i); 
+        return x(i);
       })
-      .y(function(d) { 
+      .y(function(d) {
         // verbose logging to show what's actually being done
         //console.log('Plotting Y value for data point: ' + d + ' to be at: ' + y(d) + " using our yScale.");
         // return the Y coordinate where we want to plot this datapoint
-        return y(d); 
+        return y(d);
       })
       .interpolate(interpolation)
-  
+
       // display the line by appending an svg:path element with the data line we created above
       graph.append("svg:path").attr("d", line(data));
       // or it can be done like this
       //graph.selectAll("path").data([data]).enter().append("svg:path").attr("d", line);
-      
-      
+
+
       function redrawWithAnimation() {
         // update with animation
         graph.selectAll("path")
@@ -162,17 +149,17 @@
           .ease("linear")
           .duration(transitionDelay) // for this demo we want a continual slide so set this to the same as the setInterval amount below
           .attr("transform", "translate(" + x(0) + ")"); // animate a slide to the left back to x(0) pixels to reveal the new value
-          
+
           /* thanks to 'barrym' for examples of transform: https://gist.github.com/1137131 */
       }
-      
+
       function redrawWithoutAnimation() {
         // static update without animation
         graph.selectAll("path")
           .data([data]) // set the new data
           .attr("d", line); // apply the new data values
       }
-      
+
       setInterval(function() {
          var v = data.shift(); // remove the first element of the array
          data.push(v); // add a new element to the array (we're just taking the number we just shifted off the front and appending to the end)
@@ -183,12 +170,12 @@
          }
       }, updateDelay);
     }
-    
+
     displayGraphExample("#graph2", 150, 15, "basis", true, 1000, 1000);
     displayGraphExample("#graph3", 150, 15, "linear", true, 1000, 1000);
-    displayGraphExample("#graph4", 150, 15, "linear", false, 1000, 1000);   
-    displayGraphExample("#graph5", 300, 30, "basis", true, 1500, 750);  
-    displayGraphExample("#graph6", 300, 30, "basis", false, 1500, 750);   
+    displayGraphExample("#graph4", 150, 15, "linear", false, 1000, 1000);
+    displayGraphExample("#graph5", 300, 30, "basis", true, 1500, 750);
+    displayGraphExample("#graph6", 300, 30, "basis", false, 1500, 750);
   </script>
 
   </body>

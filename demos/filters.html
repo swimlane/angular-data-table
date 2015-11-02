@@ -45,7 +45,25 @@
   <input type="text" ng-model-options="{ debounce: 100 }" placeholder="Filter names"
            ng-model="$parent.filterKeywords" />
 
-    <dtable options="options" rows="data" class="material"></dtable>
+    <dtable
+      options="options"
+      rows="data"
+      class="material">
+      <column name="Name" flex-grow="3">
+        <column-header>
+          <div>{{$header}}</div>
+          <input
+            type="text"
+            ng-model-options="{ debounce: 100 }"
+            placeholder="Filter names"
+            ng-click="prev($event)"
+            ng-model="$parent.filterKeywords" />
+        </column-header>
+        <i>{{$cell}}</i>
+      </column>
+      <column name="Gender" flex-grow="1"></column>
+      <column name="Company" flex-grow="1"></column>
+    </dtable>
 
     <script src="../jspm_packages/system.js"></script>
     <script src="../config.js"></script>
@@ -60,16 +78,15 @@
 
           $scope.options = {
             rowHeight: 50,
-            headerHeight: 50,
+            headerHeight: 100,
             footerHeight: false,
             scrollbarV: false,
-            selectable: false,
-            columns: [
-              { name: "Name", width: 300 },
-              { name: "Gender" },
-              { name: "Company" }
-            ]
+            selectable: false
           };
+
+          $scope.prev = function(ev){
+            ev.stopPropagation();
+          }
 
           $scope.$watch('filterKeywords', function(newVal) {
             if(!data)return;

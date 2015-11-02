@@ -8,6 +8,7 @@ export function HeaderCellDirective($compile){
     controllerAs: 'hcell',
     scope: true,
     bindToController: {
+      options: '=',
       column: '=',
       onCheckboxChange: '&',
       onSort: '&',
@@ -41,13 +42,18 @@ export function HeaderCellDirective($compile){
     compile: function() {
       return {
         pre: function($scope, $elm, $attrs, ctrl) {
-          var label = $elm[0].querySelector('.dt-header-cell-label');
+          let label = $elm[0].querySelector('.dt-header-cell-label'),
+              cellScope = ctrl.options.$outer.$new(false);
+          cellScope.$header = ctrl.column.name;
 
-          if(ctrl.column.headerRenderer){
-            var elm = angular.element(ctrl.column.headerRenderer($elm));
-            angular.element(label).append($compile(elm)($scope)[0]);
+          if(ctrl.column.headerTemplate){
+            let elm = angular.element(`<span>${ctrl.column.headerTemplate.trim()}</span>`);
+            angular.element(label).append($compile(elm)(cellScope));
+          } else if(ctrl.column.headerRenderer){
+            let elm = angular.element(ctrl.column.headerRenderer($elm));
+            angular.element(label).append($compile(elm)(cellScope)[0]);
           } else {
-            var val = ctrl.column.name;
+            let val = ctrl.column.name;
             if(val === undefined || val === null) val = '';
             label.innerHTML = val;
           }

@@ -1,12 +1,6 @@
 import angular from 'angular';
-import {
-  ColumnDefaults
-}
-from '../defaults';
-import {
-  CamelCase
-}
-from '../utils/utils';
+import { ColumnDefaults } from '../defaults';
+import { CamelCase } from '../utils/utils';
 
 export let DataTableService = {
 
@@ -34,11 +28,11 @@ export let DataTableService = {
 
       // Iterate through each column
       angular.forEach(columnElms, (c) => {
-        var column = {};
+        let column = {};
 
         // Iterate through each attribute
         angular.forEach(c.attributes, (attr) => {
-          var attrName = CamelCase(attr.name);
+          let attrName = CamelCase(attr.name);
 
           // cuz putting className vs class on
           // a element feels weird
@@ -61,6 +55,12 @@ export let DataTableService = {
           }
         });
 
+        let header = c.getElementsByTagName('column-header');
+        if(header.length){
+          column.headerTemplate = header[0].innerHTML;
+          c.removeChild(header[0])
+        }
+
         if (c.innerHTML !== '') {
           column.template = c.innerHTML;
         }
@@ -68,6 +68,7 @@ export let DataTableService = {
         this.columns[id].push(column);
       });
     });
+
     this.dTables = {};
   }
 };
