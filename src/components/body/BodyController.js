@@ -81,8 +81,7 @@ export class BodyController{
 
           this.tempRows.splice(0, this.tempRows.length);
           while(idx < lastIdx){
-            this.tempRows.push(rows[idx])
-            idx++;
+            this.tempRows.push(rows[idx++])
           }
         } else {
           this.tempRows.splice(0, this.tempRows.length);
