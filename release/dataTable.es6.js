@@ -1043,8 +1043,7 @@ class BodyController{
 
           this.tempRows.splice(0, this.tempRows.length);
           while(idx < lastIdx){
-            this.tempRows.push(rows[idx])
-            idx++;
+            this.tempRows.push(rows[idx++])
           }
         } else {
           this.tempRows.splice(0, this.tempRows.length);
@@ -1630,7 +1629,10 @@ function HeaderCellDirective($compile){
         pre: function($scope, $elm, $attrs, ctrl) {
           let label = $elm[0].querySelector('.dt-header-cell-label'),
               cellScope = ctrl.options.$outer.$new(false);
+              
+          // copy some props
           cellScope.$header = ctrl.column.name;
+          cellScope.$index = $scope.$index;
 
           if(ctrl.column.headerTemplate){
             let elm = angular.element(`<span>${ctrl.column.headerTemplate.trim()}</span>`);

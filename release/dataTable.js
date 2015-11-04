@@ -1,6 +1,6 @@
 /**
  * angular-data-table - A feature-rich but lightweight ES6 AngularJS Data Table crafted for large data sets!
- * @version v0.4.1
+ * @version v0.4.2
  * @link http://swimlane.com/
  * @license 
  */
@@ -859,8 +859,7 @@
 
               this.tempRows.splice(0, this.tempRows.length);
               while (idx < lastIdx) {
-                this.tempRows.push(rows[idx]);
-                idx++;
+                this.tempRows.push(rows[idx++]);
               }
             } else {
               var _tempRows;
@@ -1310,7 +1309,9 @@
           pre: function pre($scope, $elm, $attrs, ctrl) {
             var label = $elm[0].querySelector('.dt-header-cell-label'),
                 cellScope = ctrl.options.$outer.$new(false);
+
             cellScope.$header = ctrl.column.name;
+            cellScope.$index = $scope.$index;
 
             if (ctrl.column.headerTemplate) {
               var elm = angular.element("<span>" + ctrl.column.headerTemplate.trim() + "</span>");
