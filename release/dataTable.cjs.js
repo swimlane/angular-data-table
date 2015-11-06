@@ -1,6 +1,6 @@
 /**
  * angular-data-table - A feature-rich but lightweight ES6 AngularJS Data Table crafted for large data sets!
- * @version v0.4.2
+ * @version v0.4.3
  * @link http://swimlane.com/
  * @license 
  */
@@ -298,7 +298,6 @@ function CellDirective($rootScope, $compile, $log, $timeout) {
           }
 
           $scope.$watch('cell.row', function () {
-            content.empty();
             if (cellScope) {
               cellScope.$cell = ctrl.value;
               cellScope.$row = ctrl.row;
@@ -306,13 +305,15 @@ function CellDirective($rootScope, $compile, $log, $timeout) {
             }
 
             if (ctrl.column.template) {
+              content.empty();
               var elm = angular.element("<span>" + ctrl.column.template.trim() + "</span>");
               content.append($compile(elm)(cellScope));
             } else if (ctrl.column.cellRenderer) {
+              content.empty();
               var elm = angular.element(ctrl.column.cellRenderer(cellScope, content));
               content.append($compile(elm)(cellScope));
             } else {
-              content[0].innerHTML = ctrl.getValue();
+              content[0].textContent = ctrl.getValue();
             }
           });
         }
@@ -733,9 +734,14 @@ function ScrollerDirective($timeout) {
       };
 
       function update() {
+        if (lastScrollX !== ctrl.options.internal.offsetX) {
+          $scope.$apply(function () {
+            ctrl.options.internal.offsetX = lastScrollX;
+          });
+        }
+
         $scope.$applyAsync(function () {
           ctrl.options.internal.offsetY = lastScrollY;
-          ctrl.options.internal.offsetX = lastScrollX;
           ctrl.updatePage();
 
           if (ctrl.options.scrollbarV) {
@@ -753,10 +759,14 @@ function ScrollerDirective($timeout) {
         }
       };
 
-      $elm.parent().on('scroll', function (ev) {
+      parent.on('scroll', function (ev) {
         lastScrollY = this.scrollTop;
         lastScrollX = this.scrollLeft;
         requestTick();
+      });
+
+      $scope.$on('$destroy', function () {
+        parent.off('scroll');
       });
 
       $scope.scrollerStyles = function () {
@@ -1299,10 +1309,14 @@ function HeaderCellDirective($compile) {
       return {
         pre: function pre($scope, $elm, $attrs, ctrl) {
           var label = $elm[0].querySelector('.dt-header-cell-label'),
-              cellScope = ctrl.options.$outer.$new(false);
+              cellScope = undefined;
 
-          cellScope.$header = ctrl.column.name;
-          cellScope.$index = $scope.$index;
+          if (ctrl.column.headerTemplate || ctrl.column.headerRenderer) {
+            cellScope = ctrl.options.$outer.$new(false);
+
+            cellScope.$header = ctrl.column.name;
+            cellScope.$index = $scope.$index;
+          }
 
           if (ctrl.column.headerTemplate) {
             var elm = angular.element("<span>" + ctrl.column.headerTemplate.trim() + "</span>");
@@ -1313,7 +1327,7 @@ function HeaderCellDirective($compile) {
           } else {
             var val = ctrl.column.name;
             if (val === undefined || val === null) val = '';
-            label.innerHTML = val;
+            label.textContent = val;
           }
         }
       };

@@ -358,7 +358,6 @@ function CellDirective($rootScope, $compile, $log, $timeout){
           }
 
           $scope.$watch('cell.row', () => {
-            content.empty();
             if(cellScope){
               cellScope.$cell = ctrl.value;
               cellScope.$row = ctrl.row;
@@ -366,13 +365,15 @@ function CellDirective($rootScope, $compile, $log, $timeout){
             }
 
             if(ctrl.column.template){
+              content.empty();
               var elm = angular.element(`<span>${ctrl.column.template.trim()}</span>`);
               content.append($compile(elm)(cellScope));
             } else if(ctrl.column.cellRenderer){
+              content.empty();
               var elm = angular.element(ctrl.column.cellRenderer(cellScope, content));
               content.append($compile(elm)(cellScope));
             } else {
-              content[0].innerHTML = ctrl.getValue();
+              content[0].textContent = ctrl.getValue();
             }
           });
         }
@@ -924,9 +925,14 @@ function ScrollerDirective($timeout){
       };
 
       function update(){
+        if(lastScrollX !== ctrl.options.internal.offsetX){
+          $scope.$apply(() => {
+            ctrl.options.internal.offsetX = lastScrollX;
+          });
+        }
+
         $scope.$applyAsync(() => {
           ctrl.options.internal.offsetY = lastScrollY;
-          ctrl.options.internal.offsetX = lastScrollX;
           ctrl.updatePage();
 
           if(ctrl.options.scrollbarV){
@@ -944,10 +950,14 @@ function ScrollerDirective($timeout){
         }
       };
 
-      $elm.parent().on('scroll', function(ev) {
+      parent.on('scroll', function(ev) {
         lastScrollY = this.scrollTop;
         lastScrollX = this.scrollLeft;
         requestTick();
+      });
+
+      $scope.$on('$destroy', () => {
+        parent.off('scroll');
       });
 
       $scope.scrollerStyles = function(){
@@ -1627,12 +1637,15 @@ function HeaderCellDirective($compile){
     compile: function() {
       return {
         pre: function($scope, $elm, $attrs, ctrl) {
-          let label = $elm[0].querySelector('.dt-header-cell-label'),
-              cellScope = ctrl.options.$outer.$new(false);
-              
-          // copy some props
-          cellScope.$header = ctrl.column.name;
-          cellScope.$index = $scope.$index;
+          let label = $elm[0].querySelector('.dt-header-cell-label'), cellScope;
+
+          if(ctrl.column.headerTemplate || ctrl.column.headerRenderer){
+            cellScope = ctrl.options.$outer.$new(false);
+            
+            // copy some props
+            cellScope.$header = ctrl.column.name;
+            cellScope.$index = $scope.$index;
+          }
 
           if(ctrl.column.headerTemplate){
             let elm = angular.element(`<span>${ctrl.column.headerTemplate.trim()}</span>`);
@@ -1643,7 +1656,7 @@ function HeaderCellDirective($compile){
           } else {
             let val = ctrl.column.name;
             if(val === undefined || val === null) val = '';
-            label.innerHTML = val;
+            label.textContent = val;
           }
         }
       }
