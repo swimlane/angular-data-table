@@ -23,9 +23,14 @@ export function ScrollerDirective($timeout){
       };
 
       function update(){
+        if(lastScrollX !== ctrl.options.internal.offsetX){
+          $scope.$apply(() => {
+            ctrl.options.internal.offsetX = lastScrollX;
+          });
+        }
+
         $scope.$applyAsync(() => {
           ctrl.options.internal.offsetY = lastScrollY;
-          ctrl.options.internal.offsetX = lastScrollX;
           ctrl.updatePage();
 
           if(ctrl.options.scrollbarV){
@@ -43,10 +48,14 @@ export function ScrollerDirective($timeout){
         }
       };
 
-      $elm.parent().on('scroll', function(ev) {
+      parent.on('scroll', function(ev) {
         lastScrollY = this.scrollTop;
         lastScrollX = this.scrollLeft;
         requestTick();
+      });
+
+      $scope.$on('$destroy', () => {
+        parent.off('scroll');
       });
 
       $scope.scrollerStyles = function(){
