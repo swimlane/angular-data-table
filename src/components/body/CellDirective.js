@@ -46,7 +46,6 @@ export function CellDirective($rootScope, $compile, $log, $timeout){
           }
 
           $scope.$watch('cell.row', () => {
-            content.empty();
             if(cellScope){
               cellScope.$cell = ctrl.value;
               cellScope.$row = ctrl.row;
@@ -54,13 +53,15 @@ export function CellDirective($rootScope, $compile, $log, $timeout){
             }
 
             if(ctrl.column.template){
+              content.empty();
               var elm = angular.element(`<span>${ctrl.column.template.trim()}</span>`);
               content.append($compile(elm)(cellScope));
             } else if(ctrl.column.cellRenderer){
+              content.empty();
               var elm = angular.element(ctrl.column.cellRenderer(cellScope, content));
               content.append($compile(elm)(cellScope));
             } else {
-              content[0].innerHTML = ctrl.getValue();
+              content[0].textContent = ctrl.getValue();
             }
           });
         }

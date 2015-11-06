@@ -42,12 +42,15 @@ export function HeaderCellDirective($compile){
     compile: function() {
       return {
         pre: function($scope, $elm, $attrs, ctrl) {
-          let label = $elm[0].querySelector('.dt-header-cell-label'),
-              cellScope = ctrl.options.$outer.$new(false);
-              
-          // copy some props
-          cellScope.$header = ctrl.column.name;
-          cellScope.$index = $scope.$index;
+          let label = $elm[0].querySelector('.dt-header-cell-label'), cellScope;
+
+          if(ctrl.column.headerTemplate || ctrl.column.headerRenderer){
+            cellScope = ctrl.options.$outer.$new(false);
+            
+            // copy some props
+            cellScope.$header = ctrl.column.name;
+            cellScope.$index = $scope.$index;
+          }
 
           if(ctrl.column.headerTemplate){
             let elm = angular.element(`<span>${ctrl.column.headerTemplate.trim()}</span>`);
@@ -58,7 +61,7 @@ export function HeaderCellDirective($compile){
           } else {
             let val = ctrl.column.name;
             if(val === undefined || val === null) val = '';
-            label.innerHTML = val;
+            label.textContent = val;
           }
         }
       }
