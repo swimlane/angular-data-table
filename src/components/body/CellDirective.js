@@ -50,6 +50,7 @@ export function CellDirective($rootScope, $compile, $log, $timeout){
               cellScope.$cell = ctrl.value;
               cellScope.$row = ctrl.row;
               cellScope.$column = ctrl.column;
+              cellScope.$$watchers = null;
             }
 
             if(ctrl.column.template){
