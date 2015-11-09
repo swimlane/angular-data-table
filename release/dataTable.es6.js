@@ -362,6 +362,7 @@ function CellDirective($rootScope, $compile, $log, $timeout){
               cellScope.$cell = ctrl.value;
               cellScope.$row = ctrl.row;
               cellScope.$column = ctrl.column;
+              cellScope.$$watchers = null;
             }
 
             if(ctrl.column.template){
@@ -904,7 +905,7 @@ class StyleTranslator{
 
 }
 
-function ScrollerDirective($timeout){
+function ScrollerDirective($timeout, $rootScope){
   return {
     restrict: 'E',
     require:'^dtBody',
@@ -925,20 +926,18 @@ function ScrollerDirective($timeout){
       };
 
       function update(){
-        if(lastScrollX !== ctrl.options.internal.offsetX){
-          $scope.$apply(() => {
-            ctrl.options.internal.offsetX = lastScrollX;
-          });
+        ctrl.options.internal.offsetY = lastScrollY;
+        ctrl.options.internal.offsetX = lastScrollX;
+        ctrl.updatePage();
+
+        if(ctrl.options.scrollbarV){
+          ctrl.getRows();
         }
 
-        $scope.$applyAsync(() => {
-          ctrl.options.internal.offsetY = lastScrollY;
-          ctrl.updatePage();
-
-          if(ctrl.options.scrollbarV){
-            ctrl.getRows();
-          }
-        });
+        $scope.$digest();
+        
+        // https://github.com/Swimlane/angular-data-table/pull/74
+        ctrl.options.$outer.$digest();
 
         ticking = false;
       };

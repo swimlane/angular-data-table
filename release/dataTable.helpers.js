@@ -1,6 +1,6 @@
 /**
  * angular-data-table - A feature-rich but lightweight ES6 AngularJS Data Table crafted for large data sets!
- * @version v0.4.3
+ * @version v0.4.4
  * @link http://swimlane.com/
  * @license 
  */
@@ -320,6 +320,7 @@
                 cellScope.$cell = ctrl.value;
                 cellScope.$row = ctrl.row;
                 cellScope.$column = ctrl.column;
+                cellScope.$$watchers = null;
               }
 
               if (ctrl.column.template) {
@@ -736,7 +737,7 @@
     return StyleTranslator;
   })();
 
-  function ScrollerDirective($timeout) {
+  function ScrollerDirective($timeout, $rootScope) {
     return {
       restrict: 'E',
       require: '^dtBody',
@@ -756,20 +757,17 @@
         };
 
         function update() {
-          if (lastScrollX !== ctrl.options.internal.offsetX) {
-            $scope.$apply(function () {
-              ctrl.options.internal.offsetX = lastScrollX;
-            });
+          ctrl.options.internal.offsetY = lastScrollY;
+          ctrl.options.internal.offsetX = lastScrollX;
+          ctrl.updatePage();
+
+          if (ctrl.options.scrollbarV) {
+            ctrl.getRows();
           }
 
-          $scope.$applyAsync(function () {
-            ctrl.options.internal.offsetY = lastScrollY;
-            ctrl.updatePage();
+          $scope.$digest();
 
-            if (ctrl.options.scrollbarV) {
-              ctrl.getRows();
-            }
-          });
+          ctrl.options.$outer.$digest();
 
           ticking = false;
         };
@@ -801,7 +799,7 @@
       }
     };
   }
-  ScrollerDirective.$inject = ["$timeout"];
+  ScrollerDirective.$inject = ["$timeout", "$rootScope"];
 
   var BodyController = (function () {
     function BodyController($scope, $timeout) {
