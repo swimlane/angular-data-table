@@ -31,8 +31,6 @@ export function ScrollerDirective($timeout, $rootScope){
           ctrl.getRows();
         }
 
-        $scope.$digest();
-        
         // https://github.com/Swimlane/angular-data-table/pull/74
         ctrl.options.$outer.$digest();
 
