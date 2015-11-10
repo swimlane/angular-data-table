@@ -1,6 +1,6 @@
 /**
  * angular-data-table - A feature-rich but lightweight ES6 AngularJS Data Table crafted for large data sets!
- * @version v0.4.4
+ * @version v0.4.5
  * @link http://swimlane.com/
  * @license 
  */
@@ -742,8 +742,6 @@ function ScrollerDirective($timeout, $rootScope) {
         if (ctrl.options.scrollbarV) {
           ctrl.getRows();
         }
-
-        $scope.$digest();
 
         ctrl.options.$outer.$digest();
 
