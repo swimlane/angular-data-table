@@ -47,8 +47,12 @@
   </head>
   <body ng-app="app" ng-controller="HomeController">
 
-
-    <dtable options="optionz" rows="data" class="material" on-page="paging(offset, size)"></dtable>
+    <dtable 
+      options="optionz"
+      rows="data" 
+      class="material" 
+      on-page="paging(offset, size)">
+    </dtable>
 
     <script src="../jspm_packages/system.js"></script>
     <script src="../config.js"></script>
@@ -72,11 +76,14 @@
             ],
             columnMode: 'force',
             paging: {
-              externalPaging: true
+              externalPaging: true,
+              loadingIndicator: true
             }
           };
 
           $scope.paging = function(offset, size){
+            $scope.optionz.paging.loadingIndicator = true;
+
             setTimeout(function(){
             $http.get('/demos/data/100.json').success(function(d) {
 
@@ -90,8 +97,10 @@
               });
 
               console.log('paging!', offset, size)
+              $scope.optionz.paging.loadingIndicator = false;
+
             });
-          }, 200)
+          }, 800)
           };
         });
       });

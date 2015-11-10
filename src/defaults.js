@@ -45,7 +45,10 @@ export const TableDefaults = {
     count: 0,
 
     // Page offset
-    offset: 0
+    offset: 0,
+
+    // Loading indicator
+    loadingIndicator: false
   },
 
   // if users can select itmes
