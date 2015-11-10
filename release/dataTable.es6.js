@@ -1457,6 +1457,14 @@ function BodyDirective($timeout){
     },
     scope: true,
     template: `
+      <div 
+        class="progress-linear" 
+        role="progressbar" 
+        ng-show="body.options.paging.loadingIndicator">
+        <div class="container">
+          <div class="bar"></div>
+        </div>
+      </div>
       <div class="dt-body" ng-style="body.styles()" dt-seletion>
         <dt-scroller class="dt-body-scroller">
           <dt-group-row ng-repeat-start="r in body.tempRows track by $index"
@@ -2484,7 +2492,10 @@ const TableDefaults = {
     count: 0,
 
     // Page offset
-    offset: 0
+    offset: 0,
+
+    // Loading indicator
+    loadingIndicator: false
   },
 
   // if users can select itmes
