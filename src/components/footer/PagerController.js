@@ -43,6 +43,20 @@ export class PagerController {
   }
 
   /**
+   * Selects the previous pager
+   */
+  prevPage(){
+    this.selectPage(--this.page);
+  }
+
+  /**
+   * Selects the next page
+   */
+  nextPage(){
+    this.selectPage(++this.page);
+  }
+
+  /**
    * Determines if the pager can go previous
    * @return {boolean}
    */
@@ -82,6 +96,7 @@ export class PagerController {
       });
     }
 
+    /*
     if (isMaxSized) {
       if (startPage > 1) {
         pages.unshift({
@@ -97,6 +112,7 @@ export class PagerController {
         });
       }
     }
+    */
 
     this.pages = pages;
   }

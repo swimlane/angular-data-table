@@ -95,6 +95,7 @@
 
   .dt-footer{
     border-top: 1px solid rgba(0, 0, 0, 0.12);
+    font-size:16px;
 
     .page-count{
       line-height: 50px;
@@ -103,24 +104,42 @@
     }
 
     .pager{
+      margin: 5px 10px;
       a{
-        height:50px;
-        line-height:50px;
+        height: 24px;
+        min-width: 24px;
+        line-height: 26px;
+        padding: 0 6px;
+        border-radius: 3px;
+        margin: 6px 3px;
+        text-align: center;
+        vertical-align: top;
         color: rgba(0,0,0,.54);
-        padding:0 .5rem;
         text-decoration: none;
 
         &:hover{
           color: rgba(0,0,0,.75);
+          background-color: rgba(158,158,158,0.2);
         }
+      }
+
+      .icon-left,
+      .icon-skip,
+      .icon-right,
+      .icon-prev{
+        font-size:20px;
+        line-height: 32px;
+        padding:0 3px;
       }
 
       .disabled a{
         cursor: not-allowed;
         color:rgba(0, 0, 0, 0.26) !important;
+        background-color: transparent !important;
       }
 
       .active a{
+        background-color: rgba(158,158,158,0.2);
         font-weight: bold;
       }
     }
