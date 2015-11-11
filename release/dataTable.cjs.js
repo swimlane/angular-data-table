@@ -1,6 +1,6 @@
 /**
  * angular-data-table - A feature-rich but lightweight ES6 AngularJS Data Table crafted for large data sets!
- * @version v0.4.6
+ * @version v0.4.7
  * @link http://swimlane.com/
  * @license 
  */
@@ -86,6 +86,16 @@ var PagerController = (function () {
       }
     }
   }, {
+    key: "prevPage",
+    value: function prevPage() {
+      this.selectPage(--this.page);
+    }
+  }, {
+    key: "nextPage",
+    value: function nextPage() {
+      this.selectPage(++this.page);
+    }
+  }, {
     key: "canPrevious",
     value: function canPrevious() {
       return this.page !== 1;
@@ -117,22 +127,6 @@ var PagerController = (function () {
         });
       }
 
-      if (isMaxSized) {
-        if (startPage > 1) {
-          pages.unshift({
-            number: startPage - 1,
-            text: '...'
-          });
-        }
-
-        if (endPage < this.totalPages) {
-          pages.push({
-            number: endPage + 1,
-            text: '...'
-          });
-        }
-      }
-
       this.pages = pages;
     }
   }]);
@@ -151,7 +145,7 @@ function PagerDirective() {
       count: '=',
       onPage: '&'
     },
-    template: "<div class=\"dt-pager\">\n        <ul class=\"pager\">\n          <li ng-class=\"{ disabled: !pager.canPrevious() }\">\n            <a href ng-click=\"pager.selectPage(1)\" class=\"icon-left\"></a>\n          </li>\n          <li ng-repeat=\"pg in pager.pages track by $index\" ng-class=\"{ active: pg.active }\">\n            <a href ng-click=\"pager.selectPage(pg.number)\">{{pg.text}}</a>\n          </li>\n          <li ng-class=\"{ disabled: !pager.canNext() }\">\n            <a href ng-click=\"pager.selectPage(pager.totalPages)\" class=\"icon-right\"></a>\n          </li>\n        </ul>\n      </div>",
+    template: "<div class=\"dt-pager\">\n        <ul class=\"pager\">\n          <li ng-class=\"{ disabled: !pager.canPrevious() }\">\n            <a href ng-click=\"pager.selectPage(1)\" class=\"icon-prev\"></a>\n          </li>\n          <li ng-class=\"{ disabled: !pager.canPrevious() }\">\n            <a href ng-click=\"pager.prevPage()\" class=\"icon-left\"></a>\n          </li>\n          <li ng-repeat=\"pg in pager.pages track by $index\" ng-class=\"{ active: pg.active }\">\n            <a href ng-click=\"pager.selectPage(pg.number)\">{{pg.text}}</a>\n          </li>\n          <li ng-class=\"{ disabled: !pager.canNext() }\">\n            <a href ng-click=\"pager.nextPage()\" class=\"icon-right\"></a>\n          </li>\n          <li ng-class=\"{ disabled: !pager.canNext() }\">\n            <a href ng-click=\"pager.selectPage(pager.totalPages)\" class=\"icon-skip\"></a>\n          </li>\n        </ul>\n      </div>",
     replace: true
   };
 }
