@@ -1,6 +1,6 @@
 /**
  * angular-data-table - A feature-rich but lightweight ES6 AngularJS Data Table crafted for large data sets!
- * @version v0.4.7
+ * @version v0.4.8
  * @link http://swimlane.com/
  * @license 
  */
@@ -112,7 +112,7 @@
     }, {
       key: "canNext",
       value: function canNext() {
-        return this.page <= this.totalPages;
+        return this.page < this.totalPages;
       }
     }, {
       key: "getPages",
@@ -853,12 +853,11 @@
             }
 
             if (this.options.paging.externalPaging) {
-              var firstIdx = this.options.paging.size * this.options.paging.offset,
-                  lastIdx = firstIdx + this.options.paging.size,
-                  idx = firstIdx;
+              var idxs = this.getFirstLastIndexes(),
+                  idx = idxs.first;
 
               this.tempRows.splice(0, this.tempRows.length);
-              while (idx < lastIdx) {
+              while (idx < idxs.last) {
                 this.tempRows.push(rows[idx++]);
               }
             } else {
@@ -873,10 +872,19 @@
     }, {
       key: "getFirstLastIndexes",
       value: function getFirstLastIndexes() {
-        var firstRowIndex = Math.max(Math.floor((this.options.internal.offsetY || 0) / this.options.rowHeight, 0), 0),
-            endIndex = Math.min(firstRowIndex + this.options.paging.size, this.count);
+        var firstRowIndex, endIndex;
 
-        if (!this.options.scrollbarV) endIndex = this.count;
+        if (this.options.scrollbarV) {
+          firstRowIndex = Math.max(Math.floor((this.options.internal.offsetY || 0) / this.options.rowHeight, 0), 0);
+          endIndex = Math.min(firstRowIndex + this.options.paging.size, this.count);
+        } else {
+          if (this.options.paging.externalPaging) {
+            firstRowIndex = Math.max(this.options.paging.offset * this.options.paging.size, 0);
+            endIndex = Math.min(firstRowIndex + this.options.paging.size, this.count);
+          } else {
+            endIndex = this.count;
+          }
+        }
 
         return {
           first: firstRowIndex,
