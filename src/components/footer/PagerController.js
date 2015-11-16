@@ -69,7 +69,7 @@ export class PagerController {
    * @return {boolean}       
    */
   canNext(){
-    return this.page <= this.totalPages;
+    return this.page < this.totalPages;
   }
 
   /**

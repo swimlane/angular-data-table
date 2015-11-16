@@ -75,12 +75,11 @@ export class BodyController{
         }
 
         if(this.options.paging.externalPaging){
-          let firstIdx = this.options.paging.size * this.options.paging.offset,
-              lastIdx = firstIdx + this.options.paging.size,
-              idx = firstIdx;
+          let idxs = this.getFirstLastIndexes(),
+              idx = idxs.first;
 
           this.tempRows.splice(0, this.tempRows.length);
-          while(idx < lastIdx){
+          while(idx < idxs.last){
             this.tempRows.push(rows[idx++])
           }
         } else {
@@ -95,11 +94,20 @@ export class BodyController{
    * Gets the first and last indexes based on the offset, row height, page size, and overall count.
    */
   getFirstLastIndexes(){
-    var firstRowIndex = Math.max(Math.floor((
-          this.options.internal.offsetY || 0) / this.options.rowHeight, 0), 0),
-        endIndex = Math.min(firstRowIndex + this.options.paging.size, this.count);
+    var firstRowIndex, endIndex;
 
-    if(!this.options.scrollbarV) endIndex = this.count;
+    if(this.options.scrollbarV){
+      firstRowIndex = Math.max(Math.floor((
+          this.options.internal.offsetY || 0) / this.options.rowHeight, 0), 0);
+      endIndex = Math.min(firstRowIndex + this.options.paging.size, this.count);
+    } else {
+      if(this.options.paging.externalPaging){
+        firstRowIndex = Math.max(this.options.paging.offset * this.options.paging.size, 0);
+        endIndex = Math.min(firstRowIndex + this.options.paging.size, this.count);
+      } else {
+        endIndex = this.count;
+      }
+    }
 
     return {
       first: firstRowIndex,
