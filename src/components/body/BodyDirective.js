@@ -45,7 +45,7 @@ export function BodyDirective($timeout){
                   columns="body.columns"
                   column-widths="body.columnWidths"
                   ng-keydown="selCtrl.keyDown($event, $index, r)"
-                  ng-click="selCtrl.rowClicked($event, $index, r)"
+                  ng-click="selCtrl.rowClicked($event, r.$$index, r)"
                   on-tree-toggle="body.onTreeToggled(row, cell)"
                   ng-class="body.rowClasses(r)"
                   options="body.options"
