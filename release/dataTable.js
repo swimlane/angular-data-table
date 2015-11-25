@@ -1997,9 +1997,7 @@
       this.options.$outer = $scope.$parent;
 
       $scope.$watch('dt.options.columns', function (newVal, oldVal) {
-        if (newVal.length > oldVal.length) {
-          _this6.transposeColumnDefaults();
-        }
+        _this6.transposeColumnDefaults();
 
         if (newVal.length !== oldVal.length) {
           _this6.adjustColumns();
