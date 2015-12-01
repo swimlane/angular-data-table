@@ -99,6 +99,23 @@
 
     </div>
 
+    <div class="wrapper">
+      <h2>Multi-select with virtual paging</h2>
+      <dtable options="options3"
+      rows="data"
+      on-row-click="onRowClick(row)"
+      style="height:300px"
+      class="material"
+      on-select="onSelect(row)"
+      selected="selected3"></dtable>
+
+      <div class="selected-box">
+        <h5>Selected list</h5>
+        <code>{{selected3}}</code>
+      </div>
+
+    </div>
+
     <script src="../jspm_packages/system.js"></script>
     <script src="../config.js"></script>
 
@@ -137,8 +154,23 @@
             ]
           };
 
+          $scope.options3 = {
+            rowHeight: 50,
+            footerHeight: false,
+            scrollbarV: true,
+            headerHeight: 50,
+            selectable: true,
+            multiSelect: true,
+            columns: [
+              { name: "Name", prop: "name", width: 300 },
+              { name: "Gender", prop: "gender" },
+              { name: "Company", prop: "company" }
+            ]
+          };
+
           $scope.selected = [];
           $scope.selected2 = [];
+          $scope.selected3 = [];
 
           $scope.onSelect = function(row){
             console.log('ROW SELECTED!', row);
