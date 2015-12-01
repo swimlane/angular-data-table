@@ -778,7 +778,7 @@ class SelectionController {
    * @param  {row}
    */
   onCheckboxChange(index, row){
-    this.selectRow({}, index, row);
+    this.selectRow(event, index, row);
   }
 
   /**
@@ -822,8 +822,8 @@ class SelectionController {
     var reverse = index < this.prevIndex,
         selecteds = [];
 
-    for(var i=0, len=this.body.tempRows.length; i < len; i++) {
-      var row = this.body.tempRows[i],
+    for(var i=0, len=this.body.rows.length; i < len; i++) {
+      var row = this.body.rows[i],
           greater = i >= this.prevIndex && i <= index,
           lesser = i <= this.prevIndex && i >= index;
 
@@ -1513,7 +1513,7 @@ function BodyDirective($timeout){
                   columns="body.columns"
                   column-widths="body.columnWidths"
                   ng-keydown="selCtrl.keyDown($event, $index, r)"
-                  ng-click="selCtrl.rowClicked($event, $index, r)"
+                  ng-click="selCtrl.rowClicked($event, r.$$index, r)"
                   on-tree-toggle="body.onTreeToggled(row, cell)"
                   ng-class="body.rowClasses(r)"
                   options="body.options"
