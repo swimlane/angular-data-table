@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset=" utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <meta name="viewport" content="width = device-width, minimal-ui, initial-scale = 1, user-scalable = no" />
+    <meta name="apple-mobile-web-app-title" content="Datagrid">
+    <title>Datagrid - Basic</title>
+    <base href="/">
+    <style>
+      *, *:after, *:before {
+        -webkit-box-sizing: border-box;
+        -moz-box-sizing: border-box;
+        box-sizing: border-box;
+      }
+
+      body{
+        font-family: 'RobotoDraft', 'Roboto', 'Helvetica Neue, Helvetica, Arial', sans-serif;
+        font-style: normal;
+        font-weight: 300;
+        font-size: 1.4rem;
+        line-height: 2rem;
+        letter-spacing: 0.01rem;
+        color: #212121;
+        background-color: #f5f5f5;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        text-rendering: optimizeLegibility;
+      }
+
+      .dt{
+        width:75%;
+        margin:50px auto;
+      }
+
+    </style>
+    <link href="../dist/dataTable.css" media="all" rel="stylesheet" />
+    <link href="../dist/themes/material.css" media="all" rel="stylesheet" />
+    <link href="http://fontastic.s3.amazonaws.com/Jnf54BZCm7mSjGCxNRbfp3/icons.css" rel="stylesheet">
+  </head>
+  <body ng-app="app" ng-controller="HomeController">
+
+
+    <dtable options="options" rows="data" class="material"></dtable>
+
+    <button ng-click="change()">Change data</button>
+
+    <script src="../jspm_packages/system.js"></script>
+    <script src="../config.js"></script>
+
+    <script>
+
+      System.import('dataTable').then(function(dt){
+        var module = angular.module('app', [ dt.default.name ]);
+
+        module.controller('HomeController', function($scope, $http){
+          $scope.options = {
+            rowHeight: 50,
+            headerHeight: 50,
+            footerHeight: false,
+            scrollbarV: false,
+            selectable: false,
+            columns: [{
+              name: "Name",
+              prop: "name",
+              width: 300,
+              cellRenderer: function() {
+                return '<div>{{$cell}}</div>';
+              }
+            }, {
+              name: "Image",
+              prop: "imgSrc",
+              cellRenderer: function() {
+                return '<div><img width="30" height="30" ng-src="{{$cell}}"></div>';
+              }
+            },{
+              name: "Company",
+              prop: "company",
+              cellDataGetter: function(val) {
+                return new Date().getSeconds() + ' seconds';
+              }
+            }]
+          };
+
+          $http.get('/demos/data/100.json').success(function(data) {
+            var subData = data.splice(0, 5);
+
+            for(var i=0;i<subData.length;i++){
+              subData[i].imgSrc= 'http://code-maven.com/img/angularjs.png';
+            }    
+
+            $scope.data = subData;
+          });
+
+          $scope.change = function(){
+            for(var i=0;i<$scope.data.length;i++){
+              $scope.data[i].imgSrc = 'http://cdn.javabeat.net/wp-content/uploads/2014/05/angularjs.png';
+            }   
+          }
+
+        });
+      });
+    </script>
+
+  </body>
+</html>
