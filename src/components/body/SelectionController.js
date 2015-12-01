@@ -100,8 +100,8 @@ export class SelectionController {
     var reverse = index < this.prevIndex,
         selecteds = [];
 
-    for(var i=0, len=this.body.tempRows.length; i < len; i++) {
-      var row = this.body.tempRows[i],
+    for(var i=0, len=this.body.rows.length; i < len; i++) {
+      var row = this.body.rows[i],
           greater = i >= this.prevIndex && i <= index,
           lesser = i <= this.prevIndex && i >= index;
 
