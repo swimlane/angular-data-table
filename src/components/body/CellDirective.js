@@ -64,7 +64,7 @@ export function CellDirective($rootScope, $compile, $log, $timeout){
             } else {
               content[0].textContent = ctrl.getValue();
             }
-          });
+          }, true);
         }
       }
     }

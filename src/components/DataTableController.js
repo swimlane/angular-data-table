@@ -12,7 +12,7 @@ export class DataTableController {
    */
   /*@ngInject*/
   constructor($scope, $filter, $log, $transclude){
-    angular.extend(this, {
+    Object.assign(this, {
       $scope: $scope,
       $filter: $filter,
       $log: $log

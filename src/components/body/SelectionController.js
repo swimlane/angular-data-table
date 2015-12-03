@@ -55,7 +55,7 @@ export class SelectionController {
    * @param  {index}
    * @param  {row}
    */
-  onCheckboxChange(index, row){
+  onCheckboxChange(event, index, row){
     this.selectRow(event, index, row);
   }
 

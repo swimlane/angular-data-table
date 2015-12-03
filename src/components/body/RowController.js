@@ -49,8 +49,9 @@ export class RowController {
   /**
    * Invoked when the cell directive's checkbox changed state
    */
-  onCheckboxChanged(){
+  onCheckboxChanged(ev){
     this.onCheckboxChange({
+      $event: ev,
       row: this.row
     });
   }

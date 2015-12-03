@@ -50,7 +50,7 @@ export function BodyDirective($timeout){
                   ng-class="body.rowClasses(r)"
                   options="body.options"
                   selected="body.isSelected(r)"
-                  on-checkbox-change="selCtrl.onCheckboxChange($index, row)"
+                  on-checkbox-change="selCtrl.onCheckboxChange($event, $index, row)"
                   columns="body.columnsByPin"
                   has-children="body.getRowHasChildren(r)"
                   expanded="body.getRowExpanded(r)"

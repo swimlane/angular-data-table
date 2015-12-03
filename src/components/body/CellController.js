@@ -61,7 +61,7 @@ export class CellController {
    */
   onCheckboxChanged(event){
     event.stopPropagation();
-    this.onCheckboxChange();
+    this.onCheckboxChange({ $event: event });
   }
 
   /**
