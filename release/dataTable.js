@@ -1,6 +1,6 @@
 /**
  * angular-data-table - A feature-rich but lightweight ES6 AngularJS Data Table crafted for large data sets!
- * @version v0.4.10
+ * @version v0.4.11
  * @link http://swimlane.com/
  * @license 
  */
@@ -256,7 +256,7 @@
       key: "onCheckboxChanged",
       value: function onCheckboxChanged(event) {
         event.stopPropagation();
-        this.onCheckboxChange();
+        this.onCheckboxChange({ $event: event });
       }
     }, {
       key: "getValue",
@@ -319,7 +319,7 @@
               } else {
                 content[0].textContent = ctrl.getValue();
               }
-            });
+            }, true);
           }
         };
       }
@@ -488,8 +488,9 @@
       }
     }, {
       key: "onCheckboxChanged",
-      value: function onCheckboxChanged() {
+      value: function onCheckboxChanged(ev) {
         this.onCheckboxChange({
+          $event: ev,
           row: this.row
         });
       }
@@ -521,7 +522,7 @@
 
         ctrl.options.internal.styleTranslator.register($scope.$index, $elm);
       },
-      template: "\n      <div class=\"dt-row\">\n        <div class=\"dt-row-left dt-row-block\"\n             ng-if=\"rowCtrl.columns['left'].length\"\n             ng-style=\"rowCtrl.stylesByGroup('left')\">\n          <dt-cell ng-repeat=\"column in rowCtrl.columns['left'] track by column.$id\"\n                   on-tree-toggle=\"rowCtrl.onTreeToggled(cell)\"\n                   column=\"column\"\n                   options=\"rowCtrl.options\"\n                   has-children=\"rowCtrl.hasChildren\"\n                   on-checkbox-change=\"rowCtrl.onCheckboxChanged()\"\n                   selected=\"rowCtrl.selected\"\n                   expanded=\"rowCtrl.expanded\"\n                   row=\"rowCtrl.row\"\n                   value=\"rowCtrl.getValue(column)\">\n          </dt-cell>\n        </div>\n        <div class=\"dt-row-center dt-row-block\"\n             ng-style=\"rowCtrl.stylesByGroup('center')\">\n          <dt-cell ng-repeat=\"column in rowCtrl.columns['center'] track by column.$id\"\n                   on-tree-toggle=\"rowCtrl.onTreeToggled(cell)\"\n                   column=\"column\"\n                   options=\"rowCtrl.options\"\n                   has-children=\"rowCtrl.hasChildren\"\n                   expanded=\"rowCtrl.expanded\"\n                   selected=\"rowCtrl.selected\"\n                   row=\"rowCtrl.row\"\n                   on-checkbox-change=\"rowCtrl.onCheckboxChanged()\"\n                   value=\"rowCtrl.getValue(column)\">\n          </dt-cell>\n        </div>\n        <div class=\"dt-row-right dt-row-block\"\n             ng-if=\"rowCtrl.columns['right'].length\"\n             ng-style=\"rowCtrl.stylesByGroup('right')\">\n          <dt-cell ng-repeat=\"column in rowCtrl.columns['right'] track by column.$id\"\n                   on-tree-toggle=\"rowCtrl.onTreeToggled(cell)\"\n                   column=\"column\"\n                   options=\"rowCtrl.options\"\n                   has-children=\"rowCtrl.hasChildren\"\n                   selected=\"rowCtrl.selected\"\n                   on-checkbox-change=\"rowCtrl.onCheckboxChanged()\"\n                   row=\"rowCtrl.row\"\n                   expanded=\"rowCtrl.expanded\"\n                   value=\"rowCtrl.getValue(column)\">\n          </dt-cell>\n        </div>\n      </div>",
+      template: "\n      <div class=\"dt-row\">\n        <div class=\"dt-row-left dt-row-block\"\n             ng-if=\"rowCtrl.columns['left'].length\"\n             ng-style=\"rowCtrl.stylesByGroup('left')\">\n          <dt-cell ng-repeat=\"column in rowCtrl.columns['left'] track by column.$id\"\n                   on-tree-toggle=\"rowCtrl.onTreeToggled(cell)\"\n                   column=\"column\"\n                   options=\"rowCtrl.options\"\n                   has-children=\"rowCtrl.hasChildren\"\n                   on-checkbox-change=\"rowCtrl.onCheckboxChanged($event)\"\n                   selected=\"rowCtrl.selected\"\n                   expanded=\"rowCtrl.expanded\"\n                   row=\"rowCtrl.row\"\n                   value=\"rowCtrl.getValue(column)\">\n          </dt-cell>\n        </div>\n        <div class=\"dt-row-center dt-row-block\"\n             ng-style=\"rowCtrl.stylesByGroup('center')\">\n          <dt-cell ng-repeat=\"column in rowCtrl.columns['center'] track by column.$id\"\n                   on-tree-toggle=\"rowCtrl.onTreeToggled(cell)\"\n                   column=\"column\"\n                   options=\"rowCtrl.options\"\n                   has-children=\"rowCtrl.hasChildren\"\n                   expanded=\"rowCtrl.expanded\"\n                   selected=\"rowCtrl.selected\"\n                   row=\"rowCtrl.row\"\n                   on-checkbox-change=\"rowCtrl.onCheckboxChanged($event)\"\n                   value=\"rowCtrl.getValue(column)\">\n          </dt-cell>\n        </div>\n        <div class=\"dt-row-right dt-row-block\"\n             ng-if=\"rowCtrl.columns['right'].length\"\n             ng-style=\"rowCtrl.stylesByGroup('right')\">\n          <dt-cell ng-repeat=\"column in rowCtrl.columns['right'] track by column.$id\"\n                   on-tree-toggle=\"rowCtrl.onTreeToggled(cell)\"\n                   column=\"column\"\n                   options=\"rowCtrl.options\"\n                   has-children=\"rowCtrl.hasChildren\"\n                   selected=\"rowCtrl.selected\"\n                   on-checkbox-change=\"rowCtrl.onCheckboxChanged($event)\"\n                   row=\"rowCtrl.row\"\n                   expanded=\"rowCtrl.expanded\"\n                   value=\"rowCtrl.getValue(column)\">\n          </dt-cell>\n        </div>\n      </div>",
       replace: true
     };
   }
@@ -594,7 +595,7 @@
       }
     }, {
       key: "onCheckboxChange",
-      value: function onCheckboxChange(index, row) {
+      value: function onCheckboxChange(event, index, row) {
         this.selectRow(event, index, row);
       }
     }, {
@@ -1206,7 +1207,7 @@
         onRowClick: '&'
       },
       scope: true,
-      template: "\n      <div \n        class=\"progress-linear\" \n        role=\"progressbar\" \n        ng-show=\"body.options.paging.loadingIndicator\">\n        <div class=\"container\">\n          <div class=\"bar\"></div>\n        </div>\n      </div>\n      <div class=\"dt-body\" ng-style=\"body.styles()\" dt-seletion>\n        <dt-scroller class=\"dt-body-scroller\">\n          <dt-group-row ng-repeat-start=\"r in body.tempRows track by $index\"\n                        ng-if=\"r.group\"\n                        ng-style=\"body.groupRowStyles(r)\" \n                        options=\"body.options\"\n                        on-group-toggle=\"body.onGroupToggle(group)\"\n                        expanded=\"body.getRowExpanded(r)\"\n                        tabindex=\"{{$index}}\"\n                        row=\"r\">\n          </dt-group-row>\n          <dt-row ng-repeat-end\n                  ng-if=\"!r.group\"\n                  row=\"body.getRowValue($index)\"\n                  tabindex=\"{{$index}}\"\n                  columns=\"body.columns\"\n                  column-widths=\"body.columnWidths\"\n                  ng-keydown=\"selCtrl.keyDown($event, $index, r)\"\n                  ng-click=\"selCtrl.rowClicked($event, r.$$index, r)\"\n                  on-tree-toggle=\"body.onTreeToggled(row, cell)\"\n                  ng-class=\"body.rowClasses(r)\"\n                  options=\"body.options\"\n                  selected=\"body.isSelected(r)\"\n                  on-checkbox-change=\"selCtrl.onCheckboxChange($index, row)\"\n                  columns=\"body.columnsByPin\"\n                  has-children=\"body.getRowHasChildren(r)\"\n                  expanded=\"body.getRowExpanded(r)\"\n                  ng-style=\"body.rowStyles(r)\">\n          </dt-row>\n        </dt-scroller>\n        <div ng-if=\"body.rows && !body.rows.length\" \n             class=\"empty-row\" \n             ng-bind=\"::body.options.emptyMessage\">\n       </div>\n       <div ng-if=\"body.rows === undefined\" \n             class=\"loading-row\"\n             ng-bind=\"::body.options.loadingMessage\">\n        </div>\n      </div>"
+      template: "\n      <div \n        class=\"progress-linear\" \n        role=\"progressbar\" \n        ng-show=\"body.options.paging.loadingIndicator\">\n        <div class=\"container\">\n          <div class=\"bar\"></div>\n        </div>\n      </div>\n      <div class=\"dt-body\" ng-style=\"body.styles()\" dt-seletion>\n        <dt-scroller class=\"dt-body-scroller\">\n          <dt-group-row ng-repeat-start=\"r in body.tempRows track by $index\"\n                        ng-if=\"r.group\"\n                        ng-style=\"body.groupRowStyles(r)\" \n                        options=\"body.options\"\n                        on-group-toggle=\"body.onGroupToggle(group)\"\n                        expanded=\"body.getRowExpanded(r)\"\n                        tabindex=\"{{$index}}\"\n                        row=\"r\">\n          </dt-group-row>\n          <dt-row ng-repeat-end\n                  ng-if=\"!r.group\"\n                  row=\"body.getRowValue($index)\"\n                  tabindex=\"{{$index}}\"\n                  columns=\"body.columns\"\n                  column-widths=\"body.columnWidths\"\n                  ng-keydown=\"selCtrl.keyDown($event, $index, r)\"\n                  ng-click=\"selCtrl.rowClicked($event, r.$$index, r)\"\n                  on-tree-toggle=\"body.onTreeToggled(row, cell)\"\n                  ng-class=\"body.rowClasses(r)\"\n                  options=\"body.options\"\n                  selected=\"body.isSelected(r)\"\n                  on-checkbox-change=\"selCtrl.onCheckboxChange($event, $index, row)\"\n                  columns=\"body.columnsByPin\"\n                  has-children=\"body.getRowHasChildren(r)\"\n                  expanded=\"body.getRowExpanded(r)\"\n                  ng-style=\"body.rowStyles(r)\">\n          </dt-row>\n        </dt-scroller>\n        <div ng-if=\"body.rows && !body.rows.length\" \n             class=\"empty-row\" \n             ng-bind=\"::body.options.emptyMessage\">\n       </div>\n       <div ng-if=\"body.rows === undefined\" \n             class=\"loading-row\"\n             ng-bind=\"::body.options.loadingMessage\">\n        </div>\n      </div>"
     };
   }
   BodyDirective.$inject = ["$timeout"];
@@ -1986,7 +1987,7 @@
 
       babelHelpers.classCallCheck(this, DataTableController);
 
-      angular.extend(this, {
+      Object.assign(this, {
         $scope: $scope,
         $filter: $filter,
         $log: $log

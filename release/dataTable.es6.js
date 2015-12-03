@@ -318,7 +318,7 @@ class CellController {
    */
   onCheckboxChanged(event){
     event.stopPropagation();
-    this.onCheckboxChange();
+    this.onCheckboxChange({ $event: event });
   }
 
   /**
@@ -398,7 +398,7 @@ function CellDirective($rootScope, $compile, $log, $timeout){
             } else {
               content[0].textContent = ctrl.getValue();
             }
-          });
+          }, true);
         }
       }
     }
@@ -607,8 +607,9 @@ class RowController {
   /**
    * Invoked when the cell directive's checkbox changed state
    */
-  onCheckboxChanged(){
+  onCheckboxChanged(ev){
     this.onCheckboxChange({
+      $event: ev,
       row: this.row
     });
   }
@@ -651,7 +652,7 @@ function RowDirective(){
                    column="column"
                    options="rowCtrl.options"
                    has-children="rowCtrl.hasChildren"
-                   on-checkbox-change="rowCtrl.onCheckboxChanged()"
+                   on-checkbox-change="rowCtrl.onCheckboxChanged($event)"
                    selected="rowCtrl.selected"
                    expanded="rowCtrl.expanded"
                    row="rowCtrl.row"
@@ -668,7 +669,7 @@ function RowDirective(){
                    expanded="rowCtrl.expanded"
                    selected="rowCtrl.selected"
                    row="rowCtrl.row"
-                   on-checkbox-change="rowCtrl.onCheckboxChanged()"
+                   on-checkbox-change="rowCtrl.onCheckboxChanged($event)"
                    value="rowCtrl.getValue(column)">
           </dt-cell>
         </div>
@@ -681,7 +682,7 @@ function RowDirective(){
                    options="rowCtrl.options"
                    has-children="rowCtrl.hasChildren"
                    selected="rowCtrl.selected"
-                   on-checkbox-change="rowCtrl.onCheckboxChanged()"
+                   on-checkbox-change="rowCtrl.onCheckboxChanged($event)"
                    row="rowCtrl.row"
                    expanded="rowCtrl.expanded"
                    value="rowCtrl.getValue(column)">
@@ -777,7 +778,7 @@ class SelectionController {
    * @param  {index}
    * @param  {row}
    */
-  onCheckboxChange(index, row){
+  onCheckboxChange(event, index, row){
     this.selectRow(event, index, row);
   }
 
@@ -1518,7 +1519,7 @@ function BodyDirective($timeout){
                   ng-class="body.rowClasses(r)"
                   options="body.options"
                   selected="body.isSelected(r)"
-                  on-checkbox-change="selCtrl.onCheckboxChange($index, row)"
+                  on-checkbox-change="selCtrl.onCheckboxChange($event, $index, row)"
                   columns="body.columnsByPin"
                   has-children="body.getRowHasChildren(r)"
                   expanded="body.getRowExpanded(r)"
@@ -2558,7 +2559,7 @@ class DataTableController {
    */
   /*@ngInject*/
   constructor($scope, $filter, $log, $transclude){
-    angular.extend(this, {
+    Object.assign(this, {
       $scope: $scope,
       $filter: $filter,
       $log: $log
