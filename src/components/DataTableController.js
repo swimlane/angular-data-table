@@ -259,7 +259,6 @@ export class DataTableController {
    * @param  {object} rows
    */
   onUnchecked(rows){
-    console.log('yolo');
     this.onUncheck({
       rows: rows
     });
