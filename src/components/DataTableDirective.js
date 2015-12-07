@@ -47,7 +47,7 @@ export function DataTableDirective($window, $timeout, $parse){
                    expanded="dt.expanded"
                    columns="dt.columnsByPin"
                    on-select="dt.onSelected(rows)"
-                   on-uncheck="dt.onUncheck(rows)"
+                   on-uncheck="dt.onUnchecked(rows)"
                    on-row-click="dt.onRowClicked(row)"
                    column-widths="dt.columnWidths"
                    options="dt.options"
