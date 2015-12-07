@@ -10,7 +10,7 @@ export const TableDefaults = {
   // Enable horz scrollbars
   // scrollbarH: true,
 
-  // The row height, which is necessary 
+  // The row height, which is necessary
   // to calculate the height for the lazy rendering.
   rowHeight: 30,
 
@@ -36,7 +36,7 @@ export const TableDefaults = {
 
   paging: {
     // if external paging is turned on
-    externalPaging: false, 
+    externalPaging: false,
 
     // Page size
     size: undefined,
@@ -80,7 +80,7 @@ export const ColumnDefaults = {
 
   // pinned to the left
   frozenLeft: false,
-  
+
   // pinned to the right
   frozenRight: false,
 
@@ -90,11 +90,11 @@ export const ColumnDefaults = {
   // header cell css class name
   heaerClassName: undefined,
 
-  // The grow factor relative to other columns. Same as the flex-grow 
-  // API from http://www.w3.org/TR/css3-flexbox/. Basically, 
-  // take any available extra width and distribute it proportionally 
+  // The grow factor relative to other columns. Same as the flex-grow
+  // API from http://www.w3.org/TR/css3-flexbox/. Basically,
+  // take any available extra width and distribute it proportionally
   // according to all columns' flexGrow values.
-  flexGrow: 0,
+  flexGrow: 1,
 
   // Minimum width of the column.
   minWidth: undefined,
@@ -110,7 +110,7 @@ export const ColumnDefaults = {
 
   // Custom sort comparator
   // pass false if you want to server sort
-  comparator: undefined, 
+  comparator: undefined,
 
   // If yes then the column can be sorted.
   sortable: true,
@@ -124,8 +124,8 @@ export const ColumnDefaults = {
   // The cell renderer function(scope, elm) that returns React-renderable content for table cell.
   cellRenderer: undefined,
 
-  // The getter function(value) that returns the cell data for the cellRenderer. 
-  // If not provided, the cell data will be collected from row data instead. 
+  // The getter function(value) that returns the cell data for the cellRenderer.
+  // If not provided, the cell data will be collected from row data instead.
   cellDataGetter: undefined,
 
   // Adds +/- button and makes a secondary call to load nested data
