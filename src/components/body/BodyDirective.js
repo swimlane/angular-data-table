@@ -15,6 +15,7 @@ export function BodyDirective($timeout){
       onPage: '&',
       onTreeToggle: '&',
       onSelect: '&',
+      onUncheck: '&',
       onRowClick: '&'
     },
     scope: true,

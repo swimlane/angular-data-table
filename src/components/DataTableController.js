@@ -207,10 +207,14 @@ export class DataTableController {
     if(this.rows){
       var matches = this.selected.length === this.rows.length;
       this.selected.splice(0, this.selected.length);
+      var isChecked = false;
 
       if(!matches){
         this.selected.push(...this.rows);
+        isChecked = true;
       }
+
+      this.onHeaderCheckboxChanged({isChecked: isChecked});
     }
   }
 
@@ -251,6 +255,16 @@ export class DataTableController {
   }
 
   /**
+   * Occurs when a row is unchecked
+   * @param  {object} rows
+   */
+  onUncheck(rows){
+    this.onUncheck({
+      rows: rows
+    });
+  }
+
+  /**
    * Occurs when a row was click but may not be selected.
    * @param  {object} row
    */
@@ -259,5 +273,4 @@ export class DataTableController {
       row: row
     });
   }
-
 }
