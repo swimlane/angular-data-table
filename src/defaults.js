@@ -94,10 +94,10 @@ export const ColumnDefaults = {
   // API from http://www.w3.org/TR/css3-flexbox/. Basically,
   // take any available extra width and distribute it proportionally
   // according to all columns' flexGrow values.
-  flexGrow: 1,
+  flexGrow: 0,
 
   // Minimum width of the column.
-  minWidth: undefined,
+  minWidth: 100,
 
   //Maximum width of the column.
   maxWidth: undefined,

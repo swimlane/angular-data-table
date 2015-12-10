@@ -54,23 +54,42 @@ export function AdjustColumnWidths(allColumns, expectedWidth){
  * @param {int} totalFlexGrow
  */
 function ScaleColumns(colsByGroup, maxWidth, totalFlexGrow) {
+  // calculate total width and flexgrow points for coulumns that can be resized
   angular.forEach(colsByGroup, (cols) => {
     cols.forEach((column) => {
       if (!column.canAutoResize){
         maxWidth -= column.width;
         totalFlexGrow -= column.flexGrow;
+      } else {
+        column.width = 0;
       }
     });
   });
 
-  let widthPerFlexPoint = maxWidth / totalFlexGrow;
-  angular.forEach(colsByGroup, (cols) => {
-    cols.forEach((column) => {
-      if (column.canAutoResize){
-        column.width = column.flexGrow * widthPerFlexPoint;
-      }
+  var hasMinWidth = {}
+  var remainingWidth = maxWidth;
+
+  // resize columns until no width is left to be distributed
+  do {
+    let widthPerFlexPoint = remainingWidth / totalFlexGrow;
+    remainingWidth = 0;
+    angular.forEach(colsByGroup, (cols) => {
+      cols.forEach((column, i) => {
+        // if the column can be resize and it hasn't reached its minimum width yet
+        if (column.canAutoResize && !hasMinWidth[i]){
+          let newWidth = column.width  + column.flexGrow * widthPerFlexPoint;
+          if (column.minWidth !== undefined && newWidth < column.minWidth){
+            remainingWidth += newWidth - column.minWidth;
+            column.width = column.minWidth;
+            hasMinWidth[i] = true;
+          } else {
+            column.width = newWidth;
+          }
+        }
+      });
     });
-  });
+  } while (remainingWidth !== 0);
+
 }
 
 /**
