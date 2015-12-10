@@ -1,6 +1,6 @@
 /**
  * angular-data-table - A feature-rich but lightweight ES6 AngularJS Data Table crafted for large data sets!
- * @version v0.4.11
+ * @version v0.4.12
  * @link http://swimlane.com/
  * @license 
  */
@@ -1725,6 +1725,66 @@
     }).toLowerCase();
   }
 
+  function ScaleColumns(colsByGroup, maxWidth, totalFlexGrow) {
+    angular.forEach(colsByGroup, function (cols) {
+      cols.forEach(function (column) {
+        if (!column.canAutoResize) {
+          maxWidth -= column.width;
+          totalFlexGrow -= column.flexGrow;
+        } else {
+          column.width = 0;
+        }
+      });
+    });
+
+    var hasMinWidth = {};
+    var remainingWidth = maxWidth;
+
+    var _loop = function () {
+      var widthPerFlexPoint = remainingWidth / totalFlexGrow;
+      remainingWidth = 0;
+      angular.forEach(colsByGroup, function (cols) {
+        cols.forEach(function (column, i) {
+          if (column.canAutoResize && !hasMinWidth[i]) {
+            var newWidth = column.width + column.flexGrow * widthPerFlexPoint;
+            if (column.minWidth !== undefined && newWidth < column.minWidth) {
+              remainingWidth += newWidth - column.minWidth;
+              column.width = column.minWidth;
+              hasMinWidth[i] = true;
+            } else {
+              column.width = newWidth;
+            }
+          }
+        });
+      });
+    };
+
+    do {
+      _loop();
+    } while (remainingWidth !== 0);
+  }
+
+  function ColumnsByPin(cols) {
+    var ret = {
+      left: [],
+      center: [],
+      right: []
+    };
+
+    for (var i = 0, len = cols.length; i < len; i++) {
+      var c = cols[i];
+      if (c.frozenLeft) {
+        ret.left.push(c);
+      } else if (c.frozenRight) {
+        ret.right.push(c);
+      } else {
+        ret.center.push(c);
+      }
+    }
+
+    return ret;
+  }
+
   function GetTotalFlexGrow(columns) {
     var totalFlexGrow = 0;
 
@@ -1767,84 +1827,14 @@
     return totalWidth;
   }
 
-  function DistributeFlexWidth(columns, flexWidth) {
-    if (flexWidth <= 0) {
-      return {
-        columns: columns,
-        width: ColumnTotalWidth(columns)
-      };
-    }
-
-    var remainingFlexGrow = GetTotalFlexGrow(columns),
-        remainingFlexWidth = flexWidth,
-        totalWidth = 0;
-
-    for (var i = 0, len = columns.length; i < len; i++) {
-      var column = columns[i];
-
-      if (!column.flexGrow) {
-        totalWidth += column.width;
-        return;
-      }
-
-      var columnFlexWidth = Math.floor(column.flexGrow / remainingFlexGrow * remainingFlexWidth),
-          newColumnWidth = Math.floor(column.width + columnFlexWidth);
-
-      if (column.minWidth && newColumnWidth < column.minWidth) {
-        newColumnWidth = column.minWidth;
-      }
-
-      if (column.maxWidth && newColumnWidth > column.maxWidth) {
-        newColumnWidth = column.maxWidth;
-      }
-
-      totalWidth += newColumnWidth;
-      remainingFlexGrow -= column.flexGrow;
-      remainingFlexWidth -= columnFlexWidth;
-
-      column.width = newColumnWidth;
-    }
-
-    return {
-      width: totalWidth
-    };
-  }
-
-  function ColumnsByPin(cols) {
-    var ret = {
-      left: [],
-      center: [],
-      right: []
-    };
-
-    for (var i = 0, len = cols.length; i < len; i++) {
-      var c = cols[i];
-      if (c.frozenLeft) {
-        ret.left.push(c);
-      } else if (c.frozenRight) {
-        ret.right.push(c);
-      } else {
-        ret.center.push(c);
-      }
-    }
-
-    return ret;
-  }
-
   function AdjustColumnWidths(allColumns, expectedWidth) {
     var columnsWidth = ColumnTotalWidth(allColumns),
-        remainingFlexGrow = GetTotalFlexGrow(allColumns),
-        remainingFlexWidth = Math.max(expectedWidth - columnsWidth, 0),
+        totalFlexGrow = GetTotalFlexGrow(allColumns),
         colsByGroup = ColumnsByPin(allColumns);
 
-    angular.forEach(colsByGroup, function (cols) {
-      var columnGroupFlexGrow = GetTotalFlexGrow(cols),
-          columnGroupFlexWidth = Math.floor(columnGroupFlexGrow / remainingFlexGrow * remainingFlexWidth),
-          newColumnSettings = DistributeFlexWidth(cols, columnGroupFlexWidth);
-
-      remainingFlexGrow -= columnGroupFlexGrow;
-      remainingFlexWidth -= columnGroupFlexWidth;
-    });
+    if (columnsWidth !== expectedWidth) {
+      ScaleColumns(colsByGroup, expectedWidth, totalFlexGrow);
+    }
   }
 
   function ForceFillColumnWidths(allColumns, expectedWidth, startIdx) {
@@ -1907,7 +1897,7 @@
 
     flexGrow: 0,
 
-    minWidth: undefined,
+    minWidth: 100,
 
     maxWidth: undefined,
 

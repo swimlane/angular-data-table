@@ -2199,7 +2199,79 @@ function ObjectId() {
 
 
 /**
- * Calculates the Total Flex Grow width.
+ * Resizes columns based on the flexGrow property, while respecting manually set widths
+ * @param {array} colsByGroup
+ * @param {int} maxWidth
+ * @param {int} totalFlexGrow
+ */
+function ScaleColumns(colsByGroup, maxWidth, totalFlexGrow) {
+  // calculate total width and flexgrow points for coulumns that can be resized
+  angular.forEach(colsByGroup, (cols) => {
+    cols.forEach((column) => {
+      if (!column.canAutoResize){
+        maxWidth -= column.width;
+        totalFlexGrow -= column.flexGrow;
+      } else {
+        column.width = 0;
+      }
+    });
+  });
+
+  var hasMinWidth = {}
+  var remainingWidth = maxWidth;
+
+  // resize columns until no width is left to be distributed
+  do {
+    let widthPerFlexPoint = remainingWidth / totalFlexGrow;
+    remainingWidth = 0;
+    angular.forEach(colsByGroup, (cols) => {
+      cols.forEach((column, i) => {
+        // if the column can be resize and it hasn't reached its minimum width yet
+        if (column.canAutoResize && !hasMinWidth[i]){
+          let newWidth = column.width  + column.flexGrow * widthPerFlexPoint;
+          if (column.minWidth !== undefined && newWidth < column.minWidth){
+            remainingWidth += newWidth - column.minWidth;
+            column.width = column.minWidth;
+            hasMinWidth[i] = true;
+          } else {
+            column.width = newWidth;
+          }
+        }
+      });
+    });
+  } while (remainingWidth !== 0);
+
+}
+
+
+/**
+ * Returns the columns by pin.
+ * @param {array} colsumns
+ */
+function ColumnsByPin(cols){
+  var ret = {
+    left: [],
+    center: [],
+    right: []
+  };
+
+  for(var i=0, len=cols.length; i < len; i++) {
+    var c = cols[i];
+    if(c.frozenLeft){
+      ret.left.push(c)
+    } else if(c.frozenRight){
+      ret.right.push(c);
+    } else {
+      ret.center.push(c);
+    }
+  }
+
+  return ret;
+}
+
+
+/**
+ * Calculates the Total Flex Grow
  * @param {array}
  */
 function GetTotalFlexGrow(columns){
@@ -2231,81 +2303,6 @@ function ColumnTotalWidth(columns, prop) {
 
 
 /**
- * Distributes the flex widths to the columns
- * @param {array} columns
- * @param {int} flex width
- */
-function DistributeFlexWidth(columns, flexWidth) {
-  if (flexWidth <= 0) {
-    return {
-      columns: columns,
-      width: ColumnTotalWidth(columns),
-    };
-  }
-
-  var remainingFlexGrow = GetTotalFlexGrow(columns),
-      remainingFlexWidth = flexWidth,
-      totalWidth = 0;
-
-  for(var i=0, len=columns.length; i < len; i++) {
-    var column = columns[i];
-
-    if (!column.flexGrow) {
-      totalWidth += column.width;
-      return;
-    }
-
-    var columnFlexWidth = Math.floor(column.flexGrow / remainingFlexGrow * remainingFlexWidth),
-        newColumnWidth = Math.floor(column.width + columnFlexWidth);
-
-    if(column.minWidth && newColumnWidth < column.minWidth){
-      newColumnWidth = column.minWidth;
-    }
-
-    if(column.maxWidth && newColumnWidth > column.maxWidth){
-      newColumnWidth = column.maxWidth;
-    }
-
-    totalWidth += newColumnWidth;
-    remainingFlexGrow -= column.flexGrow;
-    remainingFlexWidth -= columnFlexWidth;
-
-    column.width = newColumnWidth;
-  }
-
-  return {
-    width: totalWidth
-  };
-}
-
-
-/**
- * Returns the columns by pin.
- * @param {array} colsumns
- */
-function ColumnsByPin(cols){
-  var ret = {
-    left: [],
-    center: [],
-    right: []
-  };
-
-  for(var i=0, len=cols.length; i < len; i++) {
-    var c = cols[i];
-    if(c.frozenLeft){
-      ret.left.push(c)
-    } else if(c.frozenRight){
-      ret.right.push(c);
-    } else {
-      ret.center.push(c);
-    }
-  }
-
-  return ret;
-}
-
-
-/**
  * Adjusts the column widths.
  * Inspired by: https://github.com/facebook/fixed-data-table/blob/master/src/FixedDataTableWidthHelper.js
  * @param {array} all columns
@@ -2313,18 +2310,12 @@ function ColumnsByPin(cols){
  */
 function AdjustColumnWidths(allColumns, expectedWidth){
   var columnsWidth = ColumnTotalWidth(allColumns),
-      remainingFlexGrow = GetTotalFlexGrow(allColumns),
-      remainingFlexWidth = Math.max(expectedWidth - columnsWidth, 0),
+      totalFlexGrow = GetTotalFlexGrow(allColumns),
       colsByGroup = ColumnsByPin(allColumns);
 
-  angular.forEach(colsByGroup, (cols) => {
-    var columnGroupFlexGrow = GetTotalFlexGrow(cols),
-        columnGroupFlexWidth = Math.floor(columnGroupFlexGrow / remainingFlexGrow * remainingFlexWidth),
-        newColumnSettings = DistributeFlexWidth(cols, columnGroupFlexWidth);
-
-    remainingFlexGrow -= columnGroupFlexGrow;
-    remainingFlexWidth -= columnGroupFlexWidth;
-  });
+  if (columnsWidth !== expectedWidth){
+    ScaleColumns(colsByGroup, expectedWidth, totalFlexGrow);
+  }
 }
 
 
@@ -2412,7 +2403,7 @@ const ColumnDefaults = {
 
   // pinned to the left
   frozenLeft: false,
-  
+
   // pinned to the right
   frozenRight: false,
 
@@ -2422,14 +2413,14 @@ const ColumnDefaults = {
   // header cell css class name
   heaerClassName: undefined,
 
-  // The grow factor relative to other columns. Same as the flex-grow 
-  // API from http://www.w3.org/TR/css3-flexbox/. Basically, 
-  // take any available extra width and distribute it proportionally 
+  // The grow factor relative to other columns. Same as the flex-grow
+  // API from http://www.w3.org/TR/css3-flexbox/. Basically,
+  // take any available extra width and distribute it proportionally
   // according to all columns' flexGrow values.
   flexGrow: 0,
 
   // Minimum width of the column.
-  minWidth: undefined,
+  minWidth: 100,
 
   //Maximum width of the column.
   maxWidth: undefined,
@@ -2442,7 +2433,7 @@ const ColumnDefaults = {
 
   // Custom sort comparator
   // pass false if you want to server sort
-  comparator: undefined, 
+  comparator: undefined,
 
   // If yes then the column can be sorted.
   sortable: true,
@@ -2456,8 +2447,8 @@ const ColumnDefaults = {
   // The cell renderer function(scope, elm) that returns React-renderable content for table cell.
   cellRenderer: undefined,
 
-  // The getter function(value) that returns the cell data for the cellRenderer. 
-  // If not provided, the cell data will be collected from row data instead. 
+  // The getter function(value) that returns the cell data for the cellRenderer.
+  // If not provided, the cell data will be collected from row data instead.
   cellDataGetter: undefined,
 
   // Adds +/- button and makes a secondary call to load nested data
@@ -2488,7 +2479,7 @@ const TableDefaults = {
   // Enable horz scrollbars
   // scrollbarH: true,
 
-  // The row height, which is necessary 
+  // The row height, which is necessary
   // to calculate the height for the lazy rendering.
   rowHeight: 30,
 
@@ -2514,7 +2505,7 @@ const TableDefaults = {
 
   paging: {
     // if external paging is turned on
-    externalPaging: false, 
+    externalPaging: false,
 
     // Page size
     size: undefined,
