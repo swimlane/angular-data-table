@@ -30,19 +30,37 @@
         text-rendering: optimizeLegibility;
       }
 
-      .dt{
-        width:75%;
-        margin:50px auto;
+      .container {
+        width: 75%;
+        margin: 50px auto;
       }
 
+      .flexbox-container{
+        display: flex;
+        flex-direction: row;
+        margin: 20px auto;
+      }
+      .flex-item{
+        height: 100px;
+        background: #BDBDBD;
+        margin: 5px;
+      }
     </style>
     <link href="../dist/dataTable.css" media="all" rel="stylesheet" />
     <link href="../dist/themes/material.css" media="all" rel="stylesheet" />
     <link href="http://fontastic.s3.amazonaws.com/Jnf54BZCm7mSjGCxNRbfp3/icons.css" rel="stylesheet">
   </head>
   <body ng-app="app" ng-controller="HomeController">
+    <div class="container">
+      <dtable options="options" rows="data" class="material"></dtable>
 
-    <dtable options="options" rows="data" class="material"></dtable>
+      <h4>Native flexbox behavior</h4>
+      <div class="flexbox-container">
+        <div class="flex-item" style="flex-grow: 2">Name</div>
+        <div class="flex-item">Gender</div>
+        <div class="flex-item" style="flex-grow: 1">Company</div>
+      </div>
+    </div>
 
     <script src="../jspm_packages/system.js"></script>
     <script src="../config.js"></script>

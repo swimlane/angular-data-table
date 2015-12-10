@@ -18,7 +18,7 @@ export function ColumnTotalWidth(columns, prop) {
 }
 
 /**
- * Calculates the Total Flex Grow width.
+ * Calculates the Total Flex Grow
  * @param {array}
  */
 export function GetTotalFlexGrow(columns){
@@ -39,66 +39,57 @@ export function GetTotalFlexGrow(columns){
  */
 export function AdjustColumnWidths(allColumns, expectedWidth){
   var columnsWidth = ColumnTotalWidth(allColumns),
-      remainingFlexGrow = GetTotalFlexGrow(allColumns),
-      remainingFlexWidth = Math.max(expectedWidth - columnsWidth, 0),
+      totalFlexGrow = GetTotalFlexGrow(allColumns),
       colsByGroup = ColumnsByPin(allColumns);
 
-  angular.forEach(colsByGroup, (cols) => {
-    var columnGroupFlexGrow = GetTotalFlexGrow(cols),
-        columnGroupFlexWidth = Math.floor(columnGroupFlexGrow / remainingFlexGrow * remainingFlexWidth),
-        newColumnSettings = DistributeFlexWidth(cols, columnGroupFlexWidth);
-
-    remainingFlexGrow -= columnGroupFlexGrow;
-    remainingFlexWidth -= columnGroupFlexWidth;
-  });
+  if (columnsWidth !== expectedWidth){
+    ScaleColumns(colsByGroup, expectedWidth, totalFlexGrow);
+  }
 }
 
 /**
- * Distributes the flex widths to the columns
- * @param {array} columns
- * @param {int} flex width
+ * Resizes columns based on the flexGrow property, while respecting manually set widths
+ * @param {array} colsByGroup
+ * @param {int} maxWidth
+ * @param {int} totalFlexGrow
  */
-export function DistributeFlexWidth(columns, flexWidth) {
-  if (flexWidth <= 0) {
-    return {
-      columns: columns,
-      width: ColumnTotalWidth(columns),
-    };
-  }
+function ScaleColumns(colsByGroup, maxWidth, totalFlexGrow) {
+  // calculate total width and flexgrow points for coulumns that can be resized
+  angular.forEach(colsByGroup, (cols) => {
+    cols.forEach((column) => {
+      if (!column.canAutoResize){
+        maxWidth -= column.width;
+        totalFlexGrow -= column.flexGrow;
+      } else {
+        column.width = 0;
+      }
+    });
+  });
 
-  var remainingFlexGrow = GetTotalFlexGrow(columns),
-      remainingFlexWidth = flexWidth,
-      totalWidth = 0;
+  var hasMinWidth = {}
+  var remainingWidth = maxWidth;
 
-  for(var i=0, len=columns.length; i < len; i++) {
-    var column = columns[i];
+  // resize columns until no width is left to be distributed
+  do {
+    let widthPerFlexPoint = remainingWidth / totalFlexGrow;
+    remainingWidth = 0;
+    angular.forEach(colsByGroup, (cols) => {
+      cols.forEach((column, i) => {
+        // if the column can be resize and it hasn't reached its minimum width yet
+        if (column.canAutoResize && !hasMinWidth[i]){
+          let newWidth = column.width  + column.flexGrow * widthPerFlexPoint;
+          if (column.minWidth !== undefined && newWidth < column.minWidth){
+            remainingWidth += newWidth - column.minWidth;
+            column.width = column.minWidth;
+            hasMinWidth[i] = true;
+          } else {
+            column.width = newWidth;
+          }
+        }
+      });
+    });
+  } while (remainingWidth !== 0);
 
-    if (!column.flexGrow) {
-      totalWidth += column.width;
-      return;
-    }
-
-    var columnFlexWidth = Math.floor(column.flexGrow / remainingFlexGrow * remainingFlexWidth),
-        newColumnWidth = Math.floor(column.width + columnFlexWidth);
-
-    if(column.minWidth && newColumnWidth < column.minWidth){
-      newColumnWidth = column.minWidth;
-    }
-
-    if(column.maxWidth && newColumnWidth > column.maxWidth){
-      newColumnWidth = column.maxWidth;
-    }
-
-    totalWidth += newColumnWidth;
-    remainingFlexGrow -= column.flexGrow;
-    remainingFlexWidth -= columnFlexWidth;
-
-    column.width = newColumnWidth;
-  }
-
-  return {
-    width: totalWidth
-  };
 }
 
 /**
