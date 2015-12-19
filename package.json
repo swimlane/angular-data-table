@@ -62,7 +62,7 @@
   "dependencies": {},
   "jspm": {
     "dependencies": {
-      "angular": "npm:angular@^1.4.0"
+      "angular": "github:angular/bower-angular@^1.4.8"
     },
     "devDependencies": {
       "babel": "npm:babel-core@^5.8.22",
