@@ -396,7 +396,7 @@ function CellDirective($rootScope, $compile, $log, $timeout){
               var elm = angular.element(ctrl.column.cellRenderer(cellScope, content));
               content.append($compile(elm)(cellScope));
             } else {
-              content[0].textContent = ctrl.getValue();
+              content[0].innerHTML = ctrl.getValue();
             }
           }, true);
         }
