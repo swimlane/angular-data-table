@@ -234,7 +234,7 @@ export class BodyController{
 
     if(this.options.selectable){
       if(this.options.multiSelect){
-        selected = this.selected.indexOf(row) > -1;
+        selected = JSON.stringify(this.selected).indexOf(JSON.stringify(row)) > -1;
       } else {
         selected = this.selected === row;
       }
