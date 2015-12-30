@@ -16,10 +16,12 @@ export function DataTableDirective($window, $timeout, $parse){
       selected: '=?',
       expanded: '=?',
       onSelect: '&',
+      onUncheck: '&',
       onSort: '&',
       onTreeToggle: '&',
       onPage: '&',
-      onRowClick: '&'
+      onRowClick: '&',
+      onHeaderCheckboxChanged: '&'
     },
     controllerAs: 'dt',
     template: function(element){
@@ -37,6 +39,7 @@ export function DataTableDirective($window, $timeout, $parse){
                      ng-if="dt.options.headerHeight"
                      on-resize="dt.onResize(column, width)"
                      selected="dt.isAllRowsSelected()"
+                     on-header-checkbox-changed="dt.onHeaderCheckboxChanged(isChecked)"
                      on-sort="dt.onSorted()">
           </dt-header>
           <dt-body rows="dt.rows"
@@ -44,6 +47,7 @@ export function DataTableDirective($window, $timeout, $parse){
                    expanded="dt.expanded"
                    columns="dt.columnsByPin"
                    on-select="dt.onSelected(rows)"
+                   on-uncheck="dt.onUnchecked(rows)"
                    on-row-click="dt.onRowClicked(row)"
                    column-widths="dt.columnWidths"
                    options="dt.options"
