@@ -46,7 +46,9 @@ export class PagerController {
    * Selects the previous pager
    */
   prevPage(){
-    this.selectPage(--this.page);
+    if (this.page > 1) {
+      this.selectPage(--this.page);
+    }
   }
 
   /**
@@ -61,7 +63,7 @@ export class PagerController {
    * @return {boolean}
    */
   canPrevious(){
-    return this.page !== 1;
+    return this.page > 1;
   }
 
   /**
