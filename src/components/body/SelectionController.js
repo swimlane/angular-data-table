@@ -49,6 +49,21 @@ export class SelectionController {
 
     this.body.onRowClick({ row: row });
   }
+  
+  /**
+   * Handler for the row double click event
+   * @param  {object} event
+   * @param  {int} index
+   * @param  {object} row
+   */
+  rowDblClicked(event, index, row){
+    if(!this.options.checkboxSelection){
+      event.preventDefault();
+      this.selectRow(event, index, row);
+    }
+
+    this.body.onRowDblClick({ row: row });
+  }
 
   /**
    * Invoked when a row directive's checkbox was changed.

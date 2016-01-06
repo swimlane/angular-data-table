@@ -19,7 +19,8 @@ export function DataTableDirective($window, $timeout, $parse){
       onSort: '&',
       onTreeToggle: '&',
       onPage: '&',
-      onRowClick: '&'
+      onRowClick: '&',
+      onRowDblClick: '&'
     },
     controllerAs: 'dt',
     template: function(element){
@@ -45,6 +46,7 @@ export function DataTableDirective($window, $timeout, $parse){
                    columns="dt.columnsByPin"
                    on-select="dt.onSelected(rows)"
                    on-row-click="dt.onRowClicked(row)"
+                   on-row-dbl-click="dt.onRowDblClicked(row)"
                    column-widths="dt.columnWidths"
                    options="dt.options"
                    on-page="dt.onBodyPage(offset, size)"
