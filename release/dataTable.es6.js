@@ -85,7 +85,9 @@ class PagerController {
    * Selects the previous pager
    */
   prevPage(){
-    this.selectPage(--this.page);
+    if (this.page > 1) {
+      this.selectPage(--this.page);
+    }
   }
 
   /**
@@ -100,7 +102,7 @@ class PagerController {
    * @return {boolean}
    */
   canPrevious(){
-    return this.page !== 1;
+    return this.page > 1;
   }
 
   /**
@@ -771,6 +773,21 @@ class SelectionController {
     }
 
     this.body.onRowClick({ row: row });
+  }
+  
+  /**
+   * Handler for the row double click event
+   * @param  {object} event
+   * @param  {int} index
+   * @param  {object} row
+   */
+  rowDblClicked(event, index, row){
+    if(!this.options.checkboxSelection){
+      event.preventDefault();
+      this.selectRow(event, index, row);
+    }
+
+    this.body.onRowDblClick({ row: row });
   }
 
   /**
@@ -1484,7 +1501,8 @@ function BodyDirective($timeout){
       onPage: '&',
       onTreeToggle: '&',
       onSelect: '&',
-      onRowClick: '&'
+      onRowClick: '&',
+      onRowDblClick: '&'
     },
     scope: true,
     template: `
@@ -1515,6 +1533,7 @@ function BodyDirective($timeout){
                   column-widths="body.columnWidths"
                   ng-keydown="selCtrl.keyDown($event, $index, r)"
                   ng-click="selCtrl.rowClicked($event, r.$$index, r)"
+                  ng-dblclick="selCtrl.rowDblClicked($event, r.$$index, r)"
                   on-tree-toggle="body.onTreeToggled(row, cell)"
                   ng-class="body.rowClasses(r)"
                   options="body.options"
@@ -2797,6 +2816,16 @@ class DataTableController {
       row: row
     });
   }
+  
+  /**
+   * Occurs when a row was double click but may not be selected.
+   * @param  {object} row
+   */
+  onRowDblClicked(row){
+    this.onRowDblClick({
+      row: row
+    });
+  }
 
 }
 
@@ -2815,7 +2844,8 @@ function DataTableDirective($window, $timeout, $parse){
       onSort: '&',
       onTreeToggle: '&',
       onPage: '&',
-      onRowClick: '&'
+      onRowClick: '&',
+      onRowDblClick: '&'
     },
     controllerAs: 'dt',
     template: function(element){
@@ -2841,6 +2871,7 @@ function DataTableDirective($window, $timeout, $parse){
                    columns="dt.columnsByPin"
                    on-select="dt.onSelected(rows)"
                    on-row-click="dt.onRowClicked(row)"
+                   on-row-dbl-click="dt.onRowDblClicked(row)"
                    column-widths="dt.columnWidths"
                    options="dt.options"
                    on-page="dt.onBodyPage(offset, size)"
