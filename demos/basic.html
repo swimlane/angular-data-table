@@ -43,7 +43,7 @@
   <body ng-app="app" ng-controller="HomeController">
 
 
-    <dtable options="options" rows="data" class="material"></dtable>
+    <dtable options="options" rows="data" class="material" on-row-dbl-click="onRowDblClick(row)"></dtable>
 
     <script src="../jspm_packages/system.js"></script>
     <script src="../config.js"></script>
@@ -66,6 +66,14 @@
               { name: "Company" }
             ]
           };
+          
+          angular.extend($scope, {
+              onRowDblClick: onRowDblClick 
+          });
+          
+          function onRowDblClick(row) {
+              console.log('Row Double Clicked', row);
+          }
 
           $http.get('/demos/data/100.json').success(function(data) {
             $scope.data = data;

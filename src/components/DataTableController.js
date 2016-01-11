@@ -259,5 +259,15 @@ export class DataTableController {
       row: row
     });
   }
+  
+  /**
+   * Occurs when a row was double click but may not be selected.
+   * @param  {object} row
+   */
+  onRowDblClicked(row){
+    this.onRowDblClick({
+      row: row
+    });
+  }
 
 }
