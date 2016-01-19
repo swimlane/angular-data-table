@@ -20,7 +20,8 @@ export function DataTableDirective($window, $timeout, $parse){
       onTreeToggle: '&',
       onPage: '&',
       onRowClick: '&',
-      onRowDblClick: '&'
+      onRowDblClick: '&',
+      headerSelected:'='
     },
     controllerAs: 'dt',
     template: function(element){
@@ -37,7 +38,7 @@ export function DataTableDirective($window, $timeout, $parse){
                      column-widths="dt.columnWidths"
                      ng-if="dt.options.headerHeight"
                      on-resize="dt.onResize(column, width)"
-                     selected="dt.isAllRowsSelected()"
+                     selected="dt.headerSelected"
                      on-sort="dt.onSorted()">
           </dt-header>
           <dt-body rows="dt.rows"
