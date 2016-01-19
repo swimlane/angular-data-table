@@ -13,7 +13,8 @@ export function HeaderDirective($timeout){
       columnWidths: '=',
       onSort: '&',
       onResize: '&',
-      onCheckboxChange: '&'
+      onCheckboxChange: '&',
+      selected: '='
     },
     template: `
       <div class="dt-header" ng-style="header.styles()">
@@ -31,7 +32,7 @@ export function HeaderDirective($timeout){
               options="header.options"
               sort-type="header.options.sortType"
               on-resize="header.onResized(column, width)"
-              selected="header.isSelected()"
+              selected="header.selected"
               column="column">
             </dt-header-cell>
           </div>
@@ -44,7 +45,7 @@ export function HeaderDirective($timeout){
               on-checkbox-change="header.onCheckboxChanged()"
               on-sort="header.onSorted(column)"
               sort-type="header.options.sortType"
-              selected="header.isSelected()"
+              selected="header.selected"
               on-resize="header.onResized(column, width)"
               options="header.options"
               column="column">
@@ -60,7 +61,7 @@ export function HeaderDirective($timeout){
               on-checkbox-change="header.onCheckboxChanged()"
               on-sort="header.onSorted(column)"
               sort-type="header.options.sortType"
-              selected="header.isSelected()"
+              selected="header.selected"
               on-resize="header.onResized(column, width)"
               options="header.options"
               column="column">

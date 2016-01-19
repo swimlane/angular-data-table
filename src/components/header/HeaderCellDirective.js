@@ -30,8 +30,7 @@ export function HeaderCellDirective($compile){
              max-width="hcell.column.maxWidth">
           <label ng-if="hcell.column.isCheckboxColumn && hcell.column.headerCheckbox" class="dt-checkbox">
             <input type="checkbox"
-                   ng-checked="hcell.selected"
-                   ng-click="hcell.onCheckboxChange()" />
+                   ng-model="hcell.selected" />
           </label>
           <span class="dt-header-cell-label"
                 ng-click="hcell.onSorted()">
