@@ -46,7 +46,7 @@ export function HeaderCellDirective($compile){
 
           if(ctrl.column.headerTemplate || ctrl.column.headerRenderer){
             cellScope = ctrl.options.$outer.$new(false);
-            
+
             // copy some props
             cellScope.$header = ctrl.column.name;
             cellScope.$index = $scope.$index;
