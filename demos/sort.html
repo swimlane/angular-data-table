@@ -43,7 +43,7 @@
   <body ng-app="app" ng-controller="HomeController">
 
 
-    <dtable options="options" rows="data" class="material"></dtable>
+    <dtable options="options" rows="data" class="material" on-sort="onColumnSort"></dtable>
 
     <script src="../jspm_packages/system.js"></script>
     <script src="../config.js"></script>
@@ -54,16 +54,40 @@
         var module = angular.module('app', [ dt.default.name ]);
 
         module.controller('HomeController', function($scope, $http){
+
+          $scope.onColumnSort = (columns) => {
+            console.log('Sorting:')
+            columns.forEach((c) => {
+              console.log(`${c.sortPriority}. ${c.name} - ${c.sort}`, c)
+            })
+          }
+
           $scope.options = {
             rowHeight: 50,
             headerHeight: 50,
             footerHeight: false,
             scrollbarV: false,
-            sortType: 'multiple', // other option: 'single'
-            columns: [
-              { name: "Name", prop: "name", width: 300, sort: 'desc' },
-              { name: "Gender", prop: "gender" },
-              { name: "Company", prop: "company" }
+            sortType: 'multiple', // available options: ['single', 'multiple']
+            // onSort: $scope.onColumnSort,
+            columns: [{
+                name: "Name",
+                prop: "name",
+                width: 300,
+                sort: 'desc',
+                sortPriority: 2
+              },
+              {
+                name: "Gender",
+                prop: "gender",
+                sort: 'asc',
+                sortPriority: 1
+              },
+              {
+                name: "Company",
+                prop: "company",
+                sort: 'asc',
+                sortPriority: 3
+              }
             ]
           };
 

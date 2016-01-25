@@ -81,9 +81,9 @@ export class HeaderController {
 
   /**
    * Occurs when a header cell directive triggered a resize
-   * @param  {object} scope  
-   * @param  {object} column 
-   * @param  {int} width  
+   * @param  {object} scope
+   * @param  {object} column
+   * @param  {int} width
    */
   onResized(column, width){
     this.onResize({
