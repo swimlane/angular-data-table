@@ -160,7 +160,6 @@ gulp.task('release-common', function () {
     .pipe(babel({
       comments: false,
       compact: false,
-      externalHelpers: true,
       modules: 'common',
       moduleId: 'DataTable'
     }))
