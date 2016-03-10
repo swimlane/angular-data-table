@@ -33,6 +33,7 @@ See live demos [here](http://swimlane.github.io/angular-data-table/).
 
 - NPM `npm install angular-data-table`
 - JSPM `jspm install github:Swimlane/angular-data-table`
+- BOWER `bower install angular-data-table`
 
 or Github download or clone of course!
 
