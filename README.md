@@ -1,12 +1,4 @@
-# angular-data-table 
-
-[![Join the chat at https://gitter.im/Swimlane/angular-data-table](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/Swimlane/angular-data-table?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
-
-[![Dependency Status](https://david-dm.org/Swimlane/angular-data-data.svg)](https://david-dm.org/Swimlane/angular-data-data)
-
-[![devDependency Status](https://david-dm.org/Swimlane/angular-data-data/dev-status.svg)](https://david-dm.org/Swimlane/angular-data-data#info=devDependencies)
-
-[![Throughput Graph](https://graphs.waffle.io/Swimlane/angular-data-data/throughput.svg)](https://waffle.io/Swimlane/angular-data-data/metrics)
+# angular-data-table [![Join the chat at https://gitter.im/Swimlane/angular-data-table](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/Swimlane/angular-data-table?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge) [![Dependency Status](https://david-dm.org/Swimlane/angular-data-data.svg)](https://david-dm.org/Swimlane/angular-data-data) [![devDependency Status](https://david-dm.org/Swimlane/angular-data-data/dev-status.svg)](https://david-dm.org/Swimlane/angular-data-data#info=devDependencies)
 
 `angular-data-table` is a AngularJS directive for presenting large and complex data.  It has all the features you would expect from any other table but in a light package with _no external depedencies_. The table was designed to be extremely flexible and light; it doesn't make any assumptions about your data or how you: filter, sort or page it.
 
