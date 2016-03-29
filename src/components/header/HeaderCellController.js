@@ -23,7 +23,7 @@ export class HeaderCellController{
       'resizable': this.column.resizable
     };
 
-    if(this.column.heaerClassName){
+    if(this.column.headerClassName){
       cls[this.column.headerClassName] = true;
     }
 
