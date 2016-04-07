@@ -79,7 +79,7 @@ export function DataTableDirective($window, $timeout, $parse){
            * Invoked on init of control or when the window is resized;
            */
           function resize() {
-            var rect = $elm[0].getBoundingClientRect();
+            var rect = $elm[0].parentNode.getBoundingClientRect();
 
             ctrl.options.internal.innerWidth = Math.floor(rect.width);
 
