@@ -49,7 +49,7 @@ export class SelectionController {
 
     this.body.onRowClick({ row: row });
   }
-  
+
   /**
    * Handler for the row double click event
    * @param  {object} event
@@ -91,6 +91,7 @@ export class SelectionController {
           var idx = this.selected.indexOf(row);
           if(idx > -1){
             this.selected.splice(idx, 1);
+            this.body.onDeselect({ rows: [ row ]});
           } else {
             if(this.options.multiSelectOnShift && this.selected.length === 1) {
               this.selected.splice(0, 1);
