@@ -4,7 +4,7 @@
 
 It was engineered from its conception to handle thousands of rows without sacrificing performance.  It was built for modern browsers using _ES6, CSS3 and HTML5_ and only supports [Evergreen Browsers](http://eisenbergeffect.bluespire.com/evergreen-browsers/) and >= 1.4.x Angular.
 
-See live demos [here]( http://swimlane-contrib.github.io/angular-data-table/).
+See live demos [here](http://swimlane-contrib.github.io/angular-data-table/).
 
 ## Features
 
@@ -94,7 +94,7 @@ then using expressive markup in your template:
       </column>
     </dtable>
 
-and your off to the races! See live demos [here](http://swimlane.github.io/angular-data-table/).
+and your off to the races! See live demos [here](http://swimlane-contrib.github.io/angular-data-table/).
 
 ## Research
 
