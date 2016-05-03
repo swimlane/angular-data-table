@@ -94,7 +94,7 @@ then using expressive markup in your template:
       </column>
     </dtable>
 
-and your off to the races! See live demos [here](http://swimlane.github.io/angular-data-table/).
+and your off to the races! See live demos [here](http://swimlane-contrib.github.io/angular-data-table/).
 
 ## Research
 
