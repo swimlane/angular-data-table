@@ -11,20 +11,24 @@ describe('DataTableService', function () {
 	beforeEach(mock.module('DataTables.Mock'));
 
 	beforeEach(mock.module(($provide) => {
-		$provide.factory('DataTableService', DataTableService);
+		$provide.constant('DataTableService', DataTableService);
 	}));
 
-	beforeEach(mock.inject((DataTableService) => {
+	beforeEach(mock.inject((DataTableService, $parse) => {
 		this.DataTableService = DataTableService;
+		this.$parse = $parse;
 	}));
 
 	it('should build and save columns', () => {
 		let id = ObjectId();
 		let columnElements = [
-			angular.element(`<column name="Name" width="300" flex-grow="1"></column>`)[0],
-			angular.element(`<column name="Gender" flex-grow="1">{{monkey}} ---- {{$cell}}</column>`)[0]
-		];
-		this.DataTableService.buildAndSaveColumns(id, columnElements);
+			`<column name="Name" width="300" flex-grow="1"></column>`,
+			`<column name="Gender" flex-grow="1">{{monkey}} ---- {{$cell}}</column>`
+		].map((el) => angular.element(el)[0]);
+
+		this.DataTableService.saveColumns(id, columnElements);
+		this.DataTableService.buildColumns({}, this.$parse);
+
 		this.DataTableService.columns.should.have.property(id).and.have.length(2);
 	});
 
