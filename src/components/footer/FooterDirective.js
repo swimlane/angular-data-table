@@ -17,7 +17,7 @@ export function FooterDirective(){
                size="footer.paging.size"
                count="footer.paging.count"
                on-page="footer.onPaged(page)"
-               ng-show="footer.paging.count > 1">
+               ng-show="footer.paging.count / footer.paging.size > 1">
          </dt-pager>
       </div>`,
     replace: true
