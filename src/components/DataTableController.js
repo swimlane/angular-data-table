@@ -252,7 +252,7 @@ export class DataTableController {
    * @param  {object} column
    * @param  {int} width
    */
-  onResize(column, width){
+  onResized(column, width){
     var idx =this.options.columns.indexOf(column);
     if(idx > -1){
       var column = this.options.columns[idx];
@@ -261,6 +261,13 @@ export class DataTableController {
 
       this.adjustColumns(idx);
       this.calculateColumns();
+    }
+
+    if (this.onColumnResize){
+      this.onColumnResize({
+        column: column,
+        width: width
+      });
     }
   }
 
