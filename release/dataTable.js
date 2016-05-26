@@ -1,22 +1,22 @@
 /**
  * angular-data-table - A feature-rich but lightweight ES6 AngularJS Data Table crafted for large data sets!
- * @version v0.4.15
+ * @version v0.5.0
  * @link http://swimlane.com/
  * @license 
  */
 (function (global, factory) {
   if (typeof define === "function" && define.amd) {
-    define("DataTable", ["exports", "module"], factory);
-  } else if (typeof exports !== "undefined" && typeof module !== "undefined") {
-    factory(exports, module);
+    define("DataTable", ["exports"], factory);
+  } else if (typeof exports !== "undefined") {
+    factory(exports);
   } else {
     var mod = {
       exports: {}
     };
-    factory(mod.exports, mod);
+    factory(mod.exports);
     global.DataTable = mod.exports;
   }
-})(this, function (exports, module) {
+})(this, function (exports) {
   "use strict";
 
   DataTableDirective.$inject = ["$window", "$timeout", "$parse"];
@@ -27,6 +27,44 @@
   BodyDirective.$inject = ["$timeout"];
   ScrollerDirective.$inject = ["$timeout", "$rootScope"];
   CellDirective.$inject = ["$rootScope", "$compile", "$log", "$timeout"];
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+
+  function _toConsumableArray(arr) {
+    if (Array.isArray(arr)) {
+      for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) arr2[i] = arr[i];
+
+      return arr2;
+    } else {
+      return Array.from(arr);
+    }
+  }
+
+  function _classCallCheck(instance, Constructor) {
+    if (!(instance instanceof Constructor)) {
+      throw new TypeError("Cannot call a class as a function");
+    }
+  }
+
+  var _createClass = function () {
+    function defineProperties(target, props) {
+      for (var i = 0; i < props.length; i++) {
+        var descriptor = props[i];
+        descriptor.enumerable = descriptor.enumerable || false;
+        descriptor.configurable = true;
+        if ("value" in descriptor) descriptor.writable = true;
+        Object.defineProperty(target, descriptor.key, descriptor);
+      }
+    }
+
+    return function (Constructor, protoProps, staticProps) {
+      if (protoProps) defineProperties(Constructor.prototype, protoProps);
+      if (staticProps) defineProperties(Constructor, staticProps);
+      return Constructor;
+    };
+  }();
+
   (function () {
     function polyfill(fnName) {
       if (!Array.prototype[fnName]) {
@@ -65,14 +103,19 @@
     }
   })();
 
-  var PagerController = (function () {
+  var PagerController = function () {
     PagerController.$inject = ["$scope"];
     function PagerController($scope) {
       var _this = this;
 
-      babelHelpers.classCallCheck(this, PagerController);
+      _classCallCheck(this, PagerController);
 
       $scope.$watch('pager.count', function (newVal) {
+        _this.calcTotalPages(_this.size, _this.count);
+        _this.getPages(_this.page || 1);
+      });
+
+      $scope.$watch('pager.size', function (newVal) {
         _this.calcTotalPages(_this.size, _this.count);
         _this.getPages(_this.page || 1);
       });
@@ -86,7 +129,7 @@
       this.getPages(this.page || 1);
     }
 
-    babelHelpers.createClass(PagerController, [{
+    _createClass(PagerController, [{
       key: "calcTotalPages",
       value: function calcTotalPages(size, count) {
         var count = size < 1 ? 1 : Math.ceil(count / size);
@@ -149,8 +192,9 @@
         this.pages = pages;
       }
     }]);
+
     return PagerController;
-  })();
+  }();
 
   function PagerDirective() {
     return {
@@ -169,12 +213,12 @@
     };
   }
 
-  var FooterController = (function () {
+  var FooterController = function () {
     FooterController.$inject = ["$scope"];
     function FooterController($scope) {
       var _this2 = this;
 
-      babelHelpers.classCallCheck(this, FooterController);
+      _classCallCheck(this, FooterController);
 
       this.page = this.paging.offset + 1;
       $scope.$watch('footer.paging.offset', function (newVal) {
@@ -182,7 +226,7 @@
       });
     }
 
-    babelHelpers.createClass(FooterController, [{
+    _createClass(FooterController, [{
       key: "offsetChanged",
       value: function offsetChanged(newVal) {
         this.page = newVal + 1;
@@ -197,8 +241,9 @@
         });
       }
     }]);
+
     return FooterController;
-  })();
+  }();
 
   function FooterDirective() {
     return {
@@ -210,21 +255,22 @@
         paging: '=',
         onPage: '&'
       },
-      template: "<div class=\"dt-footer\">\n        <div class=\"page-count\">{{footer.paging.count}} total</div>\n        <dt-pager page=\"footer.page\"\n               size=\"footer.paging.size\"\n               count=\"footer.paging.count\"\n               on-page=\"footer.onPaged(page)\"\n               ng-show=\"footer.paging.count > 1\">\n         </dt-pager>\n      </div>",
+      template: "<div class=\"dt-footer\">\n        <div class=\"page-count\">{{footer.paging.count}} total</div>\n        <dt-pager page=\"footer.page\"\n               size=\"footer.paging.size\"\n               count=\"footer.paging.count\"\n               on-page=\"footer.onPaged(page)\"\n               ng-show=\"footer.paging.count / footer.paging.size > 1\">\n         </dt-pager>\n      </div>",
       replace: true
     };
   }
 
-  var CellController = (function () {
+  var CellController = function () {
     function CellController() {
-      babelHelpers.classCallCheck(this, CellController);
+      _classCallCheck(this, CellController);
     }
 
-    babelHelpers.createClass(CellController, [{
+    _createClass(CellController, [{
       key: "styles",
       value: function styles() {
         return {
-          width: this.column.width + 'px'
+          width: this.column.width + 'px',
+          'min-width': this.column.width + 'px'
         };
       }
     }, {
@@ -277,8 +323,9 @@
         return val;
       }
     }]);
+
     return CellController;
-  })();
+  }();
 
   function CellDirective($rootScope, $compile, $log, $timeout) {
     return {
@@ -339,7 +386,7 @@
   var cache = {},
       testStyle = document.createElement('div').style;
 
-  var prefix = (function () {
+  var prefix = function () {
     var styles = window.getComputedStyle(document.documentElement, ''),
         pre = (Array.prototype.slice.call(styles).join('').match(/-(moz|webkit|ms)-/) || styles.OLink === '' && ['', 'o'])[1],
         dom = 'WebKit|Moz|MS|O'.match(new RegExp('(' + pre + ')', 'i'))[1];
@@ -349,7 +396,7 @@
       css: '-' + pre + '-',
       js: pre[0].toUpperCase() + pre.substr(1)
     };
-  })();
+  }();
 
   function CamelCase(str) {
     str = str.replace(/[^a-zA-Z0-9 ]/g, " ");
@@ -397,12 +444,12 @@
     }
   }
 
-  var GroupRowController = (function () {
+  var GroupRowController = function () {
     function GroupRowController() {
-      babelHelpers.classCallCheck(this, GroupRowController);
+      _classCallCheck(this, GroupRowController);
     }
 
-    babelHelpers.createClass(GroupRowController, [{
+    _createClass(GroupRowController, [{
       key: "onGroupToggled",
       value: function onGroupToggled(evt) {
         evt.stopPropagation();
@@ -420,8 +467,9 @@
         };
       }
     }]);
+
     return GroupRowController;
-  })();
+  }();
 
   function GroupRowDirective() {
     return {
@@ -460,12 +508,12 @@
     return current;
   }
 
-  var RowController = (function () {
+  var RowController = function () {
     function RowController() {
-      babelHelpers.classCallCheck(this, RowController);
+      _classCallCheck(this, RowController);
     }
 
-    babelHelpers.createClass(RowController, [{
+    _createClass(RowController, [{
       key: "getValue",
       value: function getValue(col) {
         if (!col.prop) return '';
@@ -504,8 +552,9 @@
         });
       }
     }]);
+
     return RowController;
-  })();
+  }();
 
   function RowDirective() {
     return {
@@ -561,17 +610,17 @@
     NUMPAD_9: 105
   };
 
-  var SelectionController = (function () {
+  var SelectionController = function () {
     SelectionController.$inject = ["$scope"];
     function SelectionController($scope) {
-      babelHelpers.classCallCheck(this, SelectionController);
+      _classCallCheck(this, SelectionController);
 
       this.body = $scope.body;
       this.options = $scope.body.options;
       this.selected = $scope.body.selected;
     }
 
-    babelHelpers.createClass(SelectionController, [{
+    _createClass(SelectionController, [{
       key: "keyDown",
       value: function keyDown(ev, index, row) {
         if (KEYS[ev.keyCode]) {
@@ -690,8 +739,9 @@
         this.body.onSelect({ rows: selecteds });
       }
     }]);
+
     return SelectionController;
-  })();
+  }();
 
   function SelectionDirective() {
     return {
@@ -702,21 +752,21 @@
     };
   }
 
-  var requestAnimFrame = (function () {
+  var requestAnimFrame = function () {
     return window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.oRequestAnimationFrame || window.msRequestAnimationFrame || function (callback) {
       window.setTimeout(callback, 1000 / 60);
     };
-  })();
+  }();
 
-  var StyleTranslator = (function () {
+  var StyleTranslator = function () {
     function StyleTranslator(height) {
-      babelHelpers.classCallCheck(this, StyleTranslator);
+      _classCallCheck(this, StyleTranslator);
 
       this.height = height;
       this.map = new Map();
     }
 
-    babelHelpers.createClass(StyleTranslator, [{
+    _createClass(StyleTranslator, [{
       key: "update",
       value: function update(rows) {
         var n = 0;
@@ -735,8 +785,9 @@
         this.map.set(idx, dom);
       }
     }]);
+
     return StyleTranslator;
-  })();
+  }();
 
   function ScrollerDirective($timeout, $rootScope) {
     return {
@@ -799,12 +850,12 @@
     };
   }
 
-  var BodyController = (function () {
+  var BodyController = function () {
     BodyController.$inject = ["$scope", "$timeout"];
     function BodyController($scope, $timeout) {
       var _this3 = this;
 
-      babelHelpers.classCallCheck(this, BodyController);
+      _classCallCheck(this, BodyController);
 
       this.$scope = $scope;
       this.tempRows = [];
@@ -844,7 +895,7 @@
       }
     }
 
-    babelHelpers.createClass(BodyController, [{
+    _createClass(BodyController, [{
       key: "rowsUpdated",
       value: function rowsUpdated(newVal, oldVal) {
         if (newVal) {
@@ -883,7 +934,7 @@
               var _tempRows;
 
               this.tempRows.splice(0, this.tempRows.length);
-              (_tempRows = this.tempRows).push.apply(_tempRows, babelHelpers.toConsumableArray(rows));
+              (_tempRows = this.tempRows).push.apply(_tempRows, _toConsumableArray(rows));
             }
           }
         }
@@ -989,7 +1040,7 @@
           });
 
           if (_this4.expanded[k]) {
-            temp.push.apply(temp, babelHelpers.toConsumableArray(v));
+            temp.push.apply(temp, _toConsumableArray(v));
           }
         });
 
@@ -1030,7 +1081,7 @@
 
           if (rows && rows.length) {
             if (expanded) {
-              temp.push.apply(temp, babelHelpers.toConsumableArray(rows));
+              temp.push.apply(temp, _toConsumableArray(rows));
               count = count + rows.length;
             }
           }
@@ -1180,7 +1231,7 @@
 
           var values = this.buildTree();
           this.tempRows.splice(0, this.tempRows.length);
-          (_tempRows2 = this.tempRows).push.apply(_tempRows2, babelHelpers.toConsumableArray(values));
+          (_tempRows2 = this.tempRows).push.apply(_tempRows2, _toConsumableArray(values));
         }
 
         this.onTreeToggle({
@@ -1200,12 +1251,13 @@
 
           var values = this.buildGroups();
           this.tempRows.splice(0, this.tempRows.length);
-          (_tempRows3 = this.tempRows).push.apply(_tempRows3, babelHelpers.toConsumableArray(values));
+          (_tempRows3 = this.tempRows).push.apply(_tempRows3, _toConsumableArray(values));
         }
       }
     }]);
+
     return BodyController;
-  })();
+  }();
 
   function BodyDirective($timeout) {
     return {
@@ -1248,12 +1300,12 @@
     }
   }
 
-  var HeaderCellController = (function () {
+  var HeaderCellController = function () {
     function HeaderCellController() {
-      babelHelpers.classCallCheck(this, HeaderCellController);
+      _classCallCheck(this, HeaderCellController);
     }
 
-    babelHelpers.createClass(HeaderCellController, [{
+    _createClass(HeaderCellController, [{
       key: "styles",
       value: function styles() {
         return {
@@ -1271,7 +1323,7 @@
           'resizable': this.column.resizable
         };
 
-        if (this.column.heaerClassName) {
+        if (this.column.headerClassName) {
           cls[this.column.headerClassName] = true;
         }
 
@@ -1315,8 +1367,9 @@
         this.onCheckboxChanged();
       }
     }]);
+
     return HeaderCellController;
-  })();
+  }();
 
   function HeaderCellDirective($compile) {
     return {
@@ -1339,7 +1392,7 @@
         return {
           pre: function pre($scope, $elm, $attrs, ctrl) {
             var label = $elm[0].querySelector('.dt-header-cell-label'),
-                cellScope = undefined;
+                cellScope = void 0;
 
             if (ctrl.column.headerTemplate || ctrl.column.headerRenderer) {
               cellScope = ctrl.options.$outer.$new(false);
@@ -1352,8 +1405,8 @@
               var elm = angular.element("<span>" + ctrl.column.headerTemplate.trim() + "</span>");
               angular.element(label).append($compile(elm)(cellScope));
             } else if (ctrl.column.headerRenderer) {
-              var elm = angular.element(ctrl.column.headerRenderer($elm));
-              angular.element(label).append($compile(elm)(cellScope)[0]);
+              var _elm = angular.element(ctrl.column.headerRenderer($elm));
+              angular.element(label).append($compile(_elm)(cellScope)[0]);
             } else {
               var val = ctrl.column.name;
               if (val === undefined || val === null) val = '';
@@ -1365,12 +1418,12 @@
     };
   }
 
-  var HeaderController = (function () {
+  var HeaderController = function () {
     function HeaderController() {
-      babelHelpers.classCallCheck(this, HeaderController);
+      _classCallCheck(this, HeaderController);
     }
 
-    babelHelpers.createClass(HeaderController, [{
+    _createClass(HeaderController, [{
       key: "styles",
       value: function styles() {
         return {
@@ -1434,8 +1487,9 @@
         });
       }
     }]);
+
     return HeaderController;
-  })();
+  }();
 
   function HeaderDirective($timeout) {
     return {
@@ -1599,7 +1653,7 @@
         function mousemove(event) {
           event = event.originalEvent || event;
 
-          var width = parent[0].scrollWidth,
+          var width = parent[0].clientWidth,
               movementX = event.movementX || event.mozMovementX || event.screenX - prevScreenX,
               newWidth = width + (movementX || 0);
 
@@ -1615,7 +1669,7 @@
         function mouseup() {
           if ($scope.onResize) {
             $timeout(function () {
-              $scope.onResize({ width: parent[0].scrollWidth });
+              $scope.onResize({ width: parent[0].clientWidth });
             });
           }
 
@@ -1686,7 +1740,6 @@
         this.dTables[id] = columnsArray;
       }
     },
-
     buildColumns: function buildColumns(scope, parse) {
       var _this5 = this;
 
@@ -1758,7 +1811,7 @@
     var hasMinWidth = {};
     var remainingWidth = maxWidth;
 
-    var _loop = function () {
+    var _loop = function _loop() {
       var widthPerFlexPoint = remainingWidth / totalFlexGrow;
       remainingWidth = 0;
       angular.forEach(colsByGroup, function (cols) {
@@ -1821,8 +1874,8 @@
       _iteratorError = err;
     } finally {
       try {
-        if (!_iteratorNormalCompletion && _iterator["return"]) {
-          _iterator["return"]();
+        if (!_iteratorNormalCompletion && _iterator.return) {
+          _iterator.return();
         }
       } finally {
         if (_didIteratorError) {
@@ -1911,7 +1964,7 @@
 
     className: undefined,
 
-    heaerClassName: undefined,
+    headerClassName: undefined,
 
     flexGrow: 0,
 
@@ -1989,12 +2042,12 @@
 
   };
 
-  var DataTableController = (function () {
+  var DataTableController = function () {
     DataTableController.$inject = ["$scope", "$filter", "$log", "$transclude"];
     function DataTableController($scope, $filter, $log, $transclude) {
       var _this6 = this;
 
-      babelHelpers.classCallCheck(this, DataTableController);
+      _classCallCheck(this, DataTableController);
 
       Object.assign(this, {
         $scope: $scope,
@@ -2024,7 +2077,7 @@
       });
     }
 
-    babelHelpers.createClass(DataTableController, [{
+    _createClass(DataTableController, [{
       key: "defaults",
       value: function defaults() {
         var _this7 = this;
@@ -2119,9 +2172,7 @@
         });
 
         if (sorts.length) {
-          if (this.onSort()) {
-            this.onSort()(sorts);
-          }
+          this.onSort({ sorts: sorts });
 
           if (this.options.onSort) {
             this.options.onSort(sorts);
@@ -2141,7 +2192,7 @@
 
             var sortedValues = this.$filter('orderBy')(this.rows, clientSorts);
             this.rows.splice(0, this.rows.length);
-            (_rows = this.rows).push.apply(_rows, babelHelpers.toConsumableArray(sortedValues));
+            (_rows = this.rows).push.apply(_rows, _toConsumableArray(sortedValues));
           }
         }
 
@@ -2181,7 +2232,7 @@
           if (!matches) {
             var _selected;
 
-            (_selected = this.selected).push.apply(_selected, babelHelpers.toConsumableArray(this.rows));
+            (_selected = this.selected).push.apply(_selected, _toConsumableArray(this.rows));
           }
         }
       }
@@ -2192,8 +2243,8 @@
         return this.selected.length === this.rows.length;
       }
     }, {
-      key: "onResize",
-      value: function onResize(column, width) {
+      key: "onResized",
+      value: function onResized(column, width) {
         var idx = this.options.columns.indexOf(column);
         if (idx > -1) {
           var column = this.options.columns[idx];
@@ -2202,6 +2253,13 @@
 
           this.adjustColumns(idx);
           this.calculateColumns();
+        }
+
+        if (this.onColumnResize) {
+          this.onColumnResize({
+            column: column,
+            width: width
+          });
         }
       }
     }, {
@@ -2226,8 +2284,9 @@
         });
       }
     }]);
+
     return DataTableController;
-  })();
+  }();
 
   function DataTableDirective($window, $timeout, $parse) {
     return {
@@ -2245,7 +2304,8 @@
         onTreeToggle: '&',
         onPage: '&',
         onRowClick: '&',
-        onRowDblClick: '&'
+        onRowDblClick: '&',
+        onColumnResize: '&'
       },
       controllerAs: 'dt',
       template: function template(element) {
@@ -2253,7 +2313,7 @@
             id = ObjectId();
         DataTableService.saveColumns(id, columns);
 
-        return "<div class=\"dt\" ng-class=\"dt.tableCss()\" data-column-id=\"" + id + "\">\n          <dt-header options=\"dt.options\"\n                     on-checkbox-change=\"dt.onHeaderCheckboxChange()\"\n                     columns=\"dt.columnsByPin\"\n                     column-widths=\"dt.columnWidths\"\n                     ng-if=\"dt.options.headerHeight\"\n                     on-resize=\"dt.onResize(column, width)\"\n                     selected=\"dt.isAllRowsSelected()\"\n                     on-sort=\"dt.onSorted()\">\n          </dt-header>\n          <dt-body rows=\"dt.rows\"\n                   selected=\"dt.selected\"\n                   expanded=\"dt.expanded\"\n                   columns=\"dt.columnsByPin\"\n                   on-select=\"dt.onSelected(rows)\"\n                   on-row-click=\"dt.onRowClicked(row)\"\n                   on-row-dbl-click=\"dt.onRowDblClicked(row)\"\n                   column-widths=\"dt.columnWidths\"\n                   options=\"dt.options\"\n                   on-page=\"dt.onBodyPage(offset, size)\"\n                   on-tree-toggle=\"dt.onTreeToggled(row, cell)\">\n           </dt-body>\n          <dt-footer ng-if=\"dt.options.footerHeight\"\n                     ng-style=\"{ height: dt.options.footerHeight + 'px' }\"\n                     on-page=\"dt.onFooterPage(offset, size)\"\n                     paging=\"dt.options.paging\">\n           </dt-footer>\n        </div>";
+        return "<div class=\"dt\" ng-class=\"dt.tableCss()\" data-column-id=\"" + id + "\">\n          <dt-header options=\"dt.options\"\n                     on-checkbox-change=\"dt.onHeaderCheckboxChange()\"\n                     columns=\"dt.columnsByPin\"\n                     column-widths=\"dt.columnWidths\"\n                     ng-if=\"dt.options.headerHeight\"\n                     on-resize=\"dt.onResized(column, width)\"\n                     selected=\"dt.isAllRowsSelected()\"\n                     on-sort=\"dt.onSorted()\">\n          </dt-header>\n          <dt-body rows=\"dt.rows\"\n                   selected=\"dt.selected\"\n                   expanded=\"dt.expanded\"\n                   columns=\"dt.columnsByPin\"\n                   on-select=\"dt.onSelected(rows)\"\n                   on-row-click=\"dt.onRowClicked(row)\"\n                   on-row-dbl-click=\"dt.onRowDblClicked(row)\"\n                   column-widths=\"dt.columnWidths\"\n                   options=\"dt.options\"\n                   on-page=\"dt.onBodyPage(offset, size)\"\n                   on-tree-toggle=\"dt.onTreeToggled(row, cell)\">\n           </dt-body>\n          <dt-footer ng-if=\"dt.options.footerHeight\"\n                     ng-style=\"{ height: dt.options.footerHeight + 'px' }\"\n                     on-page=\"dt.onFooterPage(offset, size)\"\n                     paging=\"dt.options.paging\">\n           </dt-footer>\n        </div>";
       },
       compile: function compile(tElem, tAttrs) {
         return {
@@ -2316,5 +2376,5 @@
 
   var dataTable = angular.module('data-table', []).directive('dtable', DataTableDirective).directive('resizable', ResizableDirective).directive('sortable', SortableDirective).directive('dtHeader', HeaderDirective).directive('dtHeaderCell', HeaderCellDirective).directive('dtBody', BodyDirective).directive('dtScroller', ScrollerDirective).directive('dtSeletion', SelectionDirective).directive('dtRow', RowDirective).directive('dtGroupRow', GroupRowDirective).directive('dtCell', CellDirective).directive('dtFooter', FooterDirective).directive('dtPager', PagerDirective);
 
-  module.exports = dataTable;
+  exports.default = dataTable;
 });

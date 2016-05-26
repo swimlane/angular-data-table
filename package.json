@@ -2,7 +2,7 @@
   "name": "angular-data-table",
   "title": "AngularJS Data-Table",
   "description": "A feature-rich but lightweight ES6 AngularJS Data Table crafted for large data sets!",
-  "version": "0.4.15",
+  "version": "0.5.0",
   "repository": {
     "type": "git",
     "url": "git@github.com:Swimlane/angular-data-table.git",

@@ -50,6 +50,11 @@ class PagerController {
       this.getPages(this.page || 1);
     });
 
+    $scope.$watch('pager.size', (newVal) => {
+      this.calcTotalPages(this.size, this.count);
+      this.getPages(this.page || 1);
+    });
+
     $scope.$watch('pager.page', (newVal) => {
       if (newVal !== 0 && newVal <= this.totalPages) {
         this.getPages(newVal);
@@ -250,7 +255,7 @@ function FooterDirective(){
                size="footer.paging.size"
                count="footer.paging.count"
                on-page="footer.onPaged(page)"
-               ng-show="footer.paging.count > 1">
+               ng-show="footer.paging.count / footer.paging.size > 1">
          </dt-pager>
       </div>`,
     replace: true
@@ -265,7 +270,8 @@ class CellController {
    */
   styles(){
     return {
-      width: this.column.width  + 'px'
+      width: this.column.width  + 'px',
+	  'min-width': this.column.width + 'px'
     };
   }
 
@@ -1598,7 +1604,7 @@ class HeaderCellController{
       'resizable': this.column.resizable
     };
 
-    if(this.column.heaerClassName){
+    if(this.column.headerClassName){
       cls[this.column.headerClassName] = true;
     }
 
@@ -2046,7 +2052,7 @@ function ResizableDirective($document, $timeout){
       function mousemove(event) {
         event = event.originalEvent || event;
         
-        var width = parent[0].scrollWidth,
+        var width = parent[0].clientWidth,
             movementX = event.movementX || event.mozMovementX || (event.screenX - prevScreenX),
             newWidth = width + (movementX || 0);
 
@@ -2062,7 +2068,7 @@ function ResizableDirective($document, $timeout){
       function mouseup() {
         if($scope.onResize){
           $timeout(() => {
-            $scope.onResize({ width: parent[0].scrollWidth });
+            $scope.onResize({ width: parent[0].clientWidth });
           });
         }
 
@@ -2433,7 +2439,7 @@ const ColumnDefaults = {
   className: undefined,
 
   // header cell css class name
-  heaerClassName: undefined,
+  headerClassName: undefined,
 
   // The grow factor relative to other columns. Same as the flex-grow
   // API from http://www.w3.org/TR/css3-flexbox/. Basically,
@@ -2721,9 +2727,7 @@ class DataTableController {
       });
 
     if(sorts.length){
-      if (this.onSort()){
-        this.onSort()(sorts);
-      }
+      this.onSort({sorts: sorts});
 
       if (this.options.onSort){
         this.options.onSort(sorts);
@@ -2814,7 +2818,7 @@ class DataTableController {
    * @param  {object} column
    * @param  {int} width
    */
-  onResize(column, width){
+  onResized(column, width){
     var idx =this.options.columns.indexOf(column);
     if(idx > -1){
       var column = this.options.columns[idx];
@@ -2823,6 +2827,13 @@ class DataTableController {
 
       this.adjustColumns(idx);
       this.calculateColumns();
+    }
+
+    if (this.onColumnResize){
+      this.onColumnResize({
+        column: column,
+        width: width
+      });
     }
   }
 
@@ -2874,7 +2885,8 @@ function DataTableDirective($window, $timeout, $parse){
       onTreeToggle: '&',
       onPage: '&',
       onRowClick: '&',
-      onRowDblClick: '&'
+      onRowDblClick: '&',
+      onColumnResize: '&'
     },
     controllerAs: 'dt',
     template: function(element){
@@ -2890,7 +2902,7 @@ function DataTableDirective($window, $timeout, $parse){
                      columns="dt.columnsByPin"
                      column-widths="dt.columnWidths"
                      ng-if="dt.options.headerHeight"
-                     on-resize="dt.onResize(column, width)"
+                     on-resize="dt.onResized(column, width)"
                      selected="dt.isAllRowsSelected()"
                      on-sort="dt.onSorted()">
           </dt-header>

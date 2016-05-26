@@ -1,6 +1,6 @@
 {
   "name": "angular-data-table",
-  "version": "0.4.15",
+  "version": "0.5.0",
   "homepage": "https://github.com/Swimlane/angular-data-table",
   "author": {
     "name": "Swimlane",
@@ -8,7 +8,6 @@
     "web": "http://swimlane.com/"
   },
    "main": [
-    "release/dataTable.helpers.js",
     "release/dataTable.js",
     "release/dataTable.css"
   ],
