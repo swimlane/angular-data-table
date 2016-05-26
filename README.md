@@ -50,7 +50,7 @@ docs coming soon, in the meantime, 'View Source' is your friend ;)!
 
 #### Build
 
-`gulp release` to build Modules, ES5 via Babel and compile.
+`gulp release` to build Modules, ES* via Babel and compile.
 
 #### Include
 
@@ -131,6 +131,3 @@ The core CSS for the table has no assumptions about the styling of your applicat
 ## Credits
 
 `angular-data-table` is a [Swimlane](http://swimlane.com) open-source project; we believe in giving back to the open-source community by sharing some of the projects we build for our application. Swimlane is an automated cyber security operations and incident response platform that enables cyber security teams to leverage threat intelligence, speed up incident response and automate security operations.
-
-## License
-MIT
