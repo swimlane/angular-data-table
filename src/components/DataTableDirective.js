@@ -19,9 +19,11 @@ export const DataTableDirective = {
     onColumnResize: '&'
   },
   template: function($element) {
+    let elm = $element.length ? $element[0] : $element;
+    
     // Gets the column nodes to transposes to column objects
     // http://stackoverflow.com/questions/30845397/angular-expressive-directive-design/30847609#30847609
-    const columns = $element[0].getElementsByTagName('column');
+    const columns = elm.getElementsByTagName('column');
     const id = ObjectId();
 
     DataTableService.saveColumns(id, columns);
@@ -29,8 +31,7 @@ export const DataTableDirective = {
     return `
       <div 
         class="dt"
-        ng-class="$ctrl.tableCss()"
-        data-column-id="${id}">
+        ng-class="$ctrl.tableCss()">
         <dt-header 
           options="$ctrl.options"
            on-checkbox-change="$ctrl.onHeaderCheckboxChange()"
