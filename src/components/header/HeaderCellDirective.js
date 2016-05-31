@@ -16,7 +16,6 @@ export function HeaderCellDirective($compile){
       onResize: '&',
       selected: '='
     },
-    replace: true,
     template:
       `<div ng-class="hcell.cellClass()"
             class="dt-header-cell"
@@ -39,31 +38,27 @@ export function HeaderCellDirective($compile){
           <span ng-class="hcell.sortClass()"></span>
         </div>
       </div>`,
-    compile: function() {
-      return {
-        pre: function($scope, $elm, $attrs, ctrl) {
-          let label = $elm[0].querySelector('.dt-header-cell-label'), cellScope;
+    link: function($scope, $elm, $attrs, ctrl) {
+      let label = $elm[0].querySelector('.dt-header-cell-label'), cellScope;
 
-          if(ctrl.column.headerTemplate || ctrl.column.headerRenderer){
-            cellScope = ctrl.options.$outer.$new(false);
+      if(ctrl.column.headerTemplate || ctrl.column.headerRenderer){
+        cellScope = ctrl.options.$outer.$new(false);
 
-            // copy some props
-            cellScope.$header = ctrl.column.name;
-            cellScope.$index = $scope.$index;
-          }
+        // copy some props
+        cellScope.$header = ctrl.column.name;
+        cellScope.$index = $scope.$index;
+      }
 
-          if(ctrl.column.headerTemplate){
-            let elm = angular.element(`<span>${ctrl.column.headerTemplate.trim()}</span>`);
-            angular.element(label).append($compile(elm)(cellScope));
-          } else if(ctrl.column.headerRenderer){
-            let elm = angular.element(ctrl.column.headerRenderer($elm));
-            angular.element(label).append($compile(elm)(cellScope)[0]);
-          } else {
-            let val = ctrl.column.name;
-            if(val === undefined || val === null) val = '';
-            label.textContent = val;
-          }
-        }
+      if(ctrl.column.headerTemplate){
+        let elm = angular.element(`<span>${ctrl.column.headerTemplate.trim()}</span>`);
+        angular.element(label).append($compile(elm)(cellScope));
+      } else if(ctrl.column.headerRenderer){
+        let elm = angular.element(ctrl.column.headerRenderer($elm));
+        angular.element(label).append($compile(elm)(cellScope)[0]);
+      } else {
+        let val = ctrl.column.name;
+        if(val === undefined || val === null) val = '';
+        label.textContent = val;
       }
     }
   };

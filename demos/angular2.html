@@ -7,7 +7,7 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black" />
     <meta name="viewport" content="width = device-width, minimal-ui, initial-scale = 1, user-scalable = no" />
     <meta name="apple-mobile-web-app-title" content="Datagrid">
-    <title>Datagrid - Basic</title>
+    <title>Datagrid - Angular2</title>
     <base href="/">
     <style>
       *, *:after, *:before {
@@ -40,50 +40,19 @@
     <link href="../dist/themes/material.css" media="all" rel="stylesheet" />
     <link href="http://fontastic.s3.amazonaws.com/Jnf54BZCm7mSjGCxNRbfp3/icons.css" rel="stylesheet">
   </head>
-  <body ng-app="app" ng-controller="HomeController">
+  <body>
 
-
-    <dtable 
-      options="options" 
-      rows="data" 
-      class="material" 
-      on-row-dbl-click="onRowDblClick(row)">
-    </dtable>
+    <app></app>
 
     <script src="../jspm_packages/system.js"></script>
     <script src="../config.js"></script>
 
     <script>
-
-      System.import('dataTable').then(function(dt){
-        var module = angular.module('app', [ dt.default.name ]);
-
-        module.controller('HomeController', function($scope, $http){
-          $scope.options = {
-            rowHeight: 50,
-            headerHeight: 50,
-            footerHeight: false,
-            scrollbarV: false,
-            selectable: false,
-            columns: [
-              { name: "Name", width: 300 },
-              { name: "Gender" },
-              { name: "Company" }
-            ]
-          };
-          
-          angular.extend($scope, {
-              onRowDblClick: onRowDblClick 
+      System.import('reflect-metadata').then(function() {
+        System.import('zone.js').then(function() {
+          System.import('rxjs').then(function() {
+            System.import('../demos/angular2.js');
           });
-          
-          function onRowDblClick(row) {
-              console.log('Row Double Clicked', row);
-          }
-
-          $http.get('/demos/data/100.json').success(function(data) {
-            $scope.data = data;
-          });
-
         });
       });
     </script>

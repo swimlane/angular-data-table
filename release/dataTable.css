@@ -20,8 +20,8 @@
 .dt .dt-clone .dt-resize-handle {
   visibility: hidden;
 }
-.dt .dt-cell,
-.dt .dt-header-cell {
+.dt dt-cell,
+.dt dt-header-cell {
   vertical-align: top;
   overflow: hidden;
   white-space: nowrap;
@@ -34,7 +34,7 @@
   -o-user-select: none;
   user-select: none;
 }
-.dt .dt-row,
+.dt dt-row,
 .dt .dt-header-inner {
   display: -webkit-box;
   display: -moz-box;
@@ -98,7 +98,7 @@
 .dt .dt-header .dt-header-cell.resizable:hover .dt-resize-handle {
   visibility: visible;
 }
-.dt .dt-header .dt-header-cell:last-child .dt-resize-handle {
+.dt .dt-header .dt-header-cell > div > div:last-child .dt-resize-handle {
   visibility: hidden !important;
 }
 .dt .dt-body {
@@ -112,12 +112,13 @@
 .dt .dt-body .dt-group-row {
   outline: none;
 }
-.dt .dt-body .dt-row {
+.dt .dt-body dt-row {
   backface-visibility: hidden;
   outline: none;
   white-space: nowrap;
 }
-.dt .dt-body .dt-row > div {
+.dt .dt-body dt-row .dt-row,
+.dt .dt-body dt-row .dt-row > div {
   display: -webkit-box;
   display: -moz-box;
   display: -ms-flexbox;
@@ -145,7 +146,7 @@
   display: inline-block;
   outline: none;
 }
-.dt.fixed .dt-body .dt-row,
+.dt.fixed .dt-body dt-row,
 .dt.fixed .dt-body .dt-group-row {
   position: absolute;
 }

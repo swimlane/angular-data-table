@@ -15,6 +15,9 @@
     "email": "austin@swimlane.com",
     "web": "http://swimlane.com/"
   },
+  "scripts": {
+    "postinstall": "jspm install --log warn"
+  },
   "licenses": [
     {
       "type": "MIT",
@@ -22,8 +25,8 @@
     }
   ],
   "devDependencies": {
-    "angular": "^1.4.4",
-    "angular-mocks": "^1.4.3",
+    "angular": "^1.5.6",
+    "angular-mocks": "^1.5.6",
     "babelify": "7.3.0",
     "babel-core": "^6.9.0",
     "babel-eslint": "^6.0.2",
@@ -68,12 +71,16 @@
   },
   "jspm": {
     "dependencies": {
-      "angular": "npm:angular@^1.4.0"
+      "@angular/platform-browser-dynamic": "npm:@angular/platform-browser-dynamic@2.0.0-rc.1",
+      "@angular/upgrade@^2.0.0-rc.1": "npm:@angular/upgrade@^2.0.0-rc.1",
+      "angular": "npm:angular@1.5.6",
+      "reflect-metadata": "npm:reflect-metadata@0.1.2",
+      "zone.js": "npm:zone.js@0.6.11"
     },
     "devDependencies": {
-      "babel": "npm:babel-core@^5.8.22",
-      "babel-runtime": "npm:babel-runtime@^5.6.4",
-      "core-js": "npm:core-js@^1.1.1"
+      "babel": "npm:babel-core@^5.8.24",
+      "babel-runtime": "npm:babel-runtime@^5.8.24",
+      "core-js": "npm:core-js@^1.1.4"
     }
   },
   "babel": {

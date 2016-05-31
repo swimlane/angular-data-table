@@ -38,7 +38,7 @@ var banner = ['/**',
 //
 // Compile Tasks
 // ------------------------------------------------------------
-gulp.task('es6', function () {
+gulp.task('babel', function () {
   return gulp.src(path.source)
     .pipe(plumber())
     .pipe(changed(path.output, { extension: '.js' }))
@@ -66,7 +66,7 @@ gulp.task('clean', function () {
 
 gulp.task('compile', function (callback) {
   return runSequence(
-    ['less', 'es6'],
+    ['less', 'babel'],
     callback
     );
 });

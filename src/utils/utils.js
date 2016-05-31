@@ -17,12 +17,10 @@ export var requestAnimFrame = (function(){
 
 /**
  * Creates a unique object id.
+ * http://stackoverflow.com/questions/6248666/how-to-generate-short-uid-like-ax4j9z-in-js
  */
 export function ObjectId() {
-  var timestamp = (new Date().getTime() / 1000 | 0).toString(16);
-  return timestamp + 'xxxxxxxxxxxxxxxx'.replace(/[x]/g, function () {
-      return (Math.random() * 16 | 0).toString(16);
-  }).toLowerCase();
+  return ("0000" + (Math.random()*Math.pow(36,4) << 0).toString(36)).slice(-4);
 };
 
 /**

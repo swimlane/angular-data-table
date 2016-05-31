@@ -2,6 +2,8 @@ import angular from 'angular';
 import { TableDefaults, ColumnDefaults } from '../defaults';
 import { AdjustColumnWidths, ForceFillColumnWidths } from '../utils/math';
 import { ColumnsByPin, ColumnGroupWidths, CamelCase, ObjectId, ScrollbarWidth } from '../utils/utils';
+import { DataTableService } from './DataTableService';
+import { throttle } from '../utils/throttle';
 
 export class DataTableController {
 
@@ -11,19 +13,30 @@ export class DataTableController {
    * @param  {filter}
    */
   /*@ngInject*/
-  constructor($scope, $filter, $log, $transclude){
+  constructor($scope, $element, $parse, $window, $timeout, $filter, $log) {
     Object.assign(this, {
-      $scope: $scope,
-      $filter: $filter,
-      $log: $log
+      $element,
+      $timeout,
+      $scope,
+      $filter,
+      $log,
+      $scope,
+      $parse,
+      $window
     });
+  }
 
-    this.defaults();
+  $onInit() {
+    const children = this.$element.children();
+    this.childElm = angular.element(children[0]);
 
     // set scope to the parent
-    this.options.$outer = $scope.$parent;
+    this.options.$outer = this.$scope.$parent;
 
-    $scope.$watch('dt.options.columns', (newVal, oldVal) => {
+    this.build();
+    this.defaults();
+
+    this.$scope.$watch('$ctrl.options.columns', (newVal, oldVal) => {
       this.transposeColumnDefaults();
 
       if(newVal.length !== oldVal.length){
@@ -34,12 +47,84 @@ export class DataTableController {
     }, true);
 
     // default sort
-    var watch = $scope.$watch('dt.rows', (newVal) => {
+    var watch = this.$scope.$watch('$ctrl.rows', (newVal) => {
       if(newVal){
         watch();
         this.onSorted();
       }
     });
+
+    this.options.internal.scrollBarWidth = ScrollbarWidth();
+    this.setupSizing();
+
+    // add a loaded class to avoid flickering
+    this.childElm.addClass('dt-loaded');
+  }
+
+  $onDestroy() {
+    angular.element(this.$window).off('resize');
+  }
+
+  build() {
+    DataTableService.buildColumns(this.$scope, this.$parse);
+
+    // Check and see if we had expressive columns
+    // and if so, lets use those
+    
+    const id = this.childElm.attr('data-column-id');
+
+    let columns = DataTableService.columns[id];
+    if (columns) {
+      this.options.columns = columns;
+    }
+
+    this.transposeColumnDefaults();
+  }
+
+  setupSizing() {
+    /**
+     * Invoked on init of control or when the window is resized;
+     */
+    const resize = () => {
+      var rect = this.childElm[0].getBoundingClientRect();
+
+      this.options.internal.innerWidth = Math.floor(rect.width);
+
+      if (this.options.scrollbarV) {
+        var height = rect.height;
+
+        if (this.options.headerHeight) {
+          height = height - this.options.headerHeight;
+        }
+
+        if (this.options.footerHeight) {
+          height = height - this.options.footerHeight;
+        }
+
+        this.options.internal.bodyHeight = height;
+        this.calculatePageSize();
+      }
+
+      this.adjustColumns();
+    };
+
+    angular.element(this.$window).bind('resize',
+      throttle(() => {
+        this.$timeout(resize);
+      }));
+
+    // When an item is hidden for example
+    // in a tab with display none, the height
+    // is not calculated correrctly.  We need to watch
+    // the visible attribute and resize if this occurs
+    var checkVisibility = () => {
+    var bounds = this.$element[0].getBoundingClientRect(),
+        visible = bounds.width && bounds.height;
+      if (visible) resize();
+      else this.$timeout(checkVisibility, 100);
+    };
+
+    checkVisibility();
   }
 
   /**
@@ -185,7 +270,8 @@ export class DataTableController {
       }
     }
 
-    this.options.internal.setYOffset(0);
+    this.options.internal.setYOffset &&
+      this.options.internal.setYOffset(0);
   }
 
   /**

@@ -1,49 +1,49 @@
-.dt.material {
+.material .dt {
   background: #FFF;
   -webkit-box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.12), 0 1px 2px 0 rgba(0, 0, 0, 0.24);
   -moz-box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.12), 0 1px 2px 0 rgba(0, 0, 0, 0.24);
   box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.12), 0 1px 2px 0 rgba(0, 0, 0, 0.24);
 }
-.dt.material.selectable:not(.checkboxable) .dt-body .dt-row:focus,
-.dt.material.selectable:not(.checkboxable) .dt-body .dt-row:focus .dt-row-block {
+.material .dt.selectable:not(.checkboxable) .dt-body dt-row:focus,
+.material .dt.selectable:not(.checkboxable) .dt-body dt-row:focus .dt-row-block {
   background-color: #EEE;
 }
-.dt.material.selectable:not(.checkboxable) .dt-body .dt-row.selected,
-.dt.material.selectable:not(.checkboxable) .dt-body .dt-row.selected:hover,
-.dt.material.selectable:not(.checkboxable) .dt-body .dt-row.selected:focus,
-.dt.material.selectable:not(.checkboxable) .dt-body .dt-row.selected .dt-row-block,
-.dt.material.selectable:not(.checkboxable) .dt-body .dt-row.selected:hover .dt-row-block {
+.material .dt.selectable:not(.checkboxable) .dt-body dt-row.selected,
+.material .dt.selectable:not(.checkboxable) .dt-body dt-row.selected:hover,
+.material .dt.selectable:not(.checkboxable) .dt-body dt-row.selected:focus,
+.material .dt.selectable:not(.checkboxable) .dt-body dt-row.selected .dt-row-block,
+.material .dt.selectable:not(.checkboxable) .dt-body dt-row.selected:hover .dt-row-block {
   background-color: #304FFE;
   color: #FFF;
 }
-.dt.material .dt-header {
+.material .dt .dt-header {
   border-bottom: 1px solid rgba(0, 0, 0, 0.12);
 }
-.dt.material .dt-header .dt-header-cell {
+.material .dt .dt-header .dt-header-cell {
   text-align: left;
   padding: .5rem 1.2rem;
   font-weight: 400;
   color: #757575;
   vertical-align: bottom;
 }
-.dt.material .dt-header .dt-resize-handle {
+.material .dt .dt-header .dt-resize-handle {
   border-right: solid 1px #eee;
 }
-.dt.material .dt-header .dt-row-left,
-.dt.material .dt-body .dt-row-left {
+.material .dt .dt-header .dt-row-left,
+.material .dt .dt-body .dt-row-left {
   background-color: #FFF;
   background-position: 100% 0;
   background-repeat: repeat-y;
   background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAABCAYAAAD5PA/NAAAAFklEQVQIHWPSkNeSBmJhTQVtbiDNCgASagIIuJX8OgAAAABJRU5ErkJggg==);
 }
-.dt.material .dt-header .dt-row-right,
-.dt.material .dt-body .dt-row-right {
+.material .dt .dt-header .dt-row-right,
+.material .dt .dt-body .dt-row-right {
   background-position: 0 0;
   background-color: #fff;
   background-repeat: repeat-y;
   background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAABCAYAAAD5PA/NAAAAFklEQVQI12PQkNdi1VTQ5gbSwkAsDQARLAIGtOSFUAAAAABJRU5ErkJggg==);
 }
-.dt.material .dt-body .dt-row .dt-cell {
+.material .dt .dt-body dt-row .dt-cell {
   text-align: left;
   padding: .5rem 1.2rem;
   vertical-align: top;
@@ -52,36 +52,36 @@
   -o-transition: width 0.3s ease;
   transition: width 0.3s ease;
 }
-.dt.material .dt-body .dt-row:hover,
-.dt.material .dt-body .dt-row:hover .dt-row-block {
+.material .dt .dt-body dt-row:hover,
+.material .dt .dt-body dt-row:hover .dt-row-block {
   background-color: #eee;
   transition-property: background;
   transition-duration: .3s;
   transition-timing-function: linear;
 }
-.dt.material .dt-body .dt-row:hover input[type='checkbox']:after {
+.material .dt .dt-body dt-row:hover input[type='checkbox']:after {
   background-color: #b3e5fc;
 }
-.dt.material .dt-body .dt-group-row {
+.material .dt .dt-body .dt-group-row {
   text-align: left;
   padding: .5rem 1.2rem;
   vertical-align: top;
   border-top: 0;
   background: #B6B6B6;
 }
-.dt.material .dt-footer {
+.material .dt .dt-footer {
   border-top: 1px solid rgba(0, 0, 0, 0.12);
   font-size: 16px;
 }
-.dt.material .dt-footer .page-count {
+.material .dt .dt-footer .page-count {
   line-height: 50px;
   height: 50px;
   padding: 0 1.2rem;
 }
-.dt.material .dt-footer .pager {
+.material .dt .dt-footer .pager {
   margin: 5px 10px;
 }
-.dt.material .dt-footer .pager a {
+.material .dt .dt-footer .pager a {
   height: 24px;
   min-width: 24px;
   line-height: 26px;
@@ -93,35 +93,35 @@
   color: rgba(0, 0, 0, 0.54);
   text-decoration: none;
 }
-.dt.material .dt-footer .pager a:hover {
+.material .dt .dt-footer .pager a:hover {
   color: rgba(0, 0, 0, 0.75);
   background-color: rgba(158, 158, 158, 0.2);
 }
-.dt.material .dt-footer .pager .icon-left,
-.dt.material .dt-footer .pager .icon-skip,
-.dt.material .dt-footer .pager .icon-right,
-.dt.material .dt-footer .pager .icon-prev {
+.material .dt .dt-footer .pager .icon-left,
+.material .dt .dt-footer .pager .icon-skip,
+.material .dt .dt-footer .pager .icon-right,
+.material .dt .dt-footer .pager .icon-prev {
   font-size: 20px;
   line-height: 32px;
   padding: 0 3px;
 }
-.dt.material .dt-footer .pager .disabled a {
+.material .dt .dt-footer .pager .disabled a {
   cursor: not-allowed;
   color: rgba(0, 0, 0, 0.26) !important;
   background-color: transparent !important;
 }
-.dt.material .dt-footer .pager .active a {
+.material .dt .dt-footer .pager .active a {
   background-color: rgba(158, 158, 158, 0.2);
   font-weight: bold;
 }
-.dt.material .empty-row {
+.material .dt .empty-row {
   height: 50px;
   text-align: left;
   padding: .5rem 1.2rem;
   vertical-align: top;
   border-top: 0;
 }
-.dt.material .loading-row {
+.material .dt .loading-row {
   text-align: left;
   padding: .5rem 1.2rem;
   vertical-align: top;

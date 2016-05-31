@@ -31,7 +31,7 @@ export function PagerDirective(){
             <a href ng-click="pager.selectPage(pager.totalPages)" class="icon-skip"></a>
           </li>
         </ul>
-      </div>`,
-    replace: true
+      </div>
+    `
   };
 };

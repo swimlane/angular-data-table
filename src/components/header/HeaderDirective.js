@@ -17,7 +17,6 @@ export function HeaderDirective($timeout){
     },
     template: `
       <div class="dt-header" ng-style="header.styles()">
-
         <div class="dt-header-inner" ng-style="header.innerStyles()">
           <div class="dt-row-left"
                ng-style="header.stylesByGroup('left')"

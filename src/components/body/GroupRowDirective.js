@@ -13,7 +13,6 @@ export function GroupRowDirective(){
       options: '='
     },
     scope: true,
-    replace:true,
     template: `
       <div class="dt-group-row">
         <span ng-class="group.treeClass()"

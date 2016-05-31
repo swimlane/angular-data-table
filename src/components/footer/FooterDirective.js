@@ -19,7 +19,7 @@ export function FooterDirective(){
                on-page="footer.onPaged(page)"
                ng-show="footer.paging.count / footer.paging.size > 1">
          </dt-pager>
-      </div>`,
-    replace: true
+      </div>
+    `,
   };
 };

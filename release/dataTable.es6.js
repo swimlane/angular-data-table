@@ -196,8 +196,8 @@ function PagerDirective(){
             <a href ng-click="pager.selectPage(pager.totalPages)" class="icon-skip"></a>
           </li>
         </ul>
-      </div>`,
-    replace: true
+      </div>
+    `
   };
 }
 
@@ -257,8 +257,8 @@ function FooterDirective(){
                on-page="footer.onPaged(page)"
                ng-show="footer.paging.count / footer.paging.size > 1">
          </dt-pager>
-      </div>`,
-    replace: true
+      </div>
+    `,
   };
 }
 
@@ -375,40 +375,35 @@ function CellDirective($rootScope, $compile, $log, $timeout){
               ng-click="cell.onTreeToggled($event)"></span>
         <span class="dt-cell-content"></span>
       </div>`,
-    replace: true,
-    compile: function() {
-      return {
-        pre: function($scope, $elm, $attrs, ctrl) {
-          var content = angular.element($elm[0].querySelector('.dt-cell-content')), cellScope;
+    link: function($scope, $elm, $attrs, ctrl) {
+      var content = angular.element($elm[0].querySelector('.dt-cell-content')), cellScope;
 
-          // extend the outer scope onto our new cell scope
-          if(ctrl.column.template || ctrl.column.cellRenderer){
-            cellScope = ctrl.options.$outer.$new(false);
-            cellScope.getValue = ctrl.getValue;
-          }
-
-          $scope.$watch('cell.row', () => {
-            if(cellScope){
-              cellScope.$cell = ctrl.value;
-              cellScope.$row = ctrl.row;
-              cellScope.$column = ctrl.column;
-              cellScope.$$watchers = null;
-            }
-
-            if(ctrl.column.template){
-              content.empty();
-              var elm = angular.element(`<span>${ctrl.column.template.trim()}</span>`);
-              content.append($compile(elm)(cellScope));
-            } else if(ctrl.column.cellRenderer){
-              content.empty();
-              var elm = angular.element(ctrl.column.cellRenderer(cellScope, content));
-              content.append($compile(elm)(cellScope));
-            } else {
-              content[0].innerHTML = ctrl.getValue();
-            }
-          }, true);
-        }
+      // extend the outer scope onto our new cell scope
+      if(ctrl.column.template || ctrl.column.cellRenderer){
+        cellScope = ctrl.options.$outer.$new(false);
+        cellScope.getValue = ctrl.getValue;
       }
+
+      $scope.$watch('cell.row', () => {
+        if(cellScope){
+          cellScope.$cell = ctrl.value;
+          cellScope.$row = ctrl.row;
+          cellScope.$column = ctrl.column;
+          cellScope.$$watchers = null;
+        }
+
+        if(ctrl.column.template){
+          content.empty();
+          var elm = angular.element(`<span>${ctrl.column.template.trim()}</span>`);
+          content.append($compile(elm)(cellScope));
+        } else if(ctrl.column.cellRenderer){
+          content.empty();
+          var elm = angular.element(ctrl.column.cellRenderer(cellScope, content));
+          content.append($compile(elm)(cellScope));
+        } else {
+          content[0].innerHTML = ctrl.getValue();
+        }
+      }, true);
     }
   };
 }
@@ -528,7 +523,6 @@ function GroupRowDirective(){
       options: '='
     },
     scope: true,
-    replace:true,
     template: `
       <div class="dt-group-row">
         <span ng-class="group.treeClass()"
@@ -696,8 +690,8 @@ function RowDirective(){
                    value="rowCtrl.getValue(column)">
           </dt-cell>
         </div>
-      </div>`,
-    replace:true
+      </div>
+    `
   };
 }
 
@@ -956,7 +950,6 @@ function ScrollerDirective($timeout, $rootScope){
     restrict: 'E',
     require:'^dtBody',
     transclude: true,
-    replace: true,
     template: `<div ng-style="scrollerStyles()" ng-transclude></div>`,
     link: function($scope, $elm, $attrs, ctrl){
       var ticking = false,
@@ -1675,7 +1668,6 @@ function HeaderCellDirective($compile){
       onResize: '&',
       selected: '='
     },
-    replace: true,
     template:
       `<div ng-class="hcell.cellClass()"
             class="dt-header-cell"
@@ -1698,31 +1690,27 @@ function HeaderCellDirective($compile){
           <span ng-class="hcell.sortClass()"></span>
         </div>
       </div>`,
-    compile: function() {
-      return {
-        pre: function($scope, $elm, $attrs, ctrl) {
-          let label = $elm[0].querySelector('.dt-header-cell-label'), cellScope;
+    link: function($scope, $elm, $attrs, ctrl) {
+      let label = $elm[0].querySelector('.dt-header-cell-label'), cellScope;
 
-          if(ctrl.column.headerTemplate || ctrl.column.headerRenderer){
-            cellScope = ctrl.options.$outer.$new(false);
+      if(ctrl.column.headerTemplate || ctrl.column.headerRenderer){
+        cellScope = ctrl.options.$outer.$new(false);
 
-            // copy some props
-            cellScope.$header = ctrl.column.name;
-            cellScope.$index = $scope.$index;
-          }
+        // copy some props
+        cellScope.$header = ctrl.column.name;
+        cellScope.$index = $scope.$index;
+      }
 
-          if(ctrl.column.headerTemplate){
-            let elm = angular.element(`<span>${ctrl.column.headerTemplate.trim()}</span>`);
-            angular.element(label).append($compile(elm)(cellScope));
-          } else if(ctrl.column.headerRenderer){
-            let elm = angular.element(ctrl.column.headerRenderer($elm));
-            angular.element(label).append($compile(elm)(cellScope)[0]);
-          } else {
-            let val = ctrl.column.name;
-            if(val === undefined || val === null) val = '';
-            label.textContent = val;
-          }
-        }
+      if(ctrl.column.headerTemplate){
+        let elm = angular.element(`<span>${ctrl.column.headerTemplate.trim()}</span>`);
+        angular.element(label).append($compile(elm)(cellScope));
+      } else if(ctrl.column.headerRenderer){
+        let elm = angular.element(ctrl.column.headerRenderer($elm));
+        angular.element(label).append($compile(elm)(cellScope)[0]);
+      } else {
+        let val = ctrl.column.name;
+        if(val === undefined || val === null) val = '';
+        label.textContent = val;
       }
     }
   };
@@ -1838,7 +1826,6 @@ function HeaderDirective($timeout){
     },
     template: `
       <div class="dt-header" ng-style="header.styles()">
-
         <div class="dt-header-inner" ng-style="header.innerStyles()">
           <div class="dt-row-left"
                ng-style="header.stylesByGroup('left')"
@@ -2081,68 +2068,6 @@ function ResizableDirective($document, $timeout){
   };
 }
 
-
-/**
- * Throttle helper
- * @param  {function}
- * @param  {boolean}
- * @param  {object}
- */
-function throttle(func, wait, options) {
-  var context, args, result;
-  var timeout = null;
-  var previous = 0;
-  options || (options = {});
-  var later = function() {
-    previous = options.leading === false ? 0 : new Date();
-    timeout = null;
-    result = func.apply(context, args);
-  };
-  return function() {
-    var now = new Date();
-    if (!previous && options.leading === false)
-      previous = now;
-    var remaining = wait - (now - previous);
-    context = this;
-    args = arguments;
-    if (remaining <= 0) {
-      clearTimeout(timeout);
-      timeout = null;
-      previous = now;
-      result = func.apply(context, args);
-    } else if (!timeout && options.trailing !== false) {
-      timeout = setTimeout(later, remaining);
-    }
-    return result;
-  };
-}
-
-
-/**
- * Gets the width of the scrollbar.  Nesc for windows
- * http://stackoverflow.com/a/13382873/888165
- * @return {int} width
- */
-function ScrollbarWidth() {
-  var outer = document.createElement("div");
-  outer.style.visibility = "hidden";
-  outer.style.width = "100px";
-  outer.style.msOverflowStyle = "scrollbar";
-  document.body.appendChild(outer);
-
-  var widthNoScroll = outer.offsetWidth;
-  outer.style.overflow = "scroll";
-
-  var inner = document.createElement("div");
-  inner.style.width = "100%";
-  outer.appendChild(inner);
-
-  var widthWithScroll = inner.offsetWidth;
-  outer.parentNode.removeChild(outer);
-
-  return widthNoScroll - widthWithScroll;
-}
-
 let DataTableService = {
 
   // id: [ column defs ]
@@ -2217,12 +2142,10 @@ let DataTableService = {
 
 /**
  * Creates a unique object id.
+ * http://stackoverflow.com/questions/6248666/how-to-generate-short-uid-like-ax4j9z-in-js
  */
 function ObjectId() {
-  var timestamp = (new Date().getTime() / 1000 | 0).toString(16);
-  return timestamp + 'xxxxxxxxxxxxxxxx'.replace(/[x]/g, function () {
-      return (Math.random() * 16 | 0).toString(16);
-  }).toLowerCase();
+  return ("0000" + (Math.random()*Math.pow(36,4) << 0).toString(36)).slice(-4);
 }
 
 
@@ -2569,6 +2492,68 @@ const TableDefaults = {
 
 };
 
+
+/**
+ * Throttle helper
+ * @param  {function}
+ * @param  {boolean}
+ * @param  {object}
+ */
+function throttle(func, wait, options) {
+  var context, args, result;
+  var timeout = null;
+  var previous = 0;
+  options || (options = {});
+  var later = function() {
+    previous = options.leading === false ? 0 : new Date();
+    timeout = null;
+    result = func.apply(context, args);
+  };
+  return function() {
+    var now = new Date();
+    if (!previous && options.leading === false)
+      previous = now;
+    var remaining = wait - (now - previous);
+    context = this;
+    args = arguments;
+    if (remaining <= 0) {
+      clearTimeout(timeout);
+      timeout = null;
+      previous = now;
+      result = func.apply(context, args);
+    } else if (!timeout && options.trailing !== false) {
+      timeout = setTimeout(later, remaining);
+    }
+    return result;
+  };
+}
+
+
+/**
+ * Gets the width of the scrollbar.  Nesc for windows
+ * http://stackoverflow.com/a/13382873/888165
+ * @return {int} width
+ */
+function ScrollbarWidth() {
+  var outer = document.createElement("div");
+  outer.style.visibility = "hidden";
+  outer.style.width = "100px";
+  outer.style.msOverflowStyle = "scrollbar";
+  document.body.appendChild(outer);
+
+  var widthNoScroll = outer.offsetWidth;
+  outer.style.overflow = "scroll";
+
+  var inner = document.createElement("div");
+  inner.style.width = "100%";
+  outer.appendChild(inner);
+
+  var widthWithScroll = inner.offsetWidth;
+  outer.parentNode.removeChild(outer);
+
+  return widthNoScroll - widthWithScroll;
+}
+
 class DataTableController {
 
   /**
@@ -2577,19 +2562,27 @@ class DataTableController {
    * @param  {filter}
    */
   /*@ngInject*/
-  constructor($scope, $filter, $log, $transclude){
+  constructor($scope, $element, $parse, $window, $timeout, $filter, $log) {
     Object.assign(this, {
-      $scope: $scope,
-      $filter: $filter,
-      $log: $log
+      $element,
+      $timeout,
+      $scope,
+      $filter,
+      $log,
+      $parse,
+      $window
     });
 
+    const children = this.$element.children();
+    this.childElm = angular.element(children[0]);
+
+    this.build();
     this.defaults();
 
     // set scope to the parent
     this.options.$outer = $scope.$parent;
 
-    $scope.$watch('dt.options.columns', (newVal, oldVal) => {
+    $scope.$watch('$ctrl.options.columns', (newVal, oldVal) => {
       this.transposeColumnDefaults();
 
       if(newVal.length !== oldVal.length){
@@ -2600,12 +2593,86 @@ class DataTableController {
     }, true);
 
     // default sort
-    var watch = $scope.$watch('dt.rows', (newVal) => {
+    var watch = $scope.$watch('$ctrl.rows', (newVal) => {
       if(newVal){
         watch();
         this.onSorted();
       }
     });
+  }
+
+  $onInit() {
+    this.options.internal.scrollBarWidth = ScrollbarWidth();
+    this.setupSizing();
+
+    // add a loaded class to avoid flickering
+    this.childElm.addClass('dt-loaded');
+  }
+
+  $onDestroy() {
+    angular.element(this.$window).off('resize');
+  }
+
+  build() {
+    DataTableService.buildColumns(this.$scope, this.$parse);
+
+    // Check and see if we had expressive columns
+    // and if so, lets use those
+    
+    const id = this.childElm.attr('data-column-id');
+
+    let columns = DataTableService.columns[id];
+    if (columns) {
+      this.options.columns = columns;
+    }
+
+    this.transposeColumnDefaults();
+  }
+
+  setupSizing() {
+    /**
+     * Invoked on init of control or when the window is resized;
+     */
+    const resize = () => {
+      var rect = this.childElm[0].getBoundingClientRect();
+
+      this.options.internal.innerWidth = Math.floor(rect.width);
+
+      if (this.options.scrollbarV) {
+        var height = rect.height;
+
+        if (this.options.headerHeight) {
+          height = height - this.options.headerHeight;
+        }
+
+        if (this.options.footerHeight) {
+          height = height - this.options.footerHeight;
+        }
+
+        this.options.internal.bodyHeight = height;
+        this.calculatePageSize();
+      }
+
+      this.adjustColumns();
+    };
+
+    angular.element(this.$window).bind('resize',
+      throttle(() => {
+        this.$timeout(resize);
+      }));
+
+    // When an item is hidden for example
+    // in a tab with display none, the height
+    // is not calculated correrctly.  We need to watch
+    // the visible attribute and resize if this occurs
+    var checkVisibility = () => {
+    var bounds = this.$element[0].getBoundingClientRect(),
+        visible = bounds.width && bounds.height;
+      if (visible) resize();
+      else this.$timeout(checkVisibility, 100);
+    };
+
+    checkVisibility();
   }
 
   /**
@@ -2869,137 +2936,70 @@ class DataTableController {
 
 }
 
-function DataTableDirective($window, $timeout, $parse){
-  return {
-    restrict: 'E',
-    replace: true,
-    controller: DataTableController,
-    scope: true,
-    bindToController: {
-      options: '=',
-      rows: '=',
-      selected: '=?',
-      expanded: '=?',
-      onSelect: '&',
-      onSort: '&',
-      onTreeToggle: '&',
-      onPage: '&',
-      onRowClick: '&',
-      onRowDblClick: '&',
-      onColumnResize: '&'
-    },
-    controllerAs: 'dt',
-    template: function(element){
-      // Gets the column nodes to transposes to column objects
-      // http://stackoverflow.com/questions/30845397/angular-expressive-directive-design/30847609#30847609
-      var columns = element[0].getElementsByTagName('column'),
-          id = ObjectId();
-      DataTableService.saveColumns(id, columns);
+const DataTableDirective = {
+  controller: DataTableController,
+  bindings: {
+    options: '=',
+    rows: '=',
+    selected: '=?',
+    expanded: '=?',
+    onSelect: '&',
+    onSort: '&',
+    onTreeToggle: '&',
+    onPage: '&',
+    onRowClick: '&',
+    onRowDblClick: '&',
+    onColumnResize: '&'
+  },
+  template:function($element) {
+    // Gets the column nodes to transposes to column objects
+    // http://stackoverflow.com/questions/30845397/angular-expressive-directive-design/30847609#30847609
+    const columns = $element[0].getElementsByTagName('column');
+    const id = ObjectId();
 
-      return `<div class="dt" ng-class="dt.tableCss()" data-column-id="${id}">
-          <dt-header options="dt.options"
-                     on-checkbox-change="dt.onHeaderCheckboxChange()"
-                     columns="dt.columnsByPin"
-                     column-widths="dt.columnWidths"
-                     ng-if="dt.options.headerHeight"
-                     on-resize="dt.onResized(column, width)"
-                     selected="dt.isAllRowsSelected()"
-                     on-sort="dt.onSorted()">
-          </dt-header>
-          <dt-body rows="dt.rows"
-                   selected="dt.selected"
-                   expanded="dt.expanded"
-                   columns="dt.columnsByPin"
-                   on-select="dt.onSelected(rows)"
-                   on-row-click="dt.onRowClicked(row)"
-                   on-row-dbl-click="dt.onRowDblClicked(row)"
-                   column-widths="dt.columnWidths"
-                   options="dt.options"
-                   on-page="dt.onBodyPage(offset, size)"
-                   on-tree-toggle="dt.onTreeToggled(row, cell)">
-           </dt-body>
-          <dt-footer ng-if="dt.options.footerHeight"
-                     ng-style="{ height: dt.options.footerHeight + 'px' }"
-                     on-page="dt.onFooterPage(offset, size)"
-                     paging="dt.options.paging">
-           </dt-footer>
-        </div>`
-    },
-    compile: function(tElem, tAttrs){
-      return {
-        pre: function($scope, $elm, $attrs, ctrl){
-          DataTableService.buildColumns($scope, $parse);
+    DataTableService.saveColumns(id, columns);
 
-          // Check and see if we had expressive columns
-          // and if so, lets use those
-          var id = $elm.attr('data-column-id'),
-              columns = DataTableService.columns[id];
-          if (columns) {
-            ctrl.options.columns = columns;
-          }
-
-          ctrl.transposeColumnDefaults();
-          ctrl.options.internal.scrollBarWidth = ScrollbarWidth();
-
-          /**
-           * Invoked on init of control or when the window is resized;
-           */
-          function resize() {
-            var rect = $elm[0].getBoundingClientRect();
-
-            ctrl.options.internal.innerWidth = Math.floor(rect.width);
-
-            if (ctrl.options.scrollbarV) {
-              var height = rect.height;
-
-              if (ctrl.options.headerHeight) {
-                height = height - ctrl.options.headerHeight;
-              }
-
-              if (ctrl.options.footerHeight) {
-                height = height - ctrl.options.footerHeight;
-              }
-
-              ctrl.options.internal.bodyHeight = height;
-              ctrl.calculatePageSize();
-            }
-
-            ctrl.adjustColumns();
-          };
-
-          angular.element($window).bind('resize',
-            throttle(() => {
-              $timeout(resize);
-            }));
-
-          // When an item is hidden for example
-          // in a tab with display none, the height
-          // is not calculated correrctly.  We need to watch
-          // the visible attribute and resize if this occurs
-          var checkVisibility = function() {
-          var bounds = $elm[0].getBoundingClientRect(),
-              visible = bounds.width && bounds.height;
-            if (visible) resize();
-            else $timeout(checkVisibility, 100);
-          };
-          checkVisibility();
-
-          // add a loaded class to avoid flickering
-          $elm.addClass('dt-loaded');
-
-          // prevent memory leaks
-          $scope.$on('$destroy', () => {
-            angular.element($window).off('resize');
-          });
-        }
-      };
-    }
-  };
-}
+    return `
+      <div 
+        class="dt"
+        ng-class="$ctrl.tableCss()"
+        data-column-id="${id}">
+        <dt-header 
+          options="$ctrl.options"
+           on-checkbox-change="$ctrl.onHeaderCheckboxChange()"
+           columns="$ctrl.columnsByPin"
+           column-widths="$ctrl.columnWidths"
+           ng-if="$ctrl.options.headerHeight"
+           on-resize="$ctrl.onResized(column, width)"
+           selected="$ctrl.isAllRowsSelected()"
+           on-sort="$ctrl.onSorted()">
+        </dt-header>
+        <dt-body rows="$ctrl.rows"
+          selected="$ctrl.selected"
+          expanded="$ctrl.expanded"
+          columns="$ctrl.columnsByPin"
+          on-select="$ctrl.onSelected(rows)"
+          on-row-click="$ctrl.onRowClicked(row)"
+          on-row-dbl-click="$ctrl.onRowDblClicked(row)"
+          column-widths="$ctrl.columnWidths"
+          options="$ctrl.options"
+          on-page="$ctrl.onBodyPage(offset, size)"
+          on-tree-toggle="$ctrl.onTreeToggled(row, cell)">
+        </dt-body>
+        <dt-footer 
+          ng-if="$ctrl.options.footerHeight"
+          ng-style="{ height: $ctrl.options.footerHeight + 'px' }"
+          on-page="$ctrl.onFooterPage(offset, size)"
+          paging="$ctrl.options.paging">
+        </dt-footer>
+      </div>
+    `;
+  }
+};
 
 var dataTable = angular
   .module('data-table', [])
-  .directive('dtable', DataTableDirective)
+  .component('dtable', DataTableDirective)
   .directive('resizable', ResizableDirective)
   .directive('sortable', SortableDirective)
   .directive('dtHeader', HeaderDirective)

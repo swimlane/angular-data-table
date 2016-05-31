@@ -18,7 +18,7 @@ import { PagerDirective } from './components/footer/PagerDirective';
 
 export default angular
   .module('data-table', [])
-  .directive('dtable', DataTableDirective)
+  .component('dtable', DataTableDirective)
   .directive('resizable', ResizableDirective)
   .directive('sortable', SortableDirective)
   .directive('dtHeader', HeaderDirective)

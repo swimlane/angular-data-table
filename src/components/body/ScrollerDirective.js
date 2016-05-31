@@ -7,7 +7,6 @@ export function ScrollerDirective($timeout, $rootScope){
     restrict: 'E',
     require:'^dtBody',
     transclude: true,
-    replace: true,
     template: `<div ng-style="scrollerStyles()" ng-transclude></div>`,
     link: function($scope, $elm, $attrs, ctrl){
       var ticking = false,

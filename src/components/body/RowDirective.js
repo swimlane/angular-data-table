@@ -73,7 +73,7 @@ export function RowDirective(){
                    value="rowCtrl.getValue(column)">
           </dt-cell>
         </div>
-      </div>`,
-    replace:true
+      </div>
+    `
   };
 };
