@@ -1,6 +1,6 @@
 # angular-data-table [![Join the chat at https://gitter.im/Swimlane/angular-data-table](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/swimlane/angular-data-table?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge) [![Dependency Status](https://david-dm.org/swimlane/angular-data-table.svg)](https://david-dm.org/swimlane/angular-data-table) [![devDependency Status](https://david-dm.org/swimlane/angular-data-table/dev-status.svg)](https://david-dm.org/swimlane/angular-data-table#info=devDependencies)
 
-`angular-data-table` is a Angular2 component for presenting large and complex data.  It has all the features you would expect from any other table but in a light package with _no external depedencies_. The table was designed to be extremely flexible and light; it doesn't make any assumptions about your data or how you: filter, sort or page it.
+`angular-data-table` is a AngularJS directive for presenting large and complex data.  It has all the features you would expect from any other table but in a light package with _no external depedencies_. The table was designed to be extremely flexible and light; it doesn't make any assumptions about your data or how you: filter, sort or page it.
 
 It was engineered from its conception to handle thousands of rows without sacrificing performance.  It was built for modern browsers using _ES6, CSS3 and HTML5_ and only supports [Evergreen Browsers](http://eisenbergeffect.bluespire.com/evergreen-browsers/) and >= 1.4.x Angular.
 
