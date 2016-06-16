@@ -1,6 +1,6 @@
 /**
  * angular-data-table - A feature-rich but lightweight ES6 AngularJS Data Table crafted for large data sets!
- * @version v0.5.0
+ * @version v0.5.1
  * @link http://swimlane.com/
  * @license 
  */
@@ -1749,6 +1749,8 @@
         angular.forEach(columnElms, function (c) {
           var column = {};
 
+          var visible = true;
+
           angular.forEach(c.attributes, function (attr) {
             var attrName = CamelCase(attr.name);
 
@@ -1764,6 +1766,9 @@
               case 'cellRenderer':
               case 'cellDataGetter':
                 column[attrName] = parse(attr.value);
+                break;
+              case 'visible':
+                visible = parse(attr.value)(scope);
                 break;
               default:
                 column[attrName] = parse(attr.value)(scope);
@@ -1781,7 +1786,7 @@
             column.template = c.innerHTML;
           }
 
-          _this5.columns[id].push(column);
+          if (visible) _this5.columns[id].push(column);
         });
       });
 

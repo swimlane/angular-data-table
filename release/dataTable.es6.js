@@ -2171,6 +2171,7 @@ let DataTableService = {
       angular.forEach(columnElms, (c) => {
         let column = {};
 
+        var visible = true;
         // Iterate through each attribute
         angular.forEach(c.attributes, (attr) => {
           let attrName = CamelCase(attr.name);
@@ -2190,6 +2191,9 @@ let DataTableService = {
             case 'cellDataGetter':
               column[attrName] = parse(attr.value);
               break;
+            case 'visible':
+              visible = parse(attr.value)(scope);
+              break;
             default:
               column[attrName] = parse(attr.value)(scope);
               break;
@@ -2206,7 +2210,8 @@ let DataTableService = {
           column.template = c.innerHTML;
         }
 
-        this.columns[id].push(column);
+        if (visible)
+          this.columns[id].push(column);
       });
     });
 
