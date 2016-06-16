@@ -1,7 +1,6 @@
 import { NextSortDirection } from '../../utils/utils';
 
 export class HeaderCellController{
-
   /**
    * Calculates the styles for the header cell directive
    * @return {styles}
@@ -24,7 +23,7 @@ export class HeaderCellController{
       'resizable': this.column.resizable
     };
 
-    if(this.column.heaerClassName){
+    if(this.column.headerClassName){
       cls[this.column.headerClassName] = true;
     }
 
@@ -37,6 +36,10 @@ export class HeaderCellController{
   onSorted(){
     if(this.column.sortable){
       this.column.sort = NextSortDirection(this.sortType, this.column.sort);
+
+      if (this.column.sort === undefined){
+        this.column.sortPriority = undefined;
+      }
 
       this.onSort({
         column: this.column

@@ -6,7 +6,8 @@ export class CellController {
    */
   styles(){
     return {
-      width: this.column.width  + 'px'
+      width: this.column.width  + 'px',
+	  'min-width': this.column.width + 'px'
     };
   }
 

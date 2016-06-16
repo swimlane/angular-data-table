@@ -1,10 +1,12 @@
-# angular-data-table [![Join the chat at https://gitter.im/Swimlane/angular-data-table](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/Swimlane/angular-data-table?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+# angular-data-table [![Join the chat at https://gitter.im/Swimlane/angular-data-table](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/swimlane/angular-data-table?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge) [![Dependency Status](https://david-dm.org/swimlane/angular-data-table.svg)](https://david-dm.org/swimlane/angular-data-table) [![devDependency Status](https://david-dm.org/swimlane/angular-data-table/dev-status.svg)](https://david-dm.org/swimlane/angular-data-table#info=devDependencies)
 
 `angular-data-table` is a AngularJS directive for presenting large and complex data.  It has all the features you would expect from any other table but in a light package with _no external depedencies_. The table was designed to be extremely flexible and light; it doesn't make any assumptions about your data or how you: filter, sort or page it.
 
 It was engineered from its conception to handle thousands of rows without sacrificing performance.  It was built for modern browsers using _ES6, CSS3 and HTML5_ and only supports [Evergreen Browsers](http://eisenbergeffect.bluespire.com/evergreen-browsers/) and >= 1.4.x Angular.
 
-See live demos [here](http://swimlane.github.io/angular-data-table/).
+Sadly, this project is **not Angular2 upgrade compatible**...but we are in the progress of building a [angular2-data-table](https://github.com/swimlane/angular2-data-table) successor. Stay tuned for more info!
+
+See live demos [here]( http://swimlane.github.io/angular-data-table/).
 
 ## Features
 
@@ -32,7 +34,8 @@ See live demos [here](http://swimlane.github.io/angular-data-table/).
 #### Download
 
 - NPM `npm install angular-data-table`
-- JSPM `jspm install github:Swimlane/angular-data-table`
+- JSPM `jspm install github:swimlane/angular-data-table`
+- BOWER `bower install angular-data-table`
 
 or Github download or clone of course!
 
@@ -49,23 +52,23 @@ docs coming soon, in the meantime, 'View Source' is your friend ;)!
 
 #### Build
 
-`gulp release` to build Modules, ES5 via Babel and compile.
+`gulp release` to build Modules, ES* via Babel and compile.
 
 #### Include
 
 You've got 5 different options to include this in your build depending on your setup.
 
-- `./release/dataTable.js` - A standalone file that was compiled with Babel and EXCLUDES the Babel runtime.
-- `./release/dataTable.helpers.js` - A standalone file that was compiled with Babel and INCLUDES the Babel runtime.
-- `./release/dataTable.helpers.min.js` - A standalone file that was compiled with Babel, INCLUDES the Babel runtime and is MINIFIED.
+- `./release/dataTable.js` - A standalone file that was compiled with Babel (UMD)
+- `./release/dataTable.min.js` - A minified standalone file that was compiled with Babel (UMD)
+- `./release/dataTable.cjs.js` - A standalone file that was compiled with Babel (CommonJS)
 - `./release/dataTable.es6.js` - Raw ES6 Version.
+ 
+All distributions include babel helpers, so they do not have to be included separately.
 
 There is also the CSS too:
 
 - `./release/dataTable.css` - The base CSS, pretty much required
 - `./release/material.css` - Material theme
-
-If none of the above makes any sense just include `./release/dataTable.helpers.min.js` and include the css files referenced above.
 
 #### Usage
 
@@ -130,6 +133,3 @@ The core CSS for the table has no assumptions about the styling of your applicat
 ## Credits
 
 `angular-data-table` is a [Swimlane](http://swimlane.com) open-source project; we believe in giving back to the open-source community by sharing some of the projects we build for our application. Swimlane is an automated cyber security operations and incident response platform that enables cyber security teams to leverage threat intelligence, speed up incident response and automate security operations.
-
-## License
-MIT

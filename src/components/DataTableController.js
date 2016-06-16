@@ -136,12 +136,36 @@ export class DataTableController {
   onSorted(){
     if(!this.rows) return;
 
-    var sorts = this.options.columns.filter((c) => {
-      return c.sort;
-    });
+    // return all sorted column, in the same order in which they were sorted
+    var sorts = this.options.columns
+      .filter((c) => {
+        return c.sort;
+      })
+      .sort((a, b) => {
+        // sort the columns with lower sortPriority order first
+        if (a.sortPriority && b.sortPriority){
+          if (a.sortPriority > b.sortPriority) return 1;
+          if (a.sortPriority < b.sortPriority) return -1;
+        } else if (a.sortPriority){
+          return -1;
+        } else if (b.sortPriority){
+          return 1;
+        }
+
+        return 0;
+      })
+      .map((c, i) => {
+        // update sortPriority
+        c.sortPriority = i + 1;
+        return c;
+      });
 
     if(sorts.length){
-        this.onSort({ sorts: sorts });
+      this.onSort({sorts: sorts});
+
+      if (this.options.onSort){
+        this.options.onSort(sorts);
+      }
 
       var clientSorts = [];
       for(var i=0, len=sorts.length; i < len; i++) {
@@ -228,7 +252,7 @@ export class DataTableController {
    * @param  {object} column
    * @param  {int} width
    */
-  onResize(column, width){
+  onResized(column, width){
     var idx =this.options.columns.indexOf(column);
     if(idx > -1){
       var column = this.options.columns[idx];
@@ -237,6 +261,13 @@ export class DataTableController {
 
       this.adjustColumns(idx);
       this.calculateColumns();
+    }
+
+    if (this.onColumnResize){
+      this.onColumnResize({
+        column: column,
+        width: width
+      });
     }
   }
 
@@ -259,7 +290,7 @@ export class DataTableController {
       row: row
     });
   }
-  
+
   /**
    * Occurs when a row was double click but may not be selected.
    * @param  {object} row

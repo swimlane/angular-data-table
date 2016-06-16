@@ -11,6 +11,11 @@ export class PagerController {
       this.getPages(this.page || 1);
     });
 
+    $scope.$watch('pager.size', (newVal) => {
+      this.calcTotalPages(this.size, this.count);
+      this.getPages(this.page || 1);
+    });
+
     $scope.$watch('pager.page', (newVal) => {
       if (newVal !== 0 && newVal <= this.totalPages) {
         this.getPages(newVal);
