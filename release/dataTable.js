@@ -2357,7 +2357,7 @@
               ctrl.adjustColumns();
             };
 
-            angular.element($window).bind('resize', throttle(function () {
+            $window.addEventListener('resize', throttle(function () {
               $timeout(resize);
             }));
 

@@ -2972,7 +2972,7 @@ function DataTableDirective($window, $timeout, $parse){
             ctrl.adjustColumns();
           };
 
-          angular.element($window).bind('resize',
+          $window.addEventListener('resize',
             throttle(() => {
               $timeout(resize);
             }));
