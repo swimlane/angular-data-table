@@ -37,7 +37,7 @@ export function ResizableDirective($document, $timeout){
 
       function mousemove(event) {
         event = event.originalEvent || event;
-        
+
         var width = parent[0].clientWidth,
             movementX = event.movementX || event.mozMovementX || (event.screenX - prevScreenX),
             newWidth = width + (movementX || 0);
@@ -52,9 +52,13 @@ export function ResizableDirective($document, $timeout){
       }
 
       function mouseup() {
-        if($scope.onResize){
-          $timeout(() => {
-            $scope.onResize({ width: parent[0].clientWidth });
+        if ($scope.onResize) {
+          $timeout(function () {
+            let width = parent[0].clientWidth;
+            if (width < $scope.minWidth){
+              width = $scope.minWidth;
+            }
+            $scope.onResize({ width: width });
           });
         }
 
