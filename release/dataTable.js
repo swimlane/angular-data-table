@@ -1,6 +1,6 @@
 /**
  * angular-data-table - A feature-rich but lightweight ES6 AngularJS Data Table crafted for large data sets!
- * @version v0.5.1
+ * @version v0.5.2
  * @link http://swimlane.com/
  * @license 
  */
@@ -1669,7 +1669,11 @@
         function mouseup() {
           if ($scope.onResize) {
             $timeout(function () {
-              $scope.onResize({ width: parent[0].clientWidth });
+              var width = parent[0].clientWidth;
+              if (width < $scope.minWidth) {
+                width = $scope.minWidth;
+              }
+              $scope.onResize({ width: width });
             });
           }
 
