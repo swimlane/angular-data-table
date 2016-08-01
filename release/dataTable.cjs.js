@@ -312,12 +312,15 @@ function CellDirective($rootScope, $compile, $log, $timeout) {
               cellScope;
 
           if (ctrl.column.template || ctrl.column.cellRenderer) {
-            cellScope = ctrl.options.$outer.$new(false);
-            cellScope.getValue = ctrl.getValue;
+            createCellScope();
           }
 
           $scope.$watch('cell.row', function () {
             if (cellScope) {
+              cellScope.$destroy();
+
+              createCellScope();
+
               cellScope.$cell = ctrl.value;
               cellScope.$row = ctrl.row;
               cellScope.$column = ctrl.column;
@@ -336,6 +339,11 @@ function CellDirective($rootScope, $compile, $log, $timeout) {
               content[0].innerHTML = ctrl.getValue();
             }
           }, true);
+
+          function createCellScope() {
+            cellScope = ctrl.options.$outer.$new(false);
+            cellScope.getValue = ctrl.getValue;
+          }
         }
       };
     }
