@@ -1956,6 +1956,8 @@ var ColumnDefaults = {
 
   sort: undefined,
 
+  sortBy: undefined,
+
   headerRenderer: undefined,
 
   cellRenderer: undefined,
