@@ -2130,6 +2130,8 @@ var DataTableController = function () {
       var sorts = this.options.columns.filter(function (c) {
         return c.sort;
       }).sort(function (a, b) {
+        console.log('maybe here', a, b);
+
         if (a.sortPriority && b.sortPriority) {
           if (a.sortPriority > b.sortPriority) return 1;
           if (a.sortPriority < b.sortPriority) return -1;
@@ -2157,7 +2159,11 @@ var DataTableController = function () {
           var c = sorts[i];
           if (c.comparator !== false) {
             var dir = c.sort === 'asc' ? '' : '-';
-            clientSorts.push(dir + c.prop);
+            if (c.sortBy !== undefined) {
+              clientSorts.push(dir + c.sortBy);
+            } else {
+              clientSorts.push(dir + c.prop);
+            }
           }
         }
 

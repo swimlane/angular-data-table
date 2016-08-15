@@ -84,15 +84,20 @@
               },
               {
                 name: "Company",
-                prop: "company",
+                prop: "companyLink",
                 sort: 'asc',
-                sortPriority: 3
+                sortPriority: 3,
+                cellRenderer: function() {
+                      return '<a target="_blank" href="\{{$cell.link}}">\{{$cell.text}}</a>';
+                  },
+                sortBy: 'company'
               }
             ]
           };
 
           $http.get('/demos/data/100.json').success(function(data) {
             $scope.data = data.splice(0, 15);
+            $scope.data.forEach(person => person.companyLink = {text: person.company, link: 'http://lmgtfy.com/?q=' + person.company})
           });
 
         });

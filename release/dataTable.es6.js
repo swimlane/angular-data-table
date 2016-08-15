@@ -2725,6 +2725,7 @@ class DataTableController {
         return c.sort;
       })
       .sort((a, b) => {
+        console.log('maybe here', a, b);
         // sort the columns with lower sortPriority order first
         if (a.sortPriority && b.sortPriority){
           if (a.sortPriority > b.sortPriority) return 1;
@@ -2755,7 +2756,11 @@ class DataTableController {
         var c = sorts[i];
         if(c.comparator !== false){
           var dir = c.sort === 'asc' ? '' : '-';
-          clientSorts.push(dir + c.prop);
+          if (c.sortBy !== undefined) {
+            clientSorts.push(dir + c.sortBy);
+          } else {
+            clientSorts.push(dir + c.prop);
+          }
         }
       }
 
