@@ -118,6 +118,10 @@ export const ColumnDefaults = {
   // Default sort asecending/descending for the column
   sort: undefined,
 
+  // If you want to sort a column by a special property
+  // See an example in demos/sort.html
+  sortBy: undefined,
+
   // The cell renderer that returns content for table column header
   headerRenderer: undefined,
 

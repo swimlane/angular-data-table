@@ -1956,6 +1956,8 @@ var ColumnDefaults = {
 
   sort: undefined,
 
+  sortBy: undefined,
+
   headerRenderer: undefined,
 
   cellRenderer: undefined,
@@ -2157,7 +2159,11 @@ var DataTableController = function () {
           var c = sorts[i];
           if (c.comparator !== false) {
             var dir = c.sort === 'asc' ? '' : '-';
-            clientSorts.push(dir + c.prop);
+            if (c.sortBy !== undefined) {
+              clientSorts.push(dir + c.sortBy);
+            } else {
+              clientSorts.push(dir + c.prop);
+            }
           }
         }
 

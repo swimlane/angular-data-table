@@ -2486,6 +2486,10 @@ const ColumnDefaults = {
   // Default sort asecending/descending for the column
   sort: undefined,
 
+  // If you want to sort a column by a special property
+  // See an example in demos/sort.html
+  sortBy: undefined,
+
   // The cell renderer that returns content for table column header
   headerRenderer: undefined,
 
@@ -2755,7 +2759,11 @@ class DataTableController {
         var c = sorts[i];
         if(c.comparator !== false){
           var dir = c.sort === 'asc' ? '' : '-';
-          clientSorts.push(dir + c.prop);
+          if (c.sortBy !== undefined) {
+            clientSorts.push(dir + c.sortBy);
+          } else {
+            clientSorts.push(dir + c.prop);
+          }
         }
       }
 
