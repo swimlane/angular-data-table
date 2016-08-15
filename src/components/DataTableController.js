@@ -142,7 +142,6 @@ export class DataTableController {
         return c.sort;
       })
       .sort((a, b) => {
-        console.log('maybe here', a, b);
         // sort the columns with lower sortPriority order first
         if (a.sortPriority && b.sortPriority){
           if (a.sortPriority > b.sortPriority) return 1;

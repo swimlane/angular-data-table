@@ -2132,8 +2132,6 @@ var DataTableController = function () {
       var sorts = this.options.columns.filter(function (c) {
         return c.sort;
       }).sort(function (a, b) {
-        console.log('maybe here', a, b);
-
         if (a.sortPriority && b.sortPriority) {
           if (a.sortPriority > b.sortPriority) return 1;
           if (a.sortPriority < b.sortPriority) return -1;
