@@ -172,7 +172,11 @@ export class DataTableController {
         var c = sorts[i];
         if(c.comparator !== false){
           var dir = c.sort === 'asc' ? '' : '-';
-          clientSorts.push(dir + c.prop);
+          if (c.prop.text !== undefined) {
+            clientSorts.push(dir + c.prop.text);
+          } else {
+            clientSorts.push(dir + c.prop);
+          }
         }
       }
 
