@@ -248,28 +248,27 @@ export class BodyController{
    * @return {array} the built tree
    */
   buildTree(){
-    var count = 0,
-        temp = [];
+    var temp = [],
+        self = this;
 
-    for(var i = 0, len = this.rows.length; i < len; i++) {
-      var row = this.rows[i],
-          relVal = row[this.treeColumn.relationProp],
-          keyVal = row[this.treeColumn.prop],
-          rows = this.rowsByGroup[keyVal],
-          expanded = this.expanded[keyVal];
+    function addChildren(fromArray, toArray, level) {
+      fromArray.forEach(function (row) {
+        var relVal = row[self.treeColumn.relationProp],
+            key = row[self.treeColumn.prop],
+            groupRows = self.rowsByGroup[key],
+            expanded = self.expanded[key];
 
-      if(!relVal){
-        count++;
-        temp.push(row);
-      }
-
-      if(rows && rows.length){
-        if(expanded){
-          temp.push(...rows);
-          count = count + rows.length;
+        if (level > 0 || !relVal) {
+          toArray.push(row);
+          if (groupRows && groupRows.length > 0 && expanded) {
+            addChildren(groupRows, toArray, level + 1);
+          }
         }
-      }
+
+      });
     }
+
+    addChildren(this.rows, temp, 0);
 
     return temp;
   }

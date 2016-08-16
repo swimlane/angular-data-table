@@ -41,12 +41,15 @@ export function CellDirective($rootScope, $compile, $log, $timeout){
 
           // extend the outer scope onto our new cell scope
           if(ctrl.column.template || ctrl.column.cellRenderer){
-            cellScope = ctrl.options.$outer.$new(false);
-            cellScope.getValue = ctrl.getValue;
+            createCellScope();
           }
 
           $scope.$watch('cell.row', () => {
             if(cellScope){
+              cellScope.$destroy();
+
+              createCellScope();
+
               cellScope.$cell = ctrl.value;
               cellScope.$row = ctrl.row;
               cellScope.$column = ctrl.column;
@@ -64,7 +67,13 @@ export function CellDirective($rootScope, $compile, $log, $timeout){
             } else {
               content[0].innerHTML = ctrl.getValue();
             }
+            
           }, true);
+
+          function createCellScope(){
+            cellScope = ctrl.options.$outer.$new(false);
+            cellScope.getValue = ctrl.getValue;
+          }
         }
       }
     }

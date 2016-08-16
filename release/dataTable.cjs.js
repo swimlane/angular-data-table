@@ -1,6 +1,6 @@
 /**
  * angular-data-table - A feature-rich but lightweight ES6 AngularJS Data Table crafted for large data sets!
- * @version v0.5.2
+ * @version v0.6.0
  * @link http://swimlane.com/
  * @license 
  */
@@ -312,12 +312,15 @@ function CellDirective($rootScope, $compile, $log, $timeout) {
               cellScope;
 
           if (ctrl.column.template || ctrl.column.cellRenderer) {
-            cellScope = ctrl.options.$outer.$new(false);
-            cellScope.getValue = ctrl.getValue;
+            createCellScope();
           }
 
           $scope.$watch('cell.row', function () {
             if (cellScope) {
+              cellScope.$destroy();
+
+              createCellScope();
+
               cellScope.$cell = ctrl.value;
               cellScope.$row = ctrl.row;
               cellScope.$column = ctrl.column;
@@ -336,6 +339,11 @@ function CellDirective($rootScope, $compile, $log, $timeout) {
               content[0].innerHTML = ctrl.getValue();
             }
           }, true);
+
+          function createCellScope() {
+            cellScope = ctrl.options.$outer.$new(false);
+            cellScope.getValue = ctrl.getValue;
+          }
         }
       };
     }
@@ -1023,28 +1031,26 @@ var BodyController = function () {
   }, {
     key: "buildTree",
     value: function buildTree() {
-      var count = 0,
-          temp = [];
+      var temp = [],
+          self = this;
 
-      for (var i = 0, len = this.rows.length; i < len; i++) {
-        var row = this.rows[i],
-            relVal = row[this.treeColumn.relationProp],
-            keyVal = row[this.treeColumn.prop],
-            rows = this.rowsByGroup[keyVal],
-            expanded = this.expanded[keyVal];
+      function addChildren(fromArray, toArray, level) {
+        fromArray.forEach(function (row) {
+          var relVal = row[self.treeColumn.relationProp],
+              key = row[self.treeColumn.prop],
+              groupRows = self.rowsByGroup[key],
+              expanded = self.expanded[key];
 
-        if (!relVal) {
-          count++;
-          temp.push(row);
-        }
-
-        if (rows && rows.length) {
-          if (expanded) {
-            temp.push.apply(temp, _toConsumableArray(rows));
-            count = count + rows.length;
+          if (level > 0 || !relVal) {
+            toArray.push(row);
+            if (groupRows && groupRows.length > 0 && expanded) {
+              addChildren(groupRows, toArray, level + 1);
+            }
           }
-        }
+        });
       }
+
+      addChildren(this.rows, temp, 0);
 
       return temp;
     }
@@ -1950,6 +1956,8 @@ var ColumnDefaults = {
 
   sort: undefined,
 
+  sortBy: undefined,
+
   headerRenderer: undefined,
 
   cellRenderer: undefined,
@@ -2151,7 +2159,11 @@ var DataTableController = function () {
           var c = sorts[i];
           if (c.comparator !== false) {
             var dir = c.sort === 'asc' ? '' : '-';
-            clientSorts.push(dir + c.prop);
+            if (c.sortBy !== undefined) {
+              clientSorts.push(dir + c.sortBy);
+            } else {
+              clientSorts.push(dir + c.prop);
+            }
           }
         }
 

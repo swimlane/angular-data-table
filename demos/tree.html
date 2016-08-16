@@ -45,8 +45,17 @@
       }
 
       .dt-depth-2 > div > .dt-tree-col{
-        text-indent: 35px;
+        text-indent: 55px;
       }
+
+      .dt-depth-3 > div > .dt-tree-col{
+        text-indent: 85px;
+      }
+
+      .dt-depth-4 > div > .dt-tree-col{
+        text-indent: 115px;
+      }
+      /* here add more if the tree depth is bigger */
 
       .dt-tree-col {
         padding-left:35px !important;
@@ -115,16 +124,57 @@
             console.log('toggled!')
           };
 
-          $scope.data = [
-            { 'company': 'Acme', 'revenue': '$3,452,342', 'sales': '$3,452,342,353' },
-            { 'company': 'Acme Holdings', 'revenue': '$345,342', 'sales': '$4,452,222,353', parentCompany: 'Acme' },
-            { 'company': 'Acme Limited', 'revenue': '$344,442', 'sales': '$10,452,444,353', parentCompany: 'Acme' },
-            { 'company': 'Sterling', 'revenue': '$40,443,111', 'sales': '$50,433,777,564' },
-            { 'company': 'Apple', 'revenue': '$1,440,443,111', 'sales': '$999,509,433,777,564' },
-            { 'company': 'Apple IBS', 'revenue': '$1,440,443,111', 'sales': '$999,509,433,777,564', parentCompany: 'Apple' },
-            { 'company': 'Apple IBS South', 'revenue': '$1,440,443,111', 'sales': '$999,509,433,777,564', parentCompany: 'Apple IBS' }
-          ];
-
+          $scope.data = [{
+              'company': 'Apple',
+              'revenue': '$1,440,443,111',
+              'sales': '$999,509,433,777,564'
+            }, {
+              'company': 'Apple IBS',
+              'revenue': '$1,440,443,111',
+              'sales': '$999,509,433,777,564',
+              parentCompany: 'Apple'
+            },{
+              'company': 'Apple XYZ',
+              'revenue': '$1,440,443,111',
+              'sales': '$999,509,433,777,564',
+              parentCompany: 'Apple'
+            },
+              {
+              'company': 'Apple IBS South1',
+              'revenue': '$1,440,443,111',
+              'sales': '$999,509,433,777,564',
+              parentCompany: 'Apple IBS'
+            },
+              {
+              'company': 'Apple IBS South1 ABC',
+              'revenue': '$1,440,443,111',
+              'sales': '$999,509,433,777,564',
+              parentCompany: 'Apple IBS South1'
+            },
+              {
+              'company': 'Apple IBS South1 CDE',
+              'revenue': '$1,440,443,111',
+              'sales': '$999,509,433,777,564',
+              parentCompany: 'Apple IBS South1'
+            },
+              {
+              'company': 'Apple IBS South2',
+              'revenue': '$1,440,443,111',
+              'sales': '$999,509,433,777,564',
+              parentCompany: 'Apple IBS'
+            },
+                          {
+              'company': 'Apple XYZ South1',
+              'revenue': '$1,440,443,111',
+              'sales': '$999,509,433,777,564',
+              parentCompany: 'Apple XYZ'
+            },
+              {
+              'company': 'Apple XYZ South2',
+              'revenue': '$1,440,443,111',
+              'sales': '$999,509,433,777,564',
+              parentCompany: 'Apple XYZ'
+            }];
         });
       });
     </script>
