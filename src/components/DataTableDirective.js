@@ -38,7 +38,8 @@ export function DataTableDirective($window, $timeout, $parse){
                      column-widths="dt.columnWidths"
                      ng-if="dt.options.headerHeight"
                      on-resize="dt.onResized(column, width)"
-                     selected="dt.isAllRowsSelected()"
+                     is-all-rows-selected="dt.isAllRowsSelected()"
+                     selected-rows="dt.selected"
                      on-sort="dt.onSorted()">
           </dt-header>
           <dt-body rows="dt.rows"

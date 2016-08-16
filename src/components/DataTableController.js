@@ -243,8 +243,8 @@ export class DataTableController {
    * @return {Boolean} if all selected
    */
   isAllRowsSelected(){
-    if(this.rows) return false;
-    return this.selected.length === this.rows.length;
+      console.log(this.selected.length, ((this.rows) ? this.rows.length : null), (!this.rows) ? false : this.selected.length === this.rows.length);
+    return (!this.rows) ? false : this.selected.length === this.rows.length;
   }
 
   /**

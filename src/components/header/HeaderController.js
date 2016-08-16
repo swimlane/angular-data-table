@@ -76,6 +76,7 @@ export class HeaderController {
    * @param  {scope}
    */
   onCheckboxChanged(){
+      console.log('HeaderController.onCheckboxChanged', this);
     this.onCheckboxChange();
   }
 

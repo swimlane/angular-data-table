@@ -71,10 +71,11 @@ export class HeaderCellController{
   }
 
   /**
-   * Invoked when the header cell directive checkbox was changed
+   * Invoked when the header cell directive checkbox is changed
    */
-  onCheckboxChange(){
-    this.onCheckboxChanged();
+  checkboxChangeCallback(){
+      console.log('HeaderCellController.checkboxChangeCallback', this, this.isAllRowsSelected, this.selectedRows);
+    (this.onCheckboxChange || angular.noop)();
   }
 
 }
