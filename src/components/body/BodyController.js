@@ -191,6 +191,14 @@ export class BodyController{
           row.$$depth = 0;
         } else {
           var parent = this.index[row[parentProp]];
+          if (parent === undefined){
+            for (var j=0; j < len; j++){
+              if (this.rows[j][prop] == relVal){
+                parent = this.rows[j];
+                break;
+              }
+            }
+          }
           row.$$depth = parent.$$depth + 1;
           if (parent.$$children){
             parent.$$children.push(row[prop]);
