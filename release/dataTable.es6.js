@@ -783,7 +783,7 @@ class SelectionController {
    */
   rowClicked(event, index, row){
     if(!this.options.checkboxSelection){
-      event.preventDefault();
+      // event.preventDefault();
       this.selectRow(event, index, row);
     }
 
