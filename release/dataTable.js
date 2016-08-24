@@ -1,6 +1,6 @@
 /**
  * angular-data-table - A feature-rich but lightweight ES6 AngularJS Data Table crafted for large data sets!
- * @version v0.6.0
+ * @version v0.7.0
  * @link http://swimlane.com/
  * @license 
  */
@@ -996,6 +996,34 @@
         }
       }
     }, {
+      key: "calculateDepth",
+      value: function calculateDepth(row) {
+        var depth = arguments.length <= 1 || arguments[1] === undefined ? 0 : arguments[1];
+
+        var parentProp = this.treeColumn ? this.treeColumn.relationProp : this.groupColumn.prop;
+        var prop = this.treeColumn.prop;
+        if (!row[parentProp]) {
+          return depth;
+        }
+        if (row.$$depth) {
+          return row.$$depth + depth;
+        }
+
+        var cachedParent = this.index[row[parentProp]];
+        if (cachedParent) {
+          depth += 1;
+          return this.calculateDepth(cachedParent, depth);
+        }
+        for (var i = 0, len = this.rows.length; i < len; i++) {
+          var parent = this.rows[i];
+          if (parent[prop] == row[parentProp]) {
+            depth += 1;
+            return this.calculateDepth(parent, depth);
+          }
+        }
+        return depth;
+      }
+    }, {
       key: "buildRowsByGroup",
       value: function buildRowsByGroup() {
         this.index = {};
@@ -1023,6 +1051,17 @@
               row.$$depth = 0;
             } else {
               var parent = this.index[row[parentProp]];
+              if (parent === undefined) {
+                for (var j = 0; j < len; j++) {
+                  if (this.rows[j][prop] == relVal) {
+                    parent = this.rows[j];
+                    break;
+                  }
+                }
+              }
+              if (parent.$$depth === undefined) {
+                parent.$$depth = this.calculateDepth(parent);
+              }
               row.$$depth = parent.$$depth + 1;
               if (parent.$$children) {
                 parent.$$children.push(row[prop]);
