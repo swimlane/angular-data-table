@@ -148,6 +148,37 @@ export class BodyController{
   }
 
   /**
+   * Recursively calculate row depth for unsorted backend data
+   * @param row
+   * @param depth
+   * @return {Integer}
+  */
+  calculateDepth(row, depth=0){
+    var parentProp = this.treeColumn ? this.treeColumn.relationProp : this.groupColumn.prop;
+    var prop = this.treeColumn.prop;
+    if (!row[parentProp]){
+      return depth;
+    }
+    if (row.$$depth) {
+      return row.$$depth + depth;
+    }
+    /* Get data from cache, if exists*/
+    var cachedParent = this.index[row[parentProp]];
+    if (cachedParent) {
+      depth += 1;
+      return this.calculateDepth(cachedParent, depth);
+    }
+    for (var i=0, len = this.rows.length; i < len;  i++){
+      var parent = this.rows[i];
+      if (parent[prop] == row[parentProp]){
+        depth+=1;
+        return this.calculateDepth(parent, depth);
+      }
+    }
+    return depth;
+  }
+
+  /**
    * Matches groups to their respective parents by index.
    *
    * Example:
@@ -198,6 +229,9 @@ export class BodyController{
                 break;
               }
             }
+          }
+          if (parent.$$depth === undefined) {
+            parent.$$depth = this.calculateDepth(parent);
           }
           row.$$depth = parent.$$depth + 1;
           if (parent.$$children){
