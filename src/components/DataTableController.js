@@ -164,7 +164,7 @@ export class DataTableController {
       this.onSort({sorts: sorts});
 
       if (this.options.onSort){
-        this.options.onSort(sorts);
+        return this.options.onSort(sorts);
       }
 
       var clientSorts = [];
