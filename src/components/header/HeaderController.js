@@ -1,7 +1,6 @@
 import { TranslateXY } from '../../utils/translate';
 
 export class HeaderController {
-
   /**
    * Returns the styles for the header directive.
    * @param  {object} scope
@@ -72,15 +71,6 @@ export class HeaderController {
   }
 
   /**
-   * Invoked when the header cell directive's checkbox has changed.
-   * @param  {scope}
-   */
-  onCheckboxChanged(){
-      console.log('HeaderController.onCheckboxChanged', this);
-    this.onCheckboxChange();
-  }
-
-  /**
    * Occurs when a header cell directive triggered a resize
    * @param  {object} scope
    * @param  {object} column
@@ -92,5 +82,4 @@ export class HeaderController {
       width: width
     });
   }
-
 };

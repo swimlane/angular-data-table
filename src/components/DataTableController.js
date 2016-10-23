@@ -1,4 +1,5 @@
 import angular from 'angular';
+import _ from 'lodash';
 import { TableDefaults, ColumnDefaults } from '../defaults';
 import { AdjustColumnWidths, ForceFillColumnWidths } from '../utils/math';
 import { ColumnsByPin, ColumnGroupWidths, CamelCase, ObjectId, ScrollbarWidth } from '../utils/utils';
@@ -11,7 +12,7 @@ export class DataTableController {
    * @param  {filter}
    */
   /*@ngInject*/
-  constructor($scope, $filter, $log, $transclude){
+  constructor($scope, $filter, $log, $transclude, $window){$window.dt = this;
     Object.assign(this, {
       $scope: $scope,
       $filter: $filter,
@@ -59,6 +60,16 @@ export class DataTableController {
 
     if(this.options.selectable && this.options.multiSelect){
       this.selected = this.selected || [];
+
+      this.$scope.$watch('dt.selected', (newVal, oldVal) => {
+        _.forEach(this.options.columns, (column) => {
+          if (column.headerCheckbox && _.isFunction(column.headerCheckboxCallback)) {
+            column.headerCheckboxCallback(this);
+          }
+        });
+      }, true);
+
+      console.log(this.$scope, this.selected);
     }
   }
 
@@ -228,18 +239,18 @@ export class DataTableController {
     this.options.internal.setYOffset(offsetY);
   }
 
-  /**
-   * Invoked when the header checkbox directive has changed.
-   */
-  onHeaderCheckboxChange(){
-    if(this.rows){
-      var matches = this.selected.length === this.rows.length;
-      this.selected.splice(0, this.selected.length);
+  selectAllRows(){
+    this.selected.splice(0, this.selected.length);
 
-      if(!matches){
-        this.selected.push(...this.rows);
-      }
-    }
+    this.selected.push(...this.rows);
+
+    return this.isAllRowsSelected();
+  }
+
+  deselectAllRows(){
+    this.selected.splice(0, this.selected.length);
+
+    return this.isAllRowsSelected();
   }
 
   /**
@@ -247,8 +258,7 @@ export class DataTableController {
    * @return {Boolean} if all selected
    */
   isAllRowsSelected(){
-      console.log(this.selected.length, ((this.rows) ? this.rows.length : null), (!this.rows) ? false : this.selected.length === this.rows.length);
-    return (!this.rows) ? false : this.selected.length === this.rows.length;
+    return (!this.rows || !this.selected) ? false : this.selected.length === this.rows.length;
   }
 
   /**
@@ -304,5 +314,4 @@ export class DataTableController {
       row: row
     });
   }
-
 }

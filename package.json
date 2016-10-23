@@ -25,12 +25,21 @@
     "start": "node ./node_modules/gulp/bin/gulp.js watch serve",
     "release": "node ./node_modules/gulp/bin/gulp.js release"
   },
+  "dependencies": {
+    "lodash": "^4.16.4",
+    "ui-utils-npm": "^1.0.0"
+  },
+  "peerDependencies": {
+    "angular": "1.5.x"
+  },
   "devDependencies": {
     "angular": "^1.5.0",
     "angular-mocks": "^1.5.0",
+    "babel-cli": "^6.16.0",
     "babel-core": "^6.9.0",
     "babel-eslint": "^6.0.2",
     "babel-plugin-external-helpers": "^6.5.0",
+    "babel-plugin-lodash": "^3.2.9",
     "babel-plugin-transform-es2015-modules-amd": "^6.8.0",
     "babel-plugin-transform-es2015-modules-commonjs": "^6.8.0",
     "babel-plugin-transform-es2015-modules-umd": "^6.8.0",
@@ -72,7 +81,9 @@
   },
   "jspm": {
     "dependencies": {
-      "angular": "npm:angular@^1.5.0"
+      "angular": "npm:angular@^1.5.0",
+      "lodash": "npm:lodash@^4.16.4",
+      "ui-utils-npm": "npm:ui-utils-npm@^1.0.0"
     },
     "devDependencies": {
       "babel": "npm:babel-core@^5.8.24",
@@ -82,6 +93,9 @@
   },
   "babel": {
     "sourceMaps": false,
+    "plugins": [
+      "lodash"
+    ],
     "presets": [
       "es2015",
       "stage-0"

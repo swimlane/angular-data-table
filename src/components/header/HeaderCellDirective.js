@@ -10,13 +10,10 @@ export function HeaderCellDirective($compile){
     bindToController: {
       options: '=',
       column: '=',
-      onCheckboxChange: '&',
       onSort: '&',
       sortType: '=',
       onResize: '&',
-      selected: '=',
-      isAllRowsSelected: '=',
-      selectedRows: '=?'
+      selected: '='
     },
     replace: true,
     template:
@@ -32,9 +29,8 @@ export function HeaderCellDirective($compile){
              max-width="hcell.column.maxWidth">
           <label ng-if="hcell.column.isCheckboxColumn && hcell.column.headerCheckbox" class="dt-checkbox">
             <input type="checkbox"
-                   ng-checked="hcell.isAllRowsSelected"
-                   ng-click="hcell.checkboxChangeCallback()"
-                   ng-attr-indeterminate="(hcell.selectedRows && hcell.selectedRows.length > 0) && !hcell.allRowsSelected" />
+                   ng-model="hcell.column.allRowsSelected"
+                   ng-change="hcell.checkboxChangeCallback()" />
           </label>
           <span class="dt-header-cell-label"
                 ng-click="hcell.onSorted()">

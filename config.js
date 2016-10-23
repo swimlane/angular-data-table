@@ -18,6 +18,8 @@ System.config({
     "babel": "npm:babel-core@5.8.38",
     "babel-runtime": "npm:babel-runtime@5.8.38",
     "core-js": "npm:core-js@1.2.7",
+    "lodash": "npm:lodash@4.16.4",
+    "ui-utils-npm": "npm:ui-utils-npm@1.0.0",
     "github:jspm/nodelibs-assert@0.1.0": {
       "assert": "npm:assert@1.4.1"
     },
@@ -35,6 +37,36 @@ System.config({
     },
     "github:jspm/nodelibs-vm@0.1.0": {
       "vm-browserify": "npm:vm-browserify@0.0.4"
+    },
+    "npm:angular-ui-event@1.0.0": {
+      "fs": "github:jspm/nodelibs-fs@0.1.2"
+    },
+    "npm:angular-ui-indeterminate@1.0.0": {
+      "fs": "github:jspm/nodelibs-fs@0.1.2"
+    },
+    "npm:angular-ui-mask@1.8.7": {
+      "fs": "github:jspm/nodelibs-fs@0.1.2",
+      "process": "github:jspm/nodelibs-process@0.1.2",
+      "systemjs-json": "github:systemjs/plugin-json@0.1.2"
+    },
+    "npm:angular-ui-scroll@1.5.1": {
+      "buffer": "github:jspm/nodelibs-buffer@0.1.0",
+      "process": "github:jspm/nodelibs-process@0.1.2"
+    },
+    "npm:angular-ui-scrollpoint@2.1.1": {
+      "fs": "github:jspm/nodelibs-fs@0.1.2",
+      "process": "github:jspm/nodelibs-process@0.1.2",
+      "systemjs-json": "github:systemjs/plugin-json@0.1.2"
+    },
+    "npm:angular-ui-uploader@1.2.1": {
+      "fs": "github:jspm/nodelibs-fs@0.1.2",
+      "process": "github:jspm/nodelibs-process@0.1.2",
+      "systemjs-json": "github:systemjs/plugin-json@0.1.2"
+    },
+    "npm:angular-ui-validate@1.2.2": {
+      "fs": "github:jspm/nodelibs-fs@0.1.2",
+      "process": "github:jspm/nodelibs-process@0.1.2",
+      "systemjs-json": "github:systemjs/plugin-json@0.1.2"
     },
     "npm:angular@1.5.0": {
       "process": "github:jspm/nodelibs-process@0.1.2"
@@ -72,6 +104,15 @@ System.config({
       "assert": "github:jspm/nodelibs-assert@0.1.0",
       "fs": "github:jspm/nodelibs-fs@0.1.2",
       "vm": "github:jspm/nodelibs-vm@0.1.0"
+    },
+    "npm:ui-utils-npm@1.0.0": {
+      "angular-ui-event": "npm:angular-ui-event@1.0.0",
+      "angular-ui-indeterminate": "npm:angular-ui-indeterminate@1.0.0",
+      "angular-ui-mask": "npm:angular-ui-mask@1.8.7",
+      "angular-ui-scroll": "npm:angular-ui-scroll@1.5.1",
+      "angular-ui-scrollpoint": "npm:angular-ui-scrollpoint@2.1.1",
+      "angular-ui-uploader": "npm:angular-ui-uploader@1.2.1",
+      "angular-ui-validate": "npm:angular-ui-validate@1.2.2"
     },
     "npm:util@0.10.3": {
       "inherits": "npm:inherits@2.0.1",
