@@ -68,8 +68,6 @@ export class DataTableController {
           }
         });
       }, true);
-
-      console.log(this.$scope, this.selected);
     }
   }
 
