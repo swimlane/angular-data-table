@@ -32,7 +32,7 @@
     "angular": "^1.5.0",
     "angular-mocks": "^1.5.0",
     "babel-core": "^6.9.0",
-    "babel-eslint": "^6.0.2",
+    "babel-eslint": "^7.0.0",
     "babel-plugin-external-helpers": "^6.5.0",
     "babel-plugin-transform-es2015-modules-amd": "^6.8.0",
     "babel-plugin-transform-es2015-modules-commonjs": "^6.8.0",
