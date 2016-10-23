@@ -2,7 +2,7 @@
   "name": "angular-data-table",
   "title": "AngularJS Data-Table",
   "description": "A feature-rich but lightweight ES6 AngularJS Data Table crafted for large data sets!",
-  "version": "0.6.1",
+  "version": "0.7.1",
   "repository": {
     "type": "git",
     "url": "git@github.com:Swimlane/angular-data-table.git",
@@ -31,7 +31,6 @@
   "devDependencies": {
     "angular": "^1.5.0",
     "angular-mocks": "^1.5.0",
-    "babel-cli": "^6.16.0",
     "babel-core": "^6.9.0",
     "babel-eslint": "^6.0.2",
     "babel-plugin-external-helpers": "^6.5.0",
