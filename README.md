@@ -1,4 +1,4 @@
-# angular-data-table [![Join the chat at https://gitter.im/Swimlane/angular-data-table](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/swimlane/angular-data-table?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge) [![Dependency Status](https://david-dm.org/swimlane/angular-data-table.svg)](https://david-dm.org/swimlane/angular-data-table) [![devDependency Status](https://david-dm.org/swimlane/angular-data-table/dev-status.svg)](https://david-dm.org/swimlane/angular-data-table#info=devDependencies)
+# angular-data-table [![Join the chat at https://gitter.im/Swimlane/angular-data-table](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/swimlane/angular-data-table?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge) [![Dependency Status](https://david-dm.org/swimlane/angular-data-table.svg)](https://david-dm.org/properjon/angular-data-table) [![devDependency Status](https://david-dm.org/swimlane/angular-data-table/dev-status.svg)](https://david-dm.org/properjon/angular-data-table#info=devDependencies)
 
 `angular-data-table` is a AngularJS directive for presenting large and complex data.  It has all the features you would expect from any other table but in a light package with _no external depedencies_. The table was designed to be extremely flexible and light; it doesn't make any assumptions about your data or how you: filter, sort or page it.
 
@@ -20,11 +20,11 @@ See live demos [here]( http://swimlane.github.io/angular-data-table/).
 - Tree Grids
 - Row Grouping
 - Checkbox and Row Selection ( multi / single / keyboard / touch )
-- Light codebase / No external deps
+- Light codebase / No external dependencies
 - Client-side AND Server Pagination / Sorting
 - Rich header / column templates
 - Fixed AND Fluid height
-- Decoupled themeing with included Google Material theme
+- Decoupled theming with included Google Material theme
 - Decoupled Cell tooltips on overflow
 - Decoupled Column Add/Removing Menu
 - Expressive Syntax
