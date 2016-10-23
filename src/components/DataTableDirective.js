@@ -33,13 +33,12 @@ export function DataTableDirective($window, $timeout, $parse){
 
       return `<div class="dt" ng-class="dt.tableCss()" data-column-id="${id}">
           <dt-header options="dt.options"
-                     on-checkbox-change="dt.onHeaderCheckboxChange()"
                      columns="dt.columnsByPin"
                      column-widths="dt.columnWidths"
                      ng-if="dt.options.headerHeight"
                      on-resize="dt.onResized(column, width)"
-                     is-all-rows-selected="dt.isAllRowsSelected()"
                      selected-rows="dt.selected"
+                     all-rows="dt.rows"
                      on-sort="dt.onSorted()">
           </dt-header>
           <dt-body rows="dt.rows"

@@ -11,15 +11,13 @@ export function HeaderDirective($timeout){
       options: '=',
       columns: '=',
       columnWidths: '=',
-      isAllRowsSelected: '=',
       selectedRows: '=?',
+      allRows: '=',
       onSort: '&',
-      onResize: '&',
-      onCheckboxChange: '&'
+      onResize: '&'
     },
     template: `
       <div class="dt-header" ng-style="header.styles()">
-
         <div class="dt-header-inner" ng-style="header.innerStyles()">
           <div class="dt-row-left"
                ng-style="header.stylesByGroup('left')"
@@ -28,14 +26,11 @@ export function HeaderDirective($timeout){
                on-sortable-sort="columnsResorted(event, columnId)">
             <dt-header-cell
               ng-repeat="column in header.columns['left'] track by column.$id"
-              on-checkbox-change="header.onCheckboxChanged()"
               on-sort="header.onSorted(column)"
               options="header.options"
               sort-type="header.options.sortType"
               on-resize="header.onResized(column, width)"
-              selected="header.isSelected()"
-              is-all-rows-selected="header.isAllRowsSelected"
-              selected-rows="header.selectedRows"
+              all-rows="header.allRows"
               column="column">
             </dt-header-cell>
           </div>

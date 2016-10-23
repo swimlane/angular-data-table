@@ -105,7 +105,7 @@ gulp.task('release', function (callback) {
     ['release-less', 'release-build'],
     'release-umd',
     'release-common',
-    'release-es-min',
+    'release-es6-min',
     callback
     );
 });
@@ -161,7 +161,7 @@ gulp.task('release-common', function () {
     .pipe(gulp.dest("release/"))
 });
 
-gulp.task('release-es-min', function () {
+gulp.task('release-es6-min', function () {
   return gulp.src('release/dataTable.es6.js')
     .pipe(babel({
       plugins: [

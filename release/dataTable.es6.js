@@ -644,7 +644,7 @@ class DataTableController {
    * @param  {filter}
    */
   /*@ngInject*/
-  constructor($scope, $filter, $log, $transclude){
+  constructor($scope, $filter, $log, $transclude, $window){$window.dt = this;
     Object.assign(this, {
       $scope: $scope,
       $filter: $filter,
@@ -692,6 +692,14 @@ class DataTableController {
 
     if(this.options.selectable && this.options.multiSelect){
       this.selected = this.selected || [];
+
+      this.$scope.$watch('dt.selected', (newVal, oldVal) => {
+        angular$1.forEach(this.options.columns, (column) => {
+          if (column.headerCheckbox && angular$1.isFunction(column.headerCheckboxCallback)) {
+            column.headerCheckboxCallback(this);
+          }
+        });
+      }, true);
     }
   }
 
@@ -861,18 +869,18 @@ class DataTableController {
     this.options.internal.setYOffset(offsetY);
   }
 
-  /**
-   * Invoked when the header checkbox directive has changed.
-   */
-  onHeaderCheckboxChange(){
-    if(this.rows){
-      var matches = this.selected.length === this.rows.length;
-      this.selected.splice(0, this.selected.length);
+  selectAllRows(){
+    this.selected.splice(0, this.selected.length);
 
-      if(!matches){
-        this.selected.push(...this.rows);
-      }
-    }
+    this.selected.push(...this.rows);
+
+    return this.isAllRowsSelected();
+  }
+
+  deselectAllRows(){
+    this.selected.splice(0, this.selected.length);
+
+    return this.isAllRowsSelected();
   }
 
   /**
@@ -880,8 +888,7 @@ class DataTableController {
    * @return {Boolean} if all selected
    */
   isAllRowsSelected(){
-      console.log(this.selected.length, ((this.rows) ? this.rows.length : null), (!this.rows) ? false : this.selected.length === this.rows.length);
-    return (!this.rows) ? false : this.selected.length === this.rows.length;
+    return (!this.rows || !this.selected) ? false : this.selected.length === this.rows.length;
   }
 
   /**
@@ -937,7 +944,6 @@ class DataTableController {
       row: row
     });
   }
-
 }
 
 /**
@@ -1088,13 +1094,12 @@ function DataTableDirective($window, $timeout, $parse){
 
       return `<div class="dt" ng-class="dt.tableCss()" data-column-id="${id}">
           <dt-header options="dt.options"
-                     on-checkbox-change="dt.onHeaderCheckboxChange()"
                      columns="dt.columnsByPin"
                      column-widths="dt.columnWidths"
                      ng-if="dt.options.headerHeight"
                      on-resize="dt.onResized(column, width)"
-                     is-all-rows-selected="dt.isAllRowsSelected()"
                      selected-rows="dt.selected"
+                     all-rows="dt.rows"
                      on-sort="dt.onSorted()">
           </dt-header>
           <dt-body rows="dt.rows"
@@ -1249,7 +1254,6 @@ function TranslateXY(styles, x,y){
 }
 
 class HeaderController {
-
   /**
    * Returns the styles for the header directive.
    * @param  {object} scope
@@ -1320,15 +1324,6 @@ class HeaderController {
   }
 
   /**
-   * Invoked when the header cell directive's checkbox has changed.
-   * @param  {scope}
-   */
-  onCheckboxChanged(){
-      console.log('HeaderController.onCheckboxChanged', this);
-    this.onCheckboxChange();
-  }
-
-  /**
    * Occurs when a header cell directive triggered a resize
    * @param  {object} scope
    * @param  {object} column
@@ -1340,7 +1335,6 @@ class HeaderController {
       width: width
     });
   }
-
 }
 
 function HeaderDirective($timeout){
@@ -1353,15 +1347,13 @@ function HeaderDirective($timeout){
       options: '=',
       columns: '=',
       columnWidths: '=',
-      isAllRowsSelected: '=',
       selectedRows: '=?',
+      allRows: '=',
       onSort: '&',
-      onResize: '&',
-      onCheckboxChange: '&'
+      onResize: '&'
     },
     template: `
       <div class="dt-header" ng-style="header.styles()">
-
         <div class="dt-header-inner" ng-style="header.innerStyles()">
           <div class="dt-row-left"
                ng-style="header.stylesByGroup('left')"
@@ -1370,14 +1362,11 @@ function HeaderDirective($timeout){
                on-sortable-sort="columnsResorted(event, columnId)">
             <dt-header-cell
               ng-repeat="column in header.columns['left'] track by column.$id"
-              on-checkbox-change="header.onCheckboxChanged()"
               on-sort="header.onSorted(column)"
               options="header.options"
               sort-type="header.options.sortType"
               on-resize="header.onResized(column, width)"
-              selected="header.isSelected()"
-              is-all-rows-selected="header.isAllRowsSelected"
-              selected-rows="header.selectedRows"
+              all-rows="header.allRows"
               column="column">
             </dt-header-cell>
           </div>
@@ -1460,6 +1449,17 @@ function HeaderDirective($timeout){
 }
 
 class HeaderCellController{
+  constructor($scope){
+    this.$scope = $scope;
+
+    if (this.$scope.$parent.$parent.$parent.$parent.dt) {
+      this.dt = this.$scope.$parent.$parent.$parent.$parent.dt;
+    }
+
+    if (this.column.headerCheckbox) {
+      this.column.headerCheckboxCallback = this.rowSelected;
+    }
+  }
   /**
    * Calculates the styles for the header cell directive
    * @return {styles}
@@ -1529,14 +1529,18 @@ class HeaderCellController{
     });
   }
 
+  rowSelected(dt){
+    this.allRowsSelected = (dt.selected) && (dt.rows.length === dt.selected.length);
+  }
+
   /**
    * Invoked when the header cell directive checkbox is changed
    */
   checkboxChangeCallback(){
-      console.log('HeaderCellController.checkboxChangeCallback', this, this.isAllRowsSelected, this.selectedRows);
-    (this.onCheckboxChange || angular.noop)();
+    return this.isAllRowsSelected = this.column.allRowsSelected ?
+      this.dt.selectAllRows() :
+      this.dt.deselectAllRows();
   }
-
 }
 
 function HeaderCellDirective($compile){
@@ -1548,13 +1552,10 @@ function HeaderCellDirective($compile){
     bindToController: {
       options: '=',
       column: '=',
-      onCheckboxChange: '&',
       onSort: '&',
       sortType: '=',
       onResize: '&',
-      selected: '=',
-      isAllRowsSelected: '=',
-      selectedRows: '=?'
+      selected: '='
     },
     replace: true,
     template:
@@ -1570,9 +1571,8 @@ function HeaderCellDirective($compile){
              max-width="hcell.column.maxWidth">
           <label ng-if="hcell.column.isCheckboxColumn && hcell.column.headerCheckbox" class="dt-checkbox">
             <input type="checkbox"
-                   ng-checked="hcell.isAllRowsSelected"
-                   ng-click="hcell.checkboxChangeCallback()"
-                   ng-attr-indeterminate="(hcell.selectedRows && hcell.selectedRows.length > 0) && !hcell.allRowsSelected" />
+                   ng-model="hcell.column.allRowsSelected"
+                   ng-change="hcell.checkboxChangeCallback()" />
           </label>
           <span class="dt-header-cell-label"
                 ng-click="hcell.onSorted()">
