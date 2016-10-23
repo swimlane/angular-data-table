@@ -1,5 +1,4 @@
 import angular from 'angular';
-import _ from 'lodash';
 import { TableDefaults, ColumnDefaults } from '../defaults';
 import { AdjustColumnWidths, ForceFillColumnWidths } from '../utils/math';
 import { ColumnsByPin, ColumnGroupWidths, CamelCase, ObjectId, ScrollbarWidth } from '../utils/utils';
@@ -62,8 +61,8 @@ export class DataTableController {
       this.selected = this.selected || [];
 
       this.$scope.$watch('dt.selected', (newVal, oldVal) => {
-        _.forEach(this.options.columns, (column) => {
-          if (column.headerCheckbox && _.isFunction(column.headerCheckboxCallback)) {
+        angular.forEach(this.options.columns, (column) => {
+          if (column.headerCheckbox && angular.isFunction(column.headerCheckboxCallback)) {
             column.headerCheckboxCallback(this);
           }
         });
