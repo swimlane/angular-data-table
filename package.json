@@ -15,6 +15,7 @@
     "email": "austin@swimlane.com",
     "web": "http://swimlane.com/"
   },
+  "license": "MIT",
   "licenses": [
     {
       "type": "MIT",
@@ -41,6 +42,8 @@
     "babel-preset-stage-0": "^6.5.0",
     "babelify": "7.3.0",
     "browser-sync": "^2.7.2",
+    "browserify": "^13.1.1",
+    "chai": "^3.5.0",
     "chai-as-promised": "^6.0.0",
     "del": "^2.2.0",
     "gulp": "^3.8.11",
@@ -65,13 +68,14 @@
     "karma-phantomjs-shim": "^1.0.0",
     "karma-sinon-chai": "^1.0.0",
     "mocha": "^3.1.2",
-    "phantomjs": "^2.1.7",
+    "phantomjs-prebuilt": "^2.1.7",
     "rollup": "^0.36.3",
     "run-sequence": "^1.1.0",
     "sinon": "^1.15.4",
     "sinon-chai": "^2.7.0",
     "systemjs-builder": "^0.15.32",
-    "vinyl-paths": "^2.1.0"
+    "vinyl-paths": "^2.1.0",
+    "watchify": "^3.7.0"
   },
   "jspm": {
     "dependencies": {
@@ -79,8 +83,8 @@
     },
     "devDependencies": {
       "babel": "npm:babel-core@^6.9.0",
-      "babel-runtime": "npm:babel-runtime@^5.8.24",
-      "core-js": "npm:core-js@^1.1.4"
+      "babel-runtime": "npm:babel-runtime@^6.11.6",
+      "core-js": "npm:core-js@^2.4.0"
     }
   },
   "babel": {
