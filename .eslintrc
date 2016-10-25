@@ -5,13 +5,16 @@
   },
   "rules": {
     "strict": 0,
-    "no-multi-spaces": false,
-    "quotes": "single",
-    "no-shadow": false,
-    "no-empty": false,
-    "no-cond-assign": false,
-    "no-loop-func": false,
-    "no-underscore-dangle": false,
-    "no-use-before-define": false
+    "no-multi-spaces": 0,
+    "quotes": [
+      1,
+      "single"
+    ],
+    "no-shadow": 0,
+    "no-empty": 0,
+    "no-cond-assign": 0,
+    "no-loop-func": 0,
+    "no-underscore-dangle": 0,
+    "no-use-before-define": 0
   }
 }
