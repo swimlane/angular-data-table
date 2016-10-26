@@ -12,7 +12,7 @@ export class BodyController{
   constructor($scope, $timeout){
     this.$scope = $scope;
     this.tempRows = [];
-    this.watches = [];
+    this.watchListeners = [];
 
     this.setTreeAndGroupColumns();
     this.setConditionalWatches();
@@ -22,7 +22,6 @@ export class BodyController{
       if (newVal) {
         this.setTreeAndGroupColumns();
 
-        console.log(this.watches);
         this.setConditionalWatches();
 
         if (!this.options.refreshRows) {
@@ -45,21 +44,25 @@ export class BodyController{
   }
 
   setConditionalWatches(){
+    this.watchListeners.map((watchListener) => (
+      watchListener()
+    ));
+
     if(this.options.scrollbarV || (!this.options.scrollbarV && this.options.paging.externalPaging)){
       var sized = false;
-      this.watches.push(this.$scope.$watch('body.options.paging.size', (newVal, oldVal) => {
+      this.watchListeners.push(this.$scope.$watch('body.options.paging.size', (newVal, oldVal) => {
         if(!sized || newVal > oldVal){
           this.getRows();
           sized = true;
         }
       }));
 
-      this.watches.push(this.$scope.$watch('body.options.paging.count', (count) => {
+      this.watchListeners.push(this.$scope.$watch('body.options.paging.count', (count) => {
         this.count = count;
         this.updatePage();
       }));
 
-      this.watches.push(this.$scope.$watch('body.options.paging.offset', (newVal) => {
+      this.watchListeners.push(this.$scope.$watch('body.options.paging.offset', (newVal) => {
         if(this.options.paging.size){
           this.onPage({
             offset: newVal,
