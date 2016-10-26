@@ -78,7 +78,21 @@
 
       <div class="selected-box">
         <h5>Selected list</h5>
-        <code>{{selected}}</code>
+        <div ng-if="selected.length === 0">
+          <code>
+            []
+          </code>
+        </div>
+        <div
+          ng-repeat="item in selected"
+          ng-if="selected.length > 0">
+          <code>
+            <strong ng-click="popItem(item)">
+              x
+            </strong>
+            {{item}}
+          </code>
+        </div>
       </div>
 
     </div>
@@ -171,6 +185,16 @@
           $scope.selected = [];
           $scope.selected2 = [];
           $scope.selected3 = [];
+
+          $scope.popItem = function(item) {
+            var indexOfItem = $scope.selected.indexOf(item);
+
+            if (indexOfItem !== -1) {
+              $scope.selected.splice(indexOfItem, 1);
+
+              console.log('new selected', $scope.selected);
+            }
+          }
 
           $scope.onSelect = function(row){
             console.log('ROW SELECTED!', row);
