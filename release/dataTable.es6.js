@@ -3096,6 +3096,14 @@ function PagerDirective(){
   };
 }
 
+let POSITION = {
+    LEFT: 'left',
+    RIGHT: 'right',
+    TOP: 'top',
+    BOTTOM: 'bottom',
+    CENTER: 'center'
+};
+
 /**
  * Popover Directive
  * @param {object} $q
@@ -3132,7 +3140,7 @@ function PopoverDirective($q, $timeout, $templateCache, $compile, PopoverRegistr
    */
   function toBoolean(value) {
     if (value && value.length !== 0) {
-      var v = ("" + value).toLowerCase();
+      var v = value.toString().toLowerCase();
       value = (v == 'true');
     } else {
       value = false;
@@ -3251,22 +3259,22 @@ function PopoverDirective($q, $timeout, $templateCache, $compile, PopoverRegistr
               popoverDimensions = popover[0].getBoundingClientRect(),
               top, left;
 
-          if (options.placement === 'right'){
+          if (options.placement === POSITION.RIGHT){
             left = elDimensions.left + elDimensions.width + options.spacing;
             top = PositionHelper.calculateVerticalAlignment(elDimensions,
               popoverDimensions, options.alignment);
           }
-          if (options.placement === 'left'){
+          if (options.placement === POSITION.LEFT){
             left = elDimensions.left - popoverDimensions.width - options.spacing;
             top = PositionHelper.calculateVerticalAlignment(elDimensions,
               popoverDimensions, options.alignment);
           }
-          if (options.placement === 'top'){
+          if (options.placement === POSITION.TOP){
             top = elDimensions.top - popoverDimensions.height - options.spacing;
             left = PositionHelper.calculateHorizontalAlignment(elDimensions,
               popoverDimensions, options.alignment);
           }
-          if (options.placement === 'bottom'){
+          if (options.placement === POSITION.BOTTOM){
             top = elDimensions.top + elDimensions.height + options.spacing;
             left = PositionHelper.calculateHorizontalAlignment(elDimensions,
               popoverDimensions, options.alignment);
@@ -3297,23 +3305,23 @@ function PopoverDirective($q, $timeout, $templateCache, $compile, PopoverRegistr
         var caretDimensions = caret[0].getBoundingClientRect();
 
         var left, top;
-        if ($scope.options.placement === 'right'){
+        if ($scope.options.placement === POSITION.RIGHT){
           left = -6;
           top = PositionHelper.calculateVerticalCaret(elDimensions,
             popoverDimensions, caretDimensions, $scope.options.alignment);
         }
-        if ($scope.options.placement === 'left'){
+        if ($scope.options.placement === POSITION.LEFT){
           left = popoverDimensions.width - 2;
           top = PositionHelper.calculateVerticalCaret(elDimensions,
             popoverDimensions, caretDimensions, $scope.options.alignment);
         }
-        if ($scope.options.placement === 'top'){
+        if ($scope.options.placement === POSITION.TOP){
           top = popoverDimensions.height - 5;
           left = PositionHelper.calculateHorizontalCaret(elDimensions,
             popoverDimensions, caretDimensions, $scope.options.alignment);
         }
 
-        if ($scope.options.placement === 'bottom'){
+        if ($scope.options.placement === POSITION.BOTTOM){
           top = -8;
           left = PositionHelper.calculateHorizontalCaret(elDimensions,
             popoverDimensions, caretDimensions, $scope.options.alignment);
@@ -3361,53 +3369,54 @@ function PopoverRegistry($animate){
 /**
  * Position helper for the popover directive.
  */
+
 function PositionHelper(){
   return {
 
     calculateVerticalAlignment: function(elDimensions, popoverDimensions, alignment){
-      if (alignment === 'top'){
+      if (alignment === POSITION.TOP){
         return elDimensions.top;
       }
-      if (alignment === 'bottom'){
+      if (alignment === POSITION.BOTTOM){
         return elDimensions.top + elDimensions.height - popoverDimensions.height;
       }
-      if (alignment === 'center'){
+      if (alignment === POSITION.CENTER){
         return elDimensions.top + elDimensions.height/2 - popoverDimensions.height/2;
       }
     },
 
     calculateVerticalCaret: function(elDimensions, popoverDimensions, caretDimensions, alignment){
-      if (alignment === 'top'){
+      if (alignment === POSITION.TOP){
         return elDimensions.height/2 - caretDimensions.height/2 - 1;
       }
-      if (alignment === 'bottom'){
+      if (alignment === POSITION.BOTTOM){
         return popoverDimensions.height - elDimensions.height/2 - caretDimensions.height/2 - 1;
       }
-      if (alignment === 'center'){
+      if (alignment === POSITION.CENTER){
         return popoverDimensions.height/2 - caretDimensions.height/2 - 1;
       }
     },
 
     calculateHorizontalCaret: function(elDimensions, popoverDimensions, caretDimensions, alignment){
-      if (alignment === 'left'){
+      if (alignment === POSITION.LEFT){
         return elDimensions.width/2 - caretDimensions.height/2 - 1;
       }
-      if (alignment === 'right'){
+      if (alignment === POSITION.RIGHT){
         return popoverDimensions.width - elDimensions.width/2 - caretDimensions.height/2 - 1;
       }
-      if (alignment === 'center'){
+      if (alignment === POSITION.CENTER){
         return popoverDimensions.width/2 - caretDimensions.height/2 - 1;
       }
     },
 
     calculateHorizontalAlignment: function(elDimensions, popoverDimensions, alignment){
-      if (alignment === 'left'){
+      if (alignment === POSITION.LEFT){
         return elDimensions.left;
       }
-      if (alignment === 'right'){
+      if (alignment === POSITION.RIGHT){
         return elDimensions.left + elDimensions.width - popoverDimensions.width;
       }
-      if (alignment === 'center'){
+      if (alignment === POSITION.CENTER){
         return elDimensions.left + elDimensions.width/2 - popoverDimensions.width/2;
       }
     }
