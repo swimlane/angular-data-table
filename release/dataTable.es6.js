@@ -3425,7 +3425,7 @@ function PositionHelper(){
 }
 
 var popover = angular$1
-  .module('popover', [])
+  .module('dt.popover', [])
   .service('PopoverRegistry', PopoverRegistry)
   .factory('PositionHelper', PositionHelper)
   .directive('popover', PopoverDirective);

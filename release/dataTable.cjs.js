@@ -2716,7 +2716,7 @@ function PositionHelper() {
   };
 }
 
-var popover = _angular2.default.module('popover', []).service('PopoverRegistry', PopoverRegistry).factory('PositionHelper', PositionHelper).directive('popover', PopoverDirective);
+var popover = _angular2.default.module('dt.popover', []).service('PopoverRegistry', PopoverRegistry).factory('PositionHelper', PositionHelper).directive('popover', PopoverDirective);
 
 var MenuController = function () {
   function MenuController($scope, $timeout) {
