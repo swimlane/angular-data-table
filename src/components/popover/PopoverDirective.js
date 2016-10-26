@@ -1,20 +1,21 @@
 import angular from 'angular';
+import { POSITION } from './Popover.constants';
 
 /**
  * Popover Directive
- * @param {object} $q              
- * @param {function} $timeout        
- * @param {function} $templateCache  
- * @param {function} $compile        
- * @param {function} PopoverRegistry 
- * @param {function} $animate        
+ * @param {object} $q
+ * @param {function} $timeout
+ * @param {function} $templateCache
+ * @param {function} $compile
+ * @param {function} PopoverRegistry
+ * @param {function} $animate
  */
 export function PopoverDirective($q, $timeout, $templateCache, $compile, PopoverRegistry, PositionHelper, $animate){
 
   /**
    * Loads a template from the template cache
-   * @param  {string} template 
-   * @param  {boolean} plain    
+   * @param  {string} template
+   * @param  {boolean} plain
    * @return {object}  html template
    */
   function loadTemplate(template, plain) {
@@ -31,12 +32,12 @@ export function PopoverDirective($q, $timeout, $templateCache, $compile, Popover
 
   /**
    * Determines a boolean given a value
-   * @param  {object} value 
-   * @return {boolean}       
+   * @param  {object} value
+   * @return {boolean}
    */
   function toBoolean(value) {
     if (value && value.length !== 0) {
-      var v = ("" + value).toLowerCase();
+      var v = value.toString().toLowerCase();
       value = (v == 'true');
     } else {
       value = false;
@@ -81,7 +82,7 @@ export function PopoverDirective($q, $timeout, $templateCache, $compile, Popover
         $timeout.cancel($scope.exitTimeout);
 
         var elm = document.getElementById(`#${$scope.popoverId}`);
-        if ($scope.popover && elm) return; 
+        if ($scope.popover && elm) return;
 
         // remove other popovers from the same group
         if ($scope.options.group){
@@ -89,7 +90,7 @@ export function PopoverDirective($q, $timeout, $templateCache, $compile, Popover
         }
 
         if ($scope.options.text && !$scope.options.template){
-          $scope.popover = angular.element(`<div class="popover popover-text 
+          $scope.popover = angular.element(`<div class="popover popover-text
             popover${$scope.options.placement}" id="${$scope.popoverId}"></div>`);
 
           $scope.popover.html($scope.options.text);
@@ -107,7 +108,7 @@ export function PopoverDirective($q, $timeout, $templateCache, $compile, Popover
               }
             }
 
-            $scope.popover = angular.element(`<div class="popover 
+            $scope.popover = angular.element(`<div class="popover
               popover-${$scope.options.placement}" id="${$scope.popoverId}"></div>`);
 
             $scope.popover.html(template);
@@ -145,9 +146,9 @@ export function PopoverDirective($q, $timeout, $templateCache, $compile, Popover
 
       /**
        * Positions the popover
-       * @param  {object} triggerElement 
-       * @param  {object} popover        
-       * @param  {object} options        
+       * @param  {object} triggerElement
+       * @param  {object} popover
+       * @param  {object} options
        */
       function positionPopover(triggerElement, popover, options){
         $timeout(function(){
@@ -155,29 +156,29 @@ export function PopoverDirective($q, $timeout, $templateCache, $compile, Popover
               popoverDimensions = popover[0].getBoundingClientRect(),
               top, left;
 
-          if (options.placement === 'right'){
+          if (options.placement === POSITION.RIGHT){
             left = elDimensions.left + elDimensions.width + options.spacing;
-            top = PositionHelper.calculateVerticalAlignment(elDimensions, 
+            top = PositionHelper.calculateVerticalAlignment(elDimensions,
               popoverDimensions, options.alignment);
           }
-          if (options.placement === 'left'){
+          if (options.placement === POSITION.LEFT){
             left = elDimensions.left - popoverDimensions.width - options.spacing;
-            top = PositionHelper.calculateVerticalAlignment(elDimensions, 
+            top = PositionHelper.calculateVerticalAlignment(elDimensions,
               popoverDimensions, options.alignment);
           }
-          if (options.placement === 'top'){
+          if (options.placement === POSITION.TOP){
             top = elDimensions.top - popoverDimensions.height - options.spacing;
-            left = PositionHelper.calculateHorizontalAlignment(elDimensions, 
+            left = PositionHelper.calculateHorizontalAlignment(elDimensions,
               popoverDimensions, options.alignment);
           }
-          if (options.placement === 'bottom'){
+          if (options.placement === POSITION.BOTTOM){
             top = elDimensions.top + elDimensions.height + options.spacing;
-            left = PositionHelper.calculateHorizontalAlignment(elDimensions, 
+            left = PositionHelper.calculateHorizontalAlignment(elDimensions,
               popoverDimensions, options.alignment);
           }
 
           popover.css({
-            top: top + 'px', 
+            top: top + 'px',
             left: left + 'px'
           });
 
@@ -191,9 +192,9 @@ export function PopoverDirective($q, $timeout, $templateCache, $compile, Popover
 
       /**
        * Adds a caret and positions it relatively to the popover
-       * @param {object} popoverEl         
-       * @param {object} elDimensions      
-       * @param {object} popoverDimensions 
+       * @param {object} popoverEl
+       * @param {object} elDimensions
+       * @param {object} popoverDimensions
        */
       function addCaret(popoverEl, elDimensions, popoverDimensions){
         var caret = angular.element(`<span class="popover-caret caret-${$scope.options.placement}"></span>`);
@@ -201,30 +202,30 @@ export function PopoverDirective($q, $timeout, $templateCache, $compile, Popover
         var caretDimensions = caret[0].getBoundingClientRect();
 
         var left, top;
-        if ($scope.options.placement === 'right'){
+        if ($scope.options.placement === POSITION.RIGHT){
           left = -6;
-          top = PositionHelper.calculateVerticalCaret(elDimensions, 
+          top = PositionHelper.calculateVerticalCaret(elDimensions,
             popoverDimensions, caretDimensions, $scope.options.alignment);
         }
-        if ($scope.options.placement === 'left'){
+        if ($scope.options.placement === POSITION.LEFT){
           left = popoverDimensions.width - 2;
-          top = PositionHelper.calculateVerticalCaret(elDimensions, 
+          top = PositionHelper.calculateVerticalCaret(elDimensions,
             popoverDimensions, caretDimensions, $scope.options.alignment);
         }
-        if ($scope.options.placement === 'top'){
+        if ($scope.options.placement === POSITION.TOP){
           top = popoverDimensions.height - 5;
-          left = PositionHelper.calculateHorizontalCaret(elDimensions, 
+          left = PositionHelper.calculateHorizontalCaret(elDimensions,
             popoverDimensions, caretDimensions, $scope.options.alignment);
         }
 
-        if ($scope.options.placement === 'bottom'){
+        if ($scope.options.placement === POSITION.BOTTOM){
           top = -8;
-          left = PositionHelper.calculateHorizontalCaret(elDimensions, 
+          left = PositionHelper.calculateHorizontalCaret(elDimensions,
             popoverDimensions, caretDimensions, $scope.options.alignment);
         }
 
         caret.css({
-          top: top + 'px', 
+          top: top + 'px',
           left: left + 'px'
         });
       };
