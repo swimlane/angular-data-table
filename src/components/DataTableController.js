@@ -4,7 +4,6 @@ import { AdjustColumnWidths, ForceFillColumnWidths } from '../utils/math';
 import { ColumnsByPin, ColumnGroupWidths, CamelCase, ObjectId, ScrollbarWidth } from '../utils/utils';
 
 export class DataTableController {
-
   /**
    * Creates an instance of the DataTable Controller
    * @param  {scope}

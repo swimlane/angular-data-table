@@ -1,8 +1,8 @@
 /**
  * angular-data-table - A feature-rich but lightweight ES6 AngularJS Data Table crafted for large data sets!
- * @version v0.7.1
+ * @version v0.7.2
  * @link http://swimlane.com/
- * @license 
+ * @license MIT
  */
 (function (global, factory) {
   if (typeof define === "function" && define.amd) {
@@ -22,6 +22,7 @@
   Object.defineProperty(exports, "__esModule", {
     value: true
   });
+  exports.dtMenu = exports.dtPopover = undefined;
 
   var _angular2 = _interopRequireDefault(_angular);
 
@@ -1323,45 +1324,77 @@
 
       this.$scope = $scope;
       this.tempRows = [];
+      this.watches = [];
 
-      this.treeColumn = this.options.columns.find(function (c) {
-        return c.isTreeColumn;
-      });
+      this.setTreeAndGroupColumns();
+      this.setConditionalWatches();
+      this.options.refreshRows = this.rowsUpdated.bind(this);
 
-      this.groupColumn = this.options.columns.find(function (c) {
-        return c.group;
-      });
+      $scope.$watch(function () {
+        return _this4.options.columns;
+      }, function (newVal, oldVal) {
+        if (newVal) {
+          _this4.setTreeAndGroupColumns();
+
+          console.log(_this4.watches);
+          _this4.setConditionalWatches();
+
+          if (!_this4.options.refreshRows) {
+            _this4.options.refreshRows = _this4.rowsUpdated.bind(_this4);
+          }
+        }
+      }, true);
 
       $scope.$watchCollection('body.rows', this.rowsUpdated.bind(this));
-
-      if (this.options.scrollbarV || !this.options.scrollbarV && this.options.paging.externalPaging) {
-        var sized = false;
-        $scope.$watch('body.options.paging.size', function (newVal, oldVal) {
-          if (!sized || newVal > oldVal) {
-            _this4.getRows();
-            sized = true;
-          }
-        });
-
-        $scope.$watch('body.options.paging.count', function (count) {
-          _this4.count = count;
-          _this4.updatePage();
-        });
-
-        $scope.$watch('body.options.paging.offset', function (newVal) {
-          if (_this4.options.paging.size) {
-            _this4.onPage({
-              offset: newVal,
-              size: _this4.options.paging.size
-            });
-          }
-        });
-      }
     }
 
     _createClass(BodyController, [{
+      key: "setTreeAndGroupColumns",
+      value: function setTreeAndGroupColumns() {
+        this.treeColumn = this.options.columns.find(function (c) {
+          return c.isTreeColumn;
+        });
+
+        this.groupColumn = this.options.columns.find(function (c) {
+          return c.group;
+        });
+      }
+    }, {
+      key: "setConditionalWatches",
+      value: function setConditionalWatches() {
+        var _this5 = this;
+
+        if (this.options.scrollbarV || !this.options.scrollbarV && this.options.paging.externalPaging) {
+          var sized = false;
+          this.watches.push(this.$scope.$watch('body.options.paging.size', function (newVal, oldVal) {
+            if (!sized || newVal > oldVal) {
+              _this5.getRows();
+              sized = true;
+            }
+          }));
+
+          this.watches.push(this.$scope.$watch('body.options.paging.count', function (count) {
+            _this5.count = count;
+            _this5.updatePage();
+          }));
+
+          this.watches.push(this.$scope.$watch('body.options.paging.offset', function (newVal) {
+            if (_this5.options.paging.size) {
+              _this5.onPage({
+                offset: newVal,
+                size: _this5.options.paging.size
+              });
+            }
+          }));
+        }
+      }
+    }, {
       key: "rowsUpdated",
       value: function rowsUpdated(newVal, oldVal) {
+        if (!newVal) {
+          this.getRows(true);
+        }
+
         if (newVal) {
           if (!this.options.paging.externalPaging) {
             this.options.paging.count = newVal.length;
@@ -1532,7 +1565,7 @@
     }, {
       key: "buildGroups",
       value: function buildGroups() {
-        var _this5 = this;
+        var _this6 = this;
 
         var temp = [];
 
@@ -1542,7 +1575,7 @@
             group: true
           });
 
-          if (_this5.expanded[k]) {
+          if (_this6.expanded[k]) {
             temp.push.apply(temp, _toConsumableArray(v));
           }
         });
@@ -1720,11 +1753,8 @@
         return children !== undefined || children && !children.length;
       }
     }, {
-      key: "onTreeToggled",
-      value: function onTreeToggled(row, cell) {
-        var val = row[this.treeColumn.prop];
-        this.expanded[val] = !this.expanded[val];
-
+      key: "refreshTree",
+      value: function refreshTree() {
         if (this.options.scrollbarV) {
           this.getRows(true);
         } else {
@@ -1734,6 +1764,14 @@
           this.tempRows.splice(0, this.tempRows.length);
           (_tempRows2 = this.tempRows).push.apply(_tempRows2, _toConsumableArray(values));
         }
+      }
+    }, {
+      key: "onTreeToggled",
+      value: function onTreeToggled(row, cell) {
+        var val = row[this.treeColumn.prop];
+        this.expanded[val] = !this.expanded[val];
+
+        this.refreshTree();
 
         this.onTreeToggle({
           row: row,
@@ -1741,10 +1779,8 @@
         });
       }
     }, {
-      key: "onGroupToggle",
-      value: function onGroupToggle(row) {
-        this.expanded[row.name] = !this.expanded[row.name];
-
+      key: "refreshGroups",
+      value: function refreshGroups() {
         if (this.options.scrollbarV) {
           this.getRows(true);
         } else {
@@ -1754,6 +1790,13 @@
           this.tempRows.splice(0, this.tempRows.length);
           (_tempRows3 = this.tempRows).push.apply(_tempRows3, _toConsumableArray(values));
         }
+      }
+    }, {
+      key: "onGroupToggle",
+      value: function onGroupToggle(row) {
+        this.expanded[row.name] = !this.expanded[row.name];
+
+        this.refreshGroups();
       }
     }]);
 
@@ -2299,13 +2342,13 @@
 
   var FooterController = function () {
     function FooterController($scope) {
-      var _this6 = this;
+      var _this7 = this;
 
       _classCallCheck(this, FooterController);
 
       this.page = this.paging.offset + 1;
       $scope.$watch('footer.paging.offset', function (newVal) {
-        _this6.offsetChanged(newVal);
+        _this7.offsetChanged(newVal);
       });
     }
 
@@ -2345,23 +2388,23 @@
 
   var PagerController = function () {
     function PagerController($scope) {
-      var _this7 = this;
+      var _this8 = this;
 
       _classCallCheck(this, PagerController);
 
       $scope.$watch('pager.count', function (newVal) {
-        _this7.calcTotalPages(_this7.size, _this7.count);
-        _this7.getPages(_this7.page || 1);
+        _this8.calcTotalPages(_this8.size, _this8.count);
+        _this8.getPages(_this8.page || 1);
       });
 
       $scope.$watch('pager.size', function (newVal) {
-        _this7.calcTotalPages(_this7.size, _this7.count);
-        _this7.getPages(_this7.page || 1);
+        _this8.calcTotalPages(_this8.size, _this8.count);
+        _this8.getPages(_this8.page || 1);
       });
 
       $scope.$watch('pager.page', function (newVal) {
-        if (newVal !== 0 && newVal <= _this7.totalPages) {
-          _this7.getPages(newVal);
+        if (newVal !== 0 && newVal <= _this8.totalPages) {
+          _this8.getPages(newVal);
         }
       });
 
@@ -2452,7 +2495,422 @@
     };
   }
 
+  var POSITION = {
+    LEFT: 'left',
+    RIGHT: 'right',
+    TOP: 'top',
+    BOTTOM: 'bottom',
+    CENTER: 'center'
+  };
+
+  function PopoverDirective($q, $timeout, $templateCache, $compile, PopoverRegistry, PositionHelper, $animate) {
+    function loadTemplate(template, plain) {
+      if (!template) {
+        return '';
+      }
+
+      if (_angular2.default.isString(template) && plain) {
+        return template;
+      }
+
+      return $templateCache.get(template) || $http.get(template, { cache: true });
+    }
+
+    function toBoolean(value) {
+      if (value && value.length !== 0) {
+        var v = value.toString().toLowerCase();
+        value = v == 'true';
+      } else {
+        value = false;
+      }
+      return value;
+    }
+
+    return {
+      restrict: 'A',
+      scope: true,
+      replace: false,
+      link: function link($scope, $element, $attributes) {
+        $scope.popover = null;
+        $scope.popoverId = Date.now();
+
+        $scope.options = {
+          text: $attributes.popoverText,
+          template: $attributes.popoverTemplate,
+          plain: toBoolean($attributes.popoverPlain || false),
+          placement: $attributes.popoverPlacement || 'right',
+          alignment: $attributes.popoverAlignment || 'center',
+          group: $attributes.popoverGroup,
+          spacing: parseInt($attributes.popoverSpacing) || 0,
+          showCaret: toBoolean($attributes.popoverPlain || false)
+        };
+
+        $element.off('mouseenter', display);
+        $element.on('mouseenter', display);
+        $element.off('mouseleave', mouseOut);
+        $element.on('mouseleave', mouseOut);
+
+        function mouseOut() {
+          $scope.exitTimeout = $timeout(remove, 500);
+        }
+
+        function display() {
+          $timeout.cancel($scope.exitTimeout);
+
+          var elm = document.getElementById("#" + $scope.popoverId);
+          if ($scope.popover && elm) return;
+
+          if ($scope.options.group) {
+            PopoverRegistry.removeGroup($scope.options.group, $scope.popoverId);
+          }
+
+          if ($scope.options.text && !$scope.options.template) {
+            $scope.popover = _angular2.default.element("<div class=\"dt-popover popover-text\n            popover" + $scope.options.placement + "\" id=\"" + $scope.popoverId + "\"></div>");
+
+            $scope.popover.html($scope.options.text);
+            _angular2.default.element(document.body).append($scope.popover);
+            positionPopover($element, $scope.popover, $scope.options);
+            PopoverRegistry.add($scope.popoverId, { element: $element, popover: $scope.popover, group: $scope.options.group });
+          } else {
+            $q.when(loadTemplate($scope.options.template, $scope.options.plain)).then(function (template) {
+              if (!_angular2.default.isString(template)) {
+                if (template.data && _angular2.default.isString(template.data)) {
+                  template = template.data;
+                } else {
+                  template = '';
+                }
+              }
+
+              $scope.popover = _angular2.default.element("<div class=\"dt-popover\n              popover-" + $scope.options.placement + "\" id=\"" + $scope.popoverId + "\"></div>");
+
+              $scope.popover.html(template);
+              $compile($scope.popover)($scope);
+              _angular2.default.element(document.body).append($scope.popover);
+              positionPopover($element, $scope.popover, $scope.options);
+
+              $scope.popover.off('mouseleave', mouseOut);
+              $scope.popover.on('mouseleave', mouseOut);
+              $scope.popover.on('mouseenter', function () {
+                $timeout.cancel($scope.exitTimeout);
+              });
+
+              PopoverRegistry.add($scope.popoverId, {
+                element: $element,
+                popover: $scope.popover,
+                group: $scope.options.group
+              });
+            });
+          }
+        }
+
+        function remove() {
+          if ($scope.popover) {
+            $scope.popover.remove();
+          }
+
+          $scope.popover = undefined;
+          PopoverRegistry.remove($scope.popoverId);
+        }
+
+        function positionPopover(triggerElement, popover, options) {
+          $timeout(function () {
+            var elDimensions = triggerElement[0].getBoundingClientRect(),
+                popoverDimensions = popover[0].getBoundingClientRect(),
+                top,
+                left;
+
+            if (options.placement === POSITION.RIGHT) {
+              left = elDimensions.left + elDimensions.width + options.spacing;
+              top = PositionHelper.calculateVerticalAlignment(elDimensions, popoverDimensions, options.alignment);
+            }
+            if (options.placement === POSITION.LEFT) {
+              left = elDimensions.left - popoverDimensions.width - options.spacing;
+              top = PositionHelper.calculateVerticalAlignment(elDimensions, popoverDimensions, options.alignment);
+            }
+            if (options.placement === POSITION.TOP) {
+              top = elDimensions.top - popoverDimensions.height - options.spacing;
+              left = PositionHelper.calculateHorizontalAlignment(elDimensions, popoverDimensions, options.alignment);
+            }
+            if (options.placement === POSITION.BOTTOM) {
+              top = elDimensions.top + elDimensions.height + options.spacing;
+              left = PositionHelper.calculateHorizontalAlignment(elDimensions, popoverDimensions, options.alignment);
+            }
+
+            popover.css({
+              top: top + 'px',
+              left: left + 'px'
+            });
+
+            if ($scope.options.showCaret) {
+              addCaret($scope.popover, elDimensions, popoverDimensions);
+            }
+
+            $animate.addClass($scope.popover, 'popover-animation');
+          }, 50);
+        }
+
+        function addCaret(popoverEl, elDimensions, popoverDimensions) {
+          var caret = _angular2.default.element("<span class=\"popover-caret caret-" + $scope.options.placement + "\"></span>");
+          popoverEl.append(caret);
+          var caretDimensions = caret[0].getBoundingClientRect();
+
+          var left, top;
+          if ($scope.options.placement === POSITION.RIGHT) {
+            left = -6;
+            top = PositionHelper.calculateVerticalCaret(elDimensions, popoverDimensions, caretDimensions, $scope.options.alignment);
+          }
+          if ($scope.options.placement === POSITION.LEFT) {
+            left = popoverDimensions.width - 2;
+            top = PositionHelper.calculateVerticalCaret(elDimensions, popoverDimensions, caretDimensions, $scope.options.alignment);
+          }
+          if ($scope.options.placement === POSITION.TOP) {
+            top = popoverDimensions.height - 5;
+            left = PositionHelper.calculateHorizontalCaret(elDimensions, popoverDimensions, caretDimensions, $scope.options.alignment);
+          }
+
+          if ($scope.options.placement === POSITION.BOTTOM) {
+            top = -8;
+            left = PositionHelper.calculateHorizontalCaret(elDimensions, popoverDimensions, caretDimensions, $scope.options.alignment);
+          }
+
+          caret.css({
+            top: top + 'px',
+            left: left + 'px'
+          });
+        }
+      }
+    };
+  }
+
+  function PopoverRegistry($animate) {
+    var popovers = {};
+    this.add = function (id, object) {
+      popovers[id] = object;
+    };
+    this.find = function (id) {
+      popovers[id];
+    };
+    this.remove = function (id) {
+      delete popovers[id];
+    };
+    this.removeGroup = function (group, currentId) {
+      angular.forEach(popovers, function (popoverOb, id) {
+        if (id === currentId) return;
+
+        if (popoverOb.group && popoverOb.group === group) {
+          $animate.removeClass(popoverOb.popover, 'sw-popover-animate').then(function () {
+            popoverOb.popover.remove();
+            delete popovers[id];
+          });
+        }
+      });
+    };
+  }
+
+  function PositionHelper() {
+    return {
+
+      calculateVerticalAlignment: function calculateVerticalAlignment(elDimensions, popoverDimensions, alignment) {
+        if (alignment === POSITION.TOP) {
+          return elDimensions.top;
+        }
+        if (alignment === POSITION.BOTTOM) {
+          return elDimensions.top + elDimensions.height - popoverDimensions.height;
+        }
+        if (alignment === POSITION.CENTER) {
+          return elDimensions.top + elDimensions.height / 2 - popoverDimensions.height / 2;
+        }
+      },
+
+      calculateVerticalCaret: function calculateVerticalCaret(elDimensions, popoverDimensions, caretDimensions, alignment) {
+        if (alignment === POSITION.TOP) {
+          return elDimensions.height / 2 - caretDimensions.height / 2 - 1;
+        }
+        if (alignment === POSITION.BOTTOM) {
+          return popoverDimensions.height - elDimensions.height / 2 - caretDimensions.height / 2 - 1;
+        }
+        if (alignment === POSITION.CENTER) {
+          return popoverDimensions.height / 2 - caretDimensions.height / 2 - 1;
+        }
+      },
+
+      calculateHorizontalCaret: function calculateHorizontalCaret(elDimensions, popoverDimensions, caretDimensions, alignment) {
+        if (alignment === POSITION.LEFT) {
+          return elDimensions.width / 2 - caretDimensions.height / 2 - 1;
+        }
+        if (alignment === POSITION.RIGHT) {
+          return popoverDimensions.width - elDimensions.width / 2 - caretDimensions.height / 2 - 1;
+        }
+        if (alignment === POSITION.CENTER) {
+          return popoverDimensions.width / 2 - caretDimensions.height / 2 - 1;
+        }
+      },
+
+      calculateHorizontalAlignment: function calculateHorizontalAlignment(elDimensions, popoverDimensions, alignment) {
+        if (alignment === POSITION.LEFT) {
+          return elDimensions.left;
+        }
+        if (alignment === POSITION.RIGHT) {
+          return elDimensions.left + elDimensions.width - popoverDimensions.width;
+        }
+        if (alignment === POSITION.CENTER) {
+          return elDimensions.left + elDimensions.width / 2 - popoverDimensions.width / 2;
+        }
+      }
+
+    };
+  }
+
+  var popover = _angular2.default.module('popover', []).service('PopoverRegistry', PopoverRegistry).factory('PositionHelper', PositionHelper).directive('popover', PopoverDirective);
+
+  var MenuController = function () {
+    function MenuController($scope, $timeout) {
+      _classCallCheck(this, MenuController);
+
+      this.$scope = $scope;
+    }
+
+    _createClass(MenuController, [{
+      key: "getColumnIndex",
+      value: function getColumnIndex(model) {
+        return this.$scope.current.findIndex(function (col) {
+          return model.name == col.name;
+        });
+      }
+    }, {
+      key: "isChecked",
+      value: function isChecked(model) {
+        return this.getColumnIndex(model) > -1;
+      }
+    }, {
+      key: "onCheck",
+      value: function onCheck(model) {
+        var idx = this.getColumnIndex(model);
+        if (idx === -1) {
+          this.$scope.current.push(model);
+        } else {
+          this.$scope.current.splice(idx, 1);
+        }
+      }
+    }]);
+
+    return MenuController;
+  }();
+
+  function MenuDirective() {
+    return {
+      restrict: 'E',
+      controller: 'MenuController',
+      controllerAs: 'dtm',
+      scope: {
+        current: '=',
+        available: '='
+      },
+      template: "<div class=\"dt-menu dropdown\" close-on-click=\"false\">\n        <a href=\"#\" class=\"dropdown-toggle icon-add\">\n          Configure Columns\n        </a>\n        <div class=\"dropdown-menu\" role=\"menu\" aria-labelledby=\"dropdown\">\n          <div class=\"keywords\">\n            <input type=\"text\" \n                   click-select\n                   placeholder=\"Filter columns...\" \n                   ng-model=\"columnKeyword\" \n                   autofocus />\n          </div>\n          <ul>\n            <li ng-repeat=\"column in available | filter:columnKeyword\">\n              <label class=\"dt-checkbox\">\n                <input type=\"checkbox\" \n                       ng-checked=\"dtm.isChecked(column)\"\n                       ng-click=\"dtm.onCheck(column)\">\n                {{column.name}}\n              </label>\n            </li>\n          </ul>\n        </div>\n      </div>"
+    };
+  }
+
+  var DropdownController = function () {
+    function DropdownController($scope) {
+      _classCallCheck(this, DropdownController);
+
+      $scope.open = false;
+    }
+
+    _createClass(DropdownController, [{
+      key: "toggle",
+      value: function toggle(scope) {
+        scope.open = !scope.open;
+      }
+    }]);
+
+    return DropdownController;
+  }();
+
+  function DropdownDirective($document, $timeout) {
+    return {
+      restrict: 'C',
+      controller: 'DropdownController',
+      link: function link($scope, $elm, $attrs) {
+
+        function closeDropdown(ev) {
+          if ($elm[0].contains(ev.target)) {
+            return;
+          }
+
+          $timeout(function () {
+            $scope.open = false;
+            off();
+          });
+        }
+
+        function keydown(ev) {
+          if (ev.which === 27) {
+            $timeout(function () {
+              $scope.open = false;
+              off();
+            });
+          }
+        }
+
+        function off() {
+          $document.unbind('click', closeDropdown);
+          $document.unbind('keydown', keydown);
+        }
+
+        $scope.$watch('open', function (newVal) {
+          if (newVal) {
+            $document.bind('click', closeDropdown);
+            $document.bind('keydown', keydown);
+          }
+        });
+      }
+    };
+  }
+
+  function DropdownToggleDirective($timeout) {
+    return {
+      restrict: 'C',
+      controller: 'DropdownController',
+      require: '?^dropdown',
+      link: function link($scope, $elm, $attrs, ctrl) {
+
+        function toggleClick(event) {
+          event.preventDefault();
+          $timeout(function () {
+            ctrl.toggle($scope);
+          });
+        }
+
+        function toggleDestroy() {
+          $elm.unbind('click', toggleClick);
+        }
+
+        $elm.bind('click', toggleClick);
+        $scope.$on('$destroy', toggleDestroy);
+      }
+    };
+  }
+
+  function DropdownMenuDirective($animate) {
+    return {
+      restrict: 'C',
+      require: '?^dropdown',
+      link: function link($scope, $elm, $attrs, ctrl) {
+        $scope.$watch('open', function () {
+          $animate[$scope.open ? 'addClass' : 'removeClass']($elm, 'ddm-open');
+        });
+      }
+    };
+  }
+
+  var dropdown = _angular2.default.module('dt.dropdown', []).controller('DropdownController', DropdownController).directive('dropdown', DropdownDirective).directive('dropdownToggle', DropdownToggleDirective).directive('dropdownMenu', DropdownMenuDirective);
+
+  var menu = _angular2.default.module('dt.menu', [dropdown.name]).controller('MenuController', MenuController).directive('dtm', MenuDirective);
+
   var dataTable = _angular2.default.module('data-table', []).directive('dtable', DataTableDirective).directive('resizable', ResizableDirective).directive('sortable', SortableDirective).directive('dtHeader', HeaderDirective).directive('dtHeaderCell', HeaderCellDirective).directive('dtBody', BodyDirective).directive('dtScroller', ScrollerDirective).directive('dtSeletion', SelectionDirective).directive('dtRow', RowDirective).directive('dtGroupRow', GroupRowDirective).directive('dtCell', CellDirective).directive('dtFooter', FooterDirective).directive('dtPager', PagerDirective);
 
+  exports.dtPopover = popover;
+  exports.dtMenu = menu;
   exports.default = dataTable;
 });

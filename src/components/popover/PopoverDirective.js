@@ -90,7 +90,7 @@ export function PopoverDirective($q, $timeout, $templateCache, $compile, Popover
         }
 
         if ($scope.options.text && !$scope.options.template){
-          $scope.popover = angular.element(`<div class="popover popover-text
+          $scope.popover = angular.element(`<div class="dt-popover popover-text
             popover${$scope.options.placement}" id="${$scope.popoverId}"></div>`);
 
           $scope.popover.html($scope.options.text);
@@ -108,7 +108,7 @@ export function PopoverDirective($q, $timeout, $templateCache, $compile, Popover
               }
             }
 
-            $scope.popover = angular.element(`<div class="popover
+            $scope.popover = angular.element(`<div class="dt-popover
               popover-${$scope.options.placement}" id="${$scope.popoverId}"></div>`);
 
             $scope.popover.html(template);

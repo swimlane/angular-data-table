@@ -12,7 +12,29 @@ export class BodyController{
   constructor($scope, $timeout){
     this.$scope = $scope;
     this.tempRows = [];
+    this.watches = [];
 
+    this.setTreeAndGroupColumns();
+    this.setConditionalWatches();
+    this.options.refreshRows = this.rowsUpdated.bind(this);
+
+    $scope.$watch(()=>(this.options.columns), (newVal, oldVal) => {
+      if (newVal) {
+        this.setTreeAndGroupColumns();
+
+        console.log(this.watches);
+        this.setConditionalWatches();
+
+        if (!this.options.refreshRows) {
+          this.options.refreshRows = this.rowsUpdated.bind(this);
+        }
+      }
+    }, true);
+
+    $scope.$watchCollection('body.rows', this.rowsUpdated.bind(this));
+  }
+
+  setTreeAndGroupColumns(){
     this.treeColumn = this.options.columns.find((c) => {
       return c.isTreeColumn;
     });
@@ -20,35 +42,39 @@ export class BodyController{
     this.groupColumn = this.options.columns.find((c) => {
       return c.group;
     });
+  }
 
-    $scope.$watchCollection('body.rows', this.rowsUpdated.bind(this));
-
+  setConditionalWatches(){
     if(this.options.scrollbarV || (!this.options.scrollbarV && this.options.paging.externalPaging)){
       var sized = false;
-      $scope.$watch('body.options.paging.size', (newVal, oldVal) => {
+      this.watches.push(this.$scope.$watch('body.options.paging.size', (newVal, oldVal) => {
         if(!sized || newVal > oldVal){
           this.getRows();
           sized = true;
         }
-      });
+      }));
 
-      $scope.$watch('body.options.paging.count', (count) => {
+      this.watches.push(this.$scope.$watch('body.options.paging.count', (count) => {
         this.count = count;
         this.updatePage();
-      });
+      }));
 
-      $scope.$watch('body.options.paging.offset', (newVal) => {
+      this.watches.push(this.$scope.$watch('body.options.paging.offset', (newVal) => {
         if(this.options.paging.size){
           this.onPage({
             offset: newVal,
             size: this.options.paging.size
           });
         }
-      });
+      }));
     }
   }
 
   rowsUpdated(newVal, oldVal){
+    if(!newVal){
+      this.getRows(true);
+    }
+
     if(newVal) {
       if(!this.options.paging.externalPaging){
         this.options.paging.count = newVal.length;
@@ -478,6 +504,16 @@ export class BodyController{
     return children !== undefined || (children && !children.length);
   }
 
+  refreshTree(){
+    if(this.options.scrollbarV){
+      this.getRows(true);
+    } else {
+      var values = this.buildTree();
+      this.tempRows.splice(0, this.tempRows.length);
+      this.tempRows.push(...values);
+    }
+  }
+
   /**
    * Tree toggle event from a cell
    * @param  {row model}
@@ -487,18 +523,22 @@ export class BodyController{
     var val  = row[this.treeColumn.prop];
     this.expanded[val] = !this.expanded[val];
 
-    if(this.options.scrollbarV){
-      this.getRows(true);
-    } else {
-      var values = this.buildTree();
-      this.tempRows.splice(0, this.tempRows.length);
-      this.tempRows.push(...values);
-    }
+    this.refreshTree();
 
     this.onTreeToggle({
       row: row,
       cell: cell
     });
+  }
+
+  refreshGroups(){
+    if(this.options.scrollbarV){
+      this.getRows(true);
+    } else {
+      var values = this.buildGroups();
+      this.tempRows.splice(0, this.tempRows.length);
+      this.tempRows.push(...values);
+    }
   }
 
   /**
@@ -508,12 +548,6 @@ export class BodyController{
   onGroupToggle(row){
     this.expanded[row.name] = !this.expanded[row.name];
 
-    if(this.options.scrollbarV){
-      this.getRows(true);
-    } else {
-      var values = this.buildGroups();
-      this.tempRows.splice(0, this.tempRows.length);
-      this.tempRows.push(...values);
-    }
+    this.refreshGroups();
   }
 }
