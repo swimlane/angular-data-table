@@ -637,7 +637,6 @@ function ForceFillColumnWidths(allColumns, expectedWidth, startIdx){
 }
 
 class DataTableController {
-
   /**
    * Creates an instance of the DataTable Controller
    * @param  {scope}
@@ -3097,6 +3096,497 @@ function PagerDirective(){
   };
 }
 
+/**
+ * Popover Directive
+ * @param {object} $q
+ * @param {function} $timeout
+ * @param {function} $templateCache
+ * @param {function} $compile
+ * @param {function} PopoverRegistry
+ * @param {function} $animate
+ */
+function PopoverDirective($q, $timeout, $templateCache, $compile, PopoverRegistry, PositionHelper, $animate){
+
+  /**
+   * Loads a template from the template cache
+   * @param  {string} template
+   * @param  {boolean} plain
+   * @return {object}  html template
+   */
+  function loadTemplate(template, plain) {
+    if (!template) {
+      return '';
+    }
+
+    if (angular$1.isString(template) && plain) {
+      return template;
+    }
+
+    return $templateCache.get(template) || $http.get(template, { cache : true });
+  }
+
+  /**
+   * Determines a boolean given a value
+   * @param  {object} value
+   * @return {boolean}
+   */
+  function toBoolean(value) {
+    if (value && value.length !== 0) {
+      var v = ("" + value).toLowerCase();
+      value = (v == 'true');
+    } else {
+      value = false;
+    }
+    return value;
+  }
+
+  return {
+    restrict: 'A',
+    scope: true,
+    replace: false,
+    link: function ($scope, $element, $attributes) {
+      $scope.popover = null;
+      $scope.popoverId = Date.now();
+
+      $scope.options = {
+        text: $attributes.popoverText,
+        template: $attributes.popoverTemplate,
+        plain: toBoolean($attributes.popoverPlain || false),
+        placement: $attributes.popoverPlacement || 'right',
+        alignment: $attributes.popoverAlignment  || 'center',
+        group: $attributes.popoverGroup,
+        spacing: parseInt($attributes.popoverSpacing) || 0,
+        showCaret: toBoolean($attributes.popoverPlain || false)
+      };
+
+      // attach exit and enter events to element
+      $element.off('mouseenter', display);
+      $element.on('mouseenter', display);
+      $element.off('mouseleave', mouseOut);
+      $element.on('mouseleave', mouseOut);
+
+      function mouseOut(){
+        $scope.exitTimeout = $timeout(remove, 500);
+      }
+
+      /**
+       * Displays the popover on the page
+       */
+      function display(){
+        // Cancel exit timeout
+        $timeout.cancel($scope.exitTimeout);
+
+        var elm = document.getElementById(`#${$scope.popoverId}`);
+        if ($scope.popover && elm) return;
+
+        // remove other popovers from the same group
+        if ($scope.options.group){
+          PopoverRegistry.removeGroup($scope.options.group, $scope.popoverId);
+        }
+
+        if ($scope.options.text && !$scope.options.template){
+          $scope.popover = angular$1.element(`<div class="dt-popover popover-text
+            popover${$scope.options.placement}" id="${$scope.popoverId}"></div>`);
+
+          $scope.popover.html($scope.options.text);
+          angular$1.element(document.body).append($scope.popover);
+          positionPopover($element, $scope.popover, $scope.options);
+          PopoverRegistry.add($scope.popoverId, {element: $element, popover: $scope.popover, group: $scope.options.group});
+
+        } else {
+          $q.when(loadTemplate($scope.options.template, $scope.options.plain)).then(function(template) {
+            if (!angular$1.isString(template)) {
+              if (template.data && angular$1.isString(template.data)){
+                template = template.data;
+              } else {
+                template = '';
+              }
+            }
+
+            $scope.popover = angular$1.element(`<div class="dt-popover
+              popover-${$scope.options.placement}" id="${$scope.popoverId}"></div>`);
+
+            $scope.popover.html(template);
+            $compile($scope.popover)($scope);
+            angular$1.element(document.body).append($scope.popover);
+            positionPopover($element, $scope.popover, $scope.options);
+
+            // attach exit and enter events to popover
+            $scope.popover.off('mouseleave', mouseOut);
+            $scope.popover.on('mouseleave', mouseOut);
+            $scope.popover.on('mouseenter', function(){
+              $timeout.cancel($scope.exitTimeout);
+            });
+
+            PopoverRegistry.add($scope.popoverId, {
+              element: $element,
+              popover: $scope.popover,
+              group: $scope.options.group
+            });
+          });
+        }
+      }
+
+      /**
+       * Removes the template from the registry and page
+       */
+      function remove(){
+        if ($scope.popover){
+          $scope.popover.remove();
+        }
+
+        $scope.popover = undefined;
+        PopoverRegistry.remove($scope.popoverId);
+      }
+
+      /**
+       * Positions the popover
+       * @param  {object} triggerElement
+       * @param  {object} popover
+       * @param  {object} options
+       */
+      function positionPopover(triggerElement, popover, options){
+        $timeout(function(){
+          var elDimensions = triggerElement[0].getBoundingClientRect(),
+              popoverDimensions = popover[0].getBoundingClientRect(),
+              top, left;
+
+          if (options.placement === 'right'){
+            left = elDimensions.left + elDimensions.width + options.spacing;
+            top = PositionHelper.calculateVerticalAlignment(elDimensions,
+              popoverDimensions, options.alignment);
+          }
+          if (options.placement === 'left'){
+            left = elDimensions.left - popoverDimensions.width - options.spacing;
+            top = PositionHelper.calculateVerticalAlignment(elDimensions,
+              popoverDimensions, options.alignment);
+          }
+          if (options.placement === 'top'){
+            top = elDimensions.top - popoverDimensions.height - options.spacing;
+            left = PositionHelper.calculateHorizontalAlignment(elDimensions,
+              popoverDimensions, options.alignment);
+          }
+          if (options.placement === 'bottom'){
+            top = elDimensions.top + elDimensions.height + options.spacing;
+            left = PositionHelper.calculateHorizontalAlignment(elDimensions,
+              popoverDimensions, options.alignment);
+          }
+
+          popover.css({
+            top: top + 'px',
+            left: left + 'px'
+          });
+
+          if($scope.options.showCaret){
+            addCaret($scope.popover, elDimensions, popoverDimensions);
+          }
+
+          $animate.addClass($scope.popover, 'popover-animation');
+        }, 50);
+      }
+
+      /**
+       * Adds a caret and positions it relatively to the popover
+       * @param {object} popoverEl
+       * @param {object} elDimensions
+       * @param {object} popoverDimensions
+       */
+      function addCaret(popoverEl, elDimensions, popoverDimensions){
+        var caret = angular$1.element(`<span class="popover-caret caret-${$scope.options.placement}"></span>`);
+        popoverEl.append(caret);
+        var caretDimensions = caret[0].getBoundingClientRect();
+
+        var left, top;
+        if ($scope.options.placement === 'right'){
+          left = -6;
+          top = PositionHelper.calculateVerticalCaret(elDimensions,
+            popoverDimensions, caretDimensions, $scope.options.alignment);
+        }
+        if ($scope.options.placement === 'left'){
+          left = popoverDimensions.width - 2;
+          top = PositionHelper.calculateVerticalCaret(elDimensions,
+            popoverDimensions, caretDimensions, $scope.options.alignment);
+        }
+        if ($scope.options.placement === 'top'){
+          top = popoverDimensions.height - 5;
+          left = PositionHelper.calculateHorizontalCaret(elDimensions,
+            popoverDimensions, caretDimensions, $scope.options.alignment);
+        }
+
+        if ($scope.options.placement === 'bottom'){
+          top = -8;
+          left = PositionHelper.calculateHorizontalCaret(elDimensions,
+            popoverDimensions, caretDimensions, $scope.options.alignment);
+        }
+
+        caret.css({
+          top: top + 'px',
+          left: left + 'px'
+        });
+      }
+
+    }
+  }
+}
+
+/**
+ * Registering to deal with popovers
+ * @param {function} $animate
+ */
+function PopoverRegistry($animate){
+  var popovers = {};
+  this.add = function(id, object){
+    popovers[id] = object;
+  };
+  this.find = function(id){
+    popovers[id];
+  };
+  this.remove = function(id){
+    delete popovers[id];
+  };
+  this.removeGroup = function(group, currentId){
+    angular.forEach(popovers, function(popoverOb, id){
+      if (id === currentId) return;
+
+      if (popoverOb.group && popoverOb.group === group){
+        $animate.removeClass(popoverOb.popover, 'sw-popover-animate').then(() => {
+          popoverOb.popover.remove();
+          delete popovers[id];
+        });
+      }
+    });
+  };
+}
+
+/**
+ * Position helper for the popover directive.
+ */
+function PositionHelper(){
+  return {
+
+    calculateVerticalAlignment: function(elDimensions, popoverDimensions, alignment){
+      if (alignment === 'top'){
+        return elDimensions.top;
+      }
+      if (alignment === 'bottom'){
+        return elDimensions.top + elDimensions.height - popoverDimensions.height;
+      }
+      if (alignment === 'center'){
+        return elDimensions.top + elDimensions.height/2 - popoverDimensions.height/2;
+      }
+    },
+
+    calculateVerticalCaret: function(elDimensions, popoverDimensions, caretDimensions, alignment){
+      if (alignment === 'top'){
+        return elDimensions.height/2 - caretDimensions.height/2 - 1;
+      }
+      if (alignment === 'bottom'){
+        return popoverDimensions.height - elDimensions.height/2 - caretDimensions.height/2 - 1;
+      }
+      if (alignment === 'center'){
+        return popoverDimensions.height/2 - caretDimensions.height/2 - 1;
+      }
+    },
+
+    calculateHorizontalCaret: function(elDimensions, popoverDimensions, caretDimensions, alignment){
+      if (alignment === 'left'){
+        return elDimensions.width/2 - caretDimensions.height/2 - 1;
+      }
+      if (alignment === 'right'){
+        return popoverDimensions.width - elDimensions.width/2 - caretDimensions.height/2 - 1;
+      }
+      if (alignment === 'center'){
+        return popoverDimensions.width/2 - caretDimensions.height/2 - 1;
+      }
+    },
+
+    calculateHorizontalAlignment: function(elDimensions, popoverDimensions, alignment){
+      if (alignment === 'left'){
+        return elDimensions.left;
+      }
+      if (alignment === 'right'){
+        return elDimensions.left + elDimensions.width - popoverDimensions.width;
+      }
+      if (alignment === 'center'){
+        return elDimensions.left + elDimensions.width/2 - popoverDimensions.width/2;
+      }
+    }
+
+  }
+}
+
+var popover = angular$1
+  .module('popover', [])
+  .service('PopoverRegistry', PopoverRegistry)
+  .factory('PositionHelper', PositionHelper)
+  .directive('popover', PopoverDirective);
+
+class MenuController{
+
+  /*@ngInject*/
+  constructor($scope, $timeout){
+    this.$scope = $scope;
+  }
+
+  getColumnIndex(model){
+    return this.$scope.current.findIndex((col) => {
+      return model.name == col.name;
+    });
+  }
+
+  isChecked(model){
+    return this.getColumnIndex(model) > -1;
+  }
+
+  onCheck(model){
+    var idx = this.getColumnIndex(model);
+    if(idx === -1){
+      this.$scope.current.push(model);
+    } else {
+      this.$scope.current.splice(idx, 1);
+    }
+  }
+  
+}
+
+function MenuDirective(){
+  return {
+    restrict: 'E',
+    controller: 'MenuController',
+    controllerAs: 'dtm',
+    scope: {
+      current: '=',
+      available: '='
+    },
+    template: 
+      `<div class="dt-menu dropdown" close-on-click="false">
+        <a href="#" class="dropdown-toggle icon-add">
+          Configure Columns
+        </a>
+        <div class="dropdown-menu" role="menu" aria-labelledby="dropdown">
+          <div class="keywords">
+            <input type="text" 
+                   click-select
+                   placeholder="Filter columns..." 
+                   ng-model="columnKeyword" 
+                   autofocus />
+          </div>
+          <ul>
+            <li ng-repeat="column in available | filter:columnKeyword">
+              <label class="dt-checkbox">
+                <input type="checkbox" 
+                       ng-checked="dtm.isChecked(column)"
+                       ng-click="dtm.onCheck(column)">
+                {{column.name}}
+              </label>
+            </li>
+          </ul>
+        </div>
+      </div>`
+  };
+}
+
+class DropdownController{
+  /*@ngInject*/
+  constructor($scope){
+    $scope.open = false;
+  }
+
+  toggle(scope){
+    scope.open = !scope.open;
+  }
+}
+
+function DropdownDirective($document, $timeout){
+  return {
+    restrict: 'C',
+    controller: 'DropdownController',
+    link: function($scope, $elm, $attrs) {
+
+      function closeDropdown(ev){
+        if($elm[0].contains(ev.target) ) {
+          return;
+        }
+
+        $timeout(() => {
+          $scope.open = false;
+          off();
+        });
+      }
+
+      function keydown(ev){
+        if (ev.which === 27) {
+          $timeout(() => {
+            $scope.open = false;
+            off();
+          });
+        }
+      }
+
+      function off(){
+        $document.unbind('click', closeDropdown);
+        $document.unbind('keydown', keydown);
+      }
+
+      $scope.$watch('open', (newVal) => {
+        if(newVal){
+          $document.bind('click', closeDropdown);
+          $document.bind('keydown', keydown);
+        }
+      });
+      
+    }
+  };
+}
+
+function DropdownToggleDirective($timeout){
+  return {
+    restrict: 'C',
+    controller: 'DropdownController',
+    require: '?^dropdown',
+    link: function($scope, $elm, $attrs, ctrl) {
+
+      function toggleClick(event) {
+        event.preventDefault();
+        $timeout(() => {
+          ctrl.toggle($scope);
+        });
+      }
+
+      function toggleDestroy(){
+        $elm.unbind('click', toggleClick);
+      }
+
+      $elm.bind('click', toggleClick);
+      $scope.$on('$destroy', toggleDestroy);
+    }
+  };
+}
+
+function DropdownMenuDirective($animate){
+  return {
+    restrict: 'C',
+    require: '?^dropdown',
+    link: function($scope, $elm, $attrs, ctrl) {
+      $scope.$watch('open', () => {
+        $animate[$scope.open ? 'addClass' : 'removeClass']($elm, 'ddm-open');
+      });
+    }
+  };
+}
+
+var dropdown = angular$1
+  .module('dt.dropdown', [])
+  .controller('DropdownController', DropdownController)
+  .directive('dropdown', DropdownDirective)
+  .directive('dropdownToggle', DropdownToggleDirective)
+  .directive('dropdownMenu', DropdownMenuDirective);
+
+var menu = angular$1
+  .module('dt.menu', [ dropdown.name ])
+  .controller('MenuController', MenuController)
+  .directive('dtm', MenuDirective);
+
 var dataTable = angular$1
   .module('data-table', [])
   .directive('dtable', DataTableDirective)
@@ -3113,4 +3603,4 @@ var dataTable = angular$1
   .directive('dtFooter', FooterDirective)
   .directive('dtPager', PagerDirective);
 
-export default dataTable;
+export { popover as dtPopover, menu as dtMenu };export default dataTable;

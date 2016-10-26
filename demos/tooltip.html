@@ -65,29 +65,27 @@
             headerHeight: 50,
             scrollbarV: true,
             columns: [
-              { 
-                name: "Company", 
-                prop: "company", 
+              {
+                name: "Company",
+                prop: "company",
                 flexGrow: 2
               },
-              { 
-                name: "Revenue", 
+              {
+                name: "Revenue",
                 flexGrow: 1,
-                prop: "revenue" 
+                prop: "revenue"
               },
-              { 
-                name: "Sales", 
+              {
+                name: "Sales",
                 flexGrow: 1,
                 prop: "sales"
-              },{ 
-                name: "Comments", 
+              },{
+                name: "Comments",
                 prop: "comments",
                 tooltips: true,
                 cellRenderer: function(scope, elm){
                   return "<span popover popover-placement='left' popover-text='{{value}}' popover-group='main'>{{value}}</span>";
                 }
-
-
               }
             ]
           };
