@@ -4,7 +4,7 @@ import { PopoverRegistry } from './PopoverRegistry';
 import { PositionHelper } from './PositionHelper';
 
 export default angular
-  .module('popover', [])
+  .module('dt.popover', [])
   .service('PopoverRegistry', PopoverRegistry)
   .factory('PositionHelper', PositionHelper)
   .directive('popover', PopoverDirective);

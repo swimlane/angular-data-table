@@ -15,6 +15,10 @@ import { GroupRowDirective } from './components/body/GroupRowDirective';
 import { CellDirective } from './components/body/CellDirective';
 import { FooterDirective } from './components/footer/FooterDirective';
 import { PagerDirective } from './components/footer/PagerDirective';
+import dtPopover from './components/popover/popover';
+import dtMenu from './components/menu/menu';
+
+export { dtPopover, dtMenu };
 
 export default angular
   .module('data-table', [])
