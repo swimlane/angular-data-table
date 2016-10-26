@@ -7,7 +7,7 @@
     "strict": 0,
     "no-multi-spaces": 0,
     "quotes": [
-      0,
+      1,
       "single"
     ],
     "no-shadow": 0,

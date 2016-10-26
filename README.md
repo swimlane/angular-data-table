@@ -1,4 +1,4 @@
-# angular-data-table [![Join the chat at https://gitter.im/Swimlane/angular-data-table](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/swimlane/angular-data-table?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge) [![Dependency Status](https://david-dm.org/swimlane/angular-data-table.svg)](https://david-dm.org/jonshaffer/angular-data-table) [![devDependency Status](https://david-dm.org/swimlane/angular-data-table/dev-status.svg)](https://david-dm.org/jonshaffer/angular-data-table#info=devDependencies)
+# angular-data-table [![Join the Swimlane chat at https://gitter.im/Swimlane/angular-data-table](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/swimlane/angular-data-table?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge) [![Dependency Status](https://david-dm.org/jonshaffer/angular-data-table.svg)](https://david-dm.org/jonshaffer/angular-data-table) [![devDependency Status](https://david-dm.org/jonshaffer/angular-data-table/dev-status.svg)](https://david-dm.org/jonshaffer/angular-data-table#info=devDependencies) [![Code Climate](https://codeclimate.com/github/jonshaffer/angular-data-table/badges/gpa.svg)](https://codeclimate.com/github/jonshaffer/angular-data-table)
 
 `angular-data-table` is a AngularJS directive for presenting large and complex data.  It has all the features you would expect from any other table but in a light package with _no external depedencies_. The table was designed to be extremely flexible and light; it doesn't make any assumptions about your data or how you: filter, sort or page it.
 
@@ -6,7 +6,7 @@ It was engineered from its conception to handle thousands of rows without sacrif
 
 Sadly, this project is **not Angular2 upgrade compatible**. Fortunately, we have authored [angular2-data-table](https://github.com/swimlane/angular2-data-table) which is the successor to this project. **We are going to slowly be transitioning this project maintenance mode**. We will continue to provide feedback to the community and accept PRs but we won't be doing any major new development.
 
-See live demos [here]( http://swimlane.github.io/angular-data-table/).
+See live demos [here]( http://jonshaffer.github.io/angular-data-table/).
 
 ## Features
 
@@ -96,7 +96,7 @@ then using expressive markup in your template:
       </column>
     </dtable>
 
-and your off to the races! See live demos [here](http://swimlane.github.io/angular-data-table/).
+and your off to the races! See live demos [here](http://jonshaffer.github.io/angular-data-table/).
 
 ## Credits
 
