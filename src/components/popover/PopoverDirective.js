@@ -1,4 +1,5 @@
 import angular from 'angular';
+import { POSITION } from './Popover.constants';
 
 /**
  * Popover Directive
@@ -36,7 +37,7 @@ export function PopoverDirective($q, $timeout, $templateCache, $compile, Popover
    */
   function toBoolean(value) {
     if (value && value.length !== 0) {
-      var v = ("" + value).toLowerCase();
+      var v = value.toString().toLowerCase();
       value = (v == 'true');
     } else {
       value = false;
@@ -155,22 +156,22 @@ export function PopoverDirective($q, $timeout, $templateCache, $compile, Popover
               popoverDimensions = popover[0].getBoundingClientRect(),
               top, left;
 
-          if (options.placement === 'right'){
+          if (options.placement === POSITION.RIGHT){
             left = elDimensions.left + elDimensions.width + options.spacing;
             top = PositionHelper.calculateVerticalAlignment(elDimensions,
               popoverDimensions, options.alignment);
           }
-          if (options.placement === 'left'){
+          if (options.placement === POSITION.LEFT){
             left = elDimensions.left - popoverDimensions.width - options.spacing;
             top = PositionHelper.calculateVerticalAlignment(elDimensions,
               popoverDimensions, options.alignment);
           }
-          if (options.placement === 'top'){
+          if (options.placement === POSITION.TOP){
             top = elDimensions.top - popoverDimensions.height - options.spacing;
             left = PositionHelper.calculateHorizontalAlignment(elDimensions,
               popoverDimensions, options.alignment);
           }
-          if (options.placement === 'bottom'){
+          if (options.placement === POSITION.BOTTOM){
             top = elDimensions.top + elDimensions.height + options.spacing;
             left = PositionHelper.calculateHorizontalAlignment(elDimensions,
               popoverDimensions, options.alignment);
@@ -201,23 +202,23 @@ export function PopoverDirective($q, $timeout, $templateCache, $compile, Popover
         var caretDimensions = caret[0].getBoundingClientRect();
 
         var left, top;
-        if ($scope.options.placement === 'right'){
+        if ($scope.options.placement === POSITION.RIGHT){
           left = -6;
           top = PositionHelper.calculateVerticalCaret(elDimensions,
             popoverDimensions, caretDimensions, $scope.options.alignment);
         }
-        if ($scope.options.placement === 'left'){
+        if ($scope.options.placement === POSITION.LEFT){
           left = popoverDimensions.width - 2;
           top = PositionHelper.calculateVerticalCaret(elDimensions,
             popoverDimensions, caretDimensions, $scope.options.alignment);
         }
-        if ($scope.options.placement === 'top'){
+        if ($scope.options.placement === POSITION.TOP){
           top = popoverDimensions.height - 5;
           left = PositionHelper.calculateHorizontalCaret(elDimensions,
             popoverDimensions, caretDimensions, $scope.options.alignment);
         }
 
-        if ($scope.options.placement === 'bottom'){
+        if ($scope.options.placement === POSITION.BOTTOM){
           top = -8;
           left = PositionHelper.calculateHorizontalCaret(elDimensions,
             popoverDimensions, caretDimensions, $scope.options.alignment);
