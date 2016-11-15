@@ -17,6 +17,8 @@ var header = require('gulp-header');
 
 var KarmaServer = require('karma').Server;
 
+import protractorAngular from 'gulp-angular-protractor';
+
 var path = {
   source: 'src/**/*.js',
   less: 'src/**/*.less',
@@ -183,9 +185,9 @@ gulp.task('release-es6-min', function () {
 // Test Tasks
 // ------------------------------------------------------------
 
-gulp.task('test', ['compile'], function (done) {
+gulp.task('unit', ['compile'], function (done) {
   var server = new KarmaServer({
-    configFile: nPath.join(__dirname, 'karma.conf.js'),
+    configFile: nPath.join(__dirname, 'test/karma.conf.js'),
     singleRun: true
   }, function () {
     done();
@@ -194,13 +196,26 @@ gulp.task('test', ['compile'], function (done) {
   server.start();
 });
 
-gulp.task('test-watch', ['compile'], function (done) {
+gulp.task('unit-watch', ['compile'], function (done) {
   var server = new KarmaServer({
-    configFile: nPath.join(__dirname, 'karma.conf.js'),
+    configFile: nPath.join(__dirname, 'test/karma.conf.js'),
     singleRun: false
   }, function () {
     done();
   });
 
   server.start();
+});
+
+gulp.task('e2e', ['serve'], function (callback) {
+  gulp.src(['src/**/*e2e.js'])
+    .pipe(protractorAngular({
+      configFile: 'test/protractor.conf.js',
+      debug: false,
+      autoStartStopServer: true
+    }))
+    .on('error', (e) => (
+      console.log(e)
+    ))
+    .on('end', callback);
 });

@@ -10,7 +10,7 @@ export class DataTableController {
    * @param  {filter}
    */
   /*@ngInject*/
-  constructor($scope, $filter, $log, $transclude, $window){$window.dt = this;
+  constructor($scope, $filter, $log, $transclude){
     Object.assign(this, {
       $scope: $scope,
       $filter: $filter,
