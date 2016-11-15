@@ -28,7 +28,7 @@
     "test": "node ./node_modules/gulp/bin/gulp.js test"
   },
   "peerDependencies": {
-    "angular": "1.5.x"
+    "angular": "1.4.x"
   },
   "devDependencies": {
     "angular": "^1.5.0",
@@ -68,15 +68,15 @@
     "karma-angular": "0.0.6",
     "karma-babel-preprocessor": "^6.0.1",
     "karma-browserify": "^5.1.0",
-    "karma-chrome-launcher": "^2.0.0",
     "karma-coverage": "^1.1.1",
     "karma-jasmine": "^1.0.2",
     "karma-phantomjs-launcher": "^1.0.2",
     "karma-sauce-launcher": "^1.1.0",
+    "karma-sinon": "^1.0.5",
     "phantomjs-prebuilt": "^2.1.7",
     "rollup": "^0.36.3",
     "run-sequence": "^1.1.0",
-    "sinon": "^1.15.4",
+    "sinon": "^1.17.6",
     "systemjs-builder": "^0.15.32",
     "vinyl-paths": "^2.1.0",
     "watchify": "^3.7.0"
