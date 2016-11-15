@@ -6,8 +6,8 @@ branches:
   - master
 before_install:
 - npm install -g gulp jspm protractor forever
-- forever start gulp serve
 after_success:
+- forever start node_modules/gulp/bin/gulp.js serve
 - test $TRAVIS_TEST_RESULT = 0 && gulp release
 script:
   - gulp unit
