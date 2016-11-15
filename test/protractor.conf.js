@@ -4,8 +4,7 @@ const config = {
 };
 
 if (process.env.TRAVIS) {
-  config.sauceUser = process.env.SAUCE_USERNAME;
-  config.sauceKey = process.env.SAUCE_ACCESS_KEY;
+  config.seleniumAddress = 'http://localhost:4445/wd/hub';
   config.capabilities = {
     'username': process.env.SAUCE_USERNAME,
     'accessKey': process.env.SAUCE_ACCESS_KEY,
