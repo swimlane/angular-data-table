@@ -219,3 +219,5 @@ gulp.task('e2e', ['serve'], function (callback) {
     ))
     .on('end', callback);
 });
+
+gulp.task('test', ['unit', 'e2e']);
