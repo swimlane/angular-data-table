@@ -1,20 +1,16 @@
 language: node_js
 node_js:
-  - '6'
-
+- '6'
 branches:
   only:
-    - master
-
+  - master
 before_install:
-  - npm install -g gulp jspm # this is done on before install due to npm install script in `package.json`
-
+- npm install -g gulp jspm
 after_success:
-  - test $TRAVIS_TEST_RESULT = 0
-    && gulp release
-
+- test $TRAVIS_TEST_RESULT = 0 && gulp release
+env:
+  - SAUCE_USERNAME=jonhyper
 addons:
-  sauce_connect:
-    username: "jonhyper"
   jwt:
-    secure: "sw8GLY/NSh8LB+yXXrgDVgxSyJQnzO+W05hMXLVHCz1DNWzoJknWIPvZcGIVcQcJZcFJE3qtdhcDg3xizH5jkTFL3l9ku1+e/7mWwTeRtUpurWt9b6yHXs/wKF/An8HXG9G8rLhNwcuWeAn95tfngOFe9nhH16xzQOyzNi8AcgCOp6zD0S+eI91N7u8YLI1y9Gy8QS1Q1bAUOsQ1tsORyh+AKvLWO2E3EltQBc3LdXtPpVbcXwMkdgZwKa4YUmthDgv3wfV//N3xx1QlKHS7GQ4eVa/jkYPI9Mqv2oHeggEm1SqC5j58qHZZhdNKdKdFigHQpDV+eJOZA3tP1q0nd6NT4X0TSxfg1nC1QGRqFJZnQdpOCCtlu+Z5mOUjQjJpUbJX8hLyxLxY/2f9lq7rvPsDMPVD5m2E/MdTD5jynRsJ5Hj8rSQDsGHo923daUijlFn197nwEXtMxerMguyf5ccDV0kc6OZiHLI9oz0r3fKw5EPsRtaxhX5h/y/kT/W2KOBqGnycFdmL/8JxBtdzAR3hi7UHjafCbO5ut3crvqS+6WZTWjEjUou9Gsb5lA68KbKaFRUEd/fExY+9IoHgAWzHikaKARH9592gZwVySg6o6bSkUs2D5YaYJy1RbwoYlIa96ss1L9pPw5jOwkJ02rcRMZdMHUcYzNujW/18404="
+    saucelabs:
+      secure: jv1ChzT+CWABmjZ1KbmDByIJaeEVYQlccnmZDHIIOP3ZPvRgp7n8JxSZh6yqkhectZsgKpOV8S8DGRisSy89HJmAvoQb74EN70lZu3yCuGPexgc4be4kL8fKmH/Ik1AJLhqHrxQPl9RlMC/YPWHMJJBWScApMJ5ojhvXAhgVS2baEQfrJ5jjyi3/d/DaarPPTUUA6hzZDjRI6eshAMwN+L6/GM4379MCGbuTVIcZMyjCHcl3tZ+N2Q8bMHTet2YghbqH5HSRlam/R6zbxS62YrEZiDhKWKm0LULrDNRLg9dx7ICoS2avyKKd8jhe8VmAfNeLaWcUO6WYJrTxtgC1avkfzNOUkPTPjybHmiIuzXPivX55vKJ7l1E82WniREYi2vd7cOZSwZOAgtjNIrQk1xtfDFX2C5p7b4tCifhgs+xeWycCyt8Qx5htdsOJPHVO1cpGt4ORQoqtmQol3efCeFqpyf4414a8FsgBw09dhnjYvqsIhQnsvWsn1G0ZuNkv6HkuXraIWodBkeXczzIKjhhH97WnUGkUt7E5KMCumt5FCVgTPV3tdPr5PjE7fcjbUOHCFm3ZqJonG4CtWZqy+xF4VsM9HCjQFojVn9CD9M8p1oYkuFPosJ0qLlpY6nE4ZuuU6ZlM3HNmCbXCmypdDj5gh4sUPeVP8zci3JU30+Y=
