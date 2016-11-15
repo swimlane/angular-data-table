@@ -5,7 +5,8 @@ branches:
   only:
   - master
 before_install:
-- npm install -g gulp jspm protractor
+- npm install -g gulp jspm protractor forever
+- forever start gulp serve
 after_success:
 - test $TRAVIS_TEST_RESULT = 0 && gulp release
 script:
