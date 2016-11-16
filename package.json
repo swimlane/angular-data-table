@@ -47,6 +47,7 @@
     "browser-sync": "^2.7.2",
     "browserify": "^13.1.1",
     "browserify-istanbul": "^2.0.0",
+    "chromedriver": "^2.25.1",
     "del": "^2.2.0",
     "gulp": "^3.8.11",
     "gulp-angular-protractor": "^0.2.0",
