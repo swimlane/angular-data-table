@@ -643,7 +643,7 @@ class DataTableController {
    * @param  {filter}
    */
   /*@ngInject*/
-  constructor($scope, $filter, $log, $transclude, $window){$window.dt = this;
+  constructor($scope, $filter, $log, $transclude, $window){
     Object.assign(this, {
       $scope: $scope,
       $filter: $filter,
@@ -1621,7 +1621,7 @@ class BodyController{
   constructor($scope, $timeout){
     this.$scope = $scope;
     this.tempRows = [];
-    this.watches = [];
+    this.watchListeners = [];
 
     this.setTreeAndGroupColumns();
     this.setConditionalWatches();
@@ -1631,7 +1631,6 @@ class BodyController{
       if (newVal) {
         this.setTreeAndGroupColumns();
 
-        console.log(this.watches);
         this.setConditionalWatches();
 
         if (!this.options.refreshRows) {
@@ -1654,21 +1653,25 @@ class BodyController{
   }
 
   setConditionalWatches(){
+    this.watchListeners.map((watchListener) => (
+      watchListener()
+    ));
+
     if(this.options.scrollbarV || (!this.options.scrollbarV && this.options.paging.externalPaging)){
       var sized = false;
-      this.watches.push(this.$scope.$watch('body.options.paging.size', (newVal, oldVal) => {
+      this.watchListeners.push(this.$scope.$watch('body.options.paging.size', (newVal, oldVal) => {
         if(!sized || newVal > oldVal){
           this.getRows();
           sized = true;
         }
       }));
 
-      this.watches.push(this.$scope.$watch('body.options.paging.count', (count) => {
+      this.watchListeners.push(this.$scope.$watch('body.options.paging.count', (count) => {
         this.count = count;
         this.updatePage();
       }));
 
-      this.watches.push(this.$scope.$watch('body.options.paging.offset', (newVal) => {
+      this.watchListeners.push(this.$scope.$watch('body.options.paging.offset', (newVal) => {
         if(this.options.paging.size){
           this.onPage({
             offset: newVal,
@@ -3372,55 +3375,57 @@ function PopoverRegistry($animate){
 
 function PositionHelper(){
   return {
-
     calculateVerticalAlignment: function(elDimensions, popoverDimensions, alignment){
-      if (alignment === POSITION.TOP){
-        return elDimensions.top;
-      }
-      if (alignment === POSITION.BOTTOM){
-        return elDimensions.top + elDimensions.height - popoverDimensions.height;
-      }
-      if (alignment === POSITION.CENTER){
-        return elDimensions.top + elDimensions.height/2 - popoverDimensions.height/2;
+      switch(alignment){
+        case POSITION.TOP:
+          return elDimensions.top;
+        case POSITION.BOTTOM:
+          return elDimensions.top + elDimensions.height - popoverDimensions.height;
+        case POSITION.CENTER:
+          return elDimensions.top + elDimensions.height/2 - popoverDimensions.height/2;
+        default:
+          return console.log('calculateVerticalAlignment issue', this);
       }
     },
 
     calculateVerticalCaret: function(elDimensions, popoverDimensions, caretDimensions, alignment){
-      if (alignment === POSITION.TOP){
-        return elDimensions.height/2 - caretDimensions.height/2 - 1;
-      }
-      if (alignment === POSITION.BOTTOM){
-        return popoverDimensions.height - elDimensions.height/2 - caretDimensions.height/2 - 1;
-      }
-      if (alignment === POSITION.CENTER){
-        return popoverDimensions.height/2 - caretDimensions.height/2 - 1;
+      switch(alignment){
+        case POSITION.TOP:
+          return elDimensions.height/2 - caretDimensions.height/2 - 1;
+        case POSITION.BOTTOM:
+          return popoverDimensions.height - elDimensions.height/2 - caretDimensions.height/2 - 1;
+        case POSITION.CENTER:
+          return popoverDimensions.height/2 - caretDimensions.height/2 - 1;
+        default:
+          return console.log('calculateVerticalCaret issue', this);
       }
     },
 
     calculateHorizontalCaret: function(elDimensions, popoverDimensions, caretDimensions, alignment){
-      if (alignment === POSITION.LEFT){
-        return elDimensions.width/2 - caretDimensions.height/2 - 1;
-      }
-      if (alignment === POSITION.RIGHT){
-        return popoverDimensions.width - elDimensions.width/2 - caretDimensions.height/2 - 1;
-      }
-      if (alignment === POSITION.CENTER){
-        return popoverDimensions.width/2 - caretDimensions.height/2 - 1;
+      switch(alignment){
+        case POSITION.LEFT:
+          return elDimensions.width/2 - caretDimensions.height/2 - 1;
+        case POSITION.RIGHT:
+          return popoverDimensions.width - elDimensions.width/2 - caretDimensions.height/2 - 1;
+        case POSITION.CENTER:
+          return popoverDimensions.width/2 - caretDimensions.height/2 - 1;
+        default:
+          return console.log('calculateHorizontalCaret issue', this);
       }
     },
 
     calculateHorizontalAlignment: function(elDimensions, popoverDimensions, alignment){
-      if (alignment === POSITION.LEFT){
-        return elDimensions.left;
-      }
-      if (alignment === POSITION.RIGHT){
-        return elDimensions.left + elDimensions.width - popoverDimensions.width;
-      }
-      if (alignment === POSITION.CENTER){
-        return elDimensions.left + elDimensions.width/2 - popoverDimensions.width/2;
+      switch(alignment){
+        case POSITION.LEFT:
+          return elDimensions.left;
+        case POSITION.RIGHT:
+          return elDimensions.left + elDimensions.width - popoverDimensions.width;
+        case POSITION.CENTER:
+          return elDimensions.left + elDimensions.width/2 - popoverDimensions.width/2;
+        default:
+          return console.log('calculateHorizontalAlignment issue', this);
       }
     }
-
   }
 }
 
