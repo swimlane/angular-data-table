@@ -1,7 +1,6 @@
 const config = {
   framework: 'jasmine',
-  specs: ['../src/**/*e2e.js'],
-  seleniumAddress: 'http://localhost:4444/wd/hub'
+  specs: ['../src/**/*e2e.js']
 };
 
 // if (process.env.TRAVIS) {
