@@ -5,11 +5,13 @@ branches:
   only:
   - master
 before_install:
-- npm install -g gulp jspm protractor forever && jspm install
+- npm install -g gulp jspm protractor forever
 before_script:
+- jspm install
 - forever start node_modules/gulp/bin/gulp.js watch serve
 after_success:
-- test $TRAVIS_TEST_RESULT = 0 && gulp release
+- test $TRAVIS_TEST_RESULT = 0
+- gulp release
 script:
 - gulp unit
 - protractor test/protractor.conf.js
@@ -19,3 +21,5 @@ env:
   - secure: ta2XxWxIUtS9KeTSwU/6lY8eo0ujcnkkPcum3woDgZ8cmAsqEmYKPPh9zYSTrCum+JRKg1G+dGCN1q86VNuNDyxDYTEuXH46Nv9hfdJFiTAbPBPzRaS/34AKEIa5/4yPaxyQ5+BHMvWwKk+81dhkjS7NQt3UaWBmhhN/qms+J9OSnHzQlnGh65wmTKrRR39FdQd4cMkX6m0FMNXDzjNn10/qFGNBgb7bCVvBTt3IAz2SkiOmx+n42cBa749kY9B98xal7XIdBnNPIRx9TB9Z8IrVmxTiE+HVeWG1BOMLpqPl+nqDz7WAYLTJVZnX4kepSYKwc1eiU9snJmgoz83r5FJDEBhyNuDkTfo6yJVzxenGjz4JfSTyYN8uNwHkf6HUNlFmX+YP0LWrf3vMo87cEHn6VraY0valFgIogQlKF/cdgtERUXyjT4sP50kk+RSpLex+TUYqXnaPinaJqVRJCy/4KXwIVaBF1OnmkUR+BatNLWZqRazGxL4AvcotfRBPmpMk+406DEeW225f74ZhAdBdZJMf8y7YzuF0O8OFpRVHKVJ8BCHlLBxWVqNdMmIB8Gl6XLBtGRVPUC8q02d1bVzeAy6LDy4aEt4U6CDevlDCnAFTRM7oX5sedZy7/GHlQKIeqKeXw81n/bejc4bT35mH3E/2G4xOCuLnrT50uBg=
 addons:
   sauce_connect: true
+  code_climate:
+        repo_token: bd801fb754e0ee913b633a62bc97fa629afdd99d274fdc7ce9f048dee1b328f2
