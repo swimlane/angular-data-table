@@ -15,6 +15,6 @@ if (process.env.TRAVIS) {
   };
 // } else {
 //   config.seleniumAddress = 'http://localhost:4444/wd/hub';
-// }
+}
 
 exports.config = config;
