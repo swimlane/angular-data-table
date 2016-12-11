@@ -1,21 +1,25 @@
-var nPath = require('path');
-var gulp = require('gulp');
-var plumber = require('gulp-plumber');
-var babel = require('gulp-babel');
-var browserSync = require('browser-sync');
-var runSequence = require('run-sequence');
-var less = require('gulp-less');
-var changed = require('gulp-changed');
-var Builder = require('systemjs-builder');
-var vinylPaths = require('vinyl-paths');
-var del = require('del');
-var ngAnnotate = require('gulp-ng-annotate');
-var rollup = require('rollup');
-var rename = require('gulp-rename');
-var uglify = require('gulp-uglify');
-var header = require('gulp-header');
+require('chromedriver');
+
+var nPath = require('path'),
+  gulp = require('gulp'),
+  plumber = require('gulp-plumber'),
+  babel = require('gulp-babel'),
+  browserSync = require('browser-sync'),
+  runSequence = require('run-sequence'),
+  less = require('gulp-less'),
+  changed = require('gulp-changed'),
+  Builder = require('systemjs-builder'),
+  vinylPaths = require('vinyl-paths'),
+  del = require('del'),
+  ngAnnotate = require('gulp-ng-annotate'),
+  rollup = require('rollup'),
+  rename = require('gulp-rename'),
+  uglify = require('gulp-uglify'),
+  header = require('gulp-header');
 
 var KarmaServer = require('karma').Server;
+
+import protractorAngular from 'gulp-angular-protractor';
 
 var path = {
   source: 'src/**/*.js',
@@ -183,24 +187,39 @@ gulp.task('release-es6-min', function () {
 // Test Tasks
 // ------------------------------------------------------------
 
-gulp.task('test', ['compile'], function (done) {
+gulp.task('unit', ['compile'], function (callback) {
   var server = new KarmaServer({
-    configFile: nPath.join(__dirname, 'karma.conf.js'),
+    configFile: nPath.join(__dirname, 'test/karma.conf.js'),
     singleRun: true
-  }, function () {
-    done();
-  });
+  }, () => (
+    callback()
+  ));
 
   server.start();
 });
 
-gulp.task('test-watch', ['compile'], function (done) {
+gulp.task('unit-watch', ['compile'], function (callback) {
   var server = new KarmaServer({
-    configFile: nPath.join(__dirname, 'karma.conf.js'),
+    configFile: nPath.join(__dirname, 'test/karma.conf.js'),
     singleRun: false
-  }, function () {
-    done();
-  });
+  }, () => (
+    callback()
+  ));
 
   server.start();
 });
+
+gulp.task('e2e', ['serve'], function (callback) {
+  gulp.src(['src/**/*e2e.js'])
+    .pipe(protractorAngular({
+      configFile: 'test/protractor.conf.js',
+      debug: false,
+      autoStartStopServer: true
+    }))
+    .on('error', (e) => (
+      console.log(e)
+    ))
+    .on('end', callback);
+});
+
+gulp.task('test', ['unit', 'e2e']);
