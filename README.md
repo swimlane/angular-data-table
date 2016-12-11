@@ -31,11 +31,10 @@ See live demos [here]( http://jonshaffer.github.io/angular-data-table/).
 
 ## Using It
 
-#### Download
+#### Download This Fork
 
-- NPM `npm install angular-data-table`
-- JSPM `jspm install github:swimlane/angular-data-table`
-- BOWER `bower install angular-data-table`
+- NPM `npm install jonshaffer/angular-data-table`
+- JSPM `jspm install github:jonshaffer/angular-data-table`
 
 or Github download or clone of course!
 

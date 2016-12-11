@@ -578,7 +578,6 @@
 
       _classCallCheck(this, DataTableController);
 
-      $window.dt = this;
       Object.assign(this, {
         $scope: $scope,
         $filter: $filter,
@@ -1324,7 +1323,7 @@
 
       this.$scope = $scope;
       this.tempRows = [];
-      this.watches = [];
+      this.watchListeners = [];
 
       this.setTreeAndGroupColumns();
       this.setConditionalWatches();
@@ -1336,7 +1335,6 @@
         if (newVal) {
           _this4.setTreeAndGroupColumns();
 
-          console.log(_this4.watches);
           _this4.setConditionalWatches();
 
           if (!_this4.options.refreshRows) {
@@ -1364,21 +1362,25 @@
       value: function setConditionalWatches() {
         var _this5 = this;
 
+        this.watchListeners.map(function (watchListener) {
+          return watchListener();
+        });
+
         if (this.options.scrollbarV || !this.options.scrollbarV && this.options.paging.externalPaging) {
           var sized = false;
-          this.watches.push(this.$scope.$watch('body.options.paging.size', function (newVal, oldVal) {
+          this.watchListeners.push(this.$scope.$watch('body.options.paging.size', function (newVal, oldVal) {
             if (!sized || newVal > oldVal) {
               _this5.getRows();
               sized = true;
             }
           }));
 
-          this.watches.push(this.$scope.$watch('body.options.paging.count', function (count) {
+          this.watchListeners.push(this.$scope.$watch('body.options.paging.count', function (count) {
             _this5.count = count;
             _this5.updatePage();
           }));
 
-          this.watches.push(this.$scope.$watch('body.options.paging.offset', function (newVal) {
+          this.watchListeners.push(this.$scope.$watch('body.options.paging.offset', function (newVal) {
             if (_this5.options.paging.size) {
               _this5.onPage({
                 offset: newVal,
@@ -2709,55 +2711,57 @@
 
   function PositionHelper() {
     return {
-
       calculateVerticalAlignment: function calculateVerticalAlignment(elDimensions, popoverDimensions, alignment) {
-        if (alignment === POSITION.TOP) {
-          return elDimensions.top;
-        }
-        if (alignment === POSITION.BOTTOM) {
-          return elDimensions.top + elDimensions.height - popoverDimensions.height;
-        }
-        if (alignment === POSITION.CENTER) {
-          return elDimensions.top + elDimensions.height / 2 - popoverDimensions.height / 2;
+        switch (alignment) {
+          case POSITION.TOP:
+            return elDimensions.top;
+          case POSITION.BOTTOM:
+            return elDimensions.top + elDimensions.height - popoverDimensions.height;
+          case POSITION.CENTER:
+            return elDimensions.top + elDimensions.height / 2 - popoverDimensions.height / 2;
+          default:
+            return console.log('calculateVerticalAlignment issue', this);
         }
       },
 
       calculateVerticalCaret: function calculateVerticalCaret(elDimensions, popoverDimensions, caretDimensions, alignment) {
-        if (alignment === POSITION.TOP) {
-          return elDimensions.height / 2 - caretDimensions.height / 2 - 1;
-        }
-        if (alignment === POSITION.BOTTOM) {
-          return popoverDimensions.height - elDimensions.height / 2 - caretDimensions.height / 2 - 1;
-        }
-        if (alignment === POSITION.CENTER) {
-          return popoverDimensions.height / 2 - caretDimensions.height / 2 - 1;
+        switch (alignment) {
+          case POSITION.TOP:
+            return elDimensions.height / 2 - caretDimensions.height / 2 - 1;
+          case POSITION.BOTTOM:
+            return popoverDimensions.height - elDimensions.height / 2 - caretDimensions.height / 2 - 1;
+          case POSITION.CENTER:
+            return popoverDimensions.height / 2 - caretDimensions.height / 2 - 1;
+          default:
+            return console.log('calculateVerticalCaret issue', this);
         }
       },
 
       calculateHorizontalCaret: function calculateHorizontalCaret(elDimensions, popoverDimensions, caretDimensions, alignment) {
-        if (alignment === POSITION.LEFT) {
-          return elDimensions.width / 2 - caretDimensions.height / 2 - 1;
-        }
-        if (alignment === POSITION.RIGHT) {
-          return popoverDimensions.width - elDimensions.width / 2 - caretDimensions.height / 2 - 1;
-        }
-        if (alignment === POSITION.CENTER) {
-          return popoverDimensions.width / 2 - caretDimensions.height / 2 - 1;
+        switch (alignment) {
+          case POSITION.LEFT:
+            return elDimensions.width / 2 - caretDimensions.height / 2 - 1;
+          case POSITION.RIGHT:
+            return popoverDimensions.width - elDimensions.width / 2 - caretDimensions.height / 2 - 1;
+          case POSITION.CENTER:
+            return popoverDimensions.width / 2 - caretDimensions.height / 2 - 1;
+          default:
+            return console.log('calculateHorizontalCaret issue', this);
         }
       },
 
       calculateHorizontalAlignment: function calculateHorizontalAlignment(elDimensions, popoverDimensions, alignment) {
-        if (alignment === POSITION.LEFT) {
-          return elDimensions.left;
-        }
-        if (alignment === POSITION.RIGHT) {
-          return elDimensions.left + elDimensions.width - popoverDimensions.width;
-        }
-        if (alignment === POSITION.CENTER) {
-          return elDimensions.left + elDimensions.width / 2 - popoverDimensions.width / 2;
+        switch (alignment) {
+          case POSITION.LEFT:
+            return elDimensions.left;
+          case POSITION.RIGHT:
+            return elDimensions.left + elDimensions.width - popoverDimensions.width;
+          case POSITION.CENTER:
+            return elDimensions.left + elDimensions.width / 2 - popoverDimensions.width / 2;
+          default:
+            return console.log('calculateHorizontalAlignment issue', this);
         }
       }
-
     };
   }
 
