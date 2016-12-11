@@ -1,20 +1,25 @@
 language: node_js
 node_js:
-  - '0.12'
-
+- '6'
 branches:
   only:
-    - master
-
+  - master
 before_install:
-  - export CHROME_BIN=chromium-browser
-  - "export DISPLAY=:99.0"
-  - "sh -e /etc/init.d/xvfb start"
-  - npm install -g gulp jspm # this is done on before install due to npm install script in `package.json`
-
-script:
-  - gulp test
-
+- npm install -g gulp jspm protractor forever
+before_script:
+- jspm install
+- forever start node_modules/gulp/bin/gulp.js watch serve
 after_success:
-  - test $TRAVIS_TEST_RESULT = 0
-    && gulp release
+- test $TRAVIS_TEST_RESULT = 0
+- gulp release
+script:
+- gulp unit
+- protractor test/protractor.conf.js
+env:
+  global:
+  - secure: j82VILAgaoIzCONVjju2xKGEzYpHpPcr0u7wygROZ1IGfS9KXrM0ZbG47rujicqSMUSk6myPhDjhffUuVsYrNv1ukxcUmjG3920v35OrXo8qK5TCDdMnExnoSD802Qm9F0i4bToSNHfKo+onbqb3G1qN8gl19JZK/U6+lfXddDolZhwBGDNfk5LOmaAMKWAcgdYKhaOre4ZFQzOx7fCyS9mEjxC/Yc0RWB9U3ScuYAbWUc/4DblfPhAmH0ptrspOUWqrtENdIO+AYc8Q7awHxDppqx5nLq3iS5caEy/5PA6z2HNbLp0LuB4+c4UrU5eXMgE28bJGt5S/6ZrLojz3tT7bbwehw5u7so16GhXJr1hizceHUwRJwioxU7yGYHSqOIqdECcDB9osXtYAx/1aCLzlkvJMshHL1EWJ0byCyx2JgIqPh7yW+drYpHkjJ1eWdWao1GIR20imTrqg+A24x6XOKOvnqY+hFSYalyAxhlsMWTE5kaRsWLTaWxFsvinWot0A2pO6J0rX+9bPlVF6/VQpXhPi3uLeXE6jOZtjfoKo9/m6ORqIUpZaZhquSzgkjsY1ib4EIGmxJ3Oj0c8AAKLXLN1cmug86FMBTL/JVzICpkX6Vj98aIb1PJnCIb1ZoZMELs5yrNpuRLPe2AoRe/ai+WalBoTHIr0o4zf9bK8=
+  - secure: ta2XxWxIUtS9KeTSwU/6lY8eo0ujcnkkPcum3woDgZ8cmAsqEmYKPPh9zYSTrCum+JRKg1G+dGCN1q86VNuNDyxDYTEuXH46Nv9hfdJFiTAbPBPzRaS/34AKEIa5/4yPaxyQ5+BHMvWwKk+81dhkjS7NQt3UaWBmhhN/qms+J9OSnHzQlnGh65wmTKrRR39FdQd4cMkX6m0FMNXDzjNn10/qFGNBgb7bCVvBTt3IAz2SkiOmx+n42cBa749kY9B98xal7XIdBnNPIRx9TB9Z8IrVmxTiE+HVeWG1BOMLpqPl+nqDz7WAYLTJVZnX4kepSYKwc1eiU9snJmgoz83r5FJDEBhyNuDkTfo6yJVzxenGjz4JfSTyYN8uNwHkf6HUNlFmX+YP0LWrf3vMo87cEHn6VraY0valFgIogQlKF/cdgtERUXyjT4sP50kk+RSpLex+TUYqXnaPinaJqVRJCy/4KXwIVaBF1OnmkUR+BatNLWZqRazGxL4AvcotfRBPmpMk+406DEeW225f74ZhAdBdZJMf8y7YzuF0O8OFpRVHKVJ8BCHlLBxWVqNdMmIB8Gl6XLBtGRVPUC8q02d1bVzeAy6LDy4aEt4U6CDevlDCnAFTRM7oX5sedZy7/GHlQKIeqKeXw81n/bejc4bT35mH3E/2G4xOCuLnrT50uBg=
+addons:
+  sauce_connect: true
+  code_climate:
+        repo_token: bd801fb754e0ee913b633a62bc97fa629afdd99d274fdc7ce9f048dee1b328f2

@@ -4,7 +4,6 @@ import { AdjustColumnWidths, ForceFillColumnWidths } from '../utils/math';
 import { ColumnsByPin, ColumnGroupWidths, CamelCase, ObjectId, ScrollbarWidth } from '../utils/utils';
 
 export class DataTableController {
-
   /**
    * Creates an instance of the DataTable Controller
    * @param  {scope}
@@ -59,6 +58,14 @@ export class DataTableController {
 
     if(this.options.selectable && this.options.multiSelect){
       this.selected = this.selected || [];
+
+      this.$scope.$watch('dt.selected', (newVal, oldVal) => {
+        angular.forEach(this.options.columns, (column) => {
+          if (column.headerCheckbox && angular.isFunction(column.headerCheckboxCallback)) {
+            column.headerCheckboxCallback(this);
+          }
+        });
+      }, true);
     }
   }
 
@@ -228,18 +235,18 @@ export class DataTableController {
     this.options.internal.setYOffset(offsetY);
   }
 
-  /**
-   * Invoked when the header checkbox directive has changed.
-   */
-  onHeaderCheckboxChange(){
-    if(this.rows){
-      var matches = this.selected.length === this.rows.length;
-      this.selected.splice(0, this.selected.length);
+  selectAllRows(){
+    this.selected.splice(0, this.selected.length);
 
-      if(!matches){
-        this.selected.push(...this.rows);
-      }
-    }
+    this.selected.push(...this.rows);
+
+    return this.isAllRowsSelected();
+  }
+
+  deselectAllRows(){
+    this.selected.splice(0, this.selected.length);
+
+    return this.isAllRowsSelected();
   }
 
   /**
@@ -247,8 +254,7 @@ export class DataTableController {
    * @return {Boolean} if all selected
    */
   isAllRowsSelected(){
-    if(this.rows) return false;
-    return this.selected.length === this.rows.length;
+    return (!this.rows || !this.selected) ? false : this.selected.length === this.rows.length;
   }
 
   /**
@@ -304,5 +310,4 @@ export class DataTableController {
       row: row
     });
   }
-
 }

@@ -3,3 +3,4 @@ jspm_packages
 npm-debug.log
 dist
 .idea
+coverage
