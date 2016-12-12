@@ -643,7 +643,7 @@ class DataTableController {
    * @param  {filter}
    */
   /*@ngInject*/
-  constructor($scope, $filter, $log, $transclude, $window){
+  constructor($scope, $filter, $log, $transclude){
     Object.assign(this, {
       $scope: $scope,
       $filter: $filter,
@@ -1046,7 +1046,8 @@ let DataTableService = {
         });
 
         let header = c.getElementsByTagName('column-header');
-        if(header.length){
+        
+        if (header.length) {
           column.headerTemplate = header[0].innerHTML;
           c.removeChild(header[0]);
         }
@@ -1055,8 +1056,9 @@ let DataTableService = {
           column.template = c.innerHTML;
         }
 
-        if (visible)
+        if (visible) {
           this.columns[id].push(column);
+        }
       });
     });
 

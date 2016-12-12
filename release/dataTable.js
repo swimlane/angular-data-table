@@ -44,6 +44,20 @@
     }
   }
 
+  var _extends = Object.assign || function (target) {
+    for (var i = 1; i < arguments.length; i++) {
+      var source = arguments[i];
+
+      for (var key in source) {
+        if (Object.prototype.hasOwnProperty.call(source, key)) {
+          target[key] = source[key];
+        }
+      }
+    }
+
+    return target;
+  };
+
   function _classCallCheck(instance, Constructor) {
     if (!(instance instanceof Constructor)) {
       throw new TypeError("Cannot call a class as a function");
@@ -68,10 +82,14 @@
     };
   }();
 
+  /**
+   * Array.prototype.find()
+   * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/find
+   */
   (function () {
     function polyfill(fnName) {
       if (!Array.prototype[fnName]) {
-        Array.prototype[fnName] = function (predicate) {
+        Array.prototype[fnName] = function (predicate /*, thisArg */) {
           var i,
               len,
               test,
@@ -106,6 +124,13 @@
     }
   })();
 
+  /**
+   * Resizable directive
+   * http://stackoverflow.com/questions/18368485/angular-js-resizable-div-directive
+   * @param {object}
+   * @param {function}
+   * @param {function}
+   */
   function ResizableDirective($document, $timeout) {
     return {
       restrict: 'A',
@@ -172,6 +197,12 @@
     };
   }
 
+  /**
+   * Sortable Directive
+   * http://jsfiddle.net/RubaXa/zLq5J/3/
+   * https://jsfiddle.net/hrohxze0/6/
+   * @param {function}
+   */
   function SortableDirective($timeout) {
     return {
       restrict: 'A',
@@ -245,39 +276,69 @@
     };
   }
 
+  /**
+   * Default Table Options
+   * @type {object}
+   */
   var TableDefaults = {
+
+    // Enable vertical scrollbars
     scrollbarV: true,
 
+    // Enable horz scrollbars
+    // scrollbarH: true,
+
+    // The row height, which is necessary
+    // to calculate the height for the lazy rendering.
     rowHeight: 30,
 
+    // flex
+    // force
+    // standard
     columnMode: 'standard',
 
+    // Loading message presented when the array is undefined
     loadingMessage: 'Loading...',
 
+    // Message to show when array is presented
+    // but contains no values
     emptyMessage: 'No data to display',
 
+    // The minimum header height in pixels.
+    // pass falsey for no header
     headerHeight: 30,
 
+    // The minimum footer height in pixels.
+    // pass falsey for no footer
     footerHeight: 0,
 
     paging: {
+      // if external paging is turned on
       externalPaging: false,
 
+      // Page size
       size: undefined,
 
+      // Total count
       count: 0,
 
+      // Page offset
       offset: 0,
 
+      // Loading indicator
       loadingIndicator: false
     },
 
+    // if users can select itmes
     selectable: false,
 
+    // if users can select mutliple items
     multiSelect: false,
 
+    // checkbox selection vs row click
     checkboxSelection: false,
 
+    // if you can reorder columns
     reorderable: true,
 
     internal: {
@@ -289,55 +350,94 @@
 
   };
 
+  /**
+   * Default Column Options
+   * @type {object}
+   */
   var ColumnDefaults = {
+
+    // pinned to the left
     frozenLeft: false,
 
+    // pinned to the right
     frozenRight: false,
 
+    // body cell css class name
     className: undefined,
 
+    // header cell css class name
     headerClassName: undefined,
 
+    // The grow factor relative to other columns. Same as the flex-grow
+    // API from http://www.w3.org/TR/css3-flexbox/. Basically,
+    // take any available extra width and distribute it proportionally
+    // according to all columns' flexGrow values.
     flexGrow: 0,
 
+    // Minimum width of the column.
     minWidth: 100,
 
+    //Maximum width of the column.
     maxWidth: undefined,
 
+    // The width of the column, by default (in pixels).
     width: 150,
 
+    // If yes then the column can be resized, otherwise it cannot.
     resizable: true,
 
+    // Custom sort comparator
+    // pass false if you want to server sort
     comparator: undefined,
 
+    // If yes then the column can be sorted.
     sortable: true,
 
+    // Default sort asecending/descending for the column
     sort: undefined,
 
+    // If you want to sort a column by a special property
+    // See an example in demos/sort.html
     sortBy: undefined,
 
+    // The cell renderer that returns content for table column header
     headerRenderer: undefined,
 
+    // The cell renderer function(scope, elm) that returns React-renderable content for table cell.
     cellRenderer: undefined,
 
+    // The getter function(value) that returns the cell data for the cellRenderer.
+    // If not provided, the cell data will be collected from row data instead.
     cellDataGetter: undefined,
 
+    // Adds +/- button and makes a secondary call to load nested data
     isTreeColumn: false,
 
+    // Adds the checkbox selection to the column
     isCheckboxColumn: false,
 
+    // Toggles the checkbox column in the header
+    // for selecting all values given to the grid
     headerCheckbox: false,
 
+    // Whether the column can automatically resize to fill space in the table.
     canAutoResize: true
 
   };
 
+  /**
+   * Shim layer with setTimeout fallback
+   * http://www.html5rocks.com/en/tutorials/speed/animations/
+   */
   var requestAnimFrame = function () {
     return window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.oRequestAnimationFrame || window.msRequestAnimationFrame || function (callback) {
       window.setTimeout(callback, 1000 / 60);
     };
   }();
 
+  /**
+   * Creates a unique object id.
+   */
   function ObjectId() {
     var timestamp = (new Date().getTime() / 1000 | 0).toString(16);
     return timestamp + 'xxxxxxxxxxxxxxxx'.replace(/[x]/g, function () {
@@ -345,6 +445,10 @@
     }).toLowerCase();
   }
 
+  /**
+   * Returns the columns by pin.
+   * @param {array} colsumns
+   */
   function ColumnsByPin(cols) {
     var ret = {
       left: [],
@@ -366,6 +470,11 @@
     return ret;
   }
 
+  /**
+   * Returns the widths of all group sets of a column
+   * @param {object} groups 
+   * @param {array} all 
+   */
   function ColumnGroupWidths(groups, all) {
     return {
       left: ColumnTotalWidth(groups.left),
@@ -375,6 +484,11 @@
     };
   }
 
+  /**
+   * Returns a deep object given a string. zoo['animal.type']
+   * @param {object} obj  
+   * @param {string} path 
+   */
   function DeepValueGetter(obj, path) {
     if (!obj || !path) return obj;
 
@@ -390,19 +504,31 @@
     return current;
   }
 
+  /**
+   * Converts strings from something to camel case
+   * http://stackoverflow.com/questions/10425287/convert-dash-separated-string-to-camelcase
+   * @param  {string} str 
+   * @return {string} camel case string
+   */
   function CamelCase(str) {
+    // Replace special characters with a space
     str = str.replace(/[^a-zA-Z0-9 ]/g, " ");
-
+    // put a space before an uppercase letter
     str = str.replace(/([a-z](?=[A-Z]))/g, '$1 ');
-
+    // Lower case first character and some other stuff
     str = str.replace(/([^a-zA-Z0-9 ])|^[0-9]+/g, '').trim().toLowerCase();
-
+    // uppercase characters preceded by a space or number
     str = str.replace(/([ 0-9]+)([a-zA-Z])/g, function (a, b, c) {
       return b.trim() + c.toUpperCase();
     });
     return str;
   }
 
+  /**
+   * Gets the width of the scrollbar.  Nesc for windows
+   * http://stackoverflow.com/a/13382873/888165
+   * @return {int} width
+   */
   function ScrollbarWidth() {
     var outer = document.createElement("div");
     outer.style.visibility = "hidden";
@@ -441,6 +567,11 @@
     }
   }
 
+  /**
+   * Calculates the total width of all columns and their groups
+   * @param {array} columns
+   * @param {string} property width to get
+   */
   function ColumnTotalWidth(columns, prop) {
     var totalWidth = 0;
 
@@ -452,6 +583,10 @@
     return totalWidth;
   }
 
+  /**
+   * Calculates the Total Flex Grow
+   * @param {array}
+   */
   function GetTotalFlexGrow(columns) {
     var totalFlexGrow = 0;
 
@@ -483,6 +618,12 @@
     return totalFlexGrow;
   }
 
+  /**
+   * Adjusts the column widths.
+   * Inspired by: https://github.com/facebook/fixed-data-table/blob/master/src/FixedDataTableWidthHelper.js
+   * @param {array} all columns
+   * @param {int} width
+   */
   function AdjustColumnWidths(allColumns, expectedWidth) {
     var columnsWidth = ColumnTotalWidth(allColumns),
         totalFlexGrow = GetTotalFlexGrow(allColumns),
@@ -493,7 +634,14 @@
     }
   }
 
+  /**
+   * Resizes columns based on the flexGrow property, while respecting manually set widths
+   * @param {array} colsByGroup
+   * @param {int} maxWidth
+   * @param {int} totalFlexGrow
+   */
   function ScaleColumns(colsByGroup, maxWidth, totalFlexGrow) {
+    // calculate total width and flexgrow points for coulumns that can be resized
     _angular2.default.forEach(colsByGroup, function (cols) {
       cols.forEach(function (column) {
         if (!column.canAutoResize) {
@@ -508,11 +656,14 @@
     var hasMinWidth = {};
     var remainingWidth = maxWidth;
 
+    // resize columns until no width is left to be distributed
+
     var _loop = function _loop() {
       var widthPerFlexPoint = remainingWidth / totalFlexGrow;
       remainingWidth = 0;
       _angular2.default.forEach(colsByGroup, function (cols) {
         cols.forEach(function (column, i) {
+          // if the column can be resize and it hasn't reached its minimum width yet
           if (column.canAutoResize && !hasMinWidth[i]) {
             var newWidth = column.width + column.flexGrow * widthPerFlexPoint;
             if (column.minWidth !== undefined && newWidth < column.minWidth) {
@@ -532,6 +683,28 @@
     } while (remainingWidth !== 0);
   }
 
+  /**
+   * Forces the width of the columns to
+   * distribute equally but overflowing when nesc.
+   *
+   * Rules:
+   *
+   *  - If combined withs are less than the total width of the grid,
+   *    proporation the widths given the min / max / noraml widths to fill the width.
+   *
+   *  - If the combined widths, exceed the total width of the grid,
+   *    use the standard widths.
+   *
+   *  - If a column is resized, it should always use that width
+   *
+   *  - The proporational widths should never fall below min size if specified.
+   *
+   *  - If the grid starts off small but then becomes greater than the size ( + / - )
+   *    the width should use the orginial width; not the newly proporatied widths.
+   *
+   * @param {array} allColumns
+   * @param {int} expectedWidth
+   */
   function ForceFillColumnWidths(allColumns, expectedWidth, startIdx) {
     var contentWidth = 0,
         columnsToResize = startIdx > -1 ? allColumns.slice(startIdx, allColumns.length).filter(function (c) {
@@ -573,12 +746,19 @@
   }
 
   var DataTableController = function () {
-    function DataTableController($scope, $filter, $log, $transclude, $window) {
+    /**
+     * Creates an instance of the DataTable Controller
+     * @param  {scope}
+     * @param  {filter}
+     */
+    /*@ngInject*/
+    DataTableController.$inject = ["$scope", "$filter", "$log", "$transclude"];
+    function DataTableController($scope, $filter, $log, $transclude) {
       var _this = this;
 
       _classCallCheck(this, DataTableController);
 
-      Object.assign(this, {
+      _extends(this, {
         $scope: $scope,
         $filter: $filter,
         $log: $log
@@ -586,6 +766,7 @@
 
       this.defaults();
 
+      // set scope to the parent
       this.options.$outer = $scope.$parent;
 
       $scope.$watch('dt.options.columns', function (newVal, oldVal) {
@@ -598,6 +779,7 @@
         _this.calculateColumns();
       }, true);
 
+      // default sort
       var watch = $scope.$watch('dt.rows', function (newVal) {
         if (newVal) {
           watch();
@@ -605,6 +787,11 @@
         }
       });
     }
+
+    /**
+     * Creates and extends default options for the grid control
+     */
+
 
     _createClass(DataTableController, [{
       key: "defaults",
@@ -690,9 +877,11 @@
       value: function onSorted() {
         if (!this.rows) return;
 
+        // return all sorted column, in the same order in which they were sorted
         var sorts = this.options.columns.filter(function (c) {
           return c.sort;
         }).sort(function (a, b) {
+          // sort the columns with lower sortPriority order first
           if (a.sortPriority && b.sortPriority) {
             if (a.sortPriority > b.sortPriority) return 1;
             if (a.sortPriority < b.sortPriority) return -1;
@@ -704,6 +893,7 @@
 
           return 0;
         }).map(function (c, i) {
+          // update sortPriority
           c.sortPriority = i + 1;
           return c;
         });
@@ -731,6 +921,8 @@
           if (clientSorts.length) {
             var _rows;
 
+            // todo: more ideal to just resort vs splice and repush
+            // but wasn't responding to this change ...
             var sortedValues = this.$filter('orderBy')(this.rows, clientSorts);
             this.rows.splice(0, this.rows.length);
             (_rows = this.rows).push.apply(_rows, _toConsumableArray(sortedValues));
@@ -832,6 +1024,19 @@
     return DataTableController;
   }();
 
+  /**
+   * Debounce helper
+   * @param  {function}
+   * @param  {int}
+   * @param  {boolean}
+   */
+
+  /**
+   * Throttle helper
+   * @param  {function}
+   * @param  {boolean}
+   * @param  {object}
+   */
   function throttle(func, wait, options) {
     var context, args, result;
     var timeout = null;
@@ -861,6 +1066,8 @@
   }
 
   var DataTableService = {
+
+    // id: [ column defs ]
     columns: {},
     dTables: {},
 
@@ -873,17 +1080,23 @@
     buildColumns: function buildColumns(scope, parse) {
       var _this3 = this;
 
+      //FIXME: Too many nested for loops.  O(n3)
+
+      // Iterate through each dTable
       _angular2.default.forEach(this.dTables, function (columnElms, id) {
         _this3.columns[id] = [];
 
+        // Iterate through each column
         _angular2.default.forEach(columnElms, function (c) {
           var column = {};
 
           var visible = true;
-
+          // Iterate through each attribute
           _angular2.default.forEach(c.attributes, function (attr) {
             var attrName = CamelCase(attr.name);
 
+            // cuz putting className vs class on
+            // a element feels weird
             switch (attrName) {
               case 'class':
                 column.className = attr.value;
@@ -907,6 +1120,7 @@
           });
 
           var header = c.getElementsByTagName('column-header');
+
           if (header.length) {
             column.headerTemplate = header[0].innerHTML;
             c.removeChild(header[0]);
@@ -916,7 +1130,9 @@
             column.template = c.innerHTML;
           }
 
-          if (visible) _this3.columns[id].push(column);
+          if (visible) {
+            _this3.columns[id].push(column);
+          }
         });
       });
 
@@ -945,6 +1161,8 @@
       },
       controllerAs: 'dt',
       template: function template(element) {
+        // Gets the column nodes to transposes to column objects
+        // http://stackoverflow.com/questions/30845397/angular-expressive-directive-design/30847609#30847609
         var columns = element[0].getElementsByTagName('column'),
             id = ObjectId();
         DataTableService.saveColumns(id, columns);
@@ -956,6 +1174,8 @@
           pre: function pre($scope, $elm, $attrs, ctrl) {
             DataTableService.buildColumns($scope, $parse);
 
+            // Check and see if we had expressive columns
+            // and if so, lets use those
             var id = $elm.attr('data-column-id'),
                 columns = DataTableService.columns[id];
             if (columns) {
@@ -965,6 +1185,9 @@
             ctrl.transposeColumnDefaults();
             ctrl.options.internal.scrollBarWidth = ScrollbarWidth();
 
+            /**
+             * Invoked on init of control or when the window is resized;
+             */
             function resize() {
               var rect = $elm[0].getBoundingClientRect();
 
@@ -992,6 +1215,10 @@
               $timeout(resize);
             }));
 
+            // When an item is hidden for example
+            // in a tab with display none, the height
+            // is not calculated correrctly.  We need to watch
+            // the visible attribute and resize if this occurs
             var checkVisibility = function checkVisibility() {
               var bounds = $elm[0].getBoundingClientRect(),
                   visible = bounds.width && bounds.height;
@@ -999,8 +1226,10 @@
             };
             checkVisibility();
 
+            // add a loaded class to avoid flickering
             $elm.addClass('dt-loaded');
 
+            // prevent memory leaks
             $scope.$on('$destroy', function () {
               _angular2.default.element($window).off('resize');
             });
@@ -1013,6 +1242,8 @@
   var cache = {};
   var testStyle = document.createElement('div').style;
 
+  // Get Prefix
+  // http://davidwalsh.name/vendor-prefix
   var prefix = function () {
     var styles = window.getComputedStyle(document.documentElement, ''),
         pre = (Array.prototype.slice.call(styles).join('').match(/-(moz|webkit|ms)-/) || styles.OLink === '' && ['', 'o'])[1],
@@ -1025,6 +1256,11 @@
     };
   }();
 
+  /**
+   * @param {string} property Name of a css property to check for.
+   * @return {?string} property name supported in the browser, or null if not
+   * supported.
+   */
   function GetVendorPrefixedName(property) {
     var name = CamelCase(property);
     if (!cache[name]) {
@@ -1037,6 +1273,7 @@
     return cache[name];
   }
 
+  // browser detection and prefixing tools
   var transform = GetVendorPrefixedName('transform');
   var backfaceVisibility = GetVendorPrefixedName('backfaceVisibility');
   var hasCSSTransforms = !!GetVendorPrefixedName('transform');
@@ -1160,6 +1397,9 @@
             _angular2.default.forEach(ctrl.columns, function (group) {
               var idx = group.indexOf(col);
               if (idx > -1) {
+
+                // this is tricky because we want to update the index
+                // in the orig columns array instead of the grouped one
                 var curColAtIdx = group[newIdx],
                     siblingIdx = ctrl.options.columns.indexOf(curColAtIdx),
                     curIdx = ctrl.options.columns.indexOf(col);
@@ -1197,6 +1437,11 @@
         this.column.headerCheckboxCallback = this.rowSelected;
       }
     }
+    /**
+     * Calculates the styles for the header cell directive
+     * @return {styles}
+     */
+
 
     _createClass(HeaderCellController, [{
       key: "styles",
@@ -1294,6 +1539,7 @@
             if (ctrl.column.headerTemplate || ctrl.column.headerRenderer) {
               cellScope = ctrl.options.$outer.$new(false);
 
+              // copy some props
               cellScope.$header = ctrl.column.name;
               cellScope.$index = $scope.$index;
             }
@@ -1316,6 +1562,15 @@
   }
 
   var BodyController = function () {
+
+    /**
+     * A tale body controller
+     * @param  {$scope}
+     * @param  {$timeout}
+     * @return {BodyController}
+     */
+    /*@ngInject*/
+    BodyController.$inject = ["$scope", "$timeout"];
     function BodyController($scope, $timeout) {
       var _this4 = this;
 
@@ -1476,10 +1731,13 @@
         this.options.internal.oldScrollPosition = newPage;
 
         if (newPage < oldScrollPosition) {
+          // scrolling up
           newPage = Math.floor(newPage);
         } else if (newPage > oldScrollPosition) {
+          // scrolling down
           newPage = Math.ceil(newPage);
         } else {
+          // equal, just stay on the current page
           newPage = curPage;
         }
 
@@ -1500,7 +1758,7 @@
         if (row.$$depth) {
           return row.$$depth + depth;
         }
-
+        /* Get data from cache, if exists*/
         var cachedParent = this.index[row[parentProp]];
         if (cachedParent) {
           depth += 1;
@@ -1525,7 +1783,7 @@
 
         for (var i = 0, len = this.rows.length; i < len; i++) {
           var row = this.rows[i];
-
+          // build groups
           var relVal = row[parentProp];
           if (relVal) {
             if (this.rowsByGroup[relVal]) {
@@ -1535,6 +1793,7 @@
             }
           }
 
+          // build indexes
           if (this.treeColumn) {
             var prop = this.treeColumn.prop;
             this.index[row[prop]] = row;
@@ -1628,6 +1887,7 @@
     }, {
       key: "getRows",
       value: function getRows(refresh) {
+        // only proceed when we have pre-aggregated the values
         if ((this.treeColumn || this.groupColumn) && !this.rowsByGroup) {
           return false;
         }
@@ -1636,16 +1896,17 @@
 
         if (this.treeColumn) {
           temp = this.treeTemp || [];
-
+          // cache the tree build
           if (refresh || !this.treeTemp) {
             this.treeTemp = temp = this.buildTree();
             this.count = temp.length;
 
+            // have to force reset, optimize this later
             this.tempRows.splice(0, this.tempRows.length);
           }
         } else if (this.groupColumn) {
           temp = this.groupsTemp || [];
-
+          // cache the group build
           if (refresh || !this.groupsTemp) {
             this.groupsTemp = temp = this.buildGroups();
             this.count = temp.length;
@@ -1661,6 +1922,7 @@
             indexes = this.getFirstLastIndexes(),
             rowIndex = indexes.first;
 
+        // slice out the old rows so we don't have duplicates
         this.tempRows.splice(0, indexes.last - indexes.first);
 
         while (rowIndex < indexes.last && rowIndex < this.count) {
@@ -1724,10 +1986,11 @@
         };
 
         if (this.treeColumn) {
+          // if i am a child
           styles['dt-leaf'] = this.rowsByGroup[row[this.treeColumn.relationProp]];
-
+          // if i have children
           styles['dt-has-leafs'] = this.rowsByGroup[row[this.treeColumn.prop]];
-
+          // the depth
           styles['dt-depth-' + row.$$depth] = true;
         }
 
@@ -1828,6 +2091,11 @@
     };
   }
 
+  /**
+   * This translates the dom position based on the model row index.
+   * This only exists because Angular's binding process is too slow.
+   */
+
   var StyleTranslator = function () {
     function StyleTranslator(height) {
       _classCallCheck(this, StyleTranslator);
@@ -1835,6 +2103,12 @@
       this.height = height;
       this.map = new Map();
     }
+
+    /**
+     * Update the rows
+     * @param  {Array} rows
+     */
+
 
     _createClass(StyleTranslator, [{
       key: "update",
@@ -1887,6 +2161,7 @@
             ctrl.getRows();
           }
 
+          // https://github.com/Swimlane/angular-data-table/pull/74
           ctrl.options.$outer.$digest();
 
           ticking = false;
@@ -1920,6 +2195,10 @@
     };
   }
 
+  /**
+   * Shortcut for key handlers
+   * @type {Object}
+   */
   var KEYS = {
     BACKSPACE: 8,
     TAB: 9,
@@ -1946,6 +2225,9 @@
   };
 
   var SelectionController = function () {
+
+    /*@ngInject*/
+    SelectionController.$inject = ["$scope"];
     function SelectionController($scope) {
       _classCallCheck(this, SelectionController);
 
@@ -1953,6 +2235,14 @@
       this.options = $scope.body.options;
       this.selected = $scope.body.selected;
     }
+
+    /**
+     * Handler for the keydown on a row
+     * @param  {event}
+     * @param  {index}
+     * @param  {row}
+     */
+
 
     _createClass(SelectionController, [{
       key: "keyDown",
@@ -1979,6 +2269,7 @@
       key: "rowClicked",
       value: function rowClicked(event, index, row) {
         if (!this.options.checkboxSelection) {
+          // event.preventDefault();
           this.selectRow(event, index, row);
         }
 
@@ -2054,12 +2345,14 @@
 
           if (reverse && lesser || !reverse && greater) {
             var idx = this.selected.indexOf(row);
-
+            // if reverse shift selection (unselect) and the
+            // row is already selected, remove it from selected
             if (reverse && idx > -1) {
               this.selected.splice(idx, 1);
               continue;
             }
-
+            // if in the positive range to be added to `selected`, and
+            // not already in the selected array, add it
             if (i >= range.start && i < range.end) {
               if (idx === -1) {
                 this.selected.push(row);
@@ -2152,9 +2445,11 @@
       },
       link: function link($scope, $elm, $attrs, ctrl) {
         if (ctrl.row) {
+          // inital render position
           TranslateXY($elm[0].style, 0, ctrl.row.$$index * ctrl.options.rowHeight);
         }
 
+        // register w/ the style translator
         ctrl.options.internal.styleTranslator.register($scope.$index, $elm);
       },
       template: "\n      <div class=\"dt-row\">\n        <div class=\"dt-row-left dt-row-block\"\n             ng-if=\"rowCtrl.columns['left'].length\"\n             ng-style=\"rowCtrl.stylesByGroup('left')\">\n          <dt-cell ng-repeat=\"column in rowCtrl.columns['left'] track by column.$id\"\n                   on-tree-toggle=\"rowCtrl.onTreeToggled(cell)\"\n                   column=\"column\"\n                   options=\"rowCtrl.options\"\n                   has-children=\"rowCtrl.hasChildren\"\n                   on-checkbox-change=\"rowCtrl.onCheckboxChanged($event)\"\n                   selected=\"rowCtrl.selected\"\n                   expanded=\"rowCtrl.expanded\"\n                   row=\"rowCtrl.row\"\n                   value=\"rowCtrl.getValue(column)\">\n          </dt-cell>\n        </div>\n        <div class=\"dt-row-center dt-row-block\"\n             ng-style=\"rowCtrl.stylesByGroup('center')\">\n          <dt-cell ng-repeat=\"column in rowCtrl.columns['center'] track by column.$id\"\n                   on-tree-toggle=\"rowCtrl.onTreeToggled(cell)\"\n                   column=\"column\"\n                   options=\"rowCtrl.options\"\n                   has-children=\"rowCtrl.hasChildren\"\n                   expanded=\"rowCtrl.expanded\"\n                   selected=\"rowCtrl.selected\"\n                   row=\"rowCtrl.row\"\n                   on-checkbox-change=\"rowCtrl.onCheckboxChanged($event)\"\n                   value=\"rowCtrl.getValue(column)\">\n          </dt-cell>\n        </div>\n        <div class=\"dt-row-right dt-row-block\"\n             ng-if=\"rowCtrl.columns['right'].length\"\n             ng-style=\"rowCtrl.stylesByGroup('right')\">\n          <dt-cell ng-repeat=\"column in rowCtrl.columns['right'] track by column.$id\"\n                   on-tree-toggle=\"rowCtrl.onTreeToggled(cell)\"\n                   column=\"column\"\n                   options=\"rowCtrl.options\"\n                   has-children=\"rowCtrl.hasChildren\"\n                   selected=\"rowCtrl.selected\"\n                   on-checkbox-change=\"rowCtrl.onCheckboxChanged($event)\"\n                   row=\"rowCtrl.row\"\n                   expanded=\"rowCtrl.expanded\"\n                   value=\"rowCtrl.getValue(column)\">\n          </dt-cell>\n        </div>\n      </div>",
@@ -2204,8 +2499,10 @@
       replace: true,
       template: "\n      <div class=\"dt-group-row\">\n        <span ng-class=\"group.treeClass()\"\n              ng-click=\"group.onGroupToggled($event)\">\n        </span>\n        <span class=\"dt-group-row-label\" ng-bind=\"group.row.name\">\n        </span>\n      </div>",
       link: function link($scope, $elm, $attrs, ctrl) {
+        // inital render position
         TranslateXY($elm[0].style, 0, ctrl.row.$$index * ctrl.options.rowHeight);
 
+        // register w/ the style translator
         ctrl.options.internal.styleTranslator.register($scope.$index, $elm);
       }
     };
@@ -2303,6 +2600,7 @@
             var content = _angular2.default.element($elm[0].querySelector('.dt-cell-content')),
                 cellScope;
 
+            // extend the outer scope onto our new cell scope
             if (ctrl.column.template || ctrl.column.cellRenderer) {
               createCellScope();
             }
@@ -2343,6 +2641,14 @@
   }
 
   var FooterController = function () {
+
+    /**
+     * Creates an instance of the Footer Controller
+     * @param  {scope}
+     * @return {[type]}
+     */
+    /*@ngInject*/
+    FooterController.$inject = ["$scope"];
     function FooterController($scope) {
       var _this7 = this;
 
@@ -2353,6 +2659,12 @@
         _this7.offsetChanged(newVal);
       });
     }
+
+    /**
+     * The offset ( page ) changed externally, update the page
+     * @param  {new offset}
+     */
+
 
     _createClass(FooterController, [{
       key: "offsetChanged",
@@ -2389,6 +2701,13 @@
   }
 
   var PagerController = function () {
+
+    /**
+     * Creates an instance of the Pager Controller
+     * @param  {object} $scope   
+     */
+    /*@ngInject*/
+    PagerController.$inject = ["$scope"];
     function PagerController($scope) {
       var _this8 = this;
 
@@ -2412,6 +2731,12 @@
 
       this.getPages(this.page || 1);
     }
+
+    /**
+     * Calculates the total number of pages given the count.
+     * @return {int} page count
+     */
+
 
     _createClass(PagerController, [{
       key: "calcTotalPages",
@@ -2473,6 +2798,23 @@
           });
         }
 
+        /*
+        if (isMaxSized) {
+          if (startPage > 1) {
+            pages.unshift({
+              number: startPage - 1,
+              text: '...'
+            });
+          }
+           if (endPage < this.totalPages) {
+            pages.push({
+              number: endPage + 1,
+              text: '...'
+            });
+          }
+        }
+        */
+
         this.pages = pages;
       }
     }]);
@@ -2505,7 +2847,23 @@
     CENTER: 'center'
   };
 
+  /**
+   * Popover Directive
+   * @param {object} $q
+   * @param {function} $timeout
+   * @param {function} $templateCache
+   * @param {function} $compile
+   * @param {function} PopoverRegistry
+   * @param {function} $animate
+   */
   function PopoverDirective($q, $timeout, $templateCache, $compile, PopoverRegistry, PositionHelper, $animate) {
+
+    /**
+     * Loads a template from the template cache
+     * @param  {string} template
+     * @param  {boolean} plain
+     * @return {object}  html template
+     */
     function loadTemplate(template, plain) {
       if (!template) {
         return '';
@@ -2518,6 +2876,11 @@
       return $templateCache.get(template) || $http.get(template, { cache: true });
     }
 
+    /**
+     * Determines a boolean given a value
+     * @param  {object} value
+     * @return {boolean}
+     */
     function toBoolean(value) {
       if (value && value.length !== 0) {
         var v = value.toString().toLowerCase();
@@ -2547,6 +2910,7 @@
           showCaret: toBoolean($attributes.popoverPlain || false)
         };
 
+        // attach exit and enter events to element
         $element.off('mouseenter', display);
         $element.on('mouseenter', display);
         $element.off('mouseleave', mouseOut);
@@ -2556,12 +2920,17 @@
           $scope.exitTimeout = $timeout(remove, 500);
         }
 
+        /**
+         * Displays the popover on the page
+         */
         function display() {
+          // Cancel exit timeout
           $timeout.cancel($scope.exitTimeout);
 
           var elm = document.getElementById("#" + $scope.popoverId);
           if ($scope.popover && elm) return;
 
+          // remove other popovers from the same group
           if ($scope.options.group) {
             PopoverRegistry.removeGroup($scope.options.group, $scope.popoverId);
           }
@@ -2590,6 +2959,7 @@
               _angular2.default.element(document.body).append($scope.popover);
               positionPopover($element, $scope.popover, $scope.options);
 
+              // attach exit and enter events to popover
               $scope.popover.off('mouseleave', mouseOut);
               $scope.popover.on('mouseleave', mouseOut);
               $scope.popover.on('mouseenter', function () {
@@ -2605,6 +2975,9 @@
           }
         }
 
+        /**
+         * Removes the template from the registry and page
+         */
         function remove() {
           if ($scope.popover) {
             $scope.popover.remove();
@@ -2614,6 +2987,12 @@
           PopoverRegistry.remove($scope.popoverId);
         }
 
+        /**
+         * Positions the popover
+         * @param  {object} triggerElement
+         * @param  {object} popover
+         * @param  {object} options
+         */
         function positionPopover(triggerElement, popover, options) {
           $timeout(function () {
             var elDimensions = triggerElement[0].getBoundingClientRect(),
@@ -2651,6 +3030,12 @@
           }, 50);
         }
 
+        /**
+         * Adds a caret and positions it relatively to the popover
+         * @param {object} popoverEl
+         * @param {object} elDimensions
+         * @param {object} popoverDimensions
+         */
         function addCaret(popoverEl, elDimensions, popoverDimensions) {
           var caret = _angular2.default.element("<span class=\"popover-caret caret-" + $scope.options.placement + "\"></span>");
           popoverEl.append(caret);
@@ -2684,6 +3069,10 @@
     };
   }
 
+  /**
+   * Registering to deal with popovers
+   * @param {function} $animate
+   */
   function PopoverRegistry($animate) {
     var popovers = {};
     this.add = function (id, object) {
@@ -2708,6 +3097,10 @@
       });
     };
   }
+
+  /**
+   * Position helper for the popover directive.
+   */
 
   function PositionHelper() {
     return {
@@ -2768,6 +3161,9 @@
   var popover = _angular2.default.module('dt.popover', []).service('PopoverRegistry', PopoverRegistry).factory('PositionHelper', PositionHelper).directive('popover', PopoverDirective);
 
   var MenuController = function () {
+
+    /*@ngInject*/
+    MenuController.$inject = ["$scope", "$timeout"];
     function MenuController($scope, $timeout) {
       _classCallCheck(this, MenuController);
 
@@ -2815,6 +3211,8 @@
   }
 
   var DropdownController = function () {
+    /*@ngInject*/
+    DropdownController.$inject = ["$scope"];
     function DropdownController($scope) {
       _classCallCheck(this, DropdownController);
 

@@ -29,7 +29,7 @@
     "report-coverage": "codecov"
   },
   "peerDependencies": {
-    "angular": "1.4.x"
+    "angular": ">=1.4.x <2.0.0"
   },
   "devDependencies": {
     "angular": "^1.5.0",
@@ -85,7 +85,7 @@
   },
   "jspm": {
     "dependencies": {
-      "angular": "npm:angular@^1.5.0"
+      "angular": "npm:angular@^1.5.8"
     },
     "devDependencies": {
       "babel": "npm:babel-core@^6.9.0",

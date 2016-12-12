@@ -14,7 +14,7 @@ System.config({
   },
 
   map: {
-    "angular": "npm:angular@1.5.0",
+    "angular": "npm:angular@1.5.8",
     "babel": "npm:babel-core@5.8.38",
     "babel-runtime": "npm:babel-runtime@5.8.38",
     "core-js": "npm:core-js@1.2.7",
@@ -36,7 +36,7 @@ System.config({
     "github:jspm/nodelibs-vm@0.1.0": {
       "vm-browserify": "npm:vm-browserify@0.0.4"
     },
-    "npm:angular@1.5.0": {
+    "npm:angular@1.5.8": {
       "process": "github:jspm/nodelibs-process@0.1.2"
     },
     "npm:assert@1.4.1": {
