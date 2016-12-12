@@ -45,20 +45,7 @@ See live demos [here]( http://swimlane.github.io/angular-data-table/).
 
 or Github download or clone of course!
 
-#### Run Demos
 
-Ensure you have the latest NPM and JSPM installed globally.  If you don't already have JSPM installed run: `npm install jspm -g`.
-
-- `npm install`
-- `jspm install`
-- `gulp watch serve`
-- Open your browser to `http://localhost:9000`
-
-docs coming soon, in the meantime, 'View Source' is your friend ;)!
-
-#### Build
-
-`gulp release` to build Modules, ES* via Babel and compile.
 
 #### Include
 
@@ -75,6 +62,7 @@ There is also the CSS too:
 
 - `./release/dataTable.css` - The base CSS, pretty much required
 - `./release/material.css` - Material theme
+- `./release/icons.css` - If you want to show fancy icons when sorting
 
 #### Usage
 
@@ -107,6 +95,23 @@ then using expressive markup in your template:
 ```
 
 and your off to the races! See live demos [here](http://swimlane.github.io/angular-data-table/).
+
+## Contributing
+
+#### Run Demos
+
+Ensure you have the latest NPM and JSPM installed globally.  If you don't already have JSPM installed run: `npm install jspm -g`.
+
+- `npm install`
+- `jspm install`
+- `gulp watch serve`
+- Open your browser to `http://localhost:9000`
+
+docs coming soon, in the meantime, 'View Source' is your friend ;)!
+
+#### Build
+
+`gulp release` to build Modules, ES* via Babel and compile.
 
 ## Credits
 
