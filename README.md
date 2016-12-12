@@ -1,4 +1,10 @@
-# angular-data-table [![Join the chat at https://gitter.im/Swimlane/angular-data-table](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/swimlane/angular-data-table?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge) [![Dependency Status](https://david-dm.org/swimlane/angular-data-table.svg)](https://david-dm.org/swimlane/angular-data-table) [![devDependency Status](https://david-dm.org/swimlane/angular-data-table/dev-status.svg)](https://david-dm.org/swimlane/angular-data-table#info=devDependencies)
+# angular-data-table 
+
+[![Join the chat at https://gitter.im/Swimlane/angular-data-table](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/swimlane/angular-data-table?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+![npm-version](https://img.shields.io/npm/v/angular-data-table.svg)
+![Dependency Status](https://david-dm.org/swimlane/angular-data-table.svg)
+![devDependency Status](https://david-dm.org/swimlane/angular-data-table/dev-status.svg)
+![download-count](https://img.shields.io/npm/dm/angular-data-table.svg)
 
 `angular-data-table` is a AngularJS directive for presenting large and complex data.  It has all the features you would expect from any other table but in a light package with _no external depedencies_. The table was designed to be extremely flexible and light; it doesn't make any assumptions about your data or how you: filter, sort or page it.
 
@@ -74,6 +80,7 @@ There is also the CSS too:
 
 Include the module in your angular app module like:
 
+```javascript
     var myApp = angular.module('myApp', [ 'data-table' ]);
 
     module.controller('HomeController', function($scope){
@@ -86,15 +93,18 @@ Include the module in your angular app module like:
         { name: 'Marjan', gender: 'Male' }
       ];
     });
+```
 
 then using expressive markup in your template:
 
+```html
     <dtable options="options" rows="data" class="material dt">
       <column name="Name" width="300" flex-grow="2"></column>
       <column name="Gender">
         <strong>{{$row.name}}</strong>: {{$cell}}
       </column>
     </dtable>
+```
 
 and your off to the races! See live demos [here](http://swimlane.github.io/angular-data-table/).
 
