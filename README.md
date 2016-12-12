@@ -96,6 +96,52 @@ then using expressive markup in your template:
 
 and your off to the races! See live demos [here](http://swimlane.github.io/angular-data-table/).
 
+## API
+
+The data table can be created with the following `options`:
+
+- `checkboxSelection`: Checkbox selection vs row click (default: `false`)
+- `columnMode`: Possible values are `flex`, `force` and `standard` (default: `standard`)
+- `columns`
+  - `canAutoResize`: Whether the column can automatically resize to fill space in the table (default: `true`)
+  - `cellDataGetter`: Type `function`. Returns content for the `cellRenderer`. If not provided, the cell data will be collected from row data instead (default: `undefined`)
+  - `cellRenderer`: Type `function`. Returns HTML for the cell.
+  - `className`: CSS class for the body cell (default: `undefined`)
+  - `comparator`: Type `function`. Custom sort comparator, pass `false` if you want to do server sort
+  - `flexGrow`: The growth factor relative to other columns (default: `0`)
+  - `frozenLeft`: Column is pinned to the left (default: `false`)
+  - `frozenRight`: Column is pinned to the right (default: `false`)
+  - `headerCheckbox`:  Toggles the checkbox column in the header for selecting all values given to the grid (default: `false`)
+  - `headerClassName`: CSS class for the header cell (default: `undefined`)
+  - `headerRenderer`: Type `function`. Returns HTML for the cell (default: `undefined`)
+  - `isCheckboxColumn`: Adds the checkbox selection to the column (default: `false`)
+  - `isTreeColumn`: Adds +/- button and makes a secondary call to load nested data (default: `false`)
+  - `maxWidth`: Maximum width, in pixels (default: `undefined`)
+  - `minWidth`: Minimum width, in pixels (default: `100`)
+  - `name`: Name of the column
+  - `prop`: Property to use to get the data
+  - `resizable`: Whether the column can be resized (default: `true`)
+  - `sort`: Default sort asecending/descending for the column (default: `undefined`)
+  - `sortBy`: Property by which to sort (default: `undefined`)
+  - `sortable`: Whether the column can be sorted (default: `true`)
+  - `template`
+  - `width`: Width, in pixels (default: `150`)
+- `emptyMessage`: Message to show when array is presented but contains no values (default: `'No data to display'`)
+- `footerHeight`: Footer height in pixels. Pass a  `falsey` value for no footer (default: `0`)
+- `headerHeight`: Header height in pixels. Pass a  `falsey` value for no header (default: `30`)
+- `loadingMessage`: Loading message presented when the array is undefined (default: `'Loading...'`)
+- `multiSelect`: Whether users can select multiple items (default: `false`)
+- `paging`
+  - `externalPaging`. Default `false`
+  - `size`. Default `undefined`
+  - `count`. Default `0`
+  - `offset`. Default `0`
+  - `loadingIndicator`. Default `false`
+- `reorderable`: Whether you can reorder columns (default: `true`)
+- `rowHeight`: Row height in pixels, necessary if using lazy rendering (default: `30`)
+- `scrollbarV`: Enable vertical scrollbars (default: `true`)
+- `selectable`: Whether users can select items (default: `false`)
+
 ## Contributing
 
 #### Run Demos
@@ -106,8 +152,6 @@ Ensure you have the latest NPM and JSPM installed globally.  If you don't alread
 - `jspm install`
 - `gulp watch serve`
 - Open your browser to `http://localhost:9000`
-
-docs coming soon, in the meantime, 'View Source' is your friend ;)!
 
 #### Build
 
