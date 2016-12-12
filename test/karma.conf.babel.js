@@ -1,5 +1,7 @@
 const istanbul = require('browserify-istanbul'),
   isparta = require('isparta'),
+
+  // Configure more at: https://wiki.saucelabs.com/display/DOCS/Platform+Configurator#/
   customLaunchers = {
     sl_chrome: {
       base: 'SauceLabs',
@@ -9,11 +11,12 @@ const istanbul = require('browserify-istanbul'),
     },
     sl_ie_11: {
       base: 'SauceLabs',
-      browserName: 'internet explorer',
+      browserName: 'Internet Explorer',
       platform: 'Windows 7',
-      version: '35'
+      version: '11.0'
     }
   },
+
   karmaBaseConfig = {
     frameworks: ['angular', 'jasmine', 'sinon', 'browserify'],
 
@@ -56,8 +59,18 @@ const istanbul = require('browserify-istanbul'),
     coverageReporter: {
       dir: './coverage',
       reporters: [
-        {type: 'html'},
-        {type: 'text-summary'}
+        {
+          type: 'html'
+        },
+        {
+          type: 'text-summary'
+        },
+        {
+          type: 'lcovonly'
+        },
+        {
+          type: 'json'
+        }
       ]
     },
 
@@ -67,15 +80,40 @@ const istanbul = require('browserify-istanbul'),
   };
 
 export default (config) => {
-  if (process.env.TRAVIS) {
-    config.sauceLabs = {
-      testName: 'angular-data-table unit tests'
-    };
-    config.customLaunchers = customLaunchers;
-    config.browsers = Object.keys(customLaunchers);
-    config.reporters = ['dots', 'saucelabs'];
-    config.singleRun = true;
-  }
 
   config.set(karmaBaseConfig);
+
+  if (process.env.TRAVIS) {
+    if (!process.env.SAUCE_USERNAME || !process.env.SAUCE_ACCESS_KEY) {
+      console.log('Make sure the SAUCE_USERNAME and SAUCE_ACCESS_KEY environment variables are set.')
+      process.exit(1)
+    }
+
+    config.sauceLabs = {
+      testName: 'angular-data-table unit tests',
+      recordScreenshots: false,
+      connectOptions: {
+        port: 5757,
+        logfile: 'sauce_connect.log'
+      },
+      public: 'public',
+      tunnelIdentifier: process.env.TRAVIS_JOB_NUMBER,
+      startConnect: false
+    };
+
+    config.customLaunchers = customLaunchers;
+
+    config.browsers = Object.keys(customLaunchers);
+
+    config.reporters = ['progress', 'dots', 'coverage', 'saucelabs'];
+
+    config.coverageReporter.reporters = [
+      {
+        type: 'lcovonly'
+      },
+      {
+        type: 'json'
+      }
+    ];
+  }
 };
