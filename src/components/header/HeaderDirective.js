@@ -11,6 +11,8 @@ export function HeaderDirective($timeout){
       options: '=',
       columns: '=',
       columnWidths: '=',
+      isAllRowsSelected: '=',
+      selectedRows: '=?',
       onSort: '&',
       onResize: '&',
       onCheckboxChange: '&'
@@ -32,6 +34,8 @@ export function HeaderDirective($timeout){
               sort-type="header.options.sortType"
               on-resize="header.onResized(column, width)"
               selected="header.isSelected()"
+              is-all-rows-selected="header.isAllRowsSelected"
+              selected-rows="header.selectedRows"
               column="column">
             </dt-header-cell>
           </div>
