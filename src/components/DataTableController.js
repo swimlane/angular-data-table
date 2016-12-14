@@ -286,7 +286,17 @@ export class DataTableController {
   }
 
   /**
-   * Occurs when a row was click but may not be selected.
+   * Occurs when a row was deselected
+   * @param  {object} rows
+   */
+  onDeselected(rows){
+    this.onDeselect({
+      rows: rows
+    });
+  }
+
+  /**
+   * Occurs when a row was clicked but may not be selected.
    * @param  {object} row
    */
   onRowClicked(row){
