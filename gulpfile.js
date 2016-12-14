@@ -38,7 +38,7 @@ var banner = ['/**',
 //
 // Compile Tasks
 // ------------------------------------------------------------
-gulp.task('es6', function () {
+gulp.task('es', function () {
   return gulp.src(path.source)
     .pipe(plumber())
     .pipe(changed(path.output, { extension: '.js' }))
@@ -66,7 +66,7 @@ gulp.task('clean', function () {
 
 gulp.task('compile', function (callback) {
   return runSequence(
-    ['less', 'es6'],
+    ['less', 'es'],
     callback
     );
 });
@@ -105,7 +105,7 @@ gulp.task('release', function (callback) {
     ['release-less', 'release-build'],
     'release-umd',
     'release-common',
-    'release-es6-min',
+    'release-es-min',
     callback
     );
 });
@@ -123,7 +123,7 @@ gulp.task('release-build', function () {
   }).then(function (bundle) {
     return bundle.write({
       dest: 'release/dataTable.es6.js',
-      format: 'es6',
+      format: 'es',
       moduleName: 'DataTable'
     });
   });
@@ -161,7 +161,7 @@ gulp.task('release-common', function () {
     .pipe(gulp.dest("release/"))
 });
 
-gulp.task('release-es6-min', function () {
+gulp.task('release-es-min', function () {
   return gulp.src('release/dataTable.es6.js')
     .pipe(babel({
       plugins: [
