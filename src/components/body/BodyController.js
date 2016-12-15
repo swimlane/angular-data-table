@@ -428,6 +428,7 @@ export class BodyController{
    */
   rowClasses(row){
     var styles = {
+      'changed': row.changed,
       'selected': this.isSelected(row),
       'dt-row-even': row && row.$$index%2 === 0,
       'dt-row-odd': row && row.$$index%2 !== 0

@@ -35,6 +35,10 @@
         margin:50px auto;
       }
 
+      .changed {
+        background:#FFDC00;
+      }
+
     </style>
     <link href="../dist/dataTable.css" media="all" rel="stylesheet" />
     <link href="../dist/themes/material.css" media="all" rel="stylesheet" />
@@ -55,7 +59,7 @@
       System.import('dataTable').then(function(dt){
         var module = angular.module('app', [ dt.default.name ]);
 
-        module.controller('HomeController', function($scope, $http){
+        module.controller('HomeController', function($scope, $http, $timeout){
           $scope.options = {
             rowHeight: 50,
             headerHeight: 50,
@@ -95,9 +99,16 @@
           });
 
           $scope.change = function(){
-            for(var i=0;i<$scope.data.length;i++){
+            var randPos = Math.floor(Math.random() * $scope.data.length);
+            for(var i = 0; i < randPos; i++){
+              $scope.data[i].changed = true;
               $scope.data[i].imgSrc = 'http://cdn.javabeat.net/wp-content/uploads/2014/05/angularjs.png';
-            }   
+            }
+            $timeout(function() {
+              for(var i = 0; i < $scope.data.length; i++){
+                $scope.data[i].changed = false;
+              }
+            }, 2000)
           }
 
         });
