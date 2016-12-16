@@ -1,8 +1,9 @@
 export class MenuController{
-
   /*@ngInject*/
-  constructor($scope, $timeout){
-    this.$scope = $scope;
+  constructor($scope, $timeout) {
+    Object.assign(this, {
+      $scope: $scope
+    });
   }
 
   getColumnIndex(model){
@@ -23,5 +24,5 @@ export class MenuController{
       this.$scope.current.splice(idx, 1);
     }
   }
-  
+
 }

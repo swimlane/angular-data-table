@@ -3,10 +3,24 @@ import { KEYS } from '../../utils/keys';
 export class SelectionController {
 
   /*@ngInject*/
-  constructor($scope){
-    this.body = $scope.body;
-    this.options = $scope.body.options;
-    this.selected = $scope.body.selected;
+  constructor($scope) {
+    Object.assign(this, {
+      $scope: $scope
+    });
+
+    if (angular.version.major === 1 && angular.version.minor < 5) {
+      this.init();
+    }
+  }
+
+  $onInit(){
+    this.init();
+  }
+
+  init(){
+    this.body = this.$scope.body;
+    this.options = this.$scope.body.options;
+    this.selected = this.$scope.body.selected;
   }
 
   /**
@@ -49,7 +63,7 @@ export class SelectionController {
 
     this.body.onRowClick({ row: row });
   }
-  
+
   /**
    * Handler for the row double click event
    * @param  {object} event

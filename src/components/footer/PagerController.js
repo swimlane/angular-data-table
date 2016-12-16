@@ -2,26 +2,41 @@ export class PagerController {
 
   /**
    * Creates an instance of the Pager Controller
-   * @param  {object} $scope   
+   * @param  {object} $scope
    */
+
   /*@ngInject*/
-  constructor($scope){
-    $scope.$watch('pager.count', (newVal) => {
+  constructor($scope) {
+    Object.assign(this, {
+      $scope: $scope
+    })
+
+    if (angular.version.major === 1 && angular.version.minor < 5) {
+      this.init();
+    }
+  }
+
+  $onInit(){
+    this.init();
+  }
+
+  init(){
+    this.$scope.$watch('pager.count', (newVal) => {
       this.calcTotalPages(this.size, this.count);
       this.getPages(this.page || 1);
     });
 
-    $scope.$watch('pager.size', (newVal) => {
+    this.$scope.$watch('pager.size', (newVal) => {
       this.calcTotalPages(this.size, this.count);
       this.getPages(this.page || 1);
     });
 
-    $scope.$watch('pager.page', (newVal) => {
+    this.$scope.$watch('pager.page', (newVal) => {
       if (newVal !== 0 && newVal <= this.totalPages) {
         this.getPages(newVal);
       }
     });
-    
+
     this.getPages(this.page || 1);
   }
 
@@ -36,7 +51,7 @@ export class PagerController {
 
   /**
    * Select a page
-   * @param  {int} num   
+   * @param  {int} num
    */
   selectPage(num){
     if (num > 0 && num <= this.totalPages) {
@@ -73,7 +88,7 @@ export class PagerController {
 
   /**
    * Determines if the pager can go forward
-   * @return {boolean}       
+   * @return {boolean}
    */
   canNext(){
     return this.page < this.totalPages;
@@ -81,11 +96,11 @@ export class PagerController {
 
   /**
    * Gets the page set given the current page
-   * @param  {int} page 
+   * @param  {int} page
    */
   getPages(page) {
     var pages = [],
-        startPage = 1, 
+        startPage = 1,
         endPage = this.totalPages,
         maxSize = 5,
         isMaxSized = maxSize < this.totalPages;
