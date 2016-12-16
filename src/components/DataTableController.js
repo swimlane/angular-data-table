@@ -12,12 +12,10 @@ export class DataTableController {
    */
 
   /*@ngInject*/
-  constructor($scope, $filter, $log, $transclude){
+  constructor($scope, $filter){
     Object.assign(this, {
       $scope: $scope,
-      $filter: $filter,
-      $log: $log,
-      $transclude: $transclude
+      $filter: $filter
     });
 
     if (angular.version.major === 1 && angular.version.minor < 5) {
