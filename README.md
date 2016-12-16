@@ -8,7 +8,7 @@
 
 `angular-data-table` is a AngularJS directive for presenting large and complex data.  It has all the features you would expect from any other table but in a light package with _no external depedencies_. The table was designed to be extremely flexible and light; it doesn't make any assumptions about your data or how you: filter, sort or page it.
 
-It was engineered from its conception to handle thousands of rows without sacrificing performance.  It was built for modern browsers using _ES6, CSS3 and HTML5_ and only supports [Evergreen Browsers](http://eisenbergeffect.bluespire.com/evergreen-browsers/) and >= 1.4.x Angular.
+It was engineered from its conception to handle thousands of rows without sacrificing performance.  It was built for modern browsers using _ES6, CSS3 and HTML5_ and **only supports [Evergreen Browsers](http://eisenbergeffect.bluespire.com/evergreen-browsers/) and Angular >= 1.4.x and < 1.7.0.
 
 Sadly, this project is **not Angular2 upgrade compatible**. Fortunately, we have authored [angular2-data-table](https://github.com/swimlane/angular2-data-table) which is the successor to this project. **We are going to slowly be transitioning this project maintenance mode**. We will continue to provide feedback to the community and accept PRs but we won't be doing any major new development.
 
@@ -66,11 +66,15 @@ There is also the CSS too:
 
 #### Usage
 
-Include the module in your angular app module like:
+Include the `data-table` module as a dependency:
 
 ```javascript
-    var myApp = angular.module('myApp', [ 'data-table' ]);
+    var module = angular.module('myApp', [ 'data-table' ]);
+```
 
+Set the data and the options in your controller:
+
+```javascript
     module.controller('HomeController', function($scope){
       $scope.options = {
         scrollbarV: false
@@ -111,6 +115,7 @@ The data table can be created with the following `options`:
   - `flexGrow`: The growth factor relative to other columns (default: `0`)
   - `frozenLeft`: Column is pinned to the left (default: `false`)
   - `frozenRight`: Column is pinned to the right (default: `false`)
+  - `group`: Whether to group by the column (default: `false`)
   - `headerCheckbox`:  Toggles the checkbox column in the header for selecting all values given to the grid (default: `false`)
   - `headerClassName`: CSS class for the header cell (default: `undefined`)
   - `headerRenderer`: Type `function`. Returns HTML for the cell (default: `undefined`)
