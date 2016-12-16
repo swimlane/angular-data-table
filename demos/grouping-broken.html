@@ -64,14 +64,14 @@
             headerHeight: 50,
             forceFillColumns: true,
             columns: [
-              { name: 'Athlete', prop: 'athlete', width: 300 },
-              { name: 'Country', prop: 'country', group: true },
-              { name: 'Year', prop: 'year' },
-              { name: 'Sport', prop: 'sport' }
+              { name: 'Name', prop: 'name', width: 300 },
+              { name: 'Gender', prop: 'gender' },
+              { name: 'Company', prop: 'company' },
+              { name: 'Foo', prop: 'foo', group: true }
             ]
           };
 
-          $http.get('/demos/data/olympics.json').success(function(data) {
+          $http.get('/demos/data/10.json').success(function(data) {
             $scope.data = data;
           });
 
