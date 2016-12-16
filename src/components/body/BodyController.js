@@ -25,7 +25,7 @@ export class BodyController{
     this.init();
   }
 
-  $onInit(){
+  init(){
     this.tempRows = [];
 
     this.treeColumn = this.options.columns.find((c) => {
