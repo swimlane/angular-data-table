@@ -1,6 +1,6 @@
 /**
  * angular-data-table - A feature-rich but lightweight ES6 AngularJS Data Table crafted for large data sets!
- * @version v0.7.2
+ * @version v0.7.3
  * @link http://swimlane.com/
  * @license MIT
  */
@@ -479,7 +479,7 @@ function DeepValueGetter(obj, path) {
  */
 function CamelCase(str) {
   // Replace special characters with a space
-  str = str.replace(/[^a-zA-Z0-9 ]/g, " ");
+  str = str.replace(/[^a-zA-Z0-9 ]/g, ' ');
   // put a space before an uppercase letter
   str = str.replace(/([a-z](?=[A-Z]))/g, '$1 ');
   // Lower case first character and some other stuff
@@ -497,17 +497,17 @@ function CamelCase(str) {
  * @return {int} width
  */
 function ScrollbarWidth() {
-  var outer = document.createElement("div");
-  outer.style.visibility = "hidden";
-  outer.style.width = "100px";
-  outer.style.msOverflowStyle = "scrollbar";
+  var outer = document.createElement('div');
+  outer.style.visibility = 'hidden';
+  outer.style.width = '100px';
+  outer.style.msOverflowStyle = 'scrollbar';
   document.body.appendChild(outer);
 
   var widthNoScroll = outer.offsetWidth;
-  outer.style.overflow = "scroll";
+  outer.style.overflow = 'scroll';
 
-  var inner = document.createElement("div");
-  inner.style.width = "100%";
+  var inner = document.createElement('div');
+  inner.style.width = '100%';
   outer.appendChild(inner);
 
   var widthWithScroll = inner.offsetWidth;
@@ -1693,34 +1693,42 @@ var BodyController = function () {
   /**
    * A tale body controller
    * @param  {$scope}
-   * @param  {$timeout}
    * @return {BodyController}
    */
   /*@ngInject*/
-  BodyController.$inject = ["$scope", "$timeout"];
-  function BodyController($scope, $timeout) {
+  BodyController.$inject = ["$scope"];
+  function BodyController($scope) {
     var _this4 = this;
 
     _classCallCheck(this, BodyController);
 
     this.$scope = $scope;
+
     this.tempRows = [];
     this.watchListeners = [];
 
-    this.setTreeAndGroupColumns();
-    this.setConditionalWatches();
-    this.options.refreshRows = this.rowsUpdated.bind(this);
+    if (this.options) {
+      this.setTreeAndGroupColumns();
+      this.setConditionalWatches();
+    }
 
-    $scope.$watch(function () {
-      return _this4.options.columns;
-    }, function (newVal, oldVal) {
+    $scope.$watch('body.options.columns', function (newVal, oldVal) {
       if (newVal) {
+        var origTreeColumn = _this4.treeColumn,
+            origGroupColumn = _this4.groupColumn;
+
         _this4.setTreeAndGroupColumns();
 
         _this4.setConditionalWatches();
 
-        if (!_this4.options.refreshRows) {
-          _this4.options.refreshRows = _this4.rowsUpdated.bind(_this4);
+        if (_this4.treeColumn && origGroupColumn !== _this4.treeColumn || _this4.groupColumn && origGroupColumn !== _this4.groupColumn) {
+          _this4.rowsUpdated(_this4.rows);
+
+          if (_this4.treeColumn) {
+            _this4.refreshTree();
+          } else if (_this4.groupColumn) {
+            _this4.refreshGroups();
+          }
         }
       }
     }, true);
@@ -1735,9 +1743,11 @@ var BodyController = function () {
         return c.isTreeColumn;
       });
 
-      this.groupColumn = this.options.columns.find(function (c) {
-        return c.group;
-      });
+      if (!this.treeColumn) {
+        this.groupColumn = this.options.columns.find(function (c) {
+          return c.group;
+        });
+      }
     }
   }, {
     key: 'setConditionalWatches',
@@ -1750,6 +1760,7 @@ var BodyController = function () {
 
       if (this.options.scrollbarV || !this.options.scrollbarV && this.options.paging.externalPaging) {
         var sized = false;
+
         this.watchListeners.push(this.$scope.$watch('body.options.paging.size', function (newVal, oldVal) {
           if (!sized || newVal > oldVal) {
             _this5.getRows();
@@ -1777,9 +1788,7 @@ var BodyController = function () {
     value: function rowsUpdated(newVal, oldVal) {
       if (!newVal) {
         this.getRows(true);
-      }
-
-      if (newVal) {
+      } else {
         if (!this.options.paging.externalPaging) {
           this.options.paging.count = newVal.length;
         }
@@ -1999,7 +2008,9 @@ var BodyController = function () {
 
       var temp = [];
 
-      _angular2.default.forEach(this.rowsByGroup, function (v, k) {
+      angular.forEach(this.rowsByGroup, function (v, k) {
+        console.log('buildGroups', _this6.rowsByGroup, v, k);
+
         temp.push({
           name: k,
           group: true
@@ -3396,19 +3407,27 @@ function PopoverDirective($q, $timeout, $templateCache, $compile, PopoverRegistr
 
           if (options.placement === POSITION.RIGHT) {
             left = elDimensions.left + elDimensions.width + options.spacing;
-            top = PositionHelper.calculateVerticalAlignment(elDimensions, popoverDimensions, options.alignment);
+            top = _calculateVerticalAlignment();
           }
           if (options.placement === POSITION.LEFT) {
             left = elDimensions.left - popoverDimensions.width - options.spacing;
-            top = PositionHelper.calculateVerticalAlignment(elDimensions, popoverDimensions, options.alignment);
+            top = _calculateVerticalAlignment();
           }
           if (options.placement === POSITION.TOP) {
             top = elDimensions.top - popoverDimensions.height - options.spacing;
-            left = PositionHelper.calculateHorizontalAlignment(elDimensions, popoverDimensions, options.alignment);
+            left = _calculateHorizontalAlignment();
           }
           if (options.placement === POSITION.BOTTOM) {
             top = elDimensions.top + elDimensions.height + options.spacing;
-            left = PositionHelper.calculateHorizontalAlignment(elDimensions, popoverDimensions, options.alignment);
+            left = _calculateHorizontalAlignment();
+          }
+
+          function _calculateVerticalAlignment() {
+            return PositionHelper.calculateVerticalAlignment(elDimensions, popoverDimensions, options.alignment);
+          }
+
+          function _calculateHorizontalAlignment() {
+            return PositionHelper.calculateHorizontalAlignment(elDimensions, popoverDimensions, options.alignment);
           }
 
           popover.css({
@@ -3438,20 +3457,28 @@ function PopoverDirective($q, $timeout, $templateCache, $compile, PopoverRegistr
         var left, top;
         if ($scope.options.placement === POSITION.RIGHT) {
           left = -6;
-          top = PositionHelper.calculateVerticalCaret(elDimensions, popoverDimensions, caretDimensions, $scope.options.alignment);
+          top = _calculateVerticalCaret();
         }
         if ($scope.options.placement === POSITION.LEFT) {
           left = popoverDimensions.width - 2;
-          top = PositionHelper.calculateVerticalCaret(elDimensions, popoverDimensions, caretDimensions, $scope.options.alignment);
+          top = _calculateVerticalCaret();
         }
         if ($scope.options.placement === POSITION.TOP) {
           top = popoverDimensions.height - 5;
-          left = PositionHelper.calculateHorizontalCaret(elDimensions, popoverDimensions, caretDimensions, $scope.options.alignment);
+          left = _calculateHorizontalCaret();
         }
 
         if ($scope.options.placement === POSITION.BOTTOM) {
           top = -8;
-          left = PositionHelper.calculateHorizontalCaret(elDimensions, popoverDimensions, caretDimensions, $scope.options.alignment);
+          left = _calculateHorizontalCaret();
+        }
+
+        function _calculateVerticalCaret() {
+          return PositionHelper.calculateVerticalCaret(elDimensions, popoverDimensions, caretDimensions, $scope.options.alignment);
+        }
+
+        function _calculateHorizontalCaret() {
+          return PositionHelper.calculateHorizontalCaret(elDimensions, popoverDimensions, caretDimensions, $scope.options.alignment);
         }
 
         caret.css({
