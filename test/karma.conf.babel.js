@@ -18,7 +18,7 @@ const istanbul = require('browserify-istanbul'),
   },
 
   karmaBaseConfig = {
-    frameworks: ['angular', 'jasmine', 'sinon', 'browserify'],
+    frameworks: ['angular', 'browserify', 'source-map-support', 'jasmine', 'sinon'],
 
     angular: ['mocks'],
 
@@ -37,6 +37,7 @@ const istanbul = require('browserify-istanbul'),
 
     browserify: {
       debug: true,
+      extensions: ['.js'],
       transform: [
         istanbul({
           instrumenter: isparta,
@@ -45,7 +46,7 @@ const istanbul = require('browserify-istanbul'),
             '**/*.spec.js'
           ]
         }),
-        'babelify'
+        'babelify' // Note: uses .babelrc
       ]
     },
 
@@ -106,6 +107,7 @@ export default (config) => {
     config.browsers = Object.keys(customLaunchers);
 
     config.reporters = ['progress', 'dots', 'coverage', 'saucelabs'];
+    config.singleRun = true;
 
     config.coverageReporter.reporters = [
       {

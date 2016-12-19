@@ -158,22 +158,28 @@ export function PopoverDirective($q, $timeout, $templateCache, $compile, Popover
 
           if (options.placement === POSITION.RIGHT){
             left = elDimensions.left + elDimensions.width + options.spacing;
-            top = PositionHelper.calculateVerticalAlignment(elDimensions,
-              popoverDimensions, options.alignment);
+            top = _calculateVerticalAlignment();
           }
           if (options.placement === POSITION.LEFT){
             left = elDimensions.left - popoverDimensions.width - options.spacing;
-            top = PositionHelper.calculateVerticalAlignment(elDimensions,
-              popoverDimensions, options.alignment);
+            top = _calculateVerticalAlignment();
           }
           if (options.placement === POSITION.TOP){
             top = elDimensions.top - popoverDimensions.height - options.spacing;
-            left = PositionHelper.calculateHorizontalAlignment(elDimensions,
-              popoverDimensions, options.alignment);
+            left = _calculateHorizontalAlignment();
           }
           if (options.placement === POSITION.BOTTOM){
             top = elDimensions.top + elDimensions.height + options.spacing;
-            left = PositionHelper.calculateHorizontalAlignment(elDimensions,
+            left = _calculateHorizontalAlignment();
+          }
+
+          function _calculateVerticalAlignment() {
+            return PositionHelper.calculateVerticalAlignment(elDimensions,
+              popoverDimensions, options.alignment);
+          }
+
+          function _calculateHorizontalAlignment() {
+            return PositionHelper.calculateHorizontalAlignment(elDimensions,
               popoverDimensions, options.alignment);
           }
 
@@ -204,23 +210,29 @@ export function PopoverDirective($q, $timeout, $templateCache, $compile, Popover
         var left, top;
         if ($scope.options.placement === POSITION.RIGHT){
           left = -6;
-          top = PositionHelper.calculateVerticalCaret(elDimensions,
-            popoverDimensions, caretDimensions, $scope.options.alignment);
+          top = _calculateVerticalCaret();
         }
         if ($scope.options.placement === POSITION.LEFT){
           left = popoverDimensions.width - 2;
-          top = PositionHelper.calculateVerticalCaret(elDimensions,
-            popoverDimensions, caretDimensions, $scope.options.alignment);
+          top = _calculateVerticalCaret();
         }
         if ($scope.options.placement === POSITION.TOP){
           top = popoverDimensions.height - 5;
-          left = PositionHelper.calculateHorizontalCaret(elDimensions,
-            popoverDimensions, caretDimensions, $scope.options.alignment);
+          left = _calculateHorizontalCaret();
         }
 
         if ($scope.options.placement === POSITION.BOTTOM){
           top = -8;
-          left = PositionHelper.calculateHorizontalCaret(elDimensions,
+          left = _calculateHorizontalCaret();
+        }
+
+        function _calculateVerticalCaret() {
+          return PositionHelper.calculateVerticalCaret(elDimensions,
+            popoverDimensions, caretDimensions, $scope.options.alignment);
+        }
+
+        function _calculateHorizontalCaret() {
+          return PositionHelper.calculateHorizontalCaret(elDimensions,
             popoverDimensions, caretDimensions, $scope.options.alignment);
         }
 

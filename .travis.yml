@@ -1,26 +1,41 @@
 language: node_js
+
 node_js:
 - '6'
+
 branches:
   only:
   - master
+
 before_install:
-- npm install -g gulp jspm protractor forever codecov
+- npm install -g gulp jspm protractor forever codecov codeclimate-test-reporter
 - jspm config registries.github.auth $JSPM_GITHUB_AUTH_TOKEN
+
 before_script:
 - jspm install
 - forever start node_modules/gulp/bin/gulp.js watch serve
+
 after_success:
 - bash <(curl -s https://codecov.io/bash)
+- test $TRAVIS_TEST_RESULT = 0
+- gulp release
+
 script:
 - gulp unit
 - protractor test/protractor.conf.js
 - codecov
+
+script:
+- gulp unit
+- protractor test/protractor.conf.js
+- codecov
+
 env:
   global:
   - secure: j82VILAgaoIzCONVjju2xKGEzYpHpPcr0u7wygROZ1IGfS9KXrM0ZbG47rujicqSMUSk6myPhDjhffUuVsYrNv1ukxcUmjG3920v35OrXo8qK5TCDdMnExnoSD802Qm9F0i4bToSNHfKo+onbqb3G1qN8gl19JZK/U6+lfXddDolZhwBGDNfk5LOmaAMKWAcgdYKhaOre4ZFQzOx7fCyS9mEjxC/Yc0RWB9U3ScuYAbWUc/4DblfPhAmH0ptrspOUWqrtENdIO+AYc8Q7awHxDppqx5nLq3iS5caEy/5PA6z2HNbLp0LuB4+c4UrU5eXMgE28bJGt5S/6ZrLojz3tT7bbwehw5u7so16GhXJr1hizceHUwRJwioxU7yGYHSqOIqdECcDB9osXtYAx/1aCLzlkvJMshHL1EWJ0byCyx2JgIqPh7yW+drYpHkjJ1eWdWao1GIR20imTrqg+A24x6XOKOvnqY+hFSYalyAxhlsMWTE5kaRsWLTaWxFsvinWot0A2pO6J0rX+9bPlVF6/VQpXhPi3uLeXE6jOZtjfoKo9/m6ORqIUpZaZhquSzgkjsY1ib4EIGmxJ3Oj0c8AAKLXLN1cmug86FMBTL/JVzICpkX6Vj98aIb1PJnCIb1ZoZMELs5yrNpuRLPe2AoRe/ai+WalBoTHIr0o4zf9bK8=
   - secure: ta2XxWxIUtS9KeTSwU/6lY8eo0ujcnkkPcum3woDgZ8cmAsqEmYKPPh9zYSTrCum+JRKg1G+dGCN1q86VNuNDyxDYTEuXH46Nv9hfdJFiTAbPBPzRaS/34AKEIa5/4yPaxyQ5+BHMvWwKk+81dhkjS7NQt3UaWBmhhN/qms+J9OSnHzQlnGh65wmTKrRR39FdQd4cMkX6m0FMNXDzjNn10/qFGNBgb7bCVvBTt3IAz2SkiOmx+n42cBa749kY9B98xal7XIdBnNPIRx9TB9Z8IrVmxTiE+HVeWG1BOMLpqPl+nqDz7WAYLTJVZnX4kepSYKwc1eiU9snJmgoz83r5FJDEBhyNuDkTfo6yJVzxenGjz4JfSTyYN8uNwHkf6HUNlFmX+YP0LWrf3vMo87cEHn6VraY0valFgIogQlKF/cdgtERUXyjT4sP50kk+RSpLex+TUYqXnaPinaJqVRJCy/4KXwIVaBF1OnmkUR+BatNLWZqRazGxL4AvcotfRBPmpMk+406DEeW225f74ZhAdBdZJMf8y7YzuF0O8OFpRVHKVJ8BCHlLBxWVqNdMmIB8Gl6XLBtGRVPUC8q02d1bVzeAy6LDy4aEt4U6CDevlDCnAFTRM7oX5sedZy7/GHlQKIeqKeXw81n/bejc4bT35mH3E/2G4xOCuLnrT50uBg=
   - secure: jNaXLlxFpsFoNO55mFiihQqEdtiOHUVWdNIX5nppf2jdOPKOVvVqoOdhGNLdNZNXpdUdbggvr9ipi9DOeX4QN4uy3M94lG3n5HHxuH8wt/JbHz+1aD8wJNz+yUIGrhillYV+I6E+6hm3FWVewdBhbQFeNblIUokrLiqbSRCZWS4GPrNrMBAGJtMo6NcJnEqFkG4Zi+o0nJz6Anj8SeDYjlTN9T8ewe6LHezvh3e3+R0vaWBAU7CHDgu0MzoyO1SRWxnPy3alBxk2Oa/0aOQDYDD5C2zj4dD8Hjb9WM75gJMJq3xOPnogZbFMBrCjnTV26wId5PiGdZdNWhayI1xnvkmi/XtD6JVMmArA68aqjLoEl2UR9OCNoA9GWu82+nnuz0n7npu4925slmW2PoQVA6YxJgoWlnh1JaxXaKzci1xxqxEO47UxsKoIXRZBbumMFljNW2POejTYMUt98flFKDJE6wYUJAGJF2QMLpx+VQybZUPLirvqVOdOPjhtx4MwiAcBtb4Ai2gJDs/ZZDVaDn/kuqV5gQWNqZBtfp9D+1ramVXW7C6XE3Rucs7iSU+3Tbn0p/DyOfY5Ow50pVwapUU2cugNkJsOeFjsAhqZxtDJvmlSrfiiiDAEE1CHlG5wH1Q4l3SSO+fO4pHL+psOB4UR2OCJhThrdh+BHSg2ep0=
+
 addons:
   sauce_connect: true
   code_climate:

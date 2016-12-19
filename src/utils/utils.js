@@ -92,7 +92,7 @@ export function DeepValueGetter(obj, path) {
  */
 export function CamelCase(str) {
   // Replace special characters with a space
-  str = str.replace(/[^a-zA-Z0-9 ]/g, " ");
+  str = str.replace(/[^a-zA-Z0-9 ]/g, ' ');
   // put a space before an uppercase letter
   str = str.replace(/([a-z](?=[A-Z]))/g, '$1 ');
   // Lower case first character and some other stuff
@@ -111,17 +111,17 @@ export function CamelCase(str) {
  * @return {int} width
  */
 export function ScrollbarWidth() {
-  var outer = document.createElement("div");
-  outer.style.visibility = "hidden";
-  outer.style.width = "100px";
-  outer.style.msOverflowStyle = "scrollbar";
+  var outer = document.createElement('div');
+  outer.style.visibility = 'hidden';
+  outer.style.width = '100px';
+  outer.style.msOverflowStyle = 'scrollbar';
   document.body.appendChild(outer);
 
   var widthNoScroll = outer.offsetWidth;
-  outer.style.overflow = "scroll";
+  outer.style.overflow = 'scroll';
 
-  var inner = document.createElement("div");
-  inner.style.width = "100%";
+  var inner = document.createElement('div');
+  inner.style.width = '100%';
   outer.appendChild(inner);
 
   var widthWithScroll = inner.offsetWidth;

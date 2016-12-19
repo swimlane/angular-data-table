@@ -17,8 +17,8 @@ describe('DataTableService', function () {
 	it('should build and save columns', () => {
 		let id = ObjectId(),
 			columnElements = [
-				`<column name="Name" width="300" flex-grow="1"></column>`,
-				`<column name="Gender" flex-grow="1">{{monkey}} ---- {{$cell}}</column>`
+				'<column name="Name" width="300" flex-grow="1"></column>',
+				'<column name="Gender" flex-grow="1">{{monkey}} ---- {{$cell}}</column>'
 			].map((el) => angular.element(el)[0]);
 
 		this.DataTableService.saveColumns(id, columnElements);

@@ -1,5 +1,3 @@
-require('chromedriver');
-
 var nPath = require('path'),
   gulp = require('gulp'),
   plumber = require('gulp-plumber'),
@@ -137,7 +135,7 @@ gulp.task('release-umd', function () {
   return gulp.src('release/dataTable.es6.js')
     .pipe(babel({
       plugins: [
-        "transform-es2015-modules-umd"
+        'transform-es2015-modules-umd'
       ],
       moduleId: 'DataTable'
     }))
@@ -146,14 +144,14 @@ gulp.task('release-umd', function () {
     }))
     .pipe(header(banner, { pkg: pkg }))
     .pipe(rename('dataTable.js'))
-    .pipe(gulp.dest("release/"))
+    .pipe(gulp.dest('release/'))
 });
 
 gulp.task('release-common', function () {
   return gulp.src('release/dataTable.es6.js')
     .pipe(babel({
       plugins: [
-        "transform-es2015-modules-commonjs"
+        'transform-es2015-modules-commonjs'
       ],
       moduleId: 'DataTable'
     }))
@@ -162,14 +160,14 @@ gulp.task('release-common', function () {
     }))
     .pipe(header(banner, { pkg: pkg }))
     .pipe(rename('dataTable.cjs.js'))
-    .pipe(gulp.dest("release/"))
+    .pipe(gulp.dest('release/'))
 });
 
 gulp.task('release-es6-min', function () {
   return gulp.src('release/dataTable.es6.js')
     .pipe(babel({
       plugins: [
-        "transform-es2015-modules-umd"
+        'transform-es2015-modules-umd'
       ],
       moduleId: 'DataTable'
     }))
@@ -179,7 +177,7 @@ gulp.task('release-es6-min', function () {
     .pipe(uglify())
     .pipe(header(banner, { pkg: pkg }))
     .pipe(rename('dataTable.min.js'))
-    .pipe(gulp.dest("release/"))
+    .pipe(gulp.dest('release/'))
 });
 
 
@@ -187,26 +185,23 @@ gulp.task('release-es6-min', function () {
 // Test Tasks
 // ------------------------------------------------------------
 
-gulp.task('unit', ['compile'], function (callback) {
+function _startKarma(callback, singleRun) {
   var server = new KarmaServer({
     configFile: nPath.join(__dirname, 'test/karma.conf.js'),
-    singleRun: true
+    singleRun: singleRun
   }, () => (
     callback()
   ));
 
   server.start();
+}
+
+gulp.task('unit', ['compile'], function (callback) {
+  _startKarma(callback, true);
 });
 
-gulp.task('unit-watch', ['compile'], function (callback) {
-  var server = new KarmaServer({
-    configFile: nPath.join(__dirname, 'test/karma.conf.js'),
-    singleRun: false
-  }, () => (
-    callback()
-  ));
-
-  server.start();
+gulp.task('unit:watch', ['compile'], function (callback) {
+  _startKarma(callback, false);
 });
 
 gulp.task('e2e', ['serve'], function (callback) {
