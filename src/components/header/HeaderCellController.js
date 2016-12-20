@@ -1,15 +1,28 @@
 import { NextSortDirection } from '../../utils/utils';
 
-export class HeaderCellController{
-  constructor($scope){
-    this.$scope = $scope;
+export class HeaderCellController {
+  constructor($scope) {
+    Object.assign(this, {
+      $scope
+    });
+
+    // if preAssignBindingsEnabled === true and no $onInit
+    if (angular.version.major === 1 && angular.version.minor < 5) {
+      this.init();
+    }
+  }
+
+  $onInit() {
+    this.init();
+  }
+
+  init() {
+    if (this.column.headerCheckbox) {
+      this.column.headerCheckboxCallback = this.rowSelected;
+    }
 
     if (this.$scope.$parent.$parent.$parent.$parent.dt) {
       this.dt = this.$scope.$parent.$parent.$parent.$parent.dt;
-    }
-
-    if (this.column.headerCheckbox) {
-      this.column.headerCheckboxCallback = this.rowSelected;
     }
   }
   /**

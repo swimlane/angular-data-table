@@ -775,49 +775,57 @@
      * @param  {scope}
      * @param  {filter}
      */
-    /*@ngInject*/
-    DataTableController.$inject = ["$scope", "$filter", "$log", "$transclude"];
-    function DataTableController($scope, $filter, $log, $transclude) {
-      var _this = this;
 
+    /* @ngInject */
+    DataTableController.$inject = ["$scope", "$filter"];
+    function DataTableController($scope, $filter) {
       _classCallCheck(this, DataTableController);
 
       _extends(this, {
         $scope: $scope,
-        $filter: $filter,
-        $log: $log
+        $filter: $filter
       });
 
-      this.defaults();
-
-      // set scope to the parent
-      this.options.$outer = $scope.$parent;
-
-      $scope.$watch('dt.options.columns', function (newVal, oldVal) {
-        _this.transposeColumnDefaults();
-
-        if (newVal.length !== oldVal.length) {
-          _this.adjustColumns();
-        }
-
-        _this.calculateColumns();
-      }, true);
-
-      // default sort
-      var watch = $scope.$watch('dt.rows', function (newVal) {
-        if (newVal) {
-          watch();
-          _this.onSorted();
-        }
-      });
+      // if preAssignBindingsEnabled === true and no $onInit
+      if (_angular2.default.version.major === 1 && _angular2.default.version.minor < 5) {
+        this.init();
+      }
     }
 
-    /**
-     * Creates and extends default options for the grid control
-     */
-
-
     _createClass(DataTableController, [{
+      key: '$onInit',
+      value: function $onInit() {
+        this.init();
+      }
+    }, {
+      key: 'init',
+      value: function init() {
+        var _this = this;
+
+        this.defaults();
+
+        // set scope to the parent
+        this.options.$outer = this.$scope.$parent;
+
+        this.$scope.$watch('dt.options.columns', function (newVal, oldVal) {
+          _this.transposeColumnDefaults();
+
+          if (newVal.length !== oldVal.length) {
+            _this.adjustColumns();
+          }
+
+          _this.calculateColumns();
+        }, true);
+
+        // default sort
+        var watch = this.$scope.$watch('dt.rows', function (newVal) {
+          if (newVal) {
+            watch();
+            _this.onSorted();
+          }
+        });
+      }
+    }, {
       key: 'defaults',
       value: function defaults() {
         var _this2 = this;
@@ -1451,23 +1459,33 @@
     function HeaderCellController($scope) {
       _classCallCheck(this, HeaderCellController);
 
-      this.$scope = $scope;
+      _extends(this, {
+        $scope: $scope
+      });
 
-      if (this.$scope.$parent.$parent.$parent.$parent.dt) {
-        this.dt = this.$scope.$parent.$parent.$parent.$parent.dt;
-      }
-
-      if (this.column.headerCheckbox) {
-        this.column.headerCheckboxCallback = this.rowSelected;
+      // if preAssignBindingsEnabled === true and no $onInit
+      if (angular.version.major === 1 && angular.version.minor < 5) {
+        this.init();
       }
     }
-    /**
-     * Calculates the styles for the header cell directive
-     * @return {styles}
-     */
-
 
     _createClass(HeaderCellController, [{
+      key: '$onInit',
+      value: function $onInit() {
+        this.init();
+      }
+    }, {
+      key: 'init',
+      value: function init() {
+        if (this.column.headerCheckbox) {
+          this.column.headerCheckboxCallback = this.rowSelected;
+        }
+
+        if (this.$scope.$parent.$parent.$parent.$parent.dt) {
+          this.dt = this.$scope.$parent.$parent.$parent.$parent.dt;
+        }
+      }
+    }, {
       key: 'styles',
       value: function styles() {
         return {
@@ -1586,54 +1604,67 @@
   }
 
   var BodyController = function () {
-
     /**
-     * A tale body controller
+     * A body controller
      * @param  {$scope}
      * @return {BodyController}
      */
+
     /*@ngInject*/
     BodyController.$inject = ["$scope"];
     function BodyController($scope) {
-      var _this4 = this;
-
       _classCallCheck(this, BodyController);
 
-      this.$scope = $scope;
+      _extends(this, {
+        $scope: $scope
+      });
 
       this.tempRows = [];
       this.watchListeners = [];
 
-      if (this.options) {
-        this.setTreeAndGroupColumns();
-        this.setConditionalWatches();
+      // if preAssignBindingsEnabled === true and no $onInit
+      if (angular.version.major === 1 && angular.version.minor < 5) {
+        this.init();
       }
-
-      $scope.$watch('body.options.columns', function (newVal, oldVal) {
-        if (newVal) {
-          var origTreeColumn = _this4.treeColumn,
-              origGroupColumn = _this4.groupColumn;
-
-          _this4.setTreeAndGroupColumns();
-
-          _this4.setConditionalWatches();
-
-          if (_this4.treeColumn && origGroupColumn !== _this4.treeColumn || _this4.groupColumn && origGroupColumn !== _this4.groupColumn) {
-            _this4.rowsUpdated(_this4.rows);
-
-            if (_this4.treeColumn) {
-              _this4.refreshTree();
-            } else if (_this4.groupColumn) {
-              _this4.refreshGroups();
-            }
-          }
-        }
-      }, true);
-
-      $scope.$watchCollection('body.rows', this.rowsUpdated.bind(this));
     }
 
     _createClass(BodyController, [{
+      key: '$onInit',
+      value: function $onInit() {
+        this.init();
+      }
+    }, {
+      key: 'init',
+      value: function init() {
+        var _this4 = this;
+
+        this.setTreeAndGroupColumns();
+        this.setConditionalWatches();
+
+        this.$scope.$watch('body.options.columns', function (newVal, oldVal) {
+          if (newVal) {
+            var origTreeColumn = _this4.treeColumn,
+                origGroupColumn = _this4.groupColumn;
+
+            _this4.setTreeAndGroupColumns();
+
+            _this4.setConditionalWatches();
+
+            if (_this4.treeColumn && origGroupColumn !== _this4.treeColumn || _this4.groupColumn && origGroupColumn !== _this4.groupColumn) {
+              _this4.rowsUpdated(_this4.rows);
+
+              if (_this4.treeColumn) {
+                _this4.refreshTree();
+              } else if (_this4.groupColumn) {
+                _this4.refreshGroups();
+              }
+            }
+          }
+        }, true);
+
+        this.$scope.$watchCollection('body.rows', this.rowsUpdated.bind(this));
+      }
+    }, {
       key: 'setTreeAndGroupColumns',
       value: function setTreeAndGroupColumns() {
         this.treeColumn = this.options.columns.find(function (c) {
@@ -1864,8 +1895,6 @@
         var temp = [];
 
         angular.forEach(this.rowsByGroup, function (v, k) {
-          console.log('buildGroups', _this6.rowsByGroup, v, k);
-
           temp.push({
             name: k,
             group: true
@@ -2122,7 +2151,7 @@
         onRowDblClick: '&'
       },
       scope: true,
-      template: '\n      <div \n        class="progress-linear" \n        role="progressbar" \n        ng-show="body.options.paging.loadingIndicator">\n        <div class="container">\n          <div class="bar"></div>\n        </div>\n      </div>\n      <div class="dt-body" ng-style="body.styles()" dt-seletion>\n        <dt-scroller class="dt-body-scroller">\n          <dt-group-row ng-repeat-start="r in body.tempRows track by $index"\n                        ng-if="r.group"\n                        ng-style="body.groupRowStyles(r)" \n                        options="body.options"\n                        on-group-toggle="body.onGroupToggle(group)"\n                        expanded="body.getRowExpanded(r)"\n                        tabindex="{{$index}}"\n                        row="r">\n          </dt-group-row>\n          <dt-row ng-repeat-end\n                  ng-if="!r.group"\n                  row="body.getRowValue($index)"\n                  tabindex="{{$index}}"\n                  columns="body.columns"\n                  column-widths="body.columnWidths"\n                  ng-keydown="selCtrl.keyDown($event, $index, r)"\n                  ng-click="selCtrl.rowClicked($event, r.$$index, r)"\n                  ng-dblclick="selCtrl.rowDblClicked($event, r.$$index, r)"\n                  on-tree-toggle="body.onTreeToggled(row, cell)"\n                  ng-class="body.rowClasses(r)"\n                  options="body.options"\n                  selected="body.isSelected(r)"\n                  on-checkbox-change="selCtrl.onCheckboxChange($event, $index, row)"\n                  columns="body.columnsByPin"\n                  has-children="body.getRowHasChildren(r)"\n                  expanded="body.getRowExpanded(r)"\n                  ng-style="body.rowStyles(r)">\n          </dt-row>\n        </dt-scroller>\n        <div ng-if="body.rows && !body.rows.length" \n             class="empty-row" \n             ng-bind="::body.options.emptyMessage">\n       </div>\n       <div ng-if="body.rows === undefined" \n             class="loading-row"\n             ng-bind="::body.options.loadingMessage">\n        </div>\n      </div>'
+      template: '\n      <div\n        class="progress-linear"\n        role="progressbar"\n        ng-show="body.options.paging.loadingIndicator">\n        <div class="container">\n          <div class="bar"></div>\n        </div>\n      </div>\n      <div class="dt-body" ng-style="body.styles()" dt-seletion>\n        <dt-scroller class="dt-body-scroller">\n          <dt-group-row ng-repeat-start="r in body.tempRows track by $index"\n                        ng-if="r.group"\n                        ng-style="body.groupRowStyles(r)"\n                        options="body.options"\n                        on-group-toggle="body.onGroupToggle(group)"\n                        expanded="body.getRowExpanded(r)"\n                        tabindex="{{$index}}"\n                        row="r">\n          </dt-group-row>\n          <dt-row ng-repeat-end\n                  ng-if="!r.group"\n                  row="body.getRowValue($index)"\n                  tabindex="{{$index}}"\n                  columns="body.columns"\n                  column-widths="body.columnWidths"\n                  ng-keydown="selCtrl.keyDown($event, $index, r)"\n                  ng-click="selCtrl.rowClicked($event, r.$$index, r)"\n                  ng-dblclick="selCtrl.rowDblClicked($event, r.$$index, r)"\n                  on-tree-toggle="body.onTreeToggled(row, cell)"\n                  ng-class="body.rowClasses(r)"\n                  options="body.options"\n                  selected="body.isSelected(r)"\n                  on-checkbox-change="selCtrl.onCheckboxChange($event, $index, row)"\n                  columns="body.columnsByPin"\n                  has-children="body.getRowHasChildren(r)"\n                  expanded="body.getRowExpanded(r)"\n                  ng-style="body.rowStyles(r)">\n          </dt-row>\n        </dt-scroller>\n        <div ng-if="body.rows && !body.rows.length"\n             class="empty-row"\n             ng-bind="::body.options.emptyMessage">\n       </div>\n       <div ng-if="body.rows === undefined"\n             class="loading-row"\n             ng-bind="::body.options.loadingMessage">\n        </div>\n      </div>'
     };
   }
 
@@ -2682,26 +2711,39 @@
      * @param  {scope}
      * @return {[type]}
      */
+
     /*@ngInject*/
     FooterController.$inject = ["$scope"];
     function FooterController($scope) {
-      var _this7 = this;
-
       _classCallCheck(this, FooterController);
 
-      this.page = this.paging.offset + 1;
-      $scope.$watch('footer.paging.offset', function (newVal) {
-        _this7.offsetChanged(newVal);
+      _extends(this, {
+        $scope: $scope
       });
+
+      // if preAssignBindingsEnabled === true and no $onInit
+      if (angular.version.major === 1 && angular.version.minor < 5) {
+        this.init();
+      }
     }
 
-    /**
-     * The offset ( page ) changed externally, update the page
-     * @param  {new offset}
-     */
-
-
     _createClass(FooterController, [{
+      key: '$onInit',
+      value: function $onInit() {
+        this.init();
+      }
+    }, {
+      key: 'init',
+      value: function init() {
+        var _this7 = this;
+
+        this.page = this.paging.offset + 1;
+
+        this.$scope.$watch('footer.paging.offset', function (newVal) {
+          _this7.offsetChanged(newVal);
+        });
+      }
+    }, {
       key: 'offsetChanged',
       value: function offsetChanged(newVal) {
         this.page = newVal + 1;
@@ -2739,41 +2781,53 @@
 
     /**
      * Creates an instance of the Pager Controller
-     * @param  {object} $scope   
+     * @param  {object} $scope
      */
+
     /*@ngInject*/
     PagerController.$inject = ["$scope"];
     function PagerController($scope) {
-      var _this8 = this;
-
       _classCallCheck(this, PagerController);
 
-      $scope.$watch('pager.count', function (newVal) {
-        _this8.calcTotalPages(_this8.size, _this8.count);
-        _this8.getPages(_this8.page || 1);
+      _extends(this, {
+        $scope: $scope
       });
 
-      $scope.$watch('pager.size', function (newVal) {
-        _this8.calcTotalPages(_this8.size, _this8.count);
-        _this8.getPages(_this8.page || 1);
-      });
-
-      $scope.$watch('pager.page', function (newVal) {
-        if (newVal !== 0 && newVal <= _this8.totalPages) {
-          _this8.getPages(newVal);
-        }
-      });
-
-      this.getPages(this.page || 1);
+      // if preAssignBindingsEnabled === true and no $onInit
+      if (angular.version.major === 1 && angular.version.minor < 5) {
+        this.init();
+      }
     }
 
-    /**
-     * Calculates the total number of pages given the count.
-     * @return {int} page count
-     */
-
-
     _createClass(PagerController, [{
+      key: '$onInit',
+      value: function $onInit() {
+        this.init();
+      }
+    }, {
+      key: 'init',
+      value: function init() {
+        var _this8 = this;
+
+        this.$scope.$watch('pager.count', function (newVal) {
+          _this8.calcTotalPages(_this8.size, _this8.count);
+          _this8.getPages(_this8.page || 1);
+        });
+
+        this.$scope.$watch('pager.size', function (newVal) {
+          _this8.calcTotalPages(_this8.size, _this8.count);
+          _this8.getPages(_this8.page || 1);
+        });
+
+        this.$scope.$watch('pager.page', function (newVal) {
+          if (newVal !== 0 && newVal <= _this8.totalPages) {
+            _this8.getPages(newVal);
+          }
+        });
+
+        this.getPages(this.page || 1);
+      }
+    }, {
       key: 'calcTotalPages',
       value: function calcTotalPages(size, count) {
         var count = size < 1 ? 1 : Math.ceil(count / size);
@@ -3214,8 +3268,8 @@
   var MenuController = function () {
 
     /*@ngInject*/
-    MenuController.$inject = ["$scope", "$timeout"];
-    function MenuController($scope, $timeout) {
+    MenuController.$inject = ["$scope"];
+    function MenuController($scope) {
       _classCallCheck(this, MenuController);
 
       this.$scope = $scope;

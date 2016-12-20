@@ -1,4 +1,4 @@
-import { BodyController } from './BodyController';
+import BodyController from './BodyController';
 
 describe('BodyController', function () {
   const defaultOptions = {

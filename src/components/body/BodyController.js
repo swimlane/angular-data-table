@@ -1,23 +1,34 @@
-export class BodyController{
-
+export default class BodyController {
   /**
-   * A tale body controller
+   * A body controller
    * @param  {$scope}
    * @return {BodyController}
    */
+
   /*@ngInject*/
-  constructor($scope){
-    this.$scope = $scope;
+  constructor($scope) {
+    Object.assign(this, {
+      $scope
+    });
 
     this.tempRows = [];
     this.watchListeners = [];
 
-    if (this.options) {
-      this.setTreeAndGroupColumns();
-      this.setConditionalWatches();
+    // if preAssignBindingsEnabled === true and no $onInit
+    if (angular.version.major === 1 && angular.version.minor < 5) {
+      this.init();
     }
+  }
 
-    $scope.$watch('body.options.columns', (newVal, oldVal) => {
+  $onInit() {
+    this.init();
+  }
+
+  init() {
+    this.setTreeAndGroupColumns();
+    this.setConditionalWatches();
+
+    this.$scope.$watch('body.options.columns', (newVal, oldVal) => {
       if (newVal) {
         const origTreeColumn = this.treeColumn,
           origGroupColumn = this.groupColumn;
@@ -39,7 +50,7 @@ export class BodyController{
       }
     }, true);
 
-    $scope.$watchCollection('body.rows', this.rowsUpdated.bind(this));
+    this.$scope.$watchCollection('body.rows', this.rowsUpdated.bind(this));
   }
 
   setTreeAndGroupColumns() {
@@ -292,8 +303,6 @@ export class BodyController{
     var temp = [];
 
     angular.forEach(this.rowsByGroup, (v, k) => {
-      console.log('buildGroups', this.rowsByGroup, v, k);
-      
       temp.push({
         name: k,
         group: true

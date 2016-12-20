@@ -667,20 +667,31 @@ class DataTableController {
    * @param  {scope}
    * @param  {filter}
    */
-  /*@ngInject*/
-  constructor($scope, $filter, $log, $transclude){
+
+  /* @ngInject */
+  constructor($scope, $filter) {
     Object.assign(this, {
       $scope: $scope,
-      $filter: $filter,
-      $log: $log
+      $filter: $filter
     });
 
+    // if preAssignBindingsEnabled === true and no $onInit
+    if (angular$1.version.major === 1 && angular$1.version.minor < 5) {
+      this.init();
+    }
+  }
+
+  $onInit() {
+    this.init();
+  }
+
+  init() {
     this.defaults();
 
     // set scope to the parent
-    this.options.$outer = $scope.$parent;
+    this.options.$outer = this.$scope.$parent;
 
-    $scope.$watch('dt.options.columns', (newVal, oldVal) => {
+    this.$scope.$watch('dt.options.columns', (newVal, oldVal) => {
       this.transposeColumnDefaults();
 
       if(newVal.length !== oldVal.length){
@@ -691,8 +702,8 @@ class DataTableController {
     }, true);
 
     // default sort
-    var watch = $scope.$watch('dt.rows', (newVal) => {
-      if(newVal){
+    var watch = this.$scope.$watch('dt.rows', (newVal) => {
+      if (newVal) {
         watch();
         this.onSorted();
       }
@@ -1474,16 +1485,29 @@ function HeaderDirective($timeout){
   };
 }
 
-class HeaderCellController{
-  constructor($scope){
-    this.$scope = $scope;
+class HeaderCellController {
+  constructor($scope) {
+    Object.assign(this, {
+      $scope
+    });
+
+    // if preAssignBindingsEnabled === true and no $onInit
+    if (angular.version.major === 1 && angular.version.minor < 5) {
+      this.init();
+    }
+  }
+
+  $onInit() {
+    this.init();
+  }
+
+  init() {
+    if (this.column.headerCheckbox) {
+      this.column.headerCheckboxCallback = this.rowSelected;
+    }
 
     if (this.$scope.$parent.$parent.$parent.$parent.dt) {
       this.dt = this.$scope.$parent.$parent.$parent.$parent.dt;
-    }
-
-    if (this.column.headerCheckbox) {
-      this.column.headerCheckboxCallback = this.rowSelected;
     }
   }
   /**
@@ -1636,26 +1660,37 @@ function HeaderCellDirective($compile){
   };
 }
 
-class BodyController{
-
+class BodyController {
   /**
-   * A tale body controller
+   * A body controller
    * @param  {$scope}
    * @return {BodyController}
    */
+
   /*@ngInject*/
-  constructor($scope){
-    this.$scope = $scope;
+  constructor($scope) {
+    Object.assign(this, {
+      $scope
+    });
 
     this.tempRows = [];
     this.watchListeners = [];
 
-    if (this.options) {
-      this.setTreeAndGroupColumns();
-      this.setConditionalWatches();
+    // if preAssignBindingsEnabled === true and no $onInit
+    if (angular.version.major === 1 && angular.version.minor < 5) {
+      this.init();
     }
+  }
 
-    $scope.$watch('body.options.columns', (newVal, oldVal) => {
+  $onInit() {
+    this.init();
+  }
+
+  init() {
+    this.setTreeAndGroupColumns();
+    this.setConditionalWatches();
+
+    this.$scope.$watch('body.options.columns', (newVal, oldVal) => {
       if (newVal) {
         const origTreeColumn = this.treeColumn,
           origGroupColumn = this.groupColumn;
@@ -1677,7 +1712,7 @@ class BodyController{
       }
     }, true);
 
-    $scope.$watchCollection('body.rows', this.rowsUpdated.bind(this));
+    this.$scope.$watchCollection('body.rows', this.rowsUpdated.bind(this));
   }
 
   setTreeAndGroupColumns() {
@@ -1930,8 +1965,6 @@ class BodyController{
     var temp = [];
 
     angular.forEach(this.rowsByGroup, (v, k) => {
-      console.log('buildGroups', this.rowsByGroup, v, k);
-      
       temp.push({
         name: k,
         group: true
@@ -2225,9 +2258,9 @@ function BodyDirective($timeout){
     },
     scope: true,
     template: `
-      <div 
-        class="progress-linear" 
-        role="progressbar" 
+      <div
+        class="progress-linear"
+        role="progressbar"
         ng-show="body.options.paging.loadingIndicator">
         <div class="container">
           <div class="bar"></div>
@@ -2237,7 +2270,7 @@ function BodyDirective($timeout){
         <dt-scroller class="dt-body-scroller">
           <dt-group-row ng-repeat-start="r in body.tempRows track by $index"
                         ng-if="r.group"
-                        ng-style="body.groupRowStyles(r)" 
+                        ng-style="body.groupRowStyles(r)"
                         options="body.options"
                         on-group-toggle="body.onGroupToggle(group)"
                         expanded="body.getRowExpanded(r)"
@@ -2264,11 +2297,11 @@ function BodyDirective($timeout){
                   ng-style="body.rowStyles(r)">
           </dt-row>
         </dt-scroller>
-        <div ng-if="body.rows && !body.rows.length" 
-             class="empty-row" 
+        <div ng-if="body.rows && !body.rows.length"
+             class="empty-row"
              ng-bind="::body.options.emptyMessage">
        </div>
-       <div ng-if="body.rows === undefined" 
+       <div ng-if="body.rows === undefined"
              class="loading-row"
              ng-bind="::body.options.loadingMessage">
         </div>
@@ -2922,10 +2955,27 @@ class FooterController {
    * @param  {scope}
    * @return {[type]}
    */
+
   /*@ngInject*/
-  constructor($scope){
+  constructor($scope) {
+    Object.assign(this, {
+      $scope
+    });
+
+    // if preAssignBindingsEnabled === true and no $onInit
+    if (angular.version.major === 1 && angular.version.minor < 5) {
+      this.init();
+    }
+  }
+
+  $onInit() {
+    this.init();
+  }
+
+  init() {
     this.page = this.paging.offset + 1;
-    $scope.$watch('footer.paging.offset', (newVal) => {
+
+    this.$scope.$watch('footer.paging.offset', (newVal) => {
       this.offsetChanged(newVal);
     });
   }
@@ -2980,26 +3030,42 @@ class PagerController {
 
   /**
    * Creates an instance of the Pager Controller
-   * @param  {object} $scope   
+   * @param  {object} $scope
    */
+
   /*@ngInject*/
   constructor($scope){
-    $scope.$watch('pager.count', (newVal) => {
+    Object.assign(this, {
+      $scope
+    });
+
+    // if preAssignBindingsEnabled === true and no $onInit
+    if (angular.version.major === 1 && angular.version.minor < 5) {
+      this.init();
+    }
+  }
+
+  $onInit() {
+    this.init();
+  }
+
+  init() {
+    this.$scope.$watch('pager.count', (newVal) => {
       this.calcTotalPages(this.size, this.count);
       this.getPages(this.page || 1);
     });
 
-    $scope.$watch('pager.size', (newVal) => {
+    this.$scope.$watch('pager.size', (newVal) => {
       this.calcTotalPages(this.size, this.count);
       this.getPages(this.page || 1);
     });
 
-    $scope.$watch('pager.page', (newVal) => {
+    this.$scope.$watch('pager.page', (newVal) => {
       if (newVal !== 0 && newVal <= this.totalPages) {
         this.getPages(newVal);
       }
     });
-    
+
     this.getPages(this.page || 1);
   }
 
@@ -3014,7 +3080,7 @@ class PagerController {
 
   /**
    * Select a page
-   * @param  {int} num   
+   * @param  {int} num
    */
   selectPage(num){
     if (num > 0 && num <= this.totalPages) {
@@ -3051,7 +3117,7 @@ class PagerController {
 
   /**
    * Determines if the pager can go forward
-   * @return {boolean}       
+   * @return {boolean}
    */
   canNext(){
     return this.page < this.totalPages;
@@ -3059,11 +3125,11 @@ class PagerController {
 
   /**
    * Gets the page set given the current page
-   * @param  {int} page 
+   * @param  {int} page
    */
   getPages(page) {
     var pages = [],
-        startPage = 1, 
+        startPage = 1,
         endPage = this.totalPages,
         maxSize = 5,
         isMaxSized = maxSize < this.totalPages;
@@ -3488,10 +3554,10 @@ var popover = angular$1
   .factory('PositionHelper', PositionHelper)
   .directive('popover', PopoverDirective);
 
-class MenuController{
+class MenuController {
 
   /*@ngInject*/
-  constructor($scope, $timeout){
+  constructor($scope){
     this.$scope = $scope;
   }
 
@@ -3513,7 +3579,7 @@ class MenuController{
       this.$scope.current.splice(idx, 1);
     }
   }
-  
+
 }
 
 function MenuDirective(){
