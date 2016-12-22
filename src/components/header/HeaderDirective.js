@@ -1,7 +1,6 @@
-import angular from 'angular';
 import { HeaderController } from './HeaderController';
 
-export function HeaderDirective($timeout){
+export default function HeaderDirective($timeout){
   return {
     restrict: 'E',
     controller: HeaderController,

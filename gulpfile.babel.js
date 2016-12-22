@@ -46,7 +46,7 @@ gulp.task('es6', function () {
     .pipe(changed(path.output, { extension: '.js' }))
     .pipe(babel())
     .pipe(ngAnnotate({
-      gulpWarnings: false
+      gulpWarnings: true
     }))
     .pipe(gulp.dest(path.output))
     .pipe(browserSync.reload({ stream: true }));

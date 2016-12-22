@@ -1,7 +1,6 @@
-import angular from 'angular';
-import { HeaderCellController } from './HeaderCellController';
+import HeaderCellController from './HeaderCellController';
 
-export function HeaderCellDirective($compile){
+export default function HeaderCellDirective($compile){
   return {
     restrict: 'E',
     controller: HeaderCellController,

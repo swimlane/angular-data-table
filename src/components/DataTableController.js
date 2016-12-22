@@ -1,4 +1,3 @@
-import angular from 'angular';
 import { TableDefaults, ColumnDefaults } from '../defaults';
 import { AdjustColumnWidths, ForceFillColumnWidths } from '../utils/math';
 import { ColumnsByPin, ColumnGroupWidths, CamelCase, ObjectId, ScrollbarWidth } from '../utils/utils';
@@ -47,6 +46,7 @@ export class DataTableController {
     var watch = this.$scope.$watch('dt.rows', (newVal) => {
       if (newVal) {
         watch();
+        
         this.onSorted();
       }
     });
@@ -58,8 +58,7 @@ export class DataTableController {
   defaults(){
     this.expanded = this.expanded || {};
 
-    this.options = angular.extend(angular.
-      copy(TableDefaults), this.options);
+    this.options = angular.extend(angular.copy(TableDefaults), this.options);
 
     angular.forEach(TableDefaults.paging, (v,k) => {
       if(!this.options.paging[k]){

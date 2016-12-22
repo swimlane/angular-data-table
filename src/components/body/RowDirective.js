@@ -1,7 +1,7 @@
 import { RowController } from './RowController';
 import { TranslateXY } from '../../utils/translate';
 
-export function RowDirective(){
+export default function RowDirective(){
   return {
     restrict: 'E',
     controller: RowController,

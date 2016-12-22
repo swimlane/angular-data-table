@@ -1,6 +1,7 @@
 import { NextSortDirection } from '../../utils/utils';
 
-export class HeaderCellController {
+export default class HeaderCellController {
+  /* @ngInject */
   constructor($scope) {
     Object.assign(this, {
       $scope

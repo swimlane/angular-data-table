@@ -1,10 +1,9 @@
-import angular from 'angular';
 import { DataTableController } from './DataTableController';
 import { ScrollbarWidth, ObjectId } from '../utils/utils';
 import { throttle } from '../utils/throttle';
 import { DataTableService } from './DataTableService';
 
-export function DataTableDirective($window, $timeout, $parse){
+export default function DataTableDirective($window, $timeout, $parse){
   return {
     restrict: 'E',
     replace: true,
@@ -102,10 +101,13 @@ export function DataTableDirective($window, $timeout, $parse){
             ctrl.adjustColumns();
           };
 
-          $window.addEventListener('resize',
+          function _calculateResize() {
             throttle(() => {
               $timeout(resize);
-            }));
+            });
+          }
+
+          $window.addEventListener('resize', _calculateResize);
 
           // When an item is hidden for example
           // in a tab with display none, the height
