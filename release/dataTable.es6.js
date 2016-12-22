@@ -184,7 +184,7 @@ function SortableDirective($timeout) {
         if (nextEl !== dragEl.nextSibling) {
           $scope.onSortableSort({
             event: evt,
-            columnId: angular$1.element(dragEl).attr('data-id')
+            columnId: angular.element(dragEl).attr('data-id')
           });
         }
       }
@@ -564,7 +564,7 @@ function AdjustColumnWidths(allColumns, expectedWidth){
  */
 function ScaleColumns(colsByGroup, maxWidth, totalFlexGrow) {
   // calculate total width and flexgrow points for coulumns that can be resized
-  angular$1.forEach(colsByGroup, (cols) => {
+  angular.forEach(colsByGroup, (cols) => {
     cols.forEach((column) => {
       if (!column.canAutoResize){
         maxWidth -= column.width;
@@ -582,7 +582,7 @@ function ScaleColumns(colsByGroup, maxWidth, totalFlexGrow) {
   do {
     let widthPerFlexPoint = remainingWidth / totalFlexGrow;
     remainingWidth = 0;
-    angular$1.forEach(colsByGroup, (cols) => {
+    angular.forEach(colsByGroup, (cols) => {
       cols.forEach((column, i) => {
         // if the column can be resize and it hasn't reached its minimum width yet
         if (column.canAutoResize && !hasMinWidth[i]){
@@ -676,7 +676,7 @@ class DataTableController {
     });
 
     // if preAssignBindingsEnabled === true and no $onInit
-    if (angular$1.version.major === 1 && angular$1.version.minor < 5) {
+    if (angular.version.major === 1 && angular.version.minor < 5) {
       this.init();
     }
   }
@@ -705,6 +705,7 @@ class DataTableController {
     var watch = this.$scope.$watch('dt.rows', (newVal) => {
       if (newVal) {
         watch();
+        
         this.onSorted();
       }
     });
@@ -716,10 +717,9 @@ class DataTableController {
   defaults(){
     this.expanded = this.expanded || {};
 
-    this.options = angular$1.extend(angular$1.
-      copy(TableDefaults), this.options);
+    this.options = angular.extend(angular.copy(TableDefaults), this.options);
 
-    angular$1.forEach(TableDefaults.paging, (v,k) => {
+    angular.forEach(TableDefaults.paging, (v,k) => {
       if(!this.options.paging[k]){
         this.options.paging[k] = v;
       }
@@ -729,8 +729,8 @@ class DataTableController {
       this.selected = this.selected || [];
 
       this.$scope.$watch('dt.selected', (newVal, oldVal) => {
-        angular$1.forEach(this.options.columns, (column) => {
-          if (column.headerCheckbox && angular$1.isFunction(column.headerCheckboxCallback)) {
+        angular.forEach(this.options.columns, (column) => {
+          if (column.headerCheckbox && angular.isFunction(column.headerCheckboxCallback)) {
             column.headerCheckboxCallback(this);
           }
         });
@@ -748,7 +748,7 @@ class DataTableController {
       var column = this.options.columns[i];
       column.$id = ObjectId();
 
-      angular$1.forEach(ColumnDefaults, (v,k) => {
+      angular.forEach(ColumnDefaults, (v,k) => {
         if(!column.hasOwnProperty(k)){
           column[k] = v;
         }
@@ -1045,16 +1045,16 @@ let DataTableService = {
     //FIXME: Too many nested for loops.  O(n3)
 
     // Iterate through each dTable
-    angular$1.forEach(this.dTables, (columnElms, id) => {
+    angular.forEach(this.dTables, (columnElms, id) => {
       this.columns[id] = [];
 
       // Iterate through each column
-      angular$1.forEach(columnElms, (c) => {
+      angular.forEach(columnElms, (c) => {
         let column = {};
 
         var visible = true;
         // Iterate through each attribute
-        angular$1.forEach(c.attributes, (attr) => {
+        angular.forEach(c.attributes, (attr) => {
           let attrName = CamelCase(attr.name);
 
           // cuz putting className vs class on
@@ -1082,7 +1082,7 @@ let DataTableService = {
         });
 
         let header = c.getElementsByTagName('column-header');
-        
+
         if (header.length) {
           column.headerTemplate = header[0].innerHTML;
           c.removeChild(header[0]);
@@ -1200,10 +1200,13 @@ function DataTableDirective($window, $timeout, $parse){
             ctrl.adjustColumns();
           }
 
-          $window.addEventListener('resize',
+          function _calculateResize() {
             throttle(() => {
               $timeout(resize);
-            }));
+            });
+          }
+
+          $window.addEventListener('resize', _calculateResize);
 
           // When an item is hidden for example
           // in a tab with display none, the height
@@ -1222,7 +1225,7 @@ function DataTableDirective($window, $timeout, $parse){
 
           // prevent memory leaks
           $scope.$on('$destroy', () => {
-            angular$1.element($window).off('resize');
+            angular.element($window).off('resize');
           });
         }
       };
@@ -1445,17 +1448,17 @@ function HeaderDirective($timeout){
 
       $scope.columnsResorted = function(event, columnId){
         var col = findColumnById(columnId),
-            parent = angular$1.element(event.currentTarget),
+            parent = angular.element(event.currentTarget),
             newIdx = -1;
 
-        angular$1.forEach(parent.children(), (c, i) => {
-          if (columnId === angular$1.element(c).attr('data-id')) {
+        angular.forEach(parent.children(), (c, i) => {
+          if (columnId === angular.element(c).attr('data-id')) {
             newIdx = i;
           }
         });
 
         $timeout(() => {
-          angular$1.forEach(ctrl.columns, (group) => {
+          angular.forEach(ctrl.columns, (group) => {
             var idx = group.indexOf(col);
             if(idx > -1){
 
@@ -1486,6 +1489,7 @@ function HeaderDirective($timeout){
 }
 
 class HeaderCellController {
+  /* @ngInject */
   constructor($scope) {
     Object.assign(this, {
       $scope
@@ -1644,11 +1648,11 @@ function HeaderCellDirective($compile){
           }
 
           if(ctrl.column.headerTemplate){
-            let elm = angular$1.element(`<span>${ctrl.column.headerTemplate.trim()}</span>`);
-            angular$1.element(label).append($compile(elm)(cellScope));
+            let elm = angular.element(`<span>${ctrl.column.headerTemplate.trim()}</span>`);
+            angular.element(label).append($compile(elm)(cellScope));
           } else if(ctrl.column.headerRenderer){
-            let elm = angular$1.element(ctrl.column.headerRenderer($elm));
-            angular$1.element(label).append($compile(elm)(cellScope)[0]);
+            let elm = angular.element(ctrl.column.headerRenderer($elm));
+            angular.element(label).append($compile(elm)(cellScope)[0]);
           } else {
             let val = ctrl.column.name;
             if(val === undefined || val === null) val = '';
@@ -2905,7 +2909,7 @@ function CellDirective($rootScope, $compile, $log, $timeout){
     compile: function() {
       return {
         pre: function($scope, $elm, $attrs, ctrl) {
-          var content = angular$1.element($elm[0].querySelector('.dt-cell-content')), cellScope;
+          var content = angular.element($elm[0].querySelector('.dt-cell-content')), cellScope;
 
           // extend the outer scope onto our new cell scope
           if(ctrl.column.template || ctrl.column.cellRenderer){
@@ -2926,16 +2930,16 @@ function CellDirective($rootScope, $compile, $log, $timeout){
 
             if(ctrl.column.template){
               content.empty();
-              var elm = angular$1.element(`<span>${ctrl.column.template.trim()}</span>`);
+              var elm = angular.element(`<span>${ctrl.column.template.trim()}</span>`);
               content.append($compile(elm)(cellScope));
             } else if(ctrl.column.cellRenderer){
               content.empty();
-              var elm = angular$1.element(ctrl.column.cellRenderer(cellScope, content));
+              var elm = angular.element(ctrl.column.cellRenderer(cellScope, content));
               content.append($compile(elm)(cellScope));
             } else {
               content[0].innerHTML = ctrl.getValue();
             }
-            
+
           }, true);
 
           function createCellScope(){
@@ -3236,7 +3240,7 @@ function PopoverDirective($q, $timeout, $templateCache, $compile, PopoverRegistr
       return '';
     }
 
-    if (angular$1.isString(template) && plain) {
+    if (angular.isString(template) && plain) {
       return template;
     }
 
@@ -3303,30 +3307,30 @@ function PopoverDirective($q, $timeout, $templateCache, $compile, PopoverRegistr
         }
 
         if ($scope.options.text && !$scope.options.template){
-          $scope.popover = angular$1.element(`<div class="dt-popover popover-text
+          $scope.popover = angular.element(`<div class="dt-popover popover-text
             popover${$scope.options.placement}" id="${$scope.popoverId}"></div>`);
 
           $scope.popover.html($scope.options.text);
-          angular$1.element(document.body).append($scope.popover);
+          angular.element(document.body).append($scope.popover);
           positionPopover($element, $scope.popover, $scope.options);
           PopoverRegistry.add($scope.popoverId, {element: $element, popover: $scope.popover, group: $scope.options.group});
 
         } else {
           $q.when(loadTemplate($scope.options.template, $scope.options.plain)).then(function(template) {
-            if (!angular$1.isString(template)) {
-              if (template.data && angular$1.isString(template.data)){
+            if (!angular.isString(template)) {
+              if (template.data && angular.isString(template.data)){
                 template = template.data;
               } else {
                 template = '';
               }
             }
 
-            $scope.popover = angular$1.element(`<div class="dt-popover
+            $scope.popover = angular.element(`<div class="dt-popover
               popover-${$scope.options.placement}" id="${$scope.popoverId}"></div>`);
 
             $scope.popover.html(template);
             $compile($scope.popover)($scope);
-            angular$1.element(document.body).append($scope.popover);
+            angular.element(document.body).append($scope.popover);
             positionPopover($element, $scope.popover, $scope.options);
 
             // attach exit and enter events to popover
@@ -3416,7 +3420,7 @@ function PopoverDirective($q, $timeout, $templateCache, $compile, PopoverRegistr
        * @param {object} popoverDimensions
        */
       function addCaret(popoverEl, elDimensions, popoverDimensions){
-        var caret = angular$1.element(`<span class="popover-caret caret-${$scope.options.placement}"></span>`);
+        var caret = angular.element(`<span class="popover-caret caret-${$scope.options.placement}"></span>`);
         popoverEl.append(caret);
         var caretDimensions = caret[0].getBoundingClientRect();
 
@@ -3548,7 +3552,7 @@ function PositionHelper(){
   }
 }
 
-var popover = angular$1
+var popover = angular
   .module('dt.popover', [])
   .service('PopoverRegistry', PopoverRegistry)
   .factory('PositionHelper', PositionHelper)
@@ -3708,14 +3712,14 @@ function DropdownMenuDirective($animate){
   };
 }
 
-var dropdown = angular$1
+var dropdown = angular
   .module('dt.dropdown', [])
   .controller('DropdownController', DropdownController)
   .directive('dropdown', DropdownDirective)
   .directive('dropdownToggle', DropdownToggleDirective)
   .directive('dropdownMenu', DropdownMenuDirective);
 
-var menu = angular$1
+var menu = angular
   .module('dt.menu', [ dropdown.name ])
   .controller('MenuController', MenuController)
   .directive('dtm', MenuDirective);

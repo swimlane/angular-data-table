@@ -6,6 +6,11 @@
  */
 'use strict';
 
+PopoverRegistry.$inject = ["$animate"];
+PopoverDirective.$inject = ["$q", "$timeout", "$templateCache", "$compile", "PopoverRegistry", "PositionHelper", "$animate"];
+DropdownDirective.$inject = ["$document", "$timeout"];
+DropdownToggleDirective.$inject = ["$timeout"];
+DropdownMenuDirective.$inject = ["$animate"];
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
@@ -214,7 +219,7 @@ function SortableDirective($timeout) {
         if (nextEl !== dragEl.nextSibling) {
           $scope.onSortableSort({
             event: evt,
-            columnId: _angular2.default.element(dragEl).attr('data-id')
+            columnId: angular.element(dragEl).attr('data-id')
           });
         }
       }
@@ -609,7 +614,7 @@ function AdjustColumnWidths(allColumns, expectedWidth) {
  */
 function ScaleColumns(colsByGroup, maxWidth, totalFlexGrow) {
   // calculate total width and flexgrow points for coulumns that can be resized
-  _angular2.default.forEach(colsByGroup, function (cols) {
+  angular.forEach(colsByGroup, function (cols) {
     cols.forEach(function (column) {
       if (!column.canAutoResize) {
         maxWidth -= column.width;
@@ -628,7 +633,7 @@ function ScaleColumns(colsByGroup, maxWidth, totalFlexGrow) {
   var _loop = function _loop() {
     var widthPerFlexPoint = remainingWidth / totalFlexGrow;
     remainingWidth = 0;
-    _angular2.default.forEach(colsByGroup, function (cols) {
+    angular.forEach(colsByGroup, function (cols) {
       cols.forEach(function (column, i) {
         // if the column can be resize and it hasn't reached its minimum width yet
         if (column.canAutoResize && !hasMinWidth[i]) {
@@ -730,7 +735,7 @@ var DataTableController = function () {
     });
 
     // if preAssignBindingsEnabled === true and no $onInit
-    if (_angular2.default.version.major === 1 && _angular2.default.version.minor < 5) {
+    if (angular.version.major === 1 && angular.version.minor < 5) {
       this.init();
     }
   }
@@ -764,6 +769,7 @@ var DataTableController = function () {
       var watch = this.$scope.$watch('dt.rows', function (newVal) {
         if (newVal) {
           watch();
+
           _this.onSorted();
         }
       });
@@ -780,9 +786,9 @@ var DataTableController = function () {
 
       this.expanded = this.expanded || {};
 
-      this.options = _angular2.default.extend(_angular2.default.copy(TableDefaults), this.options);
+      this.options = angular.extend(angular.copy(TableDefaults), this.options);
 
-      _angular2.default.forEach(TableDefaults.paging, function (v, k) {
+      angular.forEach(TableDefaults.paging, function (v, k) {
         if (!_this2.options.paging[k]) {
           _this2.options.paging[k] = v;
         }
@@ -792,8 +798,8 @@ var DataTableController = function () {
         this.selected = this.selected || [];
 
         this.$scope.$watch('dt.selected', function (newVal, oldVal) {
-          _angular2.default.forEach(_this2.options.columns, function (column) {
-            if (column.headerCheckbox && _angular2.default.isFunction(column.headerCheckboxCallback)) {
+          angular.forEach(_this2.options.columns, function (column) {
+            if (column.headerCheckbox && angular.isFunction(column.headerCheckboxCallback)) {
               column.headerCheckboxCallback(_this2);
             }
           });
@@ -814,7 +820,7 @@ var DataTableController = function () {
         var column = this.options.columns[i];
         column.$id = ObjectId();
 
-        _angular2.default.forEach(ColumnDefaults, function (v, k) {
+        angular.forEach(ColumnDefaults, function (v, k) {
           if (!column.hasOwnProperty(k)) {
             column[k] = v;
           }
@@ -1158,16 +1164,16 @@ var DataTableService = {
     //FIXME: Too many nested for loops.  O(n3)
 
     // Iterate through each dTable
-    _angular2.default.forEach(this.dTables, function (columnElms, id) {
+    angular.forEach(this.dTables, function (columnElms, id) {
       _this3.columns[id] = [];
 
       // Iterate through each column
-      _angular2.default.forEach(columnElms, function (c) {
+      angular.forEach(columnElms, function (c) {
         var column = {};
 
         var visible = true;
         // Iterate through each attribute
-        _angular2.default.forEach(c.attributes, function (attr) {
+        angular.forEach(c.attributes, function (attr) {
           var attrName = CamelCase(attr.name);
 
           // cuz putting className vs class on
@@ -1286,9 +1292,13 @@ function DataTableDirective($window, $timeout, $parse) {
             ctrl.adjustColumns();
           }
 
-          $window.addEventListener('resize', throttle(function () {
-            $timeout(resize);
-          }));
+          function _calculateResize() {
+            throttle(function () {
+              $timeout(resize);
+            });
+          }
+
+          $window.addEventListener('resize', _calculateResize);
 
           // When an item is hidden for example
           // in a tab with display none, the height
@@ -1306,7 +1316,7 @@ function DataTableDirective($window, $timeout, $parse) {
 
           // prevent memory leaks
           $scope.$on('$destroy', function () {
-            _angular2.default.element($window).off('resize');
+            angular.element($window).off('resize');
           });
         }
       };
@@ -1497,17 +1507,17 @@ function HeaderDirective($timeout) {
 
       $scope.columnsResorted = function (event, columnId) {
         var col = findColumnById(columnId),
-            parent = _angular2.default.element(event.currentTarget),
+            parent = angular.element(event.currentTarget),
             newIdx = -1;
 
-        _angular2.default.forEach(parent.children(), function (c, i) {
-          if (columnId === _angular2.default.element(c).attr('data-id')) {
+        angular.forEach(parent.children(), function (c, i) {
+          if (columnId === angular.element(c).attr('data-id')) {
             newIdx = i;
           }
         });
 
         $timeout(function () {
-          _angular2.default.forEach(ctrl.columns, function (group) {
+          angular.forEach(ctrl.columns, function (group) {
             var idx = group.indexOf(col);
             if (idx > -1) {
 
@@ -1537,6 +1547,8 @@ function HeaderDirective($timeout) {
 }
 
 var HeaderCellController = function () {
+  /* @ngInject */
+  HeaderCellController.$inject = ["$scope"];
   function HeaderCellController($scope) {
     _classCallCheck(this, HeaderCellController);
 
@@ -1700,11 +1712,11 @@ function HeaderCellDirective($compile) {
           }
 
           if (ctrl.column.headerTemplate) {
-            var elm = _angular2.default.element('<span>' + ctrl.column.headerTemplate.trim() + '</span>');
-            _angular2.default.element(label).append($compile(elm)(cellScope));
+            var elm = angular.element('<span>' + ctrl.column.headerTemplate.trim() + '</span>');
+            angular.element(label).append($compile(elm)(cellScope));
           } else if (ctrl.column.headerRenderer) {
-            var _elm = _angular2.default.element(ctrl.column.headerRenderer($elm));
-            _angular2.default.element(label).append($compile(_elm)(cellScope)[0]);
+            var _elm = angular.element(ctrl.column.headerRenderer($elm));
+            angular.element(label).append($compile(_elm)(cellScope)[0]);
           } else {
             var val = ctrl.column.name;
             if (val === undefined || val === null) val = '';
@@ -3001,7 +3013,7 @@ function CellDirective($rootScope, $compile, $log, $timeout) {
     compile: function compile() {
       return {
         pre: function pre($scope, $elm, $attrs, ctrl) {
-          var content = _angular2.default.element($elm[0].querySelector('.dt-cell-content')),
+          var content = angular.element($elm[0].querySelector('.dt-cell-content')),
               cellScope;
 
           // extend the outer scope onto our new cell scope
@@ -3023,11 +3035,11 @@ function CellDirective($rootScope, $compile, $log, $timeout) {
 
             if (ctrl.column.template) {
               content.empty();
-              var elm = _angular2.default.element('<span>' + ctrl.column.template.trim() + '</span>');
+              var elm = angular.element('<span>' + ctrl.column.template.trim() + '</span>');
               content.append($compile(elm)(cellScope));
             } else if (ctrl.column.cellRenderer) {
               content.empty();
-              var elm = _angular2.default.element(ctrl.column.cellRenderer(cellScope, content));
+              var elm = angular.element(ctrl.column.cellRenderer(cellScope, content));
               content.append($compile(elm)(cellScope));
             } else {
               content[0].innerHTML = ctrl.getValue();
@@ -3350,7 +3362,7 @@ function PopoverDirective($q, $timeout, $templateCache, $compile, PopoverRegistr
       return '';
     }
 
-    if (_angular2.default.isString(template) && plain) {
+    if (angular.isString(template) && plain) {
       return template;
     }
 
@@ -3417,27 +3429,27 @@ function PopoverDirective($q, $timeout, $templateCache, $compile, PopoverRegistr
         }
 
         if ($scope.options.text && !$scope.options.template) {
-          $scope.popover = _angular2.default.element('<div class="dt-popover popover-text\n            popover' + $scope.options.placement + '" id="' + $scope.popoverId + '"></div>');
+          $scope.popover = angular.element('<div class="dt-popover popover-text\n            popover' + $scope.options.placement + '" id="' + $scope.popoverId + '"></div>');
 
           $scope.popover.html($scope.options.text);
-          _angular2.default.element(document.body).append($scope.popover);
+          angular.element(document.body).append($scope.popover);
           positionPopover($element, $scope.popover, $scope.options);
           PopoverRegistry.add($scope.popoverId, { element: $element, popover: $scope.popover, group: $scope.options.group });
         } else {
           $q.when(loadTemplate($scope.options.template, $scope.options.plain)).then(function (template) {
-            if (!_angular2.default.isString(template)) {
-              if (template.data && _angular2.default.isString(template.data)) {
+            if (!angular.isString(template)) {
+              if (template.data && angular.isString(template.data)) {
                 template = template.data;
               } else {
                 template = '';
               }
             }
 
-            $scope.popover = _angular2.default.element('<div class="dt-popover\n              popover-' + $scope.options.placement + '" id="' + $scope.popoverId + '"></div>');
+            $scope.popover = angular.element('<div class="dt-popover\n              popover-' + $scope.options.placement + '" id="' + $scope.popoverId + '"></div>');
 
             $scope.popover.html(template);
             $compile($scope.popover)($scope);
-            _angular2.default.element(document.body).append($scope.popover);
+            angular.element(document.body).append($scope.popover);
             positionPopover($element, $scope.popover, $scope.options);
 
             // attach exit and enter events to popover
@@ -3526,7 +3538,7 @@ function PopoverDirective($q, $timeout, $templateCache, $compile, PopoverRegistr
        * @param {object} popoverDimensions
        */
       function addCaret(popoverEl, elDimensions, popoverDimensions) {
-        var caret = _angular2.default.element('<span class="popover-caret caret-' + $scope.options.placement + '"></span>');
+        var caret = angular.element('<span class="popover-caret caret-' + $scope.options.placement + '"></span>');
         popoverEl.append(caret);
         var caretDimensions = caret[0].getBoundingClientRect();
 
@@ -3655,7 +3667,7 @@ function PositionHelper() {
   };
 }
 
-var popover = _angular2.default.module('dt.popover', []).service('PopoverRegistry', PopoverRegistry).factory('PositionHelper', PositionHelper).directive('popover', PopoverDirective);
+var popover = angular.module('dt.popover', []).service('PopoverRegistry', PopoverRegistry).factory('PositionHelper', PositionHelper).directive('popover', PopoverDirective);
 
 var MenuController = function () {
 
@@ -3803,9 +3815,9 @@ function DropdownMenuDirective($animate) {
   };
 }
 
-var dropdown = _angular2.default.module('dt.dropdown', []).controller('DropdownController', DropdownController).directive('dropdown', DropdownDirective).directive('dropdownToggle', DropdownToggleDirective).directive('dropdownMenu', DropdownMenuDirective);
+var dropdown = angular.module('dt.dropdown', []).controller('DropdownController', DropdownController).directive('dropdown', DropdownDirective).directive('dropdownToggle', DropdownToggleDirective).directive('dropdownMenu', DropdownMenuDirective);
 
-var menu = _angular2.default.module('dt.menu', [dropdown.name]).controller('MenuController', MenuController).directive('dtm', MenuDirective);
+var menu = angular.module('dt.menu', [dropdown.name]).controller('MenuController', MenuController).directive('dtm', MenuDirective);
 
 var dataTable = _angular2.default.module('data-table', []).directive('dtable', DataTableDirective).directive('resizable', ResizableDirective).directive('sortable', SortableDirective).directive('dtHeader', HeaderDirective).directive('dtHeaderCell', HeaderCellDirective).directive('dtBody', BodyDirective).directive('dtScroller', ScrollerDirective).directive('dtSeletion', SelectionDirective).directive('dtRow', RowDirective).directive('dtGroupRow', GroupRowDirective).directive('dtCell', CellDirective).directive('dtFooter', FooterDirective).directive('dtPager', PagerDirective);
 
