@@ -8,7 +8,7 @@ export class StyleTranslator{
 
   constructor(height){
     this.height = height;
-    this.map = new Map();
+    this.map = {};
   }
 
   /**
@@ -17,8 +17,8 @@ export class StyleTranslator{
    */
   update(rows){
     let n = 0;
-    while (n <= this.map.size) {
-      let dom = this.map.get(n);
+    while (n <= Object.keys(this.map).length) {
+      let dom = this.map[n];
       let model = rows[n];
       if(dom && model){
         TranslateXY(dom[0].style, 0, model.$$index * this.height);
@@ -33,7 +33,7 @@ export class StyleTranslator{
    * @param  {dom} dom
    */
   register(idx, dom){
-    this.map.set(idx, dom);
+    this.map[idx] = dom;
   }
 
 }
