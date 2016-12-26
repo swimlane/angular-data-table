@@ -134,11 +134,11 @@ gulp.task('release-build', function () {
 const RELEASE = {
   UMD: {
     EXTENSION: '',
-    PLUGINS: ['transform-es2016-modules-umd']
+    PLUGINS: ['transform-es2015-modules-umd']
   },
   COMMON: {
     EXTENSION: '.cjs',
-    PLUGINS: ['transorm-es2015-modules-commonjs']
+    PLUGINS: ['transform-es2015-modules-commonjs']
   },
   MIN: {
     EXTENSION: '.min',

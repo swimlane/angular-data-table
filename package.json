@@ -9,6 +9,9 @@
     "github": "http://github.com/swimlane/angular-data-table.git"
   },
   "main": "./release/dataTable.js",
+  "files": [
+    "release/"
+  ],
   "homepage": "http://swimlane.com/",
   "author": {
     "name": "Swimlane",
