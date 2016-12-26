@@ -131,44 +131,25 @@ gulp.task('release-build', function () {
   });
 });
 
-gulp.task('release-umd', function () {
-  return gulp.src('release/dataTable.es6.js')
-    .pipe(babel({
-      plugins: [
-        'transform-es2015-modules-umd'
-      ],
-      moduleId: 'DataTable'
-    }))
-    .pipe(ngAnnotate({
-      gulpWarnings: false
-    }))
-    .pipe(header(banner, { pkg: pkg }))
-    .pipe(rename('dataTable.js'))
-    .pipe(gulp.dest('release/'))
-});
+const RELEASE = {
+  UMD: {
+    EXTENSION: '',
+    PLUGINS: ['transform-es2016-modules-umd']
+  },
+  COMMON: {
+    EXTENSION: '.cjs',
+    PLUGINS: ['transorm-es2015-modules-commonjs']
+  },
+  MIN: {
+    EXTENSION: '.min',
+    PLUGINS: ['transform-es2015-modules-umd']
+  }
+};
 
-gulp.task('release-common', function () {
+function _releaser(RELEASE) {
   return gulp.src('release/dataTable.es6.js')
     .pipe(babel({
-      plugins: [
-        'transform-es2015-modules-commonjs'
-      ],
-      moduleId: 'DataTable'
-    }))
-    .pipe(ngAnnotate({
-      gulpWarnings: false
-    }))
-    .pipe(header(banner, { pkg: pkg }))
-    .pipe(rename('dataTable.cjs.js'))
-    .pipe(gulp.dest('release/'))
-});
-
-gulp.task('release-es6-min', function () {
-  return gulp.src('release/dataTable.es6.js')
-    .pipe(babel({
-      plugins: [
-        'transform-es2015-modules-umd'
-      ],
+      plugins: RELEASE.PLUGINS,
       moduleId: 'DataTable'
     }))
     .pipe(ngAnnotate({
@@ -176,10 +157,21 @@ gulp.task('release-es6-min', function () {
     }))
     .pipe(uglify())
     .pipe(header(banner, { pkg: pkg }))
-    .pipe(rename('dataTable.min.js'))
+    .pipe(rename(`dataTable${RELEASE.EXTENSION}.js`))
     .pipe(gulp.dest('release/'))
+}
+
+gulp.task('release-umd', function () {
+  return _releaser(RELEASE.UMD)
 });
 
+gulp.task('release-common', function () {
+  return _releaser(RELEASE.COMMON)
+});
+
+gulp.task('release-es6-min', function () {
+  return _releaser(RELEASE.MIN)
+});
 
 //
 // Test Tasks
