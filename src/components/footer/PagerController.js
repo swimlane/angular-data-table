@@ -36,8 +36,7 @@ export class PagerController {
     });
 
     if (this.size && this.count && this.page) {
-      this.calcTotalPages(this.size, this.count);
-      this.getPages(this.page || 1);
+      this.findAndSetPages();
     }
   }
 
