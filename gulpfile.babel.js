@@ -13,7 +13,8 @@ var nPath = require('path'),
   rollup = require('rollup'),
   rename = require('gulp-rename'),
   uglify = require('gulp-uglify'),
-  header = require('gulp-header');
+  header = require('gulp-header'),
+  gutils = require('gulp-util');
 
 var KarmaServer = require('karma').Server;
 
@@ -76,7 +77,7 @@ gulp.task('compile', function (callback) {
 //
 // Dev Mode Tasks
 // ------------------------------------------------------------
-gulp.task('serve', ['compile'], function (done) {
+gulp.task('serve', ['compile'], function (callback) {
   browserSync({
     open: false,
     port: 9000,
@@ -87,7 +88,7 @@ gulp.task('serve', ['compile'], function (done) {
         next();
       }
     }
-  }, done);
+  }, callback);
 });
 
 gulp.task('watch', ['serve'], function () {
@@ -176,16 +177,19 @@ gulp.task('release-es6-min', function () {
 //
 // Test Tasks
 // ------------------------------------------------------------
-
 function _startKarma(callback, singleRun) {
-  var server = new KarmaServer({
+  new KarmaServer({
     configFile: nPath.join(__dirname, 'test/karma.conf.js'),
-    singleRun: singleRun
-  }, () => (
-    callback()
-  ));
-
-  server.start();
+    singleRun
+  }, (errors) => {
+       if (errors === 0) {
+           callback();
+       } else {
+           callback(new gutils.PluginError('karma', {
+               message: `${err} test${err > 1 ? 's' : ''} failed`
+           }));
+       }
+   }).start();
 }
 
 gulp.task('unit', ['compile'], function (callback) {
@@ -203,9 +207,11 @@ gulp.task('e2e', ['serve'], function (callback) {
       debug: false,
       autoStartStopServer: true
     }))
-    .on('error', (e) => (
-      console.log(e)
-    ))
+    .on('error', (e) => {
+      callback(new gutils.PluginError('protractor', {
+        message: e
+      }));
+    })
     .on('end', callback);
 });
 
