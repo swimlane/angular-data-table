@@ -4,7 +4,7 @@ import { TableDefaults } from '../../defaults';
 
 import '../../utils/polyfill';
 
-fdescribe('BodyController', function () {
+describe('BodyController', function () {
   const defaultOptions = {
       columns: [],
       paging: {}
