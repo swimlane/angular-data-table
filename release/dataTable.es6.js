@@ -3054,14 +3054,12 @@ class PagerController {
   }
 
   init() {
-    this.$scope.$watch('pager.count', (newVal) => {
-      this.calcTotalPages(this.size, this.count);
-      this.getPages(this.page || 1);
+    this.$scope.$watch('pager.count', () => {
+      this.findAndSetPages();
     });
 
-    this.$scope.$watch('pager.size', (newVal) => {
-      this.calcTotalPages(this.size, this.count);
-      this.getPages(this.page || 1);
+    this.$scope.$watch('pager.size', () => {
+      this.findAndSetPages();
     });
 
     this.$scope.$watch('pager.page', (newVal) => {
@@ -3070,6 +3068,11 @@ class PagerController {
       }
     });
 
+    this.getPages(this.page || 1);
+  }
+
+  findAndSetPages() {
+    this.calcTotalPages(this.size, this.count);
     this.getPages(this.page || 1);
   }
 
