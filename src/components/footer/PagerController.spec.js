@@ -1,5 +1,7 @@
 import { PagerController } from './PagerController';
 
+import { TableDefaults } from '../../defaults';
+
 describe('PagerController', function () {
   let ctrl = null,
     scope = null,
@@ -7,7 +9,11 @@ describe('PagerController', function () {
 
   beforeEach(inject((_$rootScope_) => {
     setController = (bindings) => {
+      bindings = Object.assign({}, TableDefaults.paging, bindings);
+
       scope = _$rootScope_.$new();
+
+      scope.pager = bindings;
 
       spyOn(scope, '$watch').and.callThrough();
 
@@ -18,14 +24,27 @@ describe('PagerController', function () {
   }));
 
   describe('when initializing', () => {
+    const angularVersion = angular.copy(angular.version);
+
     beforeEach(() => {
       setController();
 
       ctrl.$onInit();
     });
 
-    it('should call watch three times', () => {
+    it('should call watch 3 times', () => {
       expect(ctrl.$scope.$watch.calls.count()).toEqual(3);
+    });
+
+    it('should call watch 3 times when under angular 1.5', () => {
+      angular.version.major = 1;
+      angular.version.minor = 4;
+
+      setController();
+
+      expect(ctrl.$scope.$watch.calls.count()).toEqual(3);
+
+      angular.version = angularVersion;
     });
   });
 
@@ -86,6 +105,18 @@ describe('PagerController', function () {
 
       expect(ctrl.totalPages).toEqual(5);
     });
+
+    it('should default total pages to 1 if no size', () => {
+      ctrl.calcTotalPages(0, 5);
+
+      expect(ctrl.totalPages).toEqual(1);
+    });
+
+    it('should default total pages to 1 if no count', () => {
+      ctrl.calcTotalPages(5, 0);
+
+      expect(ctrl.totalPages).toEqual(1);
+    });
   });
 
   describe('when navigating to previous page', () => {
@@ -105,6 +136,7 @@ describe('PagerController', function () {
 
       ctrl.prevPage();
 
+      expect(ctrl.canPrevious()).toEqual(false);
       expect(ctrl.selectPage).not.toHaveBeenCalled();
     });
 
@@ -113,6 +145,7 @@ describe('PagerController', function () {
 
       ctrl.prevPage();
 
+      expect(ctrl.canPrevious()).toEqual(true);
       expect(ctrl.selectPage).toHaveBeenCalledWith(2);
     });
   });
@@ -135,6 +168,7 @@ describe('PagerController', function () {
 
       ctrl.nextPage();
 
+      expect(ctrl.canNext()).toEqual(false);
       expect(ctrl.selectPage).not.toHaveBeenCalled();
     });
 
@@ -144,6 +178,7 @@ describe('PagerController', function () {
 
       ctrl.nextPage();
 
+      expect(ctrl.canNext()).toEqual(true);
       expect(ctrl.selectPage).toHaveBeenCalledWith(4);
     });
   });

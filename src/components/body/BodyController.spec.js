@@ -48,6 +48,8 @@ describe('BodyController', function () {
   });
 
   describe('when initializing', () => {
+    const angularVersion = angular.copy(angular.version);
+
     it('should set ctrl', () => {
       setController(olympicOptions, olympicRows);
 
@@ -69,6 +71,8 @@ describe('BodyController', function () {
       spyOn(ctrl, 'setConditionalWatches');
 
       expect(ctrl).not.toEqual({});
+
+      angular.version = angularVersion;
     });
   });
 

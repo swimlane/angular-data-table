@@ -12,7 +12,7 @@ export class PagerController {
 
     // if preAssignBindingsEnabled === true and no $onInit
     if (angular.version.major === 1 && angular.version.minor < 5) {
-      this.init();
+      this.$onInit();
     }
   }
 
@@ -71,7 +71,7 @@ export class PagerController {
    * Selects the previous pager
    */
   prevPage() {
-    if (this.page > 1) {
+    if (this.canPrevious()) {
       this.selectPage(--this.page);
     }
   }
@@ -80,7 +80,7 @@ export class PagerController {
    * Selects the next page
    */
   nextPage() {
-    if (this.page < this.totalPages) {
+    if (this.canNext()) {
       this.selectPage(++this.page);
     }
   }
