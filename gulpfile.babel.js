@@ -192,7 +192,7 @@ gulp.task('unit', ['compile'], function (callback) {
   _startKarma(callback, true);
 });
 
-gulp.task('unit:watch', ['compile'], function (callback) {
+gulp.task('unit watch', ['compile'], function (callback) {
   _startKarma(callback, false);
 });
 
