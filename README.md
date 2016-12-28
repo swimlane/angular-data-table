@@ -147,6 +147,7 @@ The data table can be created with the following `options`:
 - `rowHeight`: Row height in pixels, necessary if using lazy rendering (default: `30`)
 - `scrollbarV`: Enable vertical scrollbars (default: `true`)
 - `selectable`: Whether users can select items (default: `false`)
+- `sortType`: Whether to allow sorting by multiple columns or only 1 (`multiple` or `single`) (default: `multiple`)
 
 ## Contributing
 
