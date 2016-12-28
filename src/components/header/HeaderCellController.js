@@ -1,4 +1,4 @@
-import { NextSortDirection } from '../../utils/utils';
+import { initIfOldAngular, NextSortDirection } from '../../utils/utils';
 
 export default class HeaderCellController {
   /* @ngInject */
@@ -7,10 +7,7 @@ export default class HeaderCellController {
       $scope
     });
 
-    // if preAssignBindingsEnabled === true and no $onInit
-    if (angular.version.major === 1 && angular.version.minor < 5) {
-      this.init();
-    }
+    initIfOldAngular(this.init);
   }
 
   $onInit() {

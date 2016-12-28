@@ -132,7 +132,12 @@ export const ColumnDefaults = {
   // If not provided, the cell data will be collected from row data instead.
   cellDataGetter: undefined,
 
+  // Grows all rows by this column value
+  // Only one column can have this set, cannot be combined with isTreeColumn
+  group: false,
+
   // Adds +/- button and makes a secondary call to load nested data
+  // Only one column can have this set, cannot be combined with isGroupColumn
   isTreeColumn: false,
 
   // Adds the checkbox selection to the column

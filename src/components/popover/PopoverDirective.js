@@ -210,17 +210,13 @@ export function PopoverDirective($q, $timeout, $templateCache, $compile, Popover
         if ($scope.options.placement === POSITION.RIGHT){
           left = -6;
           top = _calculateVerticalCaret();
-        }
-        if ($scope.options.placement === POSITION.LEFT){
+        } else if ($scope.options.placement === POSITION.LEFT){
           left = popoverDimensions.width - 2;
           top = _calculateVerticalCaret();
-        }
-        if ($scope.options.placement === POSITION.TOP){
+        } else if ($scope.options.placement === POSITION.TOP){
           top = popoverDimensions.height - 5;
           left = _calculateHorizontalCaret();
-        }
-
-        if ($scope.options.placement === POSITION.BOTTOM){
+        } else if ($scope.options.placement === POSITION.BOTTOM){
           top = -8;
           left = _calculateHorizontalCaret();
         }

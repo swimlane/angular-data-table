@@ -52,8 +52,8 @@ export function ColumnsByPin(cols){
 
 /**
  * Returns the widths of all group sets of a column
- * @param {object} groups 
- * @param {array} all 
+ * @param {object} groups
+ * @param {array} all
  */
 export function ColumnGroupWidths(groups, all){
   return {
@@ -66,8 +66,8 @@ export function ColumnGroupWidths(groups, all){
 
 /**
  * Returns a deep object given a string. zoo['animal.type']
- * @param {object} obj  
- * @param {string} path 
+ * @param {object} obj
+ * @param {string} path
  */
 export function DeepValueGetter(obj, path) {
   if(!obj || !path) return obj;
@@ -77,17 +77,17 @@ export function DeepValueGetter(obj, path) {
 
   if(split.length){
     for(var i=0, len=split.length; i < len; i++) {
-      current = current[split[i]]; 
+      current = current[split[i]];
     }
   }
-  
+
   return current;
 };
 
 /**
  * Converts strings from something to camel case
  * http://stackoverflow.com/questions/10425287/convert-dash-separated-string-to-camelcase
- * @param  {string} str 
+ * @param  {string} str
  * @return {string} camel case string
  */
 export function CamelCase(str) {
@@ -147,3 +147,10 @@ export function NextSortDirection(sortType, currentSort) {
     }
   }
 };
+
+// if preAssignBindingsEnabled === true and no $onInit
+export function initIfOldAngular(initFn) {
+    if (angular.version.major === 1 && angular.version.minor < 5) {
+      initFn();
+    }
+}

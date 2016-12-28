@@ -1,5 +1,6 @@
-export class FooterController {
+import { initIfOldAngular } from '../../utils/utils';
 
+export class FooterController {
   /**
    * Creates an instance of the Footer Controller
    * @param  {scope}
@@ -12,10 +13,7 @@ export class FooterController {
       $scope
     });
 
-    // if preAssignBindingsEnabled === true and no $onInit
-    if (angular.version.major === 1 && angular.version.minor < 5) {
-      this.init();
-    }
+    initIfOldAngular(this.init);
   }
 
   $onInit() {

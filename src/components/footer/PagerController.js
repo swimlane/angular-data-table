@@ -1,3 +1,5 @@
+import { initIfOldAngular } from '../../utils/utils';
+
 export class PagerController {
   /**
    * Creates an instance of the Pager Controller
@@ -10,10 +12,7 @@ export class PagerController {
       $scope
     });
 
-    // if preAssignBindingsEnabled === true and no $onInit
-    if (angular.version.major === 1 && angular.version.minor < 5) {
-      this.$onInit();
-    }
+    initIfOldAngular(this.init.bind(this));
   }
 
   $onInit() {

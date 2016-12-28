@@ -2,6 +2,7 @@ var nPath = require('path'),
   gulp = require('gulp'),
   plumber = require('gulp-plumber'),
   babel = require('gulp-babel'),
+  sourcemaps = require('gulp-sourcemaps'),
   browserSync = require('browser-sync'),
   runSequence = require('run-sequence'),
   less = require('gulp-less'),
@@ -44,11 +45,13 @@ var banner = ['/**',
 gulp.task('es6', function () {
   return gulp.src(path.source)
     .pipe(plumber())
+    .pipe(sourcemaps.init({ loadMaps: true }))
     .pipe(changed(path.output, { extension: '.js' }))
     .pipe(babel())
     .pipe(ngAnnotate({
       gulpWarnings: true
     }))
+    .pipe(sourcemaps.write(''))
     .pipe(gulp.dest(path.output))
     .pipe(browserSync.reload({ stream: true }));
 });
@@ -71,7 +74,7 @@ gulp.task('compile', function (callback) {
   return runSequence(
     ['less', 'es6'],
     callback
-    );
+  );
 });
 
 //
@@ -186,7 +189,7 @@ function _startKarma(callback, singleRun) {
            callback();
        } else {
            callback(new gutils.PluginError('karma', {
-               message: `${err} test${err > 1 ? 's' : ''} failed`
+               message: `${errors} test${errors > 1 ? 's' : ''} failed`
            }));
        }
    }).start();
@@ -204,7 +207,7 @@ gulp.task('e2e', ['serve'], function (callback) {
   gulp.src(['src/**/*e2e.js'])
     .pipe(protractorAngular({
       configFile: 'test/protractor.conf.js',
-      debug: false,
+      debug: true,
       autoStartStopServer: true
     }))
     .on('error', (e) => {

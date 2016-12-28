@@ -4,10 +4,23 @@
 
 import { POSITION } from './Popover.constants';
 
-export function PositionHelper(){
+export function PositionHelper() {
   return {
-    calculateVerticalAlignment: function(elDimensions, popoverDimensions, alignment){
-      switch(alignment){
+    calculateHorizontalAlignment: function (elDimensions, popoverDimensions, alignment) {
+      switch (alignment) {
+        case POSITION.LEFT:
+          return elDimensions.left;
+        case POSITION.RIGHT:
+          return elDimensions.left + elDimensions.width - popoverDimensions.width;
+        case POSITION.CENTER:
+          return elDimensions.left + elDimensions.width/2 - popoverDimensions.width/2;
+        default:
+          return console.log('calculateHorizontalAlignment issue', this);
+      }
+    },
+
+    calculateVerticalAlignment: function (elDimensions, popoverDimensions, alignment) {
+      switch (alignment) {
         case POSITION.TOP:
           return elDimensions.top;
         case POSITION.BOTTOM:
@@ -19,8 +32,8 @@ export function PositionHelper(){
       }
     },
 
-    calculateVerticalCaret: function(elDimensions, popoverDimensions, caretDimensions, alignment){
-      switch(alignment){
+    calculateVerticalCaret: function (elDimensions, popoverDimensions, caretDimensions, alignment) {
+      switch (alignment) {
         case POSITION.TOP:
           return elDimensions.height/2 - caretDimensions.height/2 - 1;
         case POSITION.BOTTOM:
@@ -32,8 +45,8 @@ export function PositionHelper(){
       }
     },
 
-    calculateHorizontalCaret: function(elDimensions, popoverDimensions, caretDimensions, alignment){
-      switch(alignment){
+    calculateHorizontalCaret: function (elDimensions, popoverDimensions, caretDimensions, alignment) {
+      switch (alignment) {
         case POSITION.LEFT:
           return elDimensions.width/2 - caretDimensions.height/2 - 1;
         case POSITION.RIGHT:
@@ -42,19 +55,6 @@ export function PositionHelper(){
           return popoverDimensions.width/2 - caretDimensions.height/2 - 1;
         default:
           return console.log('calculateHorizontalCaret issue', this);
-      }
-    },
-
-    calculateHorizontalAlignment: function(elDimensions, popoverDimensions, alignment){
-      switch(alignment){
-        case POSITION.LEFT:
-          return elDimensions.left;
-        case POSITION.RIGHT:
-          return elDimensions.left + elDimensions.width - popoverDimensions.width;
-        case POSITION.CENTER:
-          return elDimensions.left + elDimensions.width/2 - popoverDimensions.width/2;
-        default:
-          return console.log('calculateHorizontalAlignment issue', this);
       }
     }
   }

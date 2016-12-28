@@ -2,46 +2,57 @@ import BodyController from './BodyController';
 import SpecHelper from './BodyController.spechelper.json';
 import { TableDefaults } from '../../defaults';
 
-import '../../utils/polyfill';
-
 describe('BodyController', function () {
   const defaultOptions = {
       columns: [],
       paging: {}
     },
     olympicOptions = {
-      columns: SpecHelper.Olympics.Columns,
+      columns: angular.copy(SpecHelper.Olympics.Columns),
       paging: {
         size: 0,
         count: 0,
         offset: 0
       }
     },
-    olympicRows = SpecHelper.Olympics.Rows;;
+    olympicRows = angular.copy(SpecHelper.Olympics.Rows);
 
   let scope = null,
     ctrl = null,
-    setController = null;
+    setController = null,
+    $controller = null,
+    $rootScope = null;
 
-  beforeEach(inject((_$rootScope_) => {
-    setController = (options, rows = []) => {
-      options = Object.assign({}, TableDefaults, options);
+  beforeEach(inject((_$rootScope_, _$controller_) => {
+    $controller = _$controller_;
+    $rootScope = _$rootScope_;
+  }));
 
-      scope = _$rootScope_.$new();
+  beforeEach(() => {
+    setController = (bindings) => {
+      bindings.options = Object.assign({}, TableDefaults, bindings.options);
+
+      scope = $rootScope.$new();
 
       scope.body = {
-        options,
-        rows
+        options: bindings.options,
+        rows: bindings.rows
       };
 
-      ctrl = new BodyController(scope);
+      // console.log(bindings.options);
+      // console.log(bindings.data);
 
-      Object.assign(ctrl, {
-        options,
-        rows
-      });
+      ctrl = $controller('BodyController',
+        {
+          $scope: scope
+        },
+        bindings
+      );
+
+      // console.log(ctrl.options);
+      // console.log(ctrl.data);
     };
-  }));
+  });
 
   it('should export a function', () => {
     expect(BodyController).toEqual(jasmine.any(Function));
@@ -51,26 +62,29 @@ describe('BodyController', function () {
     const angularVersion = angular.copy(angular.version);
 
     it('should set ctrl', () => {
-      setController(olympicOptions, olympicRows);
-
-      spyOn(ctrl, 'setTreeAndGroupColumns');
-      spyOn(ctrl, 'setConditionalWatches');
+      setController({
+        options: olympicOptions,
+        rows: olympicRows
+      });
 
       ctrl.$onInit();
 
-      expect(ctrl).not.toEqual({});
+      expect(ctrl.options).not.toEqual({});
+      expect(ctrl.data.length).not.toEqual(0);
+
+      console.log(olympicRows);
     });
 
     it('should set ctrl if under angular 1.5', () => {
       angular.version.major = 1;
       angular.version.minor = 4;
 
-      setController(olympicOptions, olympicRows);
+      setController({
+        options: olympicOptions,
+        rows: olympicRows
+      });
 
-      spyOn(ctrl, 'setTreeAndGroupColumns');
-      spyOn(ctrl, 'setConditionalWatches');
-
-      expect(ctrl).not.toEqual({});
+      expect(ctrl.options).not.toEqual({});
 
       angular.version = angularVersion;
     });
@@ -78,7 +92,10 @@ describe('BodyController', function () {
 
   describe('when setting tree and group columns', () => {
     beforeEach(() => {
-      setController(olympicOptions, olympicRows);
+      setController({
+        options: olympicOptions,
+        rows: olympicRows
+      });
 
       ctrl.$onInit();
     });
@@ -115,7 +132,10 @@ describe('BodyController', function () {
 
   describe('when setting conditional watches', () => {
     beforeEach(() => {
-      setController(olympicOptions, olympicRows);
+      setController({
+        options: olympicOptions,
+        rows: olympicRows
+      });
 
       ctrl.$onInit();
     });

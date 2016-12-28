@@ -347,7 +347,12 @@ const ColumnDefaults = {
   // If not provided, the cell data will be collected from row data instead.
   cellDataGetter: undefined,
 
+  // Grows all rows by this column value
+  // Only one column can have this set, cannot be combined with isTreeColumn
+  group: false,
+
   // Adds +/- button and makes a secondary call to load nested data
+  // Only one column can have this set, cannot be combined with isGroupColumn
   isTreeColumn: false,
 
   // Adds the checkbox selection to the column
@@ -1677,12 +1682,9 @@ class BodyController {
       $scope
     });
 
-    this.tempRows = [];
-    this.watchListeners = [];
-
     // if preAssignBindingsEnabled === true and no $onInit
     if (angular.version.major === 1 && angular.version.minor < 5) {
-      this.init();
+      this.$onInit();
     }
   }
 
@@ -1691,52 +1693,74 @@ class BodyController {
   }
 
   init() {
-    this.setTreeAndGroupColumns();
-    this.setConditionalWatches();
+    const _initialize = () => {
+      this.tempRows = [];
+      this.watchListeners = [];
 
-    this.$scope.$watch('body.options.columns', (newVal, oldVal) => {
-      if (newVal) {
-        const origTreeColumn = this.treeColumn,
-          origGroupColumn = this.groupColumn;
+      this.setTreeAndGroupColumns();
+      this.setConditionalWatches();
 
-        this.setTreeAndGroupColumns();
+      this.$scope.$watch('body.options.columns', (newVal, oldVal) => {
+        if (newVal) {
+          const origTreeColumn = this.treeColumn,
+            origGroupColumn = this.groupColumn;
 
-        this.setConditionalWatches();
+          this.setTreeAndGroupColumns();
 
-        if ((this.treeColumn && origGroupColumn !== this.treeColumn) ||
-          (this.groupColumn && origGroupColumn !== this.groupColumn)) {
-          this.rowsUpdated(this.rows);
+          this.setConditionalWatches();
 
-          if (this.treeColumn) {
-            this.refreshTree();
-          } else if (this.groupColumn) {
-            this.refreshGroups();
+          if ((this.treeColumn && origGroupColumn !== this.treeColumn) ||
+            (this.groupColumn && origGroupColumn !== this.groupColumn)) {
+            this.rowsUpdated(this.rows);
+
+            if (this.treeColumn) {
+              this.refreshTree();
+            } else if (this.groupColumn) {
+              this.refreshGroups();
+            }
           }
         }
-      }
-    }, true);
+      }, true);
 
-    this.$scope.$watchCollection('body.rows', this.rowsUpdated.bind(this));
-  }
+      this.$scope.$watchCollection('body.rows', this.rowsUpdated.bind(this));
+    };
 
-  setTreeAndGroupColumns() {
-    this.treeColumn = this.options.columns.find((c) => {
-      return c.isTreeColumn;
-    });
-
-    if (!this.treeColumn) {
-      this.groupColumn = this.options.columns.find((c) => {
-        return c.group;
+    if (this.options && this.rows) {
+      _initialize();
+    } else {
+      const bodyRowsWatch = this.$scope.$watch('body', (newVal, oldVal) => {
+        if (newVal.options && newVal.body) {
+          _initialize();
+          bodyRowsWatch();
+        }
       });
     }
   }
 
-  setConditionalWatches(){
-    this.watchListeners.map((watchListener) => (
-      watchListener()
-    ));
+  setTreeAndGroupColumns() {
+    if (this.options && this.options.columns) {
+      this.treeColumn = this.options.columns.find((c) => {
+        return c.isTreeColumn;
+      });
 
-    if (this.options.scrollbarV || (!this.options.scrollbarV && this.options.paging.externalPaging)) {
+      if (!this.treeColumn) {
+        this.groupColumn = this.options.columns.find((c) => {
+          return c.group;
+        });
+      } else {
+        this.groupColumn = undefined;
+      }
+    }
+  }
+
+  setConditionalWatches() {
+    for (var i = this.watchListeners.length - 1; i >= 0; i--) {
+      this.watchListeners[i]();
+
+      this.watchListeners.splice(i, 1);
+    }
+
+    if (this.options && this.options.scrollbarV || (!this.options.scrollbarV && this.options.paging && this.options.paging.externalPaging)) {
       var sized = false;
 
       this.watchListeners.push(this.$scope.$watch('body.options.paging.size', (newVal, oldVal) => {
@@ -3031,21 +3055,20 @@ function FooterDirective(){
 }
 
 class PagerController {
-
   /**
    * Creates an instance of the Pager Controller
    * @param  {object} $scope
    */
 
   /*@ngInject*/
-  constructor($scope){
+  constructor($scope) {
     Object.assign(this, {
       $scope
     });
 
     // if preAssignBindingsEnabled === true and no $onInit
     if (angular.version.major === 1 && angular.version.minor < 5) {
-      this.init();
+      this.$onInit();
     }
   }
 
@@ -3068,7 +3091,9 @@ class PagerController {
       }
     });
 
-    this.getPages(this.page || 1);
+    if (this.size && this.count && this.page) {
+      this.findAndSetPages();
+    }
   }
 
   findAndSetPages() {
@@ -3089,7 +3114,7 @@ class PagerController {
    * Select a page
    * @param  {int} num
    */
-  selectPage(num){
+  selectPage(num) {
     if (num > 0 && num <= this.totalPages) {
       this.page = num;
       this.onPage({
@@ -3101,8 +3126,8 @@ class PagerController {
   /**
    * Selects the previous pager
    */
-  prevPage(){
-    if (this.page > 1) {
+  prevPage() {
+    if (this.canPrevious()) {
       this.selectPage(--this.page);
     }
   }
@@ -3110,15 +3135,17 @@ class PagerController {
   /**
    * Selects the next page
    */
-  nextPage(){
-    this.selectPage(++this.page);
+  nextPage() {
+    if (this.canNext()) {
+      this.selectPage(++this.page);
+    }
   }
 
   /**
    * Determines if the pager can go previous
    * @return {boolean}
    */
-  canPrevious(){
+  canPrevious() {
     return this.page > 1;
   }
 
@@ -3126,7 +3153,7 @@ class PagerController {
    * Determines if the pager can go forward
    * @return {boolean}
    */
-  canNext(){
+  canNext() {
     return this.page < this.totalPages;
   }
 
