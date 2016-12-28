@@ -1,4 +1,4 @@
-import { initIfOldAngular } from '../../utils/utils';
+import { isOldAngular } from '../../utils/utils';
 
 export class FooterController {
   /**
@@ -13,7 +13,9 @@ export class FooterController {
       $scope
     });
 
-    initIfOldAngular(this.init);
+    if (isOldAngular()) {
+      this.$onInit();
+    }
   }
 
   $onInit() {

@@ -1,4 +1,4 @@
-import { initIfOldAngular } from '../../utils/utils';
+import { isOldAngular } from '../../utils/utils';
 
 const TREE_TYPES = {
   GROUP: 'refreshGroups',
@@ -12,13 +12,15 @@ export default class BodyController {
    * @return {BodyController}
    */
 
-  /*@ngInject*/
+  /* @ngInject */
   constructor($scope) {
     Object.assign(this, {
       $scope
     });
 
-    initIfOldAngular(this.init);
+    if (isOldAngular()) {
+      this.$onInit();
+    }
   }
 
   $onInit() {

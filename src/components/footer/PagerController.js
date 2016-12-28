@@ -1,4 +1,4 @@
-import { initIfOldAngular } from '../../utils/utils';
+import { isOldAngular } from '../../utils/utils';
 
 export class PagerController {
   /**
@@ -12,7 +12,9 @@ export class PagerController {
       $scope
     });
 
-    initIfOldAngular(this.init.bind(this));
+    if (isOldAngular()) {
+      this.$onInit();
+    }
   }
 
   $onInit() {

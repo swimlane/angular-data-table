@@ -15,7 +15,7 @@ describe('PagerController', function () {
 
       scope.pager = bindings;
 
-      spyOn(scope, '$watch').and.callThrough();
+      spyOn(scope, '$watch');
 
       ctrl = new PagerController(scope);
 

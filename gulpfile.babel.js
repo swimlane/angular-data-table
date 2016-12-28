@@ -7,15 +7,18 @@ var nPath = require('path'),
   runSequence = require('run-sequence'),
   less = require('gulp-less'),
   changed = require('gulp-changed'),
-  Builder = require('systemjs-builder'),
   vinylPaths = require('vinyl-paths'),
+  vinylBuffer = require('vinyl-buffer'),
+  vinylSource = require('vinyl-source-stream'),
   del = require('del'),
   ngAnnotate = require('gulp-ng-annotate'),
   rollup = require('rollup'),
   rename = require('gulp-rename'),
   uglify = require('gulp-uglify'),
   header = require('gulp-header'),
-  gutils = require('gulp-util');
+  gutils = require('gulp-util'),
+  babelify = require('babelify'),
+  browserify = require('browserify');
 
 var KarmaServer = require('karma').Server;
 
@@ -43,18 +46,27 @@ var banner = ['/**',
 // Compile Tasks
 // ------------------------------------------------------------
 gulp.task('es6', function () {
-  return gulp.src(path.source)
-    .pipe(plumber())
+  const bundler = _getBrowserifyInstance();
+
+  _bundle(bundler);
+});
+
+function _getBrowserifyInstance() {
+  return browserify(path.src, {debug: true}).transform(babelify);
+}
+
+function _bundle(bundler) {
+  return bundler
+    .bundle()
+    .on('error', function(error) { gutils.log(error.message); })
+    .pipe(vinylSource('src/dataTable.js'))
+    .pipe(vinylBuffer())
     .pipe(sourcemaps.init({ loadMaps: true }))
-    .pipe(changed(path.output, { extension: '.js' }))
-    .pipe(babel())
-    .pipe(ngAnnotate({
-      gulpWarnings: true
-    }))
-    .pipe(sourcemaps.write(''))
+    .pipe(uglify())
+    .pipe(sourcemaps.write('./'))
     .pipe(gulp.dest(path.output))
     .pipe(browserSync.reload({ stream: true }));
-});
+}
 
 gulp.task('less', function () {
   return gulp.src(path.less)
@@ -189,17 +201,17 @@ function _startKarma(callback, singleRun) {
            callback();
        } else {
            callback(new gutils.PluginError('karma', {
-               message: `${errors} test${errors > 1 ? 's' : ''} failed`
+               message: 'Unit test(s) failed.'
            }));
        }
    }).start();
 }
 
-gulp.task('unit', ['compile'], function (callback) {
+gulp.task('unit', function (callback) {
   _startKarma(callback, true);
 });
 
-gulp.task('unit:watch', ['compile'], function (callback) {
+gulp.task('unit:watch', function (callback) {
   _startKarma(callback, false);
 });
 

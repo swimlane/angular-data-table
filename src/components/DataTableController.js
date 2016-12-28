@@ -1,6 +1,6 @@
 import { TableDefaults, ColumnDefaults } from '../defaults';
 import { AdjustColumnWidths, ForceFillColumnWidths } from '../utils/math';
-import { initIfOldAngular, ColumnsByPin, ColumnGroupWidths, CamelCase, ObjectId, ScrollbarWidth } from '../utils/utils';
+import { isOldAngular, ColumnsByPin, ColumnGroupWidths, CamelCase, ObjectId, ScrollbarWidth } from '../utils/utils';
 
 export class DataTableController {
   /**
@@ -16,7 +16,9 @@ export class DataTableController {
       $filter: $filter
     });
 
-    initIfOldAngular(this.init);
+    if (isOldAngular()) {
+      this.$onInit();
+    }
   }
 
   $onInit() {

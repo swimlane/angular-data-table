@@ -1,4 +1,3 @@
-import BodyController from './BodyController';
 import SpecHelper from './BodyController.spechelper.json';
 import { TableDefaults } from '../../defaults';
 
@@ -39,23 +38,13 @@ describe('BodyController', function () {
         rows: bindings.rows
       };
 
-      // console.log(bindings.options);
-      // console.log(bindings.data);
-
       ctrl = $controller('BodyController',
         {
           $scope: scope
         },
         bindings
       );
-
-      // console.log(ctrl.options);
-      // console.log(ctrl.data);
     };
-  });
-
-  it('should export a function', () => {
-    expect(BodyController).toEqual(jasmine.any(Function));
   });
 
   describe('when initializing', () => {
@@ -69,24 +58,10 @@ describe('BodyController', function () {
 
       ctrl.$onInit();
 
-      expect(ctrl.options).not.toEqual({});
-      expect(ctrl.data.length).not.toEqual(0);
-
-      console.log(olympicRows);
-    });
-
-    it('should set ctrl if under angular 1.5', () => {
-      angular.version.major = 1;
-      angular.version.minor = 4;
-
-      setController({
-        options: olympicOptions,
-        rows: olympicRows
-      });
-
+      expect(ctrl.options).not.toEqual(undefined);
       expect(ctrl.options).not.toEqual({});
 
-      angular.version = angularVersion;
+      expect(ctrl.data).not.toEqual(0);
     });
   });
 

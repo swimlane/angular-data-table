@@ -148,9 +148,7 @@ export function NextSortDirection(sortType, currentSort) {
   }
 };
 
-// if preAssignBindingsEnabled === true and no $onInit
-export function initIfOldAngular(initFn) {
-    if (angular.version.major === 1 && angular.version.minor < 5) {
-      initFn();
-    }
+// Old angular versions being where preAssignBindingsEnabled === true and no $onInit
+export function isOldAngular() {
+  return angular.version.major === 1 && angular.version.minor < 5;
 }

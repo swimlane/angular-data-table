@@ -18,22 +18,35 @@ const istanbul = require('browserify-istanbul'),
   },
 
   karmaBaseConfig = {
-    frameworks: ['browserify', 'source-map-support', 'jasmine'],
+    frameworks: ['browserify', 'jasmine'],
 
     basePath: './',
 
     files: [
-      './dataTable.mock.js',
-      '../node_modules/sinon/pkg/sinon.js',
-      '../node_modules/bardjs/dist/bard.js',
-      '../node_modules/angular-mocks/angular-mocks.js',
-      './karma.helper.babel.js',
+      {
+        pattern: '../src/**/*!(.spec || .e2e).js',
+        included: false
+      },
+      'dataTable.mock.js',
+      {
+        pattern: '../node_modules/sinon/pkg/sinon.js',
+        watched: false
+      },
+      {
+        pattern: '../node_modules/bardjs/dist/bard.js',
+        watched: false
+      },
+      {
+        pattern: '../node_modules/angular-mocks/angular-mocks.js',
+        watched: false
+      },
+      './karma.helper.js',
       '../src/**/*.spec.js'
     ],
 
     preprocessors: {
-      './dataTable.mock.js': ['browserify'],
-      '../src/**/*.js': ['browserify']
+      '../src/**/*.js': ['browserify'],
+      'dataTable.mock.js': ['browserify']
     },
 
     browserify: {
