@@ -1,27 +1,48 @@
-export class PagerController {
+import { isOldAngular } from '../../utils/utils';
 
+export class PagerController {
   /**
    * Creates an instance of the Pager Controller
-   * @param  {object} $scope   
+   * @param  {object} $scope
    */
+
   /*@ngInject*/
-  constructor($scope){
-    $scope.$watch('pager.count', (newVal) => {
-      this.calcTotalPages(this.size, this.count);
-      this.getPages(this.page || 1);
+  constructor($scope) {
+    Object.assign(this, {
+      $scope
     });
 
-    $scope.$watch('pager.size', (newVal) => {
-      this.calcTotalPages(this.size, this.count);
-      this.getPages(this.page || 1);
+    if (isOldAngular()) {
+      this.$onInit();
+    }
+  }
+
+  $onInit() {
+    this.init();
+  }
+
+  init() {
+    this.$scope.$watch('pager.count', () => {
+      this.findAndSetPages();
     });
 
-    $scope.$watch('pager.page', (newVal) => {
+    this.$scope.$watch('pager.size', () => {
+      this.findAndSetPages();
+    });
+
+    this.$scope.$watch('pager.page', (newVal) => {
       if (newVal !== 0 && newVal <= this.totalPages) {
         this.getPages(newVal);
       }
     });
-    
+
+    if (this.size && this.count && this.page) {
+      this.findAndSetPages();
+    }
+  }
+
+  findAndSetPages() {
+    this.calcTotalPages(this.size, this.count);
     this.getPages(this.page || 1);
   }
 
@@ -36,9 +57,9 @@ export class PagerController {
 
   /**
    * Select a page
-   * @param  {int} num   
+   * @param  {int} num
    */
-  selectPage(num){
+  selectPage(num) {
     if (num > 0 && num <= this.totalPages) {
       this.page = num;
       this.onPage({
@@ -50,8 +71,8 @@ export class PagerController {
   /**
    * Selects the previous pager
    */
-  prevPage(){
-    if (this.page > 1) {
+  prevPage() {
+    if (this.canPrevious()) {
       this.selectPage(--this.page);
     }
   }
@@ -59,33 +80,35 @@ export class PagerController {
   /**
    * Selects the next page
    */
-  nextPage(){
-    this.selectPage(++this.page);
+  nextPage() {
+    if (this.canNext()) {
+      this.selectPage(++this.page);
+    }
   }
 
   /**
    * Determines if the pager can go previous
    * @return {boolean}
    */
-  canPrevious(){
+  canPrevious() {
     return this.page > 1;
   }
 
   /**
    * Determines if the pager can go forward
-   * @return {boolean}       
+   * @return {boolean}
    */
-  canNext(){
+  canNext() {
     return this.page < this.totalPages;
   }
 
   /**
    * Gets the page set given the current page
-   * @param  {int} page 
+   * @param  {int} page
    */
   getPages(page) {
     var pages = [],
-        startPage = 1, 
+        startPage = 1,
         endPage = this.totalPages,
         maxSize = 5,
         isMaxSized = maxSize < this.totalPages;

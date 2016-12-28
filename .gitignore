@@ -3,3 +3,13 @@ jspm_packages
 npm-debug.log
 dist
 .idea
+coverage
+
+# OS generated Files #
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db

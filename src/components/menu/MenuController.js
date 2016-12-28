@@ -1,7 +1,7 @@
-export class MenuController{
+export class MenuController {
 
   /*@ngInject*/
-  constructor($scope, $timeout){
+  constructor($scope){
     this.$scope = $scope;
   }
 
@@ -23,5 +23,5 @@ export class MenuController{
       this.$scope.current.splice(idx, 1);
     }
   }
-  
+
 }

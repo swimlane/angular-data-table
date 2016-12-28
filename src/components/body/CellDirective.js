@@ -1,7 +1,6 @@
-import angular from 'angular';
 import { CellController } from './CellController';
 
-export function CellDirective($rootScope, $compile, $log, $timeout){
+export default function CellDirective($rootScope, $compile, $log, $timeout){
   return {
     restrict: 'E',
     controller: CellController,
@@ -67,7 +66,7 @@ export function CellDirective($rootScope, $compile, $log, $timeout){
             } else {
               content[0].innerHTML = ctrl.getValue();
             }
-            
+
           }, true);
 
           function createCellScope(){

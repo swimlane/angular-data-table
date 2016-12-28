@@ -1,14 +1,31 @@
-export class FooterController {
+import { isOldAngular } from '../../utils/utils';
 
+export class FooterController {
   /**
    * Creates an instance of the Footer Controller
    * @param  {scope}
    * @return {[type]}
    */
+
   /*@ngInject*/
-  constructor($scope){
+  constructor($scope) {
+    Object.assign(this, {
+      $scope
+    });
+
+    if (isOldAngular()) {
+      this.$onInit();
+    }
+  }
+
+  $onInit() {
+    this.init();
+  }
+
+  init() {
     this.page = this.paging.offset + 1;
-    $scope.$watch('footer.paging.offset', (newVal) => {
+
+    this.$scope.$watch('footer.paging.offset', (newVal) => {
       this.offsetChanged(newVal)
     });
   }

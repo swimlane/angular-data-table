@@ -1,6 +1,6 @@
 import { PagerController } from './PagerController';
 
-export function PagerDirective(){
+export default function PagerDirective(){
   return {
     restrict: 'E',
     controller: PagerController,

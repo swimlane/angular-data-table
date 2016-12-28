@@ -1,6 +1,30 @@
-import { NextSortDirection } from '../../utils/utils';
+import { isOldAngular, NextSortDirection } from '../../utils/utils';
 
-export class HeaderCellController{
+export default class HeaderCellController {
+  /* @ngInject */
+  constructor($scope) {
+    Object.assign(this, {
+      $scope
+    });
+
+    if (isOldAngular()) {
+      this.$onInit();
+    }
+  }
+
+  $onInit() {
+    this.init();
+  }
+
+  init() {
+    if (this.column.headerCheckbox) {
+      this.column.headerCheckboxCallback = this.rowSelected;
+    }
+
+    if (this.$scope.$parent.$parent.$parent.$parent.dt) {
+      this.dt = this.$scope.$parent.$parent.$parent.$parent.dt;
+    }
+  }
   /**
    * Calculates the styles for the header cell directive
    * @return {styles}
@@ -70,11 +94,16 @@ export class HeaderCellController{
     });
   }
 
-  /**
-   * Invoked when the header cell directive checkbox was changed
-   */
-  onCheckboxChange(){
-    this.onCheckboxChanged();
+  rowSelected(dt){
+    this.allRowsSelected = (dt.selected) && (dt.rows.length === dt.selected.length);
   }
 
+  /**
+   * Invoked when the header cell directive checkbox is changed
+   */
+  checkboxChangeCallback(){
+    return this.isAllRowsSelected = this.column.allRowsSelected ?
+      this.dt.selectAllRows() :
+      this.dt.deselectAllRows();
+  }
 }

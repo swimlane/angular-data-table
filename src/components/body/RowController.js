@@ -1,4 +1,3 @@
-import angular from 'angular';
 import { DeepValueGetter } from '../../utils/utils';
 import { TranslateXY } from '../../utils/translate';
 
