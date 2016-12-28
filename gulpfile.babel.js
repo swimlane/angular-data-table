@@ -2,23 +2,18 @@ var nPath = require('path'),
   gulp = require('gulp'),
   plumber = require('gulp-plumber'),
   babel = require('gulp-babel'),
-  sourcemaps = require('gulp-sourcemaps'),
   browserSync = require('browser-sync'),
   runSequence = require('run-sequence'),
   less = require('gulp-less'),
   changed = require('gulp-changed'),
   vinylPaths = require('vinyl-paths'),
-  vinylBuffer = require('vinyl-buffer'),
-  vinylSource = require('vinyl-source-stream'),
   del = require('del'),
   ngAnnotate = require('gulp-ng-annotate'),
   rollup = require('rollup'),
   rename = require('gulp-rename'),
   uglify = require('gulp-uglify'),
   header = require('gulp-header'),
-  gutils = require('gulp-util'),
-  babelify = require('babelify'),
-  browserify = require('browserify');
+  gutils = require('gulp-util');
 
 var KarmaServer = require('karma').Server;
 
@@ -46,27 +41,16 @@ var banner = ['/**',
 // Compile Tasks
 // ------------------------------------------------------------
 gulp.task('es6', function () {
-  const bundler = _getBrowserifyInstance();
-
-  _bundle(bundler);
-});
-
-function _getBrowserifyInstance() {
-  return browserify(path.src, {debug: true}).transform(babelify);
-}
-
-function _bundle(bundler) {
-  return bundler
-    .bundle()
-    .on('error', function(error) { gutils.log(error.message); })
-    .pipe(vinylSource('src/dataTable.js'))
-    .pipe(vinylBuffer())
-    .pipe(sourcemaps.init({ loadMaps: true }))
-    .pipe(uglify())
-    .pipe(sourcemaps.write('./'))
+  return gulp.src(path.source)
+    .pipe(plumber())
+    .pipe(changed(path.output, { extension: '.js' }))
+    .pipe(babel())
+    .pipe(ngAnnotate({
+      gulpWarnings: true
+    }))
     .pipe(gulp.dest(path.output))
     .pipe(browserSync.reload({ stream: true }));
-}
+});
 
 gulp.task('less', function () {
   return gulp.src(path.less)
