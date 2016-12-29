@@ -9,6 +9,9 @@
     "github": "http://github.com/swimlane/angular-data-table.git"
   },
   "main": "./release/dataTable.js",
+  "files": [
+    "release/"
+  ],
   "homepage": "http://swimlane.com/",
   "author": {
     "name": "Swimlane",
@@ -45,12 +48,14 @@
     "babel-preset-stage-0": "^6.5.0",
     "babel-root-import": "^4.1.3",
     "babelify": "7.3.0",
+    "bardjs": "^0.1.8",
+    "brfs": "^1.4.3",
     "browser-sync": "^2.7.2",
     "browserify": "^13.1.1",
     "browserify-istanbul": "^2.0.0",
     "del": "^2.2.0",
     "gulp": "^3.8.11",
-    "gulp-angular-protractor": "^0.2.0",
+    "gulp-angular-protractor": "^0.3.0",
     "gulp-babel": "6.1.2",
     "gulp-changed": "^1.2.1",
     "gulp-header": "^1.2.2",
@@ -74,12 +79,10 @@
     "karma-phantomjs-launcher": "^1.0.2",
     "karma-sauce-launcher": "^1.1.0",
     "karma-sinon": "^1.0.5",
-    "karma-source-map-support": "^1.2.0",
     "phantomjs-prebuilt": "^2.1.7",
-    "rollup": "^0.36.3",
+    "rollup": "^0.38.0",
     "run-sequence": "^1.1.0",
     "sinon": "^1.17.6",
-    "systemjs-builder": "^0.15.32",
     "vinyl-paths": "^2.1.0",
     "watchify": "^3.7.0"
   },

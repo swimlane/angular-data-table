@@ -1,19 +1,19 @@
-export class PagerController {
+import { isOldAngular } from '../../utils/utils';
 
+export class PagerController {
   /**
    * Creates an instance of the Pager Controller
    * @param  {object} $scope
    */
 
   /*@ngInject*/
-  constructor($scope){
+  constructor($scope) {
     Object.assign(this, {
       $scope
     });
 
-    // if preAssignBindingsEnabled === true and no $onInit
-    if (angular.version.major === 1 && angular.version.minor < 5) {
-      this.init();
+    if (isOldAngular()) {
+      this.$onInit();
     }
   }
 
@@ -22,14 +22,12 @@ export class PagerController {
   }
 
   init() {
-    this.$scope.$watch('pager.count', (newVal) => {
-      this.calcTotalPages(this.size, this.count);
-      this.getPages(this.page || 1);
+    this.$scope.$watch('pager.count', () => {
+      this.findAndSetPages();
     });
 
-    this.$scope.$watch('pager.size', (newVal) => {
-      this.calcTotalPages(this.size, this.count);
-      this.getPages(this.page || 1);
+    this.$scope.$watch('pager.size', () => {
+      this.findAndSetPages();
     });
 
     this.$scope.$watch('pager.page', (newVal) => {
@@ -38,6 +36,13 @@ export class PagerController {
       }
     });
 
+    if (this.size && this.count && this.page) {
+      this.findAndSetPages();
+    }
+  }
+
+  findAndSetPages() {
+    this.calcTotalPages(this.size, this.count);
     this.getPages(this.page || 1);
   }
 
@@ -54,7 +59,7 @@ export class PagerController {
    * Select a page
    * @param  {int} num
    */
-  selectPage(num){
+  selectPage(num) {
     if (num > 0 && num <= this.totalPages) {
       this.page = num;
       this.onPage({
@@ -66,8 +71,8 @@ export class PagerController {
   /**
    * Selects the previous pager
    */
-  prevPage(){
-    if (this.page > 1) {
+  prevPage() {
+    if (this.canPrevious()) {
       this.selectPage(--this.page);
     }
   }
@@ -75,15 +80,17 @@ export class PagerController {
   /**
    * Selects the next page
    */
-  nextPage(){
-    this.selectPage(++this.page);
+  nextPage() {
+    if (this.canNext()) {
+      this.selectPage(++this.page);
+    }
   }
 
   /**
    * Determines if the pager can go previous
    * @return {boolean}
    */
-  canPrevious(){
+  canPrevious() {
     return this.page > 1;
   }
 
@@ -91,7 +98,7 @@ export class PagerController {
    * Determines if the pager can go forward
    * @return {boolean}
    */
-  canNext(){
+  canNext() {
     return this.page < this.totalPages;
   }
 

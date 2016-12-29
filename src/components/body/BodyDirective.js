@@ -1,6 +1,6 @@
 import BodyController from './BodyController';
 
-export default function BodyDirective($timeout){
+export default function BodyDirective($timeout) {
   return {
     restrict: 'E',
     controller: BodyController,

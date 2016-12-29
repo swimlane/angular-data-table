@@ -1,6 +1,6 @@
 {
   "presets": ["es2015"],
-  "sourceMap": "inline",
+  "sourceMaps": true,
   "plugins": [
     "transform-object-assign",
     [

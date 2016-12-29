@@ -350,7 +350,12 @@ const ColumnDefaults = {
   // If not provided, the cell data will be collected from row data instead.
   cellDataGetter: undefined,
 
+  // Grows all rows by this column value
+  // Only one column can have this set, cannot be combined with isTreeColumn
+  group: false,
+
   // Adds +/- button and makes a secondary call to load nested data
+  // Only one column can have this set, cannot be combined with isGroupColumn
   isTreeColumn: false,
 
   // Adds the checkbox selection to the column
@@ -417,8 +422,8 @@ function ColumnsByPin(cols){
 
 /**
  * Returns the widths of all group sets of a column
- * @param {object} groups 
- * @param {array} all 
+ * @param {object} groups
+ * @param {array} all
  */
 function ColumnGroupWidths(groups, all){
   return {
@@ -431,8 +436,8 @@ function ColumnGroupWidths(groups, all){
 
 /**
  * Returns a deep object given a string. zoo['animal.type']
- * @param {object} obj  
- * @param {string} path 
+ * @param {object} obj
+ * @param {string} path
  */
 function DeepValueGetter(obj, path) {
   if(!obj || !path) return obj;
@@ -442,17 +447,17 @@ function DeepValueGetter(obj, path) {
 
   if(split.length){
     for(var i=0, len=split.length; i < len; i++) {
-      current = current[split[i]]; 
+      current = current[split[i]];
     }
   }
-  
+
   return current;
 }
 
 /**
  * Converts strings from something to camel case
  * http://stackoverflow.com/questions/10425287/convert-dash-separated-string-to-camelcase
- * @param  {string} str 
+ * @param  {string} str
  * @return {string} camel case string
  */
 function CamelCase(str) {
@@ -511,6 +516,11 @@ function NextSortDirection(sortType, currentSort) {
       return undefined;
     }
   }
+}
+
+// Old angular versions being where preAssignBindingsEnabled === true and no $onInit
+function isOldAngular() {
+  return angular.version.major === 1 && angular.version.minor < 5;
 }
 
 /**
@@ -678,9 +688,8 @@ class DataTableController {
       $filter: $filter
     });
 
-    // if preAssignBindingsEnabled === true and no $onInit
-    if (angular.version.major === 1 && angular.version.minor < 5) {
-      this.init();
+    if (isOldAngular()) {
+      this.$onInit();
     }
   }
 
@@ -708,7 +717,7 @@ class DataTableController {
     var watch = this.$scope.$watch('dt.rows', (newVal) => {
       if (newVal) {
         watch();
-        
+
         this.onSorted();
       }
     });
@@ -1498,9 +1507,8 @@ class HeaderCellController {
       $scope
     });
 
-    // if preAssignBindingsEnabled === true and no $onInit
-    if (angular.version.major === 1 && angular.version.minor < 5) {
-      this.init();
+    if (isOldAngular()) {
+      this.$onInit();
     }
   }
 
@@ -1667,6 +1675,11 @@ function HeaderCellDirective($compile){
   };
 }
 
+const TREE_TYPES = {
+  GROUP: 'refreshGroups',
+  TREE: 'refreshTree'
+};
+
 class BodyController {
   /**
    * A body controller
@@ -1674,18 +1687,14 @@ class BodyController {
    * @return {BodyController}
    */
 
-  /*@ngInject*/
+  /* @ngInject */
   constructor($scope) {
     Object.assign(this, {
       $scope
     });
 
-    this.tempRows = [];
-    this.watchListeners = [];
-
-    // if preAssignBindingsEnabled === true and no $onInit
-    if (angular.version.major === 1 && angular.version.minor < 5) {
-      this.init();
+    if (isOldAngular()) {
+      this.$onInit();
     }
   }
 
@@ -1694,6 +1703,9 @@ class BodyController {
   }
 
   init() {
+    this.tempRows = [];
+    this.watchListeners = [];
+
     this.setTreeAndGroupColumns();
     this.setConditionalWatches();
 
@@ -1723,23 +1735,29 @@ class BodyController {
   }
 
   setTreeAndGroupColumns() {
-    this.treeColumn = this.options.columns.find((c) => {
-      return c.isTreeColumn;
-    });
-
-    if (!this.treeColumn) {
-      this.groupColumn = this.options.columns.find((c) => {
-        return c.group;
+    if (this.options && this.options.columns) {
+      this.treeColumn = this.options.columns.find((c) => {
+        return c.isTreeColumn;
       });
+
+      if (!this.treeColumn) {
+        this.groupColumn = this.options.columns.find((c) => {
+          return c.group;
+        });
+      } else {
+        this.groupColumn = undefined;
+      }
     }
   }
 
-  setConditionalWatches(){
-    this.watchListeners.map((watchListener) => (
-      watchListener()
-    ));
+  setConditionalWatches() {
+    for (var i = this.watchListeners.length - 1; i >= 0; i--) {
+      this.watchListeners[i]();
 
-    if (this.options.scrollbarV || (!this.options.scrollbarV && this.options.paging.externalPaging)) {
+      this.watchListeners.splice(i, 1);
+    }
+
+    if (this.options && this.options.scrollbarV || (!this.options.scrollbarV && this.options.paging && this.options.paging.externalPaging)) {
       var sized = false;
 
       this.watchListeners.push(this.$scope.$watch('body.options.paging.size', (newVal, oldVal) => {
@@ -1812,10 +1830,10 @@ class BodyController {
   /**
    * Gets the first and last indexes based on the offset, row height, page size, and overall count.
    */
-  getFirstLastIndexes(){
+  getFirstLastIndexes() {
     var firstRowIndex, endIndex;
 
-    if(this.options.scrollbarV){
+    if (this.options.scrollbarV) {
       firstRowIndex = Math.max(Math.floor((
           this.options.internal.offsetY || 0) / this.options.rowHeight, 0), 0);
       endIndex = Math.min(firstRowIndex + this.options.paging.size, this.count);
@@ -1837,7 +1855,7 @@ class BodyController {
   /**
    * Updates the page's offset given the scroll position.
    */
-  updatePage(){
+  updatePage() {
     let curPage = this.options.paging.offset,
         idxs = this.getFirstLastIndexes();
 
@@ -1861,7 +1879,7 @@ class BodyController {
       newPage = curPage;
     }
 
-    if(!isNaN(newPage)){
+    if (!isNaN(newPage)) {
       this.options.paging.offset = newPage;
     }
   }
@@ -1872,7 +1890,7 @@ class BodyController {
    * @param depth
    * @return {Integer}
   */
-  calculateDepth(row, depth=0){
+  calculateDepth(row, depth=0) {
     var parentProp = this.treeColumn ? this.treeColumn.relationProp : this.groupColumn.prop;
     var prop = this.treeColumn.prop;
     if (!row[parentProp]){
@@ -1912,7 +1930,7 @@ class BodyController {
    *  }
    *
    */
-  buildRowsByGroup(){
+  buildRowsByGroup() {
     this.index = {};
     this.rowsByGroup = {};
 
@@ -1968,7 +1986,7 @@ class BodyController {
    * This function needs some optimization, todo for future release.
    * @return {Array} the temp array containing expanded rows
    */
-  buildGroups(){
+  buildGroups() {
     var temp = [];
 
     angular.forEach(this.rowsByGroup, (v, k) => {
@@ -1990,7 +2008,7 @@ class BodyController {
    * @param  {row}
    * @return {Boolean}
    */
-  isSelected(row){
+  isSelected(row) {
     var selected = false;
 
     if(this.options.selectable){
@@ -2008,7 +2026,7 @@ class BodyController {
    * Creates a tree of the existing expanded values
    * @return {array} the built tree
    */
-  buildTree(){
+  buildTree() {
     var temp = [],
         self = this;
 
@@ -2096,18 +2114,18 @@ class BodyController {
    * Returns the styles for the table body directive.
    * @return {object}
    */
-  styles(){
+  styles() {
     var styles = {
       width: this.options.internal.innerWidth + 'px'
     };
 
-    if(!this.options.scrollbarV){
+    if (!this.options.scrollbarV) {
       styles.overflowY = 'hidden';
-    } else if(this.options.scrollbarH === false){
+    } else if (this.options.scrollbarH === false) {
       styles.overflowX = 'hidden';
     }
 
-    if(this.options.scrollbarV){
+    if (this.options.scrollbarV) {
       styles.height = this.options.internal.bodyHeight + 'px';
     }
 
@@ -2119,10 +2137,10 @@ class BodyController {
    * @param  {row}
    * @return {styles object}
    */
-  rowStyles(row){
+  rowStyles(row) {
     let styles = {};
 
-    if(this.options.rowHeight === 'auto'){
+    if (this.options.rowHeight === 'auto') {
       styles.height = this.options.rowHeight + 'px';
     }
 
@@ -2134,7 +2152,7 @@ class BodyController {
    * @param  {object} row
    * @return {object} styles
    */
-  groupRowStyles(row){
+  groupRowStyles(row) {
     var styles = this.rowStyles(row);
     styles.width = this.columnWidths.total + 'px';
     return styles;
@@ -2145,7 +2163,7 @@ class BodyController {
    * @param  {row}
    * @return {css class object}
    */
-  rowClasses(row){
+  rowClasses(row) {
     var styles = {
       'selected': this.isSelected(row),
       'dt-row-even': row && row.$$index%2 === 0,
@@ -2169,7 +2187,7 @@ class BodyController {
    * @param  {index}
    * @return {row model}
    */
-  getRowValue(idx){
+  getRowValue(idx) {
     return this.tempRows[idx];
   }
 
@@ -2178,11 +2196,21 @@ class BodyController {
    * @param  {row}
    * @return {boolean}
    */
-  getRowExpanded(row){
-    if(this.treeColumn) {
+  getRowExpanded(row) {
+    if (this.treeColumn) {
       return this.expanded[row[this.treeColumn.prop]];
     } else if(this.groupColumn){
       return this.expanded[row.name];
+    }
+  }
+
+  refresh(type) {
+    if (this.options.scrollbarV) {
+      this.getRows(true);
+    } else {
+      var values = this[type]();
+      this.tempRows.splice(0, this.tempRows.length);
+      this.tempRows.push(...values);
     }
   }
 
@@ -2191,20 +2219,14 @@ class BodyController {
    * @param  {row}
    * @return {boolean}
    */
-  getRowHasChildren(row){
+  getRowHasChildren(row) {
     if(!this.treeColumn) return;
     var children = this.rowsByGroup[row[this.treeColumn.prop]];
     return children !== undefined || (children && !children.length);
   }
 
-  refreshTree(){
-    if(this.options.scrollbarV){
-      this.getRows(true);
-    } else {
-      var values = this.buildTree();
-      this.tempRows.splice(0, this.tempRows.length);
-      this.tempRows.push(...values);
-    }
+  refreshTree() {
+    this.refresh(TREE_TYPES.TREE);
   }
 
   /**
@@ -2212,7 +2234,7 @@ class BodyController {
    * @param  {row model}
    * @param  {cell model}
    */
-  onTreeToggled(row, cell){
+  onTreeToggled(row, cell) {
     var val  = row[this.treeColumn.prop];
     this.expanded[val] = !this.expanded[val];
 
@@ -2224,28 +2246,22 @@ class BodyController {
     });
   }
 
-  refreshGroups(){
-    if(this.options.scrollbarV){
-      this.getRows(true);
-    } else {
-      var values = this.buildGroups();
-      this.tempRows.splice(0, this.tempRows.length);
-      this.tempRows.push(...values);
-    }
+  refreshGroups() {
+    this.refresh(TREE_TYPES.GROUP);
   }
 
   /**
    * Invoked when the row group directive was expanded
    * @param  {object} row
    */
-  onGroupToggle(row){
+  onGroupToggle(row) {
     this.expanded[row.name] = !this.expanded[row.name];
 
     this.refreshGroups();
   }
 }
 
-function BodyDirective($timeout){
+function BodyDirective($timeout) {
   return {
     restrict: 'E',
     controller: BodyController,
@@ -2956,7 +2972,6 @@ function CellDirective($rootScope, $compile, $log, $timeout){
 }
 
 class FooterController {
-
   /**
    * Creates an instance of the Footer Controller
    * @param  {scope}
@@ -2969,9 +2984,8 @@ class FooterController {
       $scope
     });
 
-    // if preAssignBindingsEnabled === true and no $onInit
-    if (angular.version.major === 1 && angular.version.minor < 5) {
-      this.init();
+    if (isOldAngular()) {
+      this.$onInit();
     }
   }
 
@@ -3034,21 +3048,19 @@ function FooterDirective(){
 }
 
 class PagerController {
-
   /**
    * Creates an instance of the Pager Controller
    * @param  {object} $scope
    */
 
   /*@ngInject*/
-  constructor($scope){
+  constructor($scope) {
     Object.assign(this, {
       $scope
     });
 
-    // if preAssignBindingsEnabled === true and no $onInit
-    if (angular.version.major === 1 && angular.version.minor < 5) {
-      this.init();
+    if (isOldAngular()) {
+      this.$onInit();
     }
   }
 
@@ -3057,14 +3069,12 @@ class PagerController {
   }
 
   init() {
-    this.$scope.$watch('pager.count', (newVal) => {
-      this.calcTotalPages(this.size, this.count);
-      this.getPages(this.page || 1);
+    this.$scope.$watch('pager.count', () => {
+      this.findAndSetPages();
     });
 
-    this.$scope.$watch('pager.size', (newVal) => {
-      this.calcTotalPages(this.size, this.count);
-      this.getPages(this.page || 1);
+    this.$scope.$watch('pager.size', () => {
+      this.findAndSetPages();
     });
 
     this.$scope.$watch('pager.page', (newVal) => {
@@ -3073,6 +3083,13 @@ class PagerController {
       }
     });
 
+    if (this.size && this.count && this.page) {
+      this.findAndSetPages();
+    }
+  }
+
+  findAndSetPages() {
+    this.calcTotalPages(this.size, this.count);
     this.getPages(this.page || 1);
   }
 
@@ -3089,7 +3106,7 @@ class PagerController {
    * Select a page
    * @param  {int} num
    */
-  selectPage(num){
+  selectPage(num) {
     if (num > 0 && num <= this.totalPages) {
       this.page = num;
       this.onPage({
@@ -3101,8 +3118,8 @@ class PagerController {
   /**
    * Selects the previous pager
    */
-  prevPage(){
-    if (this.page > 1) {
+  prevPage() {
+    if (this.canPrevious()) {
       this.selectPage(--this.page);
     }
   }
@@ -3110,15 +3127,17 @@ class PagerController {
   /**
    * Selects the next page
    */
-  nextPage(){
-    this.selectPage(++this.page);
+  nextPage() {
+    if (this.canNext()) {
+      this.selectPage(++this.page);
+    }
   }
 
   /**
    * Determines if the pager can go previous
    * @return {boolean}
    */
-  canPrevious(){
+  canPrevious() {
     return this.page > 1;
   }
 
@@ -3126,7 +3145,7 @@ class PagerController {
    * Determines if the pager can go forward
    * @return {boolean}
    */
-  canNext(){
+  canNext() {
     return this.page < this.totalPages;
   }
 
@@ -3431,17 +3450,13 @@ function PopoverDirective($q, $timeout, $templateCache, $compile, PopoverRegistr
         if ($scope.options.placement === POSITION.RIGHT){
           left = -6;
           top = _calculateVerticalCaret();
-        }
-        if ($scope.options.placement === POSITION.LEFT){
+        } else if ($scope.options.placement === POSITION.LEFT){
           left = popoverDimensions.width - 2;
           top = _calculateVerticalCaret();
-        }
-        if ($scope.options.placement === POSITION.TOP){
+        } else if ($scope.options.placement === POSITION.TOP){
           top = popoverDimensions.height - 5;
           left = _calculateHorizontalCaret();
-        }
-
-        if ($scope.options.placement === POSITION.BOTTOM){
+        } else if ($scope.options.placement === POSITION.BOTTOM){
           top = -8;
           left = _calculateHorizontalCaret();
         }
@@ -3499,10 +3514,23 @@ function PopoverRegistry($animate){
  * Position helper for the popover directive.
  */
 
-function PositionHelper(){
+function PositionHelper() {
   return {
-    calculateVerticalAlignment: function(elDimensions, popoverDimensions, alignment){
-      switch(alignment){
+    calculateHorizontalAlignment: function (elDimensions, popoverDimensions, alignment) {
+      switch (alignment) {
+        case POSITION.LEFT:
+          return elDimensions.left;
+        case POSITION.RIGHT:
+          return elDimensions.left + elDimensions.width - popoverDimensions.width;
+        case POSITION.CENTER:
+          return elDimensions.left + elDimensions.width/2 - popoverDimensions.width/2;
+        default:
+          return console.log('calculateHorizontalAlignment issue', this);
+      }
+    },
+
+    calculateVerticalAlignment: function (elDimensions, popoverDimensions, alignment) {
+      switch (alignment) {
         case POSITION.TOP:
           return elDimensions.top;
         case POSITION.BOTTOM:
@@ -3514,8 +3542,8 @@ function PositionHelper(){
       }
     },
 
-    calculateVerticalCaret: function(elDimensions, popoverDimensions, caretDimensions, alignment){
-      switch(alignment){
+    calculateVerticalCaret: function (elDimensions, popoverDimensions, caretDimensions, alignment) {
+      switch (alignment) {
         case POSITION.TOP:
           return elDimensions.height/2 - caretDimensions.height/2 - 1;
         case POSITION.BOTTOM:
@@ -3527,8 +3555,8 @@ function PositionHelper(){
       }
     },
 
-    calculateHorizontalCaret: function(elDimensions, popoverDimensions, caretDimensions, alignment){
-      switch(alignment){
+    calculateHorizontalCaret: function (elDimensions, popoverDimensions, caretDimensions, alignment) {
+      switch (alignment) {
         case POSITION.LEFT:
           return elDimensions.width/2 - caretDimensions.height/2 - 1;
         case POSITION.RIGHT:
@@ -3537,19 +3565,6 @@ function PositionHelper(){
           return popoverDimensions.width/2 - caretDimensions.height/2 - 1;
         default:
           return console.log('calculateHorizontalCaret issue', this);
-      }
-    },
-
-    calculateHorizontalAlignment: function(elDimensions, popoverDimensions, alignment){
-      switch(alignment){
-        case POSITION.LEFT:
-          return elDimensions.left;
-        case POSITION.RIGHT:
-          return elDimensions.left + elDimensions.width - popoverDimensions.width;
-        case POSITION.CENTER:
-          return elDimensions.left + elDimensions.width/2 - popoverDimensions.width/2;
-        default:
-          return console.log('calculateHorizontalAlignment issue', this);
       }
     }
   }

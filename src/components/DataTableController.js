@@ -1,6 +1,6 @@
 import { TableDefaults, ColumnDefaults } from '../defaults';
 import { AdjustColumnWidths, ForceFillColumnWidths } from '../utils/math';
-import { ColumnsByPin, ColumnGroupWidths, CamelCase, ObjectId, ScrollbarWidth } from '../utils/utils';
+import { isOldAngular, ColumnsByPin, ColumnGroupWidths, CamelCase, ObjectId, ScrollbarWidth } from '../utils/utils';
 
 export class DataTableController {
   /**
@@ -16,9 +16,8 @@ export class DataTableController {
       $filter: $filter
     });
 
-    // if preAssignBindingsEnabled === true and no $onInit
-    if (angular.version.major === 1 && angular.version.minor < 5) {
-      this.init();
+    if (isOldAngular()) {
+      this.$onInit();
     }
   }
 
@@ -46,7 +45,7 @@ export class DataTableController {
     var watch = this.$scope.$watch('dt.rows', (newVal) => {
       if (newVal) {
         watch();
-        
+
         this.onSorted();
       }
     });

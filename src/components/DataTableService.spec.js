@@ -3,11 +3,12 @@ import { DataTableService } from './DataTableService';
 
 describe('DataTableService', function () {
 	beforeEach(() => {
-		angular.module('DataTables.Mock', []);
-		angular.mock.module('DataTables.Mock');
+		angular.mock.module('data-table.mocks');
+
 		angular.mock.module(($provide) => {
 			$provide.constant('DataTableService', DataTableService);
 		});
+
 		angular.mock.inject((DataTableService, $parse) => {
 			this.DataTableService = DataTableService;
 			this.$parse = $parse;

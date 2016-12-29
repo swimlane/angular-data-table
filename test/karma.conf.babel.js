@@ -18,25 +18,40 @@ const istanbul = require('browserify-istanbul'),
   },
 
   karmaBaseConfig = {
-    frameworks: ['angular', 'browserify', 'source-map-support', 'jasmine', 'sinon'],
-
-    angular: ['mocks'],
+    frameworks: ['browserify', 'jasmine'],
 
     basePath: './',
 
     files: [
       {
-        pattern: '../src/**/*.spec.js',
+        pattern: '../src/**/*!(.spec || .e2e).js',
+        included: false
+      },
+      'dataTable.mock.js',
+      {
+        pattern: '../node_modules/sinon/pkg/sinon.js',
         watched: false
-      }
+      },
+      {
+        pattern: '../node_modules/bardjs/dist/bard.js',
+        watched: false
+      },
+      {
+        pattern: '../node_modules/angular-mocks/angular-mocks.js',
+        watched: false
+      },
+      './karma.helper.js',
+      '../src/**/*.spec.js'
     ],
 
     preprocessors: {
-      '../src/**/*.js': ['browserify']
+      '../src/**/*!(.e2e).js': ['browserify'],
+      'dataTable.mock.js': ['browserify']
     },
 
     browserify: {
       debug: true,
+      prodSourcemap: true,
       extensions: ['.js'],
       transform: [
         istanbul({
@@ -46,7 +61,8 @@ const istanbul = require('browserify-istanbul'),
             '**/*.spec.js'
           ]
         }),
-        'babelify' // Note: uses .babelrc
+        'babelify', // Note: uses .babelrc
+        'brfs'
       ]
     },
 

@@ -3,11 +3,6 @@ import { DataTableController } from './DataTableController';
 describe('DataTableController', function () {
   let $controller = null;
 
-	beforeEach(() => {
-		angular.module('DataTables.Mock', []);
-    angular.mock.module('DataTables.Mock');
-	});
-
   beforeEach(
     inject((_$controller_) => {
       $controller = _$controller_;

@@ -25,11 +25,6 @@ script:
 - protractor test/protractor.conf.js
 - codecov
 
-script:
-- gulp unit
-- protractor test/protractor.conf.js
-- codecov
-
 addons:
   sauce_connect: true
   code_climate:

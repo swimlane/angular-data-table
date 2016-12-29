@@ -2,10 +2,9 @@
 
 [![Join the chat at https://gitter.im/Swimlane/angular-data-table](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/swimlane/angular-data-table?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![Build Status](https://travis-ci.org/jonshaffer/angular-data-table.svg?branch=master)](https://travis-ci.org/jonshaffer/angular-data-table)
-![npm-version](https://img.shields.io/npm/v/angular-data-table.svg)
-![Dependency Status](https://david-dm.org/jonshaffer/angular-data-table.svg)
-![devDependency Status](https://david-dm.org/jonshaffer/angular-data-table/dev-status.svg)
-![download-count](https://img.shields.io/npm/dm/angular-data-table.svg)
+[![GitHub version](https://badge.fury.io/gh/jonshaffer%2Fangular-data-table.svg)](https://badge.fury.io/gh/jonshaffer%2Fangular-data-table)
+[![dependencies Status](https://david-dm.org/jonshaffer/angular-data-table/status.svg)](https://david-dm.org/jonshaffer/angular-data-table)
+[![devDependencies Status](https://david-dm.org/jonshaffer/angular-data-table/dev-status.svg)](https://david-dm.org/jonshaffer/angular-data-table?type=dev)
 [![Code Climate](https://codeclimate.com/github/jonshaffer/angular-data-table/badges/gpa.svg)](https://codeclimate.com/github/jonshaffer/angular-data-table)
 [![Codecov](https://img.shields.io/codecov/c/github/jonshaffer/angular-data-table.svg)](https://codecov.io/gh/jonshaffer/angular-data-table)
 
