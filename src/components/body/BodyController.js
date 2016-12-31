@@ -5,11 +5,10 @@ export class BodyController{
   /**
    * A tale body controller
    * @param  {$scope}
-   * @param  {$timeout}
    * @return {BodyController}
    */
   /*@ngInject*/
-  constructor($scope, $timeout){
+  constructor($scope){
     this.$scope = $scope;
     this.tempRows = [];
     this.watchListeners = [];
