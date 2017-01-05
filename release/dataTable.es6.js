@@ -726,10 +726,10 @@ class DataTableController {
   /**
    * Creates and extends default options for the grid control
    */
-  defaults(){
+  defaults() {
     this.expanded = this.expanded || {};
 
-    this.options = angular.extend(angular.copy(TableDefaults), this.options);
+    this.options = Object.assign({}, TableDefaults, this.options);
 
     angular.forEach(TableDefaults.paging, (v,k) => {
       if(!this.options.paging[k]){

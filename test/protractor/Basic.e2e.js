@@ -1,5 +1,5 @@
-describe('DataTable: Basic Demo', function () {
-  browser.get('http://localhost:9000/demos/basic.html');
+describe('When Basic:', function () {
+  browser.get('/demos/basic.html');
 
   it('should display table body', () => {
     element.all(by.css('.dt-body')).then((items) => {

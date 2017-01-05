@@ -1,5 +1,5 @@
-describe('PagerDirective', function () {
-  browser.get('http://localhost:9000/demos/paging.html');
+describe('When Paging:', function () {
+  browser.get('/demos/paging.html');
 
   it('should have active class on first pager', () => {
     element.all(by.css('ul.pager li')).then(function(items) {

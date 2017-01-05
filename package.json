@@ -26,9 +26,10 @@
     }
   ],
   "scripts": {
-    "start": "node ./node_modules/gulp/bin/gulp.js watch serve",
+    "start": "node ./node_modules/gulp/bin/gulp.js serve watch",
     "release": "node ./node_modules/gulp/bin/gulp.js release",
     "test": "node ./node_modules/gulp/bin/gulp.js test",
+    "e2e": "protractor test/protractor.conf.js",
     "report-coverage": "codecov"
   },
   "peerDependencies": {
@@ -53,7 +54,9 @@
     "browser-sync": "^2.7.2",
     "browserify": "^13.1.1",
     "browserify-istanbul": "^2.0.0",
+    "codecov": "^1.0.1",
     "del": "^2.2.0",
+    "eslint-plugin-protractor": "^1.32.0",
     "gulp": "^3.8.11",
     "gulp-angular-protractor": "^0.3.0",
     "gulp-babel": "6.1.2",
