@@ -3,6 +3,8 @@ jspm_packages
 npm-debug.log
 dist
 .idea
+.vscode
+*.sublime*
 coverage
 
 # OS generated Files #
