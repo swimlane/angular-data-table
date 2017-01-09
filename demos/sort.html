@@ -42,6 +42,7 @@
   </head>
   <body ng-app="app" ng-controller="HomeController">
 
+    <label><input type="checkbox" ng-model="multiple" ng-change="updateSortType()" /> Multi column sorting</label>
 
     <dtable options="options" rows="data" class="material" on-sort="onColumnSort(sorts)"></dtable>
 
@@ -62,12 +63,18 @@
             })
           }
 
+          $scope.updateSortType = () => {
+              $scope.options.sortType = $scope.multiple === true ? 'multiple' : 'single';
+          }
+
+          $scope.multiple = true;
+
           $scope.options = {
             rowHeight: 50,
             headerHeight: 50,
             footerHeight: false,
             scrollbarV: false,
-            sortType: 'multiple', // available options: ['single', 'multiple']
+            sortType: 'multiple',
             // onSort: $scope.onColumnSort,
             columns: [{
                 name: "Name",

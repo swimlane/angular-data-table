@@ -1,5 +1,5 @@
-<!doctype html>
-<html lang="en">
+  <!doctype html>
+  <html lang="en">
   <head>
     <meta charset=" utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
@@ -53,10 +53,10 @@
 
     <script>
 
-      System.import('dataTable').then(function(dt){
+      System.import('dataTable').then(function(dt) {
         var module = angular.module('app', [ dt.default.name ]);
 
-        module.controller('HomeController', function($scope, $http){
+        module.controller('HomeController', function($scope, $http) {
           $scope.options = {
             rowHeight: 50,
             footerHeight: false,
@@ -75,20 +75,32 @@
             $scope.data = data;
           });
 
-          $scope.groupCountry = function(){
-            var col = $scope.options.columns.find(function(c){
+          $scope.groupCountry = function() {
+            _clearGroupColumns();
+
+            var col = $scope.options.columns.find(function(c) {
               return c.prop === 'country';
             });
 
             col.group = !col.group;
           };
 
-          $scope.groupYear = function(){
-            var col = $scope.options.columns.find(function(c){
+          $scope.groupYear = function() {
+            _clearGroupColumns();
+
+            var col = $scope.options.columns.find(function(c) {
               return c.prop === 'year';
             });
 
             col.group = !col.group;
+          };
+
+          function _clearGroupColumns() {
+            $scope.options.columns.map(function(column) {
+              if (column.group) {
+                delete column.group;
+              }
+            });
           };
 
         });
@@ -96,4 +108,4 @@
     </script>
 
   </body>
-</html>
+  </html>

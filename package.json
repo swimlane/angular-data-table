@@ -2,78 +2,101 @@
   "name": "angular-data-table",
   "title": "AngularJS Data-Table",
   "description": "A feature-rich but lightweight ES6 AngularJS Data Table crafted for large data sets!",
-  "version": "0.7.0",
+  "version": "0.7.3",
   "repository": {
     "type": "git",
     "url": "git@github.com:Swimlane/angular-data-table.git",
     "github": "http://github.com/swimlane/angular-data-table.git"
   },
   "main": "./release/dataTable.js",
+  "files": [
+    "release/"
+  ],
   "homepage": "http://swimlane.com/",
   "author": {
     "name": "Swimlane",
     "email": "austin@swimlane.com",
     "web": "http://swimlane.com/"
   },
+  "license": "MIT",
   "licenses": [
     {
       "type": "MIT",
       "url": "http://opensource.org/licenses/mit-license.php"
     }
   ],
+  "scripts": {
+    "start": "node ./node_modules/gulp/bin/gulp.js serve watch",
+    "release": "node ./node_modules/gulp/bin/gulp.js release",
+    "test": "node ./node_modules/gulp/bin/gulp.js test",
+    "e2e": "protractor test/protractor.conf.js",
+    "report-coverage": "codecov"
+  },
+  "peerDependencies": {
+    "angular": ">=1.4.x <2.0.0"
+  },
   "devDependencies": {
-    "angular": "^1.4.4",
-    "angular-mocks": "^1.4.3",
-    "babelify": "7.3.0",
+    "angular": "^1.5.0",
+    "angular-mocks": "^1.5.8",
     "babel-core": "^6.9.0",
-    "babel-eslint": "^6.0.2",
+    "babel-eslint": "^7.0.0",
     "babel-plugin-external-helpers": "^6.5.0",
     "babel-plugin-transform-es2015-modules-amd": "^6.8.0",
     "babel-plugin-transform-es2015-modules-commonjs": "^6.8.0",
     "babel-plugin-transform-es2015-modules-umd": "^6.8.0",
+    "babel-plugin-transform-object-assign": "^6.8.0",
     "babel-preset-es2015": "^6.9.0",
     "babel-preset-stage-0": "^6.5.0",
+    "babel-root-import": "^4.1.3",
+    "babelify": "7.3.0",
+    "bardjs": "^0.1.8",
+    "brfs": "^1.4.3",
     "browser-sync": "^2.7.2",
-    "chai-as-promised": "^5.3.0",
-    "del": "^1.2.0",
+    "browserify": "^13.1.1",
+    "browserify-istanbul": "^2.0.0",
+    "codecov": "^1.0.1",
+    "del": "^2.2.0",
+    "eslint-plugin-protractor": "^1.32.0",
     "gulp": "^3.8.11",
+    "gulp-angular-protractor": "^0.3.0",
     "gulp-babel": "6.1.2",
     "gulp-changed": "^1.2.1",
     "gulp-header": "^1.2.2",
     "gulp-less": "^3.0.3",
-    "gulp-ng-annotate": "^1.0.0",
+    "gulp-ng-annotate": "^2.0.0",
     "gulp-plumber": "^1.0.1",
+    "gulp-protractor": "^3.0.0",
     "gulp-rename": "^1.2.2",
     "gulp-replace": "^0.5.3",
-    "gulp-uglify": "^1.2.0",
+    "gulp-uglify": "^2.0.0",
+    "isparta": "^4.0.0",
+    "istanbul": "^0.4.5",
+    "jasmine-core": "^2.5.2",
     "jspm": "^0.16.1",
-    "karma": "^0.13.3",
+    "karma": "^1.3.0",
     "karma-angular": "0.0.6",
-    "karma-babel-preprocessor": "^5.2.1",
-    "karma-browserify": "^4.2.1",
-    "karma-chrome-launcher": "^0.2.0",
-    "karma-mocha": "^0.2.0",
-    "karma-mocha-reporter": "^1.0.3",
-    "karma-phantomjs-launcher": "^0.2.0",
-    "karma-phantomjs-shim": "^1.0.0",
-    "karma-sinon-chai": "^1.0.0",
-    "mocha": "^2.2.1",
-    "phantomjs": "^1.9.17",
-    "rollup": "^0.7.8",
+    "karma-babel-preprocessor": "^6.0.1",
+    "karma-browserify": "^5.1.0",
+    "karma-coverage": "^1.1.1",
+    "karma-jasmine": "^1.0.2",
+    "karma-phantomjs-launcher": "^1.0.2",
+    "karma-sauce-launcher": "^1.1.0",
+    "karma-sinon": "^1.0.5",
+    "phantomjs-prebuilt": "^2.1.7",
+    "rollup": "^0.38.0",
     "run-sequence": "^1.1.0",
-    "sinon": "^1.15.4",
-    "sinon-chai": "^2.7.0",
-    "systemjs-builder": "^0.11.3",
-    "vinyl-paths": "^1.0.0"
+    "sinon": "^1.17.6",
+    "vinyl-paths": "^2.1.0",
+    "watchify": "^3.7.0"
   },
   "jspm": {
     "dependencies": {
-      "angular": "npm:angular@^1.4.0"
+      "angular": "npm:angular@^1.5.8"
     },
     "devDependencies": {
-      "babel": "npm:babel-core@^5.8.22",
-      "babel-runtime": "npm:babel-runtime@^5.6.4",
-      "core-js": "npm:core-js@^1.1.1"
+      "babel": "npm:babel-core@^6.9.0",
+      "babel-runtime": "npm:babel-runtime@^6.11.6",
+      "core-js": "npm:core-js@^2.4.0"
     }
   },
   "babel": {

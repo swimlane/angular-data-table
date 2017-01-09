@@ -1,4 +1,3 @@
-import angular from 'angular';
 import { ColumnDefaults } from '../defaults';
 import { CamelCase } from '../utils/utils';
 
@@ -60,7 +59,8 @@ export let DataTableService = {
         });
 
         let header = c.getElementsByTagName('column-header');
-        if(header.length){
+
+        if (header.length) {
           column.headerTemplate = header[0].innerHTML;
           c.removeChild(header[0])
         }
@@ -69,8 +69,9 @@ export let DataTableService = {
           column.template = c.innerHTML;
         }
 
-        if (visible)
+        if (visible) {
           this.columns[id].push(column);
+        }
       });
     });
 

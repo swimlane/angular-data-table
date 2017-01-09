@@ -1,6 +1,6 @@
 import { FooterController } from './FooterController';
 
-export function FooterDirective(){
+export default function FooterDirective(){
   return {
     restrict: 'E',
     controller: FooterController,

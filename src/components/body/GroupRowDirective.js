@@ -1,7 +1,7 @@
 import { GroupRowController } from './GroupRowController';
 import { TranslateXY } from '../../utils/translate';
 
-export function GroupRowDirective(){
+export default function GroupRowDirective(){
   return {
     restrict: 'E',
     controller: GroupRowController,

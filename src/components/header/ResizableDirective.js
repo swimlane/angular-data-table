@@ -5,7 +5,7 @@
  * @param {function}
  * @param {function}
  */
-export function ResizableDirective($document, $timeout){
+export default function ResizableDirective($document, $timeout){
   return {
     restrict: 'A',
     scope:{
@@ -19,7 +19,7 @@ export function ResizableDirective($document, $timeout){
         $element.addClass('resizable');
       }
 
-      var handle = angular.element(`<span class="dt-resize-handle" title="Resize"></span>`),
+      var handle = angular.element('<span class="dt-resize-handle" title="Resize"></span>'),
           parent = $element.parent(),
           prevScreenX;
 

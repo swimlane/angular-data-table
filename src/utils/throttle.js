@@ -1,5 +1,3 @@
-import angular from 'angular';
-
 /**
  * Debounce helper
  * @param  {function}

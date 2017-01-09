@@ -52,8 +52,8 @@ export function ColumnsByPin(cols){
 
 /**
  * Returns the widths of all group sets of a column
- * @param {object} groups 
- * @param {array} all 
+ * @param {object} groups
+ * @param {array} all
  */
 export function ColumnGroupWidths(groups, all){
   return {
@@ -66,8 +66,8 @@ export function ColumnGroupWidths(groups, all){
 
 /**
  * Returns a deep object given a string. zoo['animal.type']
- * @param {object} obj  
- * @param {string} path 
+ * @param {object} obj
+ * @param {string} path
  */
 export function DeepValueGetter(obj, path) {
   if(!obj || !path) return obj;
@@ -77,22 +77,22 @@ export function DeepValueGetter(obj, path) {
 
   if(split.length){
     for(var i=0, len=split.length; i < len; i++) {
-      current = current[split[i]]; 
+      current = current[split[i]];
     }
   }
-  
+
   return current;
 };
 
 /**
  * Converts strings from something to camel case
  * http://stackoverflow.com/questions/10425287/convert-dash-separated-string-to-camelcase
- * @param  {string} str 
+ * @param  {string} str
  * @return {string} camel case string
  */
 export function CamelCase(str) {
   // Replace special characters with a space
-  str = str.replace(/[^a-zA-Z0-9 ]/g, " ");
+  str = str.replace(/[^a-zA-Z0-9 ]/g, ' ');
   // put a space before an uppercase letter
   str = str.replace(/([a-z](?=[A-Z]))/g, '$1 ');
   // Lower case first character and some other stuff
@@ -111,17 +111,17 @@ export function CamelCase(str) {
  * @return {int} width
  */
 export function ScrollbarWidth() {
-  var outer = document.createElement("div");
-  outer.style.visibility = "hidden";
-  outer.style.width = "100px";
-  outer.style.msOverflowStyle = "scrollbar";
+  var outer = document.createElement('div');
+  outer.style.visibility = 'hidden';
+  outer.style.width = '100px';
+  outer.style.msOverflowStyle = 'scrollbar';
   document.body.appendChild(outer);
 
   var widthNoScroll = outer.offsetWidth;
-  outer.style.overflow = "scroll";
+  outer.style.overflow = 'scroll';
 
-  var inner = document.createElement("div");
-  inner.style.width = "100%";
+  var inner = document.createElement('div');
+  inner.style.width = '100%';
   outer.appendChild(inner);
 
   var widthWithScroll = inner.offsetWidth;
@@ -147,3 +147,8 @@ export function NextSortDirection(sortType, currentSort) {
     }
   }
 };
+
+// Old angular versions being where preAssignBindingsEnabled === true and no $onInit
+export function isOldAngular() {
+  return angular.version.major === 1 && angular.version.minor < 5;
+}

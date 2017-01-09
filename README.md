@@ -1,18 +1,20 @@
-# angular-data-table 
+# angular-data-table
 
 [![Join the chat at https://gitter.im/Swimlane/angular-data-table](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/swimlane/angular-data-table?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
-![npm-version](https://img.shields.io/npm/v/angular-data-table.svg)
-![Dependency Status](https://david-dm.org/swimlane/angular-data-table.svg)
-![devDependency Status](https://david-dm.org/swimlane/angular-data-table/dev-status.svg)
-![download-count](https://img.shields.io/npm/dm/angular-data-table.svg)
+[![Build Status](https://travis-ci.org/jonshaffer/angular-data-table.svg?branch=master)](https://travis-ci.org/jonshaffer/angular-data-table)
+[![GitHub version](https://badge.fury.io/gh/jonshaffer%2Fangular-data-table.svg)](https://badge.fury.io/gh/jonshaffer%2Fangular-data-table)
+[![dependencies Status](https://david-dm.org/jonshaffer/angular-data-table/status.svg)](https://david-dm.org/jonshaffer/angular-data-table)
+[![devDependencies Status](https://david-dm.org/jonshaffer/angular-data-table/dev-status.svg)](https://david-dm.org/jonshaffer/angular-data-table?type=dev)
+[![Code Climate](https://codeclimate.com/github/jonshaffer/angular-data-table/badges/gpa.svg)](https://codeclimate.com/github/jonshaffer/angular-data-table)
+[![Codecov](https://img.shields.io/codecov/c/github/jonshaffer/angular-data-table.svg)](https://codecov.io/gh/jonshaffer/angular-data-table)
 
 `angular-data-table` is a AngularJS directive for presenting large and complex data.  It has all the features you would expect from any other table but in a light package with _no external depedencies_. The table was designed to be extremely flexible and light; it doesn't make any assumptions about your data or how you: filter, sort or page it.
 
-It was engineered from its conception to handle thousands of rows without sacrificing performance.  It was built for modern browsers using _ES6, CSS3 and HTML5_ and **only supports [Evergreen Browsers](http://eisenbergeffect.bluespire.com/evergreen-browsers/) and Angular >= 1.4.x and < 1.6.0**.
+It was engineered from its conception to handle thousands of rows without sacrificing performance.  It was built for modern browsers using _ES6, CSS3 and HTML5_ and **only supports [Evergreen Browsers](http://eisenbergeffect.bluespire.com/evergreen-browsers/) and Angular >= 1.4.x and < 2.0.0**.
 
-Sadly, this project is **not Angular2 upgrade compatible**. Fortunately, we have authored [angular2-data-table](https://github.com/swimlane/angular2-data-table) which is the successor to this project. **We are going to slowly be transitioning this project maintenance mode**. We will continue to provide feedback to the community and accept PRs but we won't be doing any major new development.
+Sadly, this project is **not Angular2 upgrade compatible**. Swimlane has authored an Angular 2 compatible table here: [angular2-data-table](https://github.com/swimlane/angular2-data-table) which is the successor to this project. ~~**We are going to slowly be transitioning this project maintenance mode**. We will continue to provide feedback to the community and accept PRs but we won't be doing any major new development.~~ Major new development is happening on this fork and there will be breaking changes, appropriately noted with [semvar](http://semver.org/) versioning.
 
-See live demos [here]( http://swimlane.github.io/angular-data-table/).
+See live demos [here]( http://jonshaffer.github.io/angular-data-table/).
 
 ## Features
 
@@ -26,22 +28,21 @@ See live demos [here]( http://swimlane.github.io/angular-data-table/).
 - Tree Grids
 - Row Grouping
 - Checkbox and Row Selection ( multi / single / keyboard / touch )
-- Light codebase / No external deps
+- Light codebase / No external dependencies
 - Client-side AND Server Pagination / Sorting
 - Rich header / column templates
 - Fixed AND Fluid height
-- Decoupled themeing with included Google Material theme
+- Decoupled theming with included Google Material theme
 - Decoupled Cell tooltips on overflow
 - Decoupled Column Add/Removing Menu
 - Expressive Syntax
 
 ## Using It
 
-#### Download
+#### Download This Fork
 
-- NPM `npm install angular-data-table`
-- JSPM `jspm install github:swimlane/angular-data-table`
-- BOWER `bower install angular-data-table`
+- NPM `npm install jonshaffer/angular-data-table`
+- JSPM `jspm install github:jonshaffer/angular-data-table`
 
 or Github download or clone of course!
 
@@ -49,13 +50,13 @@ or Github download or clone of course!
 
 #### Include
 
-You've got 5 different options to include this in your build depending on your setup.
+You've got 4 different options to include this in your build depending on your setup.
 
 - `./release/dataTable.js` - A standalone file that was compiled with Babel (UMD)
 - `./release/dataTable.min.js` - A minified standalone file that was compiled with Babel (UMD)
 - `./release/dataTable.cjs.js` - A standalone file that was compiled with Babel (CommonJS)
 - `./release/dataTable.es6.js` - Raw ES6 Version.
- 
+
 All distributions include babel helpers, so they do not have to be included separately.
 
 There is also the CSS too:
@@ -98,7 +99,7 @@ then using expressive markup in your template:
     </dtable>
 ```
 
-and your off to the races! See live demos [here](http://swimlane.github.io/angular-data-table/).
+and your off to the races! See live demos [here](http://jonshaffer.github.io/angular-data-table/).
 
 ## API
 
@@ -146,6 +147,7 @@ The data table can be created with the following `options`:
 - `rowHeight`: Row height in pixels, necessary if using lazy rendering (default: `30`)
 - `scrollbarV`: Enable vertical scrollbars (default: `true`)
 - `selectable`: Whether users can select items (default: `false`)
+- `sortType`: Whether to allow sorting by multiple columns or only 1 (`multiple` or `single`) (default: `multiple`)
 
 ## Contributing
 

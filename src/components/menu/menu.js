@@ -1,4 +1,3 @@
-import angular from 'angular';
 import { MenuController } from './MenuController';
 import { MenuDirective } from './MenuDirective';
 import dropdown from './dropdown/dropdown';

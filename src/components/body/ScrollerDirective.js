@@ -2,13 +2,13 @@ import { requestAnimFrame } from '../../utils/utils';
 import { StyleTranslator } from './StyleTranslator';
 import { TranslateXY } from '../../utils/translate';
 
-export function ScrollerDirective($timeout, $rootScope){
+export default function ScrollerDirective($timeout, $rootScope){
   return {
     restrict: 'E',
     require:'^dtBody',
     transclude: true,
     replace: true,
-    template: `<div ng-style="scrollerStyles()" ng-transclude></div>`,
+    template: '<div ng-style="scrollerStyles()" ng-transclude></div>',
     link: function($scope, $elm, $attrs, ctrl){
       var ticking = false,
           lastScrollY = 0,

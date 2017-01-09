@@ -1,10 +1,9 @@
-import angular from 'angular';
 import { DataTableController } from './DataTableController';
 import { ScrollbarWidth, ObjectId } from '../utils/utils';
 import { throttle } from '../utils/throttle';
 import { DataTableService } from './DataTableService';
 
-export function DataTableDirective($window, $timeout, $parse){
+export default function DataTableDirective($window, $timeout, $parse){
   return {
     restrict: 'E',
     replace: true,
@@ -33,12 +32,12 @@ export function DataTableDirective($window, $timeout, $parse){
 
       return `<div class="dt" ng-class="dt.tableCss()" data-column-id="${id}">
           <dt-header options="dt.options"
-                     on-checkbox-change="dt.onHeaderCheckboxChange()"
                      columns="dt.columnsByPin"
                      column-widths="dt.columnWidths"
                      ng-if="dt.options.headerHeight"
                      on-resize="dt.onResized(column, width)"
-                     selected="dt.isAllRowsSelected()"
+                     selected-rows="dt.selected"
+                     all-rows="dt.rows"
                      on-sort="dt.onSorted()">
           </dt-header>
           <dt-body rows="dt.rows"
@@ -102,10 +101,13 @@ export function DataTableDirective($window, $timeout, $parse){
             ctrl.adjustColumns();
           };
 
-          $window.addEventListener('resize',
+          function _calculateResize() {
             throttle(() => {
               $timeout(resize);
-            }));
+            });
+          }
+
+          $window.addEventListener('resize', _calculateResize);
 
           // When an item is hidden for example
           // in a tab with display none, the height

@@ -1,29 +1,37 @@
-import angular from 'angular';
 import { TableDefaults, ColumnDefaults } from '../defaults';
 import { AdjustColumnWidths, ForceFillColumnWidths } from '../utils/math';
-import { ColumnsByPin, ColumnGroupWidths, CamelCase, ObjectId, ScrollbarWidth } from '../utils/utils';
+import { isOldAngular, ColumnsByPin, ColumnGroupWidths, CamelCase, ObjectId, ScrollbarWidth } from '../utils/utils';
 
 export class DataTableController {
-
   /**
    * Creates an instance of the DataTable Controller
    * @param  {scope}
    * @param  {filter}
    */
-  /*@ngInject*/
-  constructor($scope, $filter, $log, $transclude){
+
+  /* @ngInject */
+  constructor($scope, $filter) {
     Object.assign(this, {
       $scope: $scope,
-      $filter: $filter,
-      $log: $log
+      $filter: $filter
     });
 
+    if (isOldAngular()) {
+      this.$onInit();
+    }
+  }
+
+  $onInit() {
+    this.init();
+  }
+
+  init() {
     this.defaults();
 
     // set scope to the parent
-    this.options.$outer = $scope.$parent;
+    this.options.$outer = this.$scope.$parent;
 
-    $scope.$watch('dt.options.columns', (newVal, oldVal) => {
+    this.$scope.$watch('dt.options.columns', (newVal, oldVal) => {
       this.transposeColumnDefaults();
 
       if(newVal.length !== oldVal.length){
@@ -34,9 +42,10 @@ export class DataTableController {
     }, true);
 
     // default sort
-    var watch = $scope.$watch('dt.rows', (newVal) => {
-      if(newVal){
+    var watch = this.$scope.$watch('dt.rows', (newVal) => {
+      if (newVal) {
         watch();
+
         this.onSorted();
       }
     });
@@ -45,11 +54,10 @@ export class DataTableController {
   /**
    * Creates and extends default options for the grid control
    */
-  defaults(){
+  defaults() {
     this.expanded = this.expanded || {};
 
-    this.options = angular.extend(angular.
-      copy(TableDefaults), this.options);
+    this.options = Object.assign({}, TableDefaults, this.options);
 
     angular.forEach(TableDefaults.paging, (v,k) => {
       if(!this.options.paging[k]){
@@ -59,6 +67,14 @@ export class DataTableController {
 
     if(this.options.selectable && this.options.multiSelect){
       this.selected = this.selected || [];
+
+      this.$scope.$watch('dt.selected', (newVal, oldVal) => {
+        angular.forEach(this.options.columns, (column) => {
+          if (column.headerCheckbox && angular.isFunction(column.headerCheckboxCallback)) {
+            column.headerCheckboxCallback(this);
+          }
+        });
+      }, true);
     }
   }
 
@@ -228,18 +244,18 @@ export class DataTableController {
     this.options.internal.setYOffset(offsetY);
   }
 
-  /**
-   * Invoked when the header checkbox directive has changed.
-   */
-  onHeaderCheckboxChange(){
-    if(this.rows){
-      var matches = this.selected.length === this.rows.length;
-      this.selected.splice(0, this.selected.length);
+  selectAllRows(){
+    this.selected.splice(0, this.selected.length);
 
-      if(!matches){
-        this.selected.push(...this.rows);
-      }
-    }
+    this.selected.push(...this.rows);
+
+    return this.isAllRowsSelected();
+  }
+
+  deselectAllRows(){
+    this.selected.splice(0, this.selected.length);
+
+    return this.isAllRowsSelected();
   }
 
   /**
@@ -247,8 +263,7 @@ export class DataTableController {
    * @return {Boolean} if all selected
    */
   isAllRowsSelected(){
-    if(this.rows) return false;
-    return this.selected.length === this.rows.length;
+    return (!this.rows || !this.selected) ? false : this.selected.length === this.rows.length;
   }
 
   /**
@@ -304,5 +319,4 @@ export class DataTableController {
       row: row
     });
   }
-
 }

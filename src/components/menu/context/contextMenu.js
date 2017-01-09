@@ -1,4 +1,3 @@
-import angular from 'angular';
 import dropdown from '../dropdown/dropdown';
 
 export default angular

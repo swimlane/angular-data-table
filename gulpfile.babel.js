@@ -1,21 +1,23 @@
-var nPath = require('path');
-var gulp = require('gulp');
-var plumber = require('gulp-plumber');
-var babel = require('gulp-babel');
-var browserSync = require('browser-sync');
-var runSequence = require('run-sequence');
-var less = require('gulp-less');
-var changed = require('gulp-changed');
-var Builder = require('systemjs-builder');
-var vinylPaths = require('vinyl-paths');
-var del = require('del');
-var ngAnnotate = require('gulp-ng-annotate');
-var rollup = require('rollup');
-var rename = require('gulp-rename');
-var uglify = require('gulp-uglify');
-var header = require('gulp-header');
+var nPath = require('path'),
+  gulp = require('gulp'),
+  plumber = require('gulp-plumber'),
+  babel = require('gulp-babel'),
+  browserSync = require('browser-sync'),
+  runSequence = require('run-sequence'),
+  less = require('gulp-less'),
+  changed = require('gulp-changed'),
+  vinylPaths = require('vinyl-paths'),
+  del = require('del'),
+  ngAnnotate = require('gulp-ng-annotate'),
+  rollup = require('rollup'),
+  rename = require('gulp-rename'),
+  uglify = require('gulp-uglify'),
+  header = require('gulp-header'),
+  gutils = require('gulp-util');
 
 var KarmaServer = require('karma').Server;
+
+import protractorAngular from 'gulp-angular-protractor';
 
 var path = {
   source: 'src/**/*.js',
@@ -44,7 +46,7 @@ gulp.task('es6', function () {
     .pipe(changed(path.output, { extension: '.js' }))
     .pipe(babel())
     .pipe(ngAnnotate({
-      gulpWarnings: false
+      gulpWarnings: true
     }))
     .pipe(gulp.dest(path.output))
     .pipe(browserSync.reload({ stream: true }));
@@ -68,13 +70,13 @@ gulp.task('compile', function (callback) {
   return runSequence(
     ['less', 'es6'],
     callback
-    );
+  );
 });
 
 //
 // Dev Mode Tasks
 // ------------------------------------------------------------
-gulp.task('serve', ['compile'], function (done) {
+gulp.task('serve', ['compile'], function (callback) {
   browserSync({
     open: false,
     port: 9000,
@@ -85,7 +87,7 @@ gulp.task('serve', ['compile'], function (done) {
         next();
       }
     }
-  }, done);
+  }, callback);
 });
 
 gulp.task('watch', ['serve'], function () {
@@ -123,50 +125,31 @@ gulp.task('release-build', function () {
   }).then(function (bundle) {
     return bundle.write({
       dest: 'release/dataTable.es6.js',
-      format: 'es6',
+      format: 'es',
       moduleName: 'DataTable'
     });
   });
 });
 
-gulp.task('release-umd', function () {
-  return gulp.src('release/dataTable.es6.js')
-    .pipe(babel({
-      plugins: [
-        "transform-es2015-modules-umd"
-      ],
-      moduleId: 'DataTable'
-    }))
-    .pipe(ngAnnotate({
-      gulpWarnings: false
-    }))
-    .pipe(header(banner, { pkg: pkg }))
-    .pipe(rename('dataTable.js'))
-    .pipe(gulp.dest("release/"))
-});
+const RELEASE = {
+  UMD: {
+    EXTENSION: '',
+    PLUGINS: ['transform-es2015-modules-umd']
+  },
+  COMMON: {
+    EXTENSION: '.cjs',
+    PLUGINS: ['transform-es2015-modules-commonjs']
+  },
+  MIN: {
+    EXTENSION: '.min',
+    PLUGINS: ['transform-es2015-modules-umd']
+  }
+};
 
-gulp.task('release-common', function () {
+function _releaser(RELEASE) {
   return gulp.src('release/dataTable.es6.js')
     .pipe(babel({
-      plugins: [
-        "transform-es2015-modules-commonjs"
-      ],
-      moduleId: 'DataTable'
-    }))
-    .pipe(ngAnnotate({
-      gulpWarnings: false
-    }))
-    .pipe(header(banner, { pkg: pkg }))
-    .pipe(rename('dataTable.cjs.js'))
-    .pipe(gulp.dest("release/"))
-});
-
-gulp.task('release-es6-min', function () {
-  return gulp.src('release/dataTable.es6.js')
-    .pipe(babel({
-      plugins: [
-        "transform-es2015-modules-umd"
-      ],
+      plugins: RELEASE.PLUGINS,
       moduleId: 'DataTable'
     }))
     .pipe(ngAnnotate({
@@ -174,33 +157,61 @@ gulp.task('release-es6-min', function () {
     }))
     .pipe(uglify())
     .pipe(header(banner, { pkg: pkg }))
-    .pipe(rename('dataTable.min.js'))
-    .pipe(gulp.dest("release/"))
+    .pipe(rename(`dataTable${RELEASE.EXTENSION}.js`))
+    .pipe(gulp.dest('release/'))
+}
+
+gulp.task('release-umd', function () {
+  return _releaser(RELEASE.UMD)
 });
 
+gulp.task('release-common', function () {
+  return _releaser(RELEASE.COMMON)
+});
+
+gulp.task('release-es6-min', function () {
+  return _releaser(RELEASE.MIN)
+});
 
 //
 // Test Tasks
 // ------------------------------------------------------------
+function _startKarma(callback, singleRun) {
+  new KarmaServer({
+    configFile: nPath.join(__dirname, 'test/karma.conf.js'),
+    singleRun
+  }, (errors) => {
+       if (errors === 0) {
+           callback();
+       } else {
+           callback(new gutils.PluginError('karma', {
+               message: 'Unit test(s) failed.'
+           }));
+       }
+   }).start();
+}
 
-gulp.task('test', ['compile'], function (done) {
-  var server = new KarmaServer({
-    configFile: nPath.join(__dirname, 'karma.conf.js'),
-    singleRun: true
-  }, function () {
-    done();
-  });
-
-  server.start();
+gulp.task('unit', function (callback) {
+  _startKarma(callback, true);
 });
 
-gulp.task('test-watch', ['compile'], function (done) {
-  var server = new KarmaServer({
-    configFile: nPath.join(__dirname, 'karma.conf.js'),
-    singleRun: false
-  }, function () {
-    done();
-  });
-
-  server.start();
+gulp.task('unit:watch', function (callback) {
+  _startKarma(callback, false);
 });
+
+gulp.task('e2e', ['serve'], function (callback) {
+  gulp.src(['src/**/*e2e.js'])
+    .pipe(protractorAngular({
+      configFile: 'test/protractor.conf.js',
+      debug: true,
+      autoStartStopServer: true
+    }))
+    .on('error', (e) => {
+      callback(new gutils.PluginError('protractor', {
+        message: e
+      }));
+    })
+    .on('end', callback);
+});
+
+gulp.task('test', ['unit', 'e2e']);
