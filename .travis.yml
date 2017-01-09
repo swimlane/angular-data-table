@@ -18,7 +18,8 @@ before_script:
 after_success:
 - bash <(curl -s https://codecov.io/bash)
 - test $TRAVIS_TEST_RESULT = 0
-- gulp release
+- codeclimate-test-reporter < "/home/travis/build/jonshaffer/angular-data-table/test/coverage/Chrome 35.0.1916 (Windows 7 0.0.0)/lcov.info"
+- codecov
 
 script:
 - gulp unit
