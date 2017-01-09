@@ -18,14 +18,12 @@ before_script:
 after_success:
 - bash <(curl -s https://codecov.io/bash)
 - test $TRAVIS_TEST_RESULT = 0
-- gulp release
 
 script:
 - gulp unit
 - protractor test/protractor.conf.js
 - codecov
+- gulp release
 
 addons:
   sauce_connect: true
-  code_climate:
-    repo_token: bd801fb754e0ee913b633a62bc97fa629afdd99d274fdc7ce9f048dee1b328f2
