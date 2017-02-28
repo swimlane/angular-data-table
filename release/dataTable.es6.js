@@ -1765,7 +1765,7 @@ function HeaderCellDirective($compile){
             let elm = angular.element(`<span>${ctrl.column.headerTemplate.trim()}</span>`);
             angular.element(label).append($compile(elm)(cellScope));
           } else if(ctrl.column.headerRenderer){
-            let elm = angular.element(ctrl.column.headerRenderer($elm));
+            let elm = angular.element(ctrl.column.headerRenderer(cellScope, $elm));
             angular.element(label).append($compile(elm)(cellScope)[0]);
           } else {
             let val = ctrl.column.name;
