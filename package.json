@@ -25,7 +25,7 @@
     "start": "npm install && jspm install && gulp watch",
     "test": "npm install && jspm install && gulp test",
     "preversion": "npm test && gulp release",
-    "postversion": "git push && git push --tags"
+    "postversion": "git add release && git commit -m 'Release' && git push && git push --tags"
   },
   "devDependencies": {
     "angular": "^1.4.4",
