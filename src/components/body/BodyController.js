@@ -1,4 +1,5 @@
 import angular from 'angular';
+import { DeepValueGetter } from '../../utils/utils';
 
 export class BodyController{
 
@@ -204,7 +205,7 @@ export class BodyController{
     for(var i = 0, len = this.rows.length; i < len; i++) {
       var row = this.rows[i];
       // build groups
-      var relVal = row[parentProp];
+      var relVal = DeepValueGetter(row, parentProp);
       if(relVal){
         if(this.rowsByGroup[relVal]){
           this.rowsByGroup[relVal].push(row);

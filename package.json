@@ -21,6 +21,9 @@
       "url": "http://opensource.org/licenses/mit-license.php"
     }
   ],
+  "scripts": {
+    "start": "npm install && jspm install && gulp watch"
+  },
   "devDependencies": {
     "angular": "^1.4.4",
     "angular-mocks": "^1.4.3",
