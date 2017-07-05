@@ -22,12 +22,14 @@
     }
   ],
   "scripts": {
-    "start": "npm install && jspm install && gulp watch"
+    "start": "npm install && jspm install && gulp watch",
+    "test": "npm install && jspm install && gulp test",
+    "preversion": "npm test && gulp release",
+    "postversion": "git push && git push --tags"
   },
   "devDependencies": {
     "angular": "^1.4.4",
     "angular-mocks": "^1.4.3",
-    "babelify": "7.3.0",
     "babel-core": "^6.9.0",
     "babel-eslint": "^6.0.2",
     "babel-plugin-external-helpers": "^6.5.0",
@@ -36,7 +38,9 @@
     "babel-plugin-transform-es2015-modules-umd": "^6.8.0",
     "babel-preset-es2015": "^6.9.0",
     "babel-preset-stage-0": "^6.5.0",
+    "babelify": "7.3.0",
     "browser-sync": "^2.7.2",
+    "chai": "^4.0.2",
     "chai-as-promised": "^5.3.0",
     "del": "^1.2.0",
     "gulp": "^3.8.11",
