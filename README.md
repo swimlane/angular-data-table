@@ -10,7 +10,7 @@
 
 It was engineered from its conception to handle thousands of rows without sacrificing performance.  It was built for modern browsers using _ES6, CSS3 and HTML5_ and **only supports [Evergreen Browsers](http://eisenbergeffect.bluespire.com/evergreen-browsers/) and Angular >= 1.4.x and < 1.6.0**.
 
-Sadly, this project is **not Angular2 upgrade compatible**. Fortunately, we have authored [angular2-data-table](https://github.com/swimlane/angular2-data-table) which is the successor to this project. **We are going to slowly be transitioning this project maintenance mode**. We will continue to provide feedback to the community and accept PRs but we won't be doing any major new development.
+Sadly, this project is **not Angular2 upgrade compatible**. Fortunately, we have authored [ngx-datatable](https://github.com/swimlane/ngx-datatable) which is the successor to this project. **We are going to slowly be transitioning this project maintenance mode**. We will continue to provide feedback to the community and accept PRs but we won't be doing any major new development.
 
 See live demos [here]( http://swimlane.github.io/angular-data-table/).
 
