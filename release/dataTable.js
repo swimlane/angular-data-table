@@ -998,7 +998,7 @@
     }, {
       key: "calculateDepth",
       value: function calculateDepth(row) {
-        var depth = arguments.length <= 1 || arguments[1] === undefined ? 0 : arguments[1];
+        var depth = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
 
         var parentProp = this.treeColumn ? this.treeColumn.relationProp : this.groupColumn.prop;
         var prop = this.treeColumn.prop;
@@ -1449,7 +1449,7 @@
               var elm = angular.element("<span>" + ctrl.column.headerTemplate.trim() + "</span>");
               angular.element(label).append($compile(elm)(cellScope));
             } else if (ctrl.column.headerRenderer) {
-              var _elm = angular.element(ctrl.column.headerRenderer($elm));
+              var _elm = angular.element(ctrl.column.headerRenderer(cellScope, $elm));
               angular.element(label).append($compile(_elm)(cellScope)[0]);
             } else {
               var val = ctrl.column.name;
