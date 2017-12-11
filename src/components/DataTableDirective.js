@@ -102,10 +102,11 @@ export function DataTableDirective($window, $timeout, $parse){
             ctrl.adjustColumns();
           };
 
-          $window.addEventListener('resize',
-            throttle(() => {
-              $timeout(resize);
-            }));
+          var throttledResize = throttle(() => {
+            $timeout(resize);
+          });
+
+          angular.element($window).on('resize', throttledResize);
 
           // When an item is hidden for example
           // in a tab with display none, the height
@@ -124,7 +125,7 @@ export function DataTableDirective($window, $timeout, $parse){
 
           // prevent memory leaks
           $scope.$on('$destroy', () => {
-            angular.element($window).off('resize');
+            angular.element($window).off('resize', throttledResize);
           });
         }
       };
