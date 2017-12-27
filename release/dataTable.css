@@ -4,6 +4,151 @@
   justify-content: center;
   position: relative;
 }
+.dt .popover {
+  position: absolute;
+  background: #fff;
+  color: #999;
+  z-index: 5000;
+  opacity: 0;
+  display: block;
+  max-width: 250px;
+  max-height: 300px;
+  overflow-y: auto;
+  -webkit-box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.12), 0 1px 2px 0 rgba(0, 0, 0, 0.24);
+  -moz-box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.12), 0 1px 2px 0 rgba(0, 0, 0, 0.24);
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.12), 0 1px 2px 0 rgba(0, 0, 0, 0.24);
+}
+.dt .popover h1,
+.dt .popover h2,
+.dt .popover h3,
+.dt .popover h4,
+.dt .popover h5,
+.dt .popover h6 {
+  color: #272e33 !important;
+}
+.dt .popover .popover-caret {
+  position: absolute;
+  z-index: 5001;
+  min-width: 6px;
+  height: 11px;
+}
+.dt .popover .popover-caret.caret-left {
+  -webkit-transform: rotate(180deg);
+  -moz-transform: rotate(180deg);
+  -ms-transform: rotate(180deg);
+  -o-transform: rotate(180deg);
+  transform: rotate(180deg);
+}
+.dt .popover .popover-caret.caret-top {
+  -webkit-transform: rotate(-90deg);
+  -moz-transform: rotate(-90deg);
+  -ms-transform: rotate(-90deg);
+  -o-transform: rotate(-90deg);
+  transform: rotate(-90deg);
+}
+.dt .popover .popover-caret.caret-bottom {
+  -webkit-transform: rotate(90deg);
+  -moz-transform: rotate(90deg);
+  -ms-transform: rotate(90deg);
+  -o-transform: rotate(90deg);
+  transform: rotate(90deg);
+}
+.dt .popover header {
+  padding: 15px 20px;
+}
+.dt .popover header h1 {
+  font-size: 16px;
+  font-weight: 600;
+  margin: 0;
+}
+.dt .popover header a,
+.dt .popover header a:hover,
+.dt .popover header a:focus {
+  color: #5ea1df;
+}
+.dt .popover p {
+  color: #999 !important;
+}
+.dt .popover .list {
+  list-style-type: none;
+  margin: 0px;
+  padding: 0px;
+}
+.dt .popover .list .main-text {
+  display: block;
+  color: #73777b;
+}
+.dt .popover .list .sub-text {
+  color: #afafaf;
+  font-size: 12px;
+}
+.dt .popover .list li {
+  border-top: 1px solid #f1f1f1;
+  margin: 0;
+  background: #fff;
+}
+.dt .popover .list li .list-link {
+  padding: 10px 20px;
+  display: block;
+  cursor: pointer;
+}
+.dt .popover .list li:hover {
+  background: #eff5fc;
+}
+.dt .popover .list .inactive,
+.dt .popover .list .inactive:hover {
+  padding: 10px 20px;
+  background: none;
+}
+.dt .popover-text {
+  padding: 10px;
+  color: #000;
+  font-weight: 600;
+  font-size: 12px;
+}
+.dt .popover-right {
+  -webkit-transform: translate3d(10px, 0, 0);
+  transform: translate3d(10, 0, 0);
+}
+.dt .popover-left {
+  -webkit-transform: translate3d(-10px, 0, 0);
+  transform: translate3d(-10px, 0, 0);
+}
+.dt .popover-top {
+  -webkit-transform: translate3d(0, -10px, 0);
+  transform: translate3d(0, -10px, 0);
+}
+.dt .popover-bottom {
+  -webkit-transform: translate3d(0, 10px, 0);
+  transform: translate3d(0, 10px, 0);
+}
+.dt .popover-animation {
+  opacity: 1;
+  -webkit-transition: opacity 0.3s, -webkit-transform 0.3s;
+  transition: opacity 0.3s, transform 0.3s;
+  -webkit-transform: translate3d(0, 0, 0);
+  transform: translate3d(0, 0, 0);
+}
+.dt .dt-menu {
+  text-align: left;
+}
+.dt .dt-menu ul,
+.dt .dt-menu li {
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+.dt .dt-menu .dropdown-menu {
+  width: 200px;
+  display: none;
+}
+.dt .dt-menu .dropdown-menu.ddm-open {
+  display: inline-block;
+}
+.dt .dt-menu ul {
+  max-height: 300px;
+  overflow-y: auto;
+}
 .dt.dt-loaded {
   visibility: visible !important;
 }

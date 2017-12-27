@@ -123,7 +123,7 @@ gulp.task('release-build', function () {
   }).then(function (bundle) {
     return bundle.write({
       dest: 'release/dataTable.es6.js',
-      format: 'es6',
+      format: 'es',
       moduleName: 'DataTable'
     });
   });
