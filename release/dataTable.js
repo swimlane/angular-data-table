@@ -1,6 +1,6 @@
 /**
  * angular-data-table - A feature-rich but lightweight ES6 AngularJS Data Table crafted for large data sets!
- * @version v0.7.0
+ * @version v0.7.1
  * @link http://swimlane.com/
  * @license 
  */
@@ -998,7 +998,7 @@
     }, {
       key: "calculateDepth",
       value: function calculateDepth(row) {
-        var depth = arguments.length <= 1 || arguments[1] === undefined ? 0 : arguments[1];
+        var depth = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
 
         var parentProp = this.treeColumn ? this.treeColumn.relationProp : this.groupColumn.prop;
         var prop = this.treeColumn.prop;
@@ -2411,7 +2411,7 @@
               ctrl.adjustColumns();
             };
 
-            $window.addEventListener('resize', throttle(function () {
+            angular.element($window).on('resize', throttle(function () {
               $timeout(resize);
             }));
 

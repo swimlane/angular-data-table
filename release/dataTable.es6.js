@@ -3034,10 +3034,9 @@ function DataTableDirective($window, $timeout, $parse){
             ctrl.adjustColumns();
           };
 
-          $window.addEventListener('resize',
-            throttle(() => {
-              $timeout(resize);
-            }));
+          angular.element($window).on('resize', throttle(() => {
+            $timeout(resize);
+          }));
 
           // When an item is hidden for example
           // in a tab with display none, the height
