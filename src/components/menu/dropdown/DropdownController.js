@@ -1,6 +1,6 @@
 export class DropdownController{
   /*@ngInject*/
-  constructor($scope){
+  constructor($scope) {
     $scope.open = false;
   }
 

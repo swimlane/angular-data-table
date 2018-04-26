@@ -3,7 +3,7 @@ import { KEYS } from '../../utils/keys';
 export class SelectionController {
 
   /*@ngInject*/
-  constructor($scope){
+  constructor($scope) {
     this.body = $scope.body;
     this.options = $scope.body.options;
     this.selected = $scope.body.selected;
@@ -49,7 +49,7 @@ export class SelectionController {
 
     this.body.onRowClick({ row: row });
   }
-  
+
   /**
    * Handler for the row double click event
    * @param  {object} event

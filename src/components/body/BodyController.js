@@ -8,9 +8,24 @@ export class BodyController{
    * @param  {$timeout}
    * @return {BodyController}
    */
+
   /*@ngInject*/
-  constructor($scope, $timeout){
-    this.$scope = $scope;
+  constructor($scope, $timeout) {
+    Object.assign(this, {
+      $scope: $scope,
+      $timeout: $timeout
+    });
+
+    if (angular.version.major === 1 && angular.version.minor < 5) {
+      this.init();
+    }
+  }
+
+  $onInit(){
+    this.init();
+  }
+
+  init(){
     this.tempRows = [];
 
     this.treeColumn = this.options.columns.find((c) => {
@@ -21,23 +36,23 @@ export class BodyController{
       return c.group;
     });
 
-    $scope.$watchCollection('body.rows', this.rowsUpdated.bind(this));
+    this.$scope.$watchCollection('body.rows', this.rowsUpdated.bind(this));
 
     if(this.options.scrollbarV || (!this.options.scrollbarV && this.options.paging.externalPaging)){
       var sized = false;
-      $scope.$watch('body.options.paging.size', (newVal, oldVal) => {
+      this.$scope.$watch('body.options.paging.size', (newVal, oldVal) => {
         if(!sized || newVal > oldVal){
           this.getRows();
           sized = true;
         }
       });
 
-      $scope.$watch('body.options.paging.count', (count) => {
+      this.$scope.$watch('body.options.paging.count', (count) => {
         this.count = count;
         this.updatePage();
       });
 
-      $scope.$watch('body.options.paging.offset', (newVal) => {
+      this.$scope.$watch('body.options.paging.offset', (newVal) => {
         if(this.options.paging.size){
           this.onPage({
             offset: newVal,

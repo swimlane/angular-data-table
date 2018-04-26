@@ -41,26 +41,41 @@ class PagerController {
 
   /**
    * Creates an instance of the Pager Controller
-   * @param  {object} $scope   
+   * @param  {object} $scope
    */
+
   /*@ngInject*/
-  constructor($scope){
-    $scope.$watch('pager.count', (newVal) => {
+  constructor($scope) {
+    Object.assign(this, {
+      $scope: $scope
+    })
+
+    if (angular.version.major === 1 && angular.version.minor < 5) {
+      this.init();
+    }
+  }
+
+  $onInit(){
+    this.init();
+  }
+
+  init(){
+    this.$scope.$watch('pager.count', (newVal) => {
       this.calcTotalPages(this.size, this.count);
       this.getPages(this.page || 1);
     });
 
-    $scope.$watch('pager.size', (newVal) => {
+    this.$scope.$watch('pager.size', (newVal) => {
       this.calcTotalPages(this.size, this.count);
       this.getPages(this.page || 1);
     });
 
-    $scope.$watch('pager.page', (newVal) => {
+    this.$scope.$watch('pager.page', (newVal) => {
       if (newVal !== 0 && newVal <= this.totalPages) {
         this.getPages(newVal);
       }
     });
-    
+
     this.getPages(this.page || 1);
   }
 
@@ -75,7 +90,7 @@ class PagerController {
 
   /**
    * Select a page
-   * @param  {int} num   
+   * @param  {int} num
    */
   selectPage(num){
     if (num > 0 && num <= this.totalPages) {
@@ -112,7 +127,7 @@ class PagerController {
 
   /**
    * Determines if the pager can go forward
-   * @return {boolean}       
+   * @return {boolean}
    */
   canNext(){
     return this.page < this.totalPages;
@@ -120,11 +135,11 @@ class PagerController {
 
   /**
    * Gets the page set given the current page
-   * @param  {int} page 
+   * @param  {int} page
    */
   getPages(page) {
     var pages = [],
-        startPage = 1, 
+        startPage = 1,
         endPage = this.totalPages,
         maxSize = 5,
         isMaxSized = maxSize < this.totalPages;
@@ -208,10 +223,26 @@ class FooterController {
    * @param  {scope}
    * @return {[type]}
    */
+  
   /*@ngInject*/
-  constructor($scope){
+  constructor($scope) {
+    Object.assign(this, {
+      $scope: $scope
+    });
+
+    if (angular.version.major === 1 && angular.version.minor < 5) {
+      this.init();
+    }
+  }
+
+  $onInit(){
+    this.init();
+  }
+
+  init(){
     this.page = this.paging.offset + 1;
-    $scope.$watch('footer.paging.offset', (newVal) => {
+
+    this.$scope.$watch('footer.paging.offset', (newVal) => {
       this.offsetChanged(newVal)
     });
   }
@@ -743,7 +774,7 @@ var KEYS = {
 class SelectionController {
 
   /*@ngInject*/
-  constructor($scope){
+  constructor($scope) {
     this.body = $scope.body;
     this.options = $scope.body.options;
     this.selected = $scope.body.selected;
@@ -789,7 +820,7 @@ class SelectionController {
 
     this.body.onRowClick({ row: row });
   }
-  
+
   /**
    * Handler for the row double click event
    * @param  {object} event
@@ -927,8 +958,7 @@ var requestAnimFrame = (function(){
  * This only exists because Angular's binding process is too slow.
  */
 class StyleTranslator{
-
-  constructor(height){
+  constructor(height) {
     this.height = height;
     this.map = new Map();
   }
@@ -1032,9 +1062,24 @@ class BodyController{
    * @param  {$timeout}
    * @return {BodyController}
    */
+
   /*@ngInject*/
-  constructor($scope, $timeout){
-    this.$scope = $scope;
+  constructor($scope, $timeout) {
+    Object.assign(this, {
+      $scope: $scope,
+      $timeout: $timeout
+    });
+
+    if (angular.version.major === 1 && angular.version.minor < 5) {
+      this.init();
+    }
+  }
+
+  $onInit(){
+    this.init();
+  }
+
+  init(){
     this.tempRows = [];
 
     this.treeColumn = this.options.columns.find((c) => {
@@ -1045,23 +1090,23 @@ class BodyController{
       return c.group;
     });
 
-    $scope.$watchCollection('body.rows', this.rowsUpdated.bind(this));
+    this.$scope.$watchCollection('body.rows', this.rowsUpdated.bind(this));
 
     if(this.options.scrollbarV || (!this.options.scrollbarV && this.options.paging.externalPaging)){
       var sized = false;
-      $scope.$watch('body.options.paging.size', (newVal, oldVal) => {
+      this.$scope.$watch('body.options.paging.size', (newVal, oldVal) => {
         if(!sized || newVal > oldVal){
           this.getRows();
           sized = true;
         }
       });
 
-      $scope.$watch('body.options.paging.count', (count) => {
+      this.$scope.$watch('body.options.paging.count', (count) => {
         this.count = count;
         this.updatePage();
       });
 
-      $scope.$watch('body.options.paging.offset', (newVal) => {
+      this.$scope.$watch('body.options.paging.offset', (newVal) => {
         if(this.options.paging.size){
           this.onPage({
             offset: newVal,
@@ -2639,20 +2684,30 @@ class DataTableController {
    * @param  {scope}
    * @param  {filter}
    */
+
   /*@ngInject*/
-  constructor($scope, $filter, $log, $transclude){
+  constructor($scope, $filter){
     Object.assign(this, {
       $scope: $scope,
-      $filter: $filter,
-      $log: $log
+      $filter: $filter
     });
 
+    if (angular.version.major === 1 && angular.version.minor < 5) {
+      this.init();
+    }
+  }
+
+  $onInit(){
+    this.init()
+  }
+
+  init(){
     this.defaults();
 
     // set scope to the parent
-    this.options.$outer = $scope.$parent;
+    this.options.$outer = this.$scope.$parent;
 
-    $scope.$watch('dt.options.columns', (newVal, oldVal) => {
+    this.$scope.$watch('dt.options.columns', (newVal, oldVal) => {
       this.transposeColumnDefaults();
 
       if(newVal.length !== oldVal.length){
@@ -2663,7 +2718,7 @@ class DataTableController {
     }, true);
 
     // default sort
-    var watch = $scope.$watch('dt.rows', (newVal) => {
+    var watch = this.$scope.$watch('dt.rows', (newVal) => {
       if(newVal){
         watch();
         this.onSorted();

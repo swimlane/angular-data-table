@@ -1,4 +1,4 @@
-# angular-data-table 
+# angular-data-table
 
 [![Join the chat at https://gitter.im/Swimlane/angular-data-table](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/swimlane/angular-data-table?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 ![npm-version](https://img.shields.io/npm/v/angular-data-table.svg)
@@ -8,7 +8,7 @@
 
 `angular-data-table` is a AngularJS directive for presenting large and complex data.  It has all the features you would expect from any other table but in a light package with _no external depedencies_. The table was designed to be extremely flexible and light; it doesn't make any assumptions about your data or how you: filter, sort or page it.
 
-It was engineered from its conception to handle thousands of rows without sacrificing performance.  It was built for modern browsers using _ES6, CSS3 and HTML5_ and **only supports [Evergreen Browsers](http://eisenbergeffect.bluespire.com/evergreen-browsers/) and Angular >= 1.4.x and < 1.6.0**.
+It was engineered from its conception to handle thousands of rows without sacrificing performance.  It was built for modern browsers using _ES6, CSS3 and HTML5_ and **only supports [Evergreen Browsers](http://eisenbergeffect.bluespire.com/evergreen-browsers/) and Angular >= 1.4.x and < 1.7.0**.
 
 Sadly, this project is **not Angular2 upgrade compatible**. Fortunately, we have authored [ngx-datatable](https://github.com/swimlane/ngx-datatable) which is the successor to this project. **We are going to slowly be transitioning this project maintenance mode**. We will continue to provide feedback to the community and accept PRs but we won't be doing any major new development.
 
@@ -55,7 +55,7 @@ You've got 5 different options to include this in your build depending on your s
 - `./release/dataTable.min.js` - A minified standalone file that was compiled with Babel (UMD)
 - `./release/dataTable.cjs.js` - A standalone file that was compiled with Babel (CommonJS)
 - `./release/dataTable.es6.js` - Raw ES6 Version.
- 
+
 All distributions include babel helpers, so they do not have to be included separately.
 
 There is also the CSS too:

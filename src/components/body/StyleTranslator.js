@@ -5,8 +5,7 @@ import { TranslateXY } from '../../utils/translate';
  * This only exists because Angular's binding process is too slow.
  */
 export class StyleTranslator{
-
-  constructor(height){
+  constructor(height) {
     this.height = height;
     this.map = new Map();
   }
