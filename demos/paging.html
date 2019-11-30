@@ -73,9 +73,9 @@
             columnMode: 'force',
             paging: {
               externalPaging: true,
-              size: 10
-            },
-            pageCountTextGetter: (count) => `${count} records`
+              size: 10,
+              countText: (count) => `${count} records`
+            }
           };
 
           $scope.paging = function(offset, size){

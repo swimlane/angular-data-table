@@ -48,7 +48,12 @@ export const TableDefaults = {
     offset: 0,
 
     // Loading indicator
-    loadingIndicator: false
+    loadingIndicator: false,
+
+    // template for the footer cunt text
+    countText: function(count) {
+      return `${count} total`;
+    }
   },
 
   // if users can select itmes
@@ -68,11 +73,6 @@ export const TableDefaults = {
     offsetY: 0,
     innerWidth: 0,
     bodyHeight: 300
-  },
-
-  // template for the footer cunt text
-  pageCountTextGetter: function(count) {
-    return `${count} total`;
   }
 };
 
