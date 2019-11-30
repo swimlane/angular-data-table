@@ -74,6 +74,9 @@
             paging: {
               externalPaging: true,
               size: 10
+            },
+            onSort: (sorts) => {
+              console.log({ sorts });
             }
           };
 

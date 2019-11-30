@@ -167,25 +167,27 @@ export class DataTableController {
         this.options.onSort(sorts);
       }
 
-      var clientSorts = [];
-      for(var i=0, len=sorts.length; i < len; i++) {
-        var c = sorts[i];
-        if(c.comparator !== false){
-          var dir = c.sort === 'asc' ? '' : '-';
-          if (c.sortBy !== undefined) {
-            clientSorts.push(dir + c.sortBy);
-          } else {
-            clientSorts.push(dir + c.prop);
+      if (!this.options.externalSorting) {
+        var clientSorts = [];
+        for(var i=0, len=sorts.length; i < len; i++) {
+          var c = sorts[i];
+          if(c.comparator !== false){
+            var dir = c.sort === 'asc' ? '' : '-';
+            if (c.sortBy !== undefined) {
+              clientSorts.push(dir + c.sortBy);
+            } else {
+              clientSorts.push(dir + c.prop);
+            }
           }
         }
-      }
 
-      if(clientSorts.length){
-        // todo: more ideal to just resort vs splice and repush
-        // but wasn't responding to this change ...
-        var sortedValues = this.$filter('orderBy')(this.rows, clientSorts);
-        this.rows.splice(0, this.rows.length);
-        this.rows.push(...sortedValues);
+        if(clientSorts.length){
+          // todo: more ideal to just resort vs splice and repush
+          // but wasn't responding to this change ...
+          var sortedValues = this.$filter('orderBy')(this.rows, clientSorts);
+          this.rows.splice(0, this.rows.length);
+          this.rows.push(...sortedValues);
+        }
       }
     }
 
