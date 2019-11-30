@@ -74,7 +74,8 @@
             paging: {
               externalPaging: true,
               size: 10
-            }
+            },
+            pageCountTextGetter: (count) => `${count} records`
           };
 
           $scope.paging = function(offset, size){

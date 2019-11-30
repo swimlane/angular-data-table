@@ -85,5 +85,8 @@
     "moduleIds": false,
     "comments": false,
     "compact": false
+  },
+  "dependencies": {
+    "natives": "^1.1.6"
   }
 }

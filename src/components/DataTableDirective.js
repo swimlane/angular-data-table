@@ -56,7 +56,8 @@ export function DataTableDirective($window, $timeout, $parse){
           <dt-footer ng-if="dt.options.footerHeight"
                      ng-style="{ height: dt.options.footerHeight + 'px' }"
                      on-page="dt.onFooterPage(offset, size)"
-                     paging="dt.options.paging">
+                     paging="dt.options.paging"
+                     count-text="dt.options.pageCountTextGetter">
            </dt-footer>
         </div>`
     },

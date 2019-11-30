@@ -68,8 +68,12 @@ export const TableDefaults = {
     offsetY: 0,
     innerWidth: 0,
     bodyHeight: 300
-  }
+  },
 
+  // template for the footer cunt text
+  pageCountTextGetter: function(count) {
+    return `${count} total`;
+  }
 };
 
 /**
