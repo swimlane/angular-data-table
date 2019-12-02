@@ -73,7 +73,10 @@ export const TableDefaults = {
     offsetY: 0,
     innerWidth: 0,
     bodyHeight: 300
-  }
+  },
+
+  // flag if sorting shuld be handeled externally
+  externalSorting: false
 };
 
 /**

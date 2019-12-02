@@ -73,8 +73,10 @@
             columnMode: 'force',
             paging: {
               externalPaging: true,
-              size: 10,
-              countText: (count) => `${count} records`
+              size: 10
+            },
+            onSort: (sorts) => {
+              console.log({ sorts });
             }
           };
 
