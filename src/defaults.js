@@ -48,7 +48,12 @@ export const TableDefaults = {
     offset: 0,
 
     // Loading indicator
-    loadingIndicator: false
+    loadingIndicator: false,
+
+    // template for the footer count text
+    countText: function(count) {
+      return `${count} total`;
+    }
   },
 
   // if users can select itmes
@@ -72,7 +77,6 @@ export const TableDefaults = {
 
   // flag if sorting shuld be handeled externally
   externalSorting: false
-
 };
 
 /**
