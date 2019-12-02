@@ -50,7 +50,7 @@ export const TableDefaults = {
     // Loading indicator
     loadingIndicator: false,
 
-    // template for the footer cunt text
+    // template for the footer count text
     countText: function(count) {
       return `${count} total`;
     }
