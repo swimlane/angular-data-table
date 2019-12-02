@@ -1,6 +1,6 @@
 /**
  * angular-data-table - A feature-rich but lightweight ES6 AngularJS Data Table crafted for large data sets!
- * @version v0.7.1
+ * @version v0.8.0
  * @link http://swimlane.com/
  * @license 
  */
@@ -214,7 +214,7 @@ function FooterDirective() {
       paging: '=',
       onPage: '&'
     },
-    template: "<div class=\"dt-footer\">\n        <div class=\"page-count\">{{footer.paging.count}} total</div>\n        <dt-pager page=\"footer.page\"\n               size=\"footer.paging.size\"\n               count=\"footer.paging.count\"\n               on-page=\"footer.onPaged(page)\"\n               ng-show=\"footer.paging.count / footer.paging.size > 1\">\n         </dt-pager>\n      </div>",
+    template: "<div class=\"dt-footer\">\n        <div class=\"page-count\" ng-bind=\"footer.paging.countText ? footer.paging.countText(footer.paging.count) : ''\"></div>\n        <dt-pager page=\"footer.page\"\n               size=\"footer.paging.size\"\n               count=\"footer.paging.count\"\n               on-page=\"footer.onPaged(page)\"\n               ng-show=\"footer.paging.count / footer.paging.size > 1\">\n         </dt-pager>\n      </div>",
     replace: true
   };
 }
@@ -2036,7 +2036,11 @@ var TableDefaults = {
 
     offset: 0,
 
-    loadingIndicator: false
+    loadingIndicator: false,
+
+    countText: function countText(count) {
+      return count + " total";
+    }
   },
 
   selectable: false,
@@ -2052,8 +2056,9 @@ var TableDefaults = {
     offsetY: 0,
     innerWidth: 0,
     bodyHeight: 300
-  }
+  },
 
+  externalSorting: false
 };
 
 var DataTableController = function () {
@@ -2192,25 +2197,27 @@ var DataTableController = function () {
           this.options.onSort(sorts);
         }
 
-        var clientSorts = [];
-        for (var i = 0, len = sorts.length; i < len; i++) {
-          var c = sorts[i];
-          if (c.comparator !== false) {
-            var dir = c.sort === 'asc' ? '' : '-';
-            if (c.sortBy !== undefined) {
-              clientSorts.push(dir + c.sortBy);
-            } else {
-              clientSorts.push(dir + c.prop);
+        if (!this.options.externalSorting) {
+          var clientSorts = [];
+          for (var i = 0, len = sorts.length; i < len; i++) {
+            var c = sorts[i];
+            if (c.comparator !== false) {
+              var dir = c.sort === 'asc' ? '' : '-';
+              if (c.sortBy !== undefined) {
+                clientSorts.push(dir + c.sortBy);
+              } else {
+                clientSorts.push(dir + c.prop);
+              }
             }
           }
-        }
 
-        if (clientSorts.length) {
-          var _rows;
+          if (clientSorts.length) {
+            var _rows;
 
-          var sortedValues = this.$filter('orderBy')(this.rows, clientSorts);
-          this.rows.splice(0, this.rows.length);
-          (_rows = this.rows).push.apply(_rows, _toConsumableArray(sortedValues));
+            var sortedValues = this.$filter('orderBy')(this.rows, clientSorts);
+            this.rows.splice(0, this.rows.length);
+            (_rows = this.rows).push.apply(_rows, _toConsumableArray(sortedValues));
+          }
         }
       }
 

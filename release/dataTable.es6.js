@@ -250,7 +250,7 @@ function FooterDirective(){
     },
     template:
       `<div class="dt-footer">
-        <div class="page-count">{{footer.paging.count}} total</div>
+        <div class="page-count" ng-bind="footer.paging.countText ? footer.paging.countText(footer.paging.count) : ''"></div>
         <dt-pager page="footer.page"
                size="footer.paging.size"
                count="footer.paging.count"
@@ -2608,7 +2608,12 @@ const TableDefaults = {
     offset: 0,
 
     // Loading indicator
-    loadingIndicator: false
+    loadingIndicator: false,
+
+    // template for the footer count text
+    countText: function(count) {
+      return `${count} total`;
+    }
   },
 
   // if users can select itmes
@@ -2628,8 +2633,10 @@ const TableDefaults = {
     offsetY: 0,
     innerWidth: 0,
     bodyHeight: 300
-  }
+  },
 
+  // flag if sorting shuld be handeled externally
+  externalSorting: false
 };
 
 class DataTableController {
@@ -2796,25 +2803,27 @@ class DataTableController {
         this.options.onSort(sorts);
       }
 
-      var clientSorts = [];
-      for(var i=0, len=sorts.length; i < len; i++) {
-        var c = sorts[i];
-        if(c.comparator !== false){
-          var dir = c.sort === 'asc' ? '' : '-';
-          if (c.sortBy !== undefined) {
-            clientSorts.push(dir + c.sortBy);
-          } else {
-            clientSorts.push(dir + c.prop);
+      if (!this.options.externalSorting) {
+        var clientSorts = [];
+        for(var i=0, len=sorts.length; i < len; i++) {
+          var c = sorts[i];
+          if(c.comparator !== false){
+            var dir = c.sort === 'asc' ? '' : '-';
+            if (c.sortBy !== undefined) {
+              clientSorts.push(dir + c.sortBy);
+            } else {
+              clientSorts.push(dir + c.prop);
+            }
           }
         }
-      }
 
-      if(clientSorts.length){
-        // todo: more ideal to just resort vs splice and repush
-        // but wasn't responding to this change ...
-        var sortedValues = this.$filter('orderBy')(this.rows, clientSorts);
-        this.rows.splice(0, this.rows.length);
-        this.rows.push(...sortedValues);
+        if(clientSorts.length){
+          // todo: more ideal to just resort vs splice and repush
+          // but wasn't responding to this change ...
+          var sortedValues = this.$filter('orderBy')(this.rows, clientSorts);
+          this.rows.splice(0, this.rows.length);
+          this.rows.push(...sortedValues);
+        }
       }
     }
 
