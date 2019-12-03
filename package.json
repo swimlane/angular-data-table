@@ -59,6 +59,7 @@
     "karma-phantomjs-shim": "^1.0.0",
     "karma-sinon-chai": "^1.0.0",
     "mocha": "^2.2.1",
+    "natives": "^1.1.6",
     "phantomjs": "^1.9.17",
     "rollup": "^0.7.8",
     "run-sequence": "^1.1.0",
@@ -87,7 +88,5 @@
     "comments": false,
     "compact": false
   },
-  "dependencies": {
-    "natives": "^1.1.6"
-  }
+  "dependencies": {}
 }
