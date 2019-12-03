@@ -1,6 +1,6 @@
 /**
  * angular-data-table - A feature-rich but lightweight ES6 AngularJS Data Table crafted for large data sets!
- * @version v0.8.0
+ * @version v0.8.1
  * @link http://swimlane.com/
  * @license 
  */
