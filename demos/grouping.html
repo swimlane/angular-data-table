@@ -75,21 +75,33 @@
             $scope.data = data;
           });
 
-          $scope.groupCountry = function(){
-            var col = $scope.options.columns.find(function(c){
+          $scope.groupCountry = function() {
+            _clearGroupColumns();
+
+            var col = $scope.options.columns.find(function(c) {
               return c.prop === 'country';
             });
 
             col.group = !col.group;
           };
 
-          $scope.groupYear = function(){
-            var col = $scope.options.columns.find(function(c){
+          $scope.groupYear = function() {
+            _clearGroupColumns();
+
+            var col = $scope.options.columns.find(function(c) {
               return c.prop === 'year';
             });
 
             col.group = !col.group;
           };
+
+          _clearGroupColumns = function() {
+            $scope.options.columns.map(function(column) {
+              if (column.group) {
+                delete column.group;
+              }
+            });
+          }
 
         });
       });

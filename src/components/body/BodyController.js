@@ -5,62 +5,99 @@ export class BodyController{
   /**
    * A tale body controller
    * @param  {$scope}
-   * @param  {$timeout}
    * @return {BodyController}
    */
   /*@ngInject*/
-  constructor($scope, $timeout){
+  constructor($scope){
     this.$scope = $scope;
     this.tempRows = [];
+    this.watchListeners = [];
 
+    this.setTreeAndGroupColumns();
+    this.setConditionalWatches();
+
+    $scope.$watch('body.options.columns', (newVal, oldVal) => {
+      if (newVal) {
+        const origTreeColumn = this.treeColumn,
+          origGroupColumn = this.groupColumn;
+
+        this.setTreeAndGroupColumns();
+
+        this.setConditionalWatches();
+
+        if (origGroupColumn !== this.treeColumn || origGroupColumn !== this.groupColumn) {
+          this.rowsUpdated(this.rows);
+
+          if (this.treeColumn) {
+            this.refreshTree();
+          } else if (this.groupColumn) {
+            this.refreshGroups();
+          }
+        }
+      }
+    }, true);
+
+    $scope.$watchCollection('body.rows', this.rowsUpdated.bind(this));
+  }
+
+  setTreeAndGroupColumns() {
     this.treeColumn = this.options.columns.find((c) => {
       return c.isTreeColumn;
     });
 
-    this.groupColumn = this.options.columns.find((c) => {
-      return c.group;
-    });
+    if (!this.treeColumn) {
+      this.groupColumn = this.options.columns.find((c) => {
+        return c.group;
+      });
+    }
+  }
 
-    $scope.$watchCollection('body.rows', this.rowsUpdated.bind(this));
+  setConditionalWatches(){
+    this.watchListeners.map((watchListener) => (
+      watchListener()
+    ));
 
-    if(this.options.scrollbarV || (!this.options.scrollbarV && this.options.paging.externalPaging)){
+    if (this.options.scrollbarV || (!this.options.scrollbarV && this.options.paging.externalPaging)) {
       var sized = false;
-      $scope.$watch('body.options.paging.size', (newVal, oldVal) => {
-        if(!sized || newVal > oldVal){
+
+      this.watchListeners.push(this.$scope.$watch('body.options.paging.size', (newVal, oldVal) => {
+        if (!sized || newVal > oldVal) {
           this.getRows();
           sized = true;
         }
-      });
+      }));
 
-      $scope.$watch('body.options.paging.count', (count) => {
+      this.watchListeners.push(this.$scope.$watch('body.options.paging.count', (count) => {
         this.count = count;
         this.updatePage();
-      });
+      }));
 
-      $scope.$watch('body.options.paging.offset', (newVal) => {
+      this.watchListeners.push(this.$scope.$watch('body.options.paging.offset', (newVal) => {
         if(this.options.paging.size){
           this.onPage({
             offset: newVal,
             size: this.options.paging.size
           });
         }
-      });
+      }));
     }
   }
 
   rowsUpdated(newVal, oldVal){
-    if(newVal) {
-      if(!this.options.paging.externalPaging){
+    if (!newVal) {
+      this.getRows(true);
+    } else {
+      if (!this.options.paging.externalPaging) {
         this.options.paging.count = newVal.length;
       }
 
       this.count = this.options.paging.count;
 
-      if(this.treeColumn || this.groupColumn){
+      if (this.treeColumn || this.groupColumn) {
         this.buildRowsByGroup();
       }
 
-      if(this.options.scrollbarV){
+      if (this.options.scrollbarV) {
         let refresh = newVal && oldVal && (newVal.length === oldVal.length
           || newVal.length < oldVal.length);
 
@@ -68,18 +105,18 @@ export class BodyController{
       } else {
         let rows = this.rows;
 
-        if(this.treeColumn){
+        if (this.treeColumn) {
           rows = this.buildTree();
-        } else if(this.groupColumn){
+        } else if (this.groupColumn) {
           rows = this.buildGroups();
         }
 
-        if(this.options.paging.externalPaging){
+        if (this.options.paging.externalPaging) {
           let idxs = this.getFirstLastIndexes(),
               idx = idxs.first;
 
           this.tempRows.splice(0, this.tempRows.length);
-          while(idx < idxs.last){
+          while (idx < idxs.last) {
             this.tempRows.push(rows[idx++])
           }
         } else {
@@ -478,6 +515,16 @@ export class BodyController{
     return children !== undefined || (children && !children.length);
   }
 
+  refreshTree(){
+    if(this.options.scrollbarV){
+      this.getRows(true);
+    } else {
+      var values = this.buildTree();
+      this.tempRows.splice(0, this.tempRows.length);
+      this.tempRows.push(...values);
+    }
+  }
+
   /**
    * Tree toggle event from a cell
    * @param  {row model}
@@ -487,18 +534,22 @@ export class BodyController{
     var val  = row[this.treeColumn.prop];
     this.expanded[val] = !this.expanded[val];
 
-    if(this.options.scrollbarV){
-      this.getRows(true);
-    } else {
-      var values = this.buildTree();
-      this.tempRows.splice(0, this.tempRows.length);
-      this.tempRows.push(...values);
-    }
+    this.refreshTree();
 
     this.onTreeToggle({
       row: row,
       cell: cell
     });
+  }
+
+  refreshGroups(){
+    if(this.options.scrollbarV){
+      this.getRows(true);
+    } else {
+      var values = this.buildGroups();
+      this.tempRows.splice(0, this.tempRows.length);
+      this.tempRows.push(...values);
+    }
   }
 
   /**
@@ -508,12 +559,6 @@ export class BodyController{
   onGroupToggle(row){
     this.expanded[row.name] = !this.expanded[row.name];
 
-    if(this.options.scrollbarV){
-      this.getRows(true);
-    } else {
-      var values = this.buildGroups();
-      this.tempRows.splice(0, this.tempRows.length);
-      this.tempRows.push(...values);
-    }
+    this.refreshGroups();
   }
 }
